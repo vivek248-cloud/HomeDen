@@ -19,6 +19,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <link rel="stylesheet" href="{% static 'css/interior.css' %}">
     {% block extra_css %}{% endblock %}
@@ -154,16 +155,30 @@
       {% comment %} data-bs-toggle="dropdown"  dropdown-toggle{% endcomment %}
       
     </header>
-    {% if messages %}
-  <div class="container mt-3">
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    {% endfor %}
-  </div>
+{% if messages %}
+  {% for message in messages %}
+    {% if forloop.first %}
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          Swal.fire({
+            icon: 'success',
+            title: 'Message Sent!',
+            text: '{{ message|escapejs }}',
+            confirmButtonColor: '#2ba58b',
+            timer: 3000,
+            timerProgressBar: true
+          });
+
+          const modal = document.getElementById('designConsultantModal');
+          const bsModal = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal);
+          bsModal.hide();
+        });
+      </script>
+    {% endif %}
+  {% endfor %}
 {% endif %}
+
+
 
     <div class="modal fade" id="designConsultantModal" tabindex="-1" aria-labelledby="designConsultantModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered responsive-modal"> <!-- Custom class here -->
@@ -211,7 +226,8 @@
    <!-- Floating Buttons -->
 <div class="floating-buttons position-fixed end-0 bottom-0 p-3 d-flex flex-column align-items-end z-3">
   <!-- WhatsApp -->
-  <a href="https://wa.me/8489716901?text=Hi%20there!" class="floating-btn bg-success shadow-sm mb-2">
+  <a href="https://wa.me/8489716901?text=Hi%20HOME%20DEN%2C%20I%20would%20like%20to%20discuss%20about%20a%20home%20interior%20project%20of%20mine%2C%20and%20know%20more%20about%20your%20interior%20design%20options%20and%20services%20available.
+" class="floating-btn bg-success shadow-sm mb-2">
     <i class="bi bi-whatsapp fs-4 text-white"></i>
   </a>
 

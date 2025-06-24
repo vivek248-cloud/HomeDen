@@ -51,18 +51,33 @@ path {
   stroke-dashoffset: 1000;
   animation: 
     draw 2s ease forwards,
-    fillin 2s ease 2s forwards;   /* Fill appears after stroke draws */
+    fillin 2s ease 2s forwards,
+    pulse-loader 1.5s ease-in-out 4s infinite; /* pulse starts after draw + fillin */ 
 }
 
+/* Keyframes to animate stroke drawing */
 @keyframes draw {
   to {
     stroke-dashoffset: 0;
   }
 }
 
+/* Keyframes to animate fill appearance */
 @keyframes fillin {
   to {
     fill-opacity: 1;
+  }
+}
+
+/* Optional pulse effect (you can modify as needed) */
+@keyframes pulse-loader {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.6;
   }
 }
 /* Responsive tweaks */
@@ -72,11 +87,6 @@ path {
   }
 }
 
-@media (max-width: 480px) {
-  .svg-logo {
-    max-width: 100px;
-  }
-}
 
 
 .logo-loader {
@@ -87,20 +97,6 @@ path {
   opacity: 0.8;
 }
 
-@keyframes pulse-loader {
-  0% {
-    transform: scale(1);
-    opacity: 0.6;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0.6;
-  }
-}
 
 
 
@@ -2353,19 +2349,7 @@ p {
     }
   }
 
-  @media (max-width: 480px) {
-    .furniture-list h2 {
-      font-size: 22px;
-    }
 
-    .room-section h3 {
-      font-size: 16px;
-    }
-
-    .room-section li {
-      font-size: 14px;
-    }
-  }
 
 
 
@@ -3398,73 +3382,14 @@ p {
   }
 }
 
-@media (max-width: 480px) {
-  .about-header {
-    height: 400px;
-    padding: 30px 10px;
-  }
-
-  .about-header h1 {
-    font-size: 2rem;
-    margin-top: 100px;
-  }
-
-  .contact-form {
-    padding: 20px 15px;
-  }
-
-  .about-content h2 {
-    font-size: 2rem;
-  }
-
-  .map-container iframe {
-    height: 400px;
-  }
-}
-@media (max-width: 480px) {
-  .hero-header h1 {
-    font-size: 2rem !important;
-  }
-}
 
 
 
 
 
- @media (max-width: 480px) {
-  .timeline {
-    padding: 20px 10px;
-  }
 
-  .timeline::after {
-    left: 20px!important; /* Move the line to the left side */
-  }
 
-  .timeline-item {
-    width: 100%; 
-    padding: 20px 20px 20px 40px;
-    text-align: left !important;
-    left: 0 !important;
-  }
 
-  .timeline-item h2 {
-    font-size: 1.5rem;
-    transform: rotate(0deg);
-    text-align: left;
-  }
-
-  .timeline-item.right h2 {
-    transform: rotate(0deg);
-  }
-
-  .timeline-item p {
-    font-size: 0.9rem;
-    line-height: 1.5;
-  }
-  .h22{
-    font-size: medium;
-  }
-}
 
 
 @media (max-width: 768px) {
@@ -4095,7 +4020,80 @@ margin: 0;
       font-size: 1.2rem;
       padding: 0 20px;
     }
-    
+    .svg-logo {
+    max-width: 100px;
+  }
+    .furniture-list h2 {
+      font-size: 22px;
+    }
+
+    .room-section h3 {
+      font-size: 16px;
+    }
+
+    .room-section li {
+      font-size: 14px;
+    }
+      .about-header {
+    height: 400px;
+    padding: 30px 10px;
+  }
+
+  .about-header h1 {
+    font-size: 2rem;
+    margin-top: 100px;
+  }
+
+  .contact-form {
+    padding: 20px 15px;
+  }
+
+  .about-content h2 {
+    font-size: 2rem;
+  }
+
+  .map-container iframe {
+    height: 400px;
+  }
+   .hero-header h1 {
+    font-size: 2rem !important;
+  }
+    .timeline {
+    padding: 20px 10px;
+  }
+
+  .timeline::after {
+    left: 20px!important; /* Move the line to the left side */
+  }
+
+  .timeline-item {
+    width: 100%; 
+    padding: 20px 20px 20px 40px;
+    text-align: left !important;
+    left: 0 !important;
+  }
+
+  .timeline-item h2 {
+    font-size: 1.5rem;
+    transform: rotate(0deg);
+    text-align: left;
+  }
+
+  .timeline-item.right h2 {
+    transform: rotate(0deg);
+  }
+
+  .timeline-item p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .h22{
+    font-size: medium;
+  }
+  .link-div p
+  {
+    font-size: 2rem;
+  }
 }
 
 /* Additional mobile landscape optimization */

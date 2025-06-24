@@ -512,7 +512,7 @@ def submit_contact_form(request):
         try:
             send_mail(subject_admin, message_admin, settings.EMAIL_HOST_USER, [settings.ADMIN_EMAIL])
             send_mail(subject_client, message_client, settings.EMAIL_HOST_USER, [email])
-            messages.success(request, "Enquiry submitted successfully.")
+            messages.success(request, "Thank you! Your inquiry was sent successfully.")
         except Exception as e:
             print("Email error:", e)
             messages.error(request, "Error sending email. Try again later.")
