@@ -1,0 +1,114 @@
+{% extends 'elite_interior/base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<div class="hero-header position-relative text-white text-center d-flex align-items-center justify-content-center"
+     style="background-image: url('{% static "images/about-hall.jpeg" %}');
+            background-size: cover;
+            background-position: center;
+            min-height: 75vh;
+            padding: 4rem 1rem;">
+
+    <div class="hero-overlay position-absolute top-0 start-0 w-100 h-100"
+         style="background-color: rgba(0,0,0,0.5); z-index: 0;"></div>
+
+    <div class="container position-relative z-1">
+        <div class="related-heading d-flex flex-column align-items-center gap-2 mb-3">
+            <div class="d-flex justify-content-center">
+                <span class="line" style="width: 80px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
+            </div>
+
+            <h1 class="fw-bold text-white px-2"
+                style="font-family: 'Playfair Display', serif; font-size: clamp(3.75rem, 8vw, 3.2rem); letter-spacing: 1px;">
+               {{ category|upper }}
+            </h1>
+
+            <div class="d-flex justify-content-center">
+                <span class="line" style="width: 80px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
+            </div>
+        </div>
+
+        <p class="fs-6 fs-md-5 text-white-50" style="max-width: 600px; margin: 0 auto;">
+            Your Dream Home Deserves
+        </p>
+    </div>
+</div>
+
+<div class="container py-5 justify-content-center">
+    {% comment %} <h2 class="text-center fw-bold display-5 mb-5" style="font-family: 'Playfair Display', serif;">{{ category }}</h2> {% endcomment %}
+    
+  <h2 class="mb-4 text-center fw-bold">YouTube Videos</h2>
+  <div class="projectVideo-divider mx-auto mb-4"></div>
+  
+  <div class="row g-4 justify-content-center">
+    {% for video in videos %}
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="youtube-card position-relative overflow-hidden rounded shadow-sm">
+          <div class="ratio ratio-16x9" style="min-height: 200px;">
+          <iframe
+            loading="lazy"
+            src="https://www.youtube.com/embed/{{ video.youtube_link }}"
+            title="{{ video.title }}"
+            frameborder="0"
+            allowfullscreen
+            class="w-100 h-100 rounded">
+          </iframe>
+        </div>
+
+          <div class="youtube-overlay position-absolute bottom-0 start-0 w-100 p-2 text-white">
+            <h6 class="m-0">{{ video.title }}</h6>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+
+
+<div class="container mb-4">
+  <ul class="nav justify-content-center flex-wrap gap-2 project-category-tabs">
+    <li class="nav-item">
+      <a class="nav-link {% if category == 'Kitchen' %}active{% endif %}" href="{% url 'kitchen_projects' %}">Kitchen</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if category == 'Bedroom' %}active{% endif %}" href="{% url 'bedroom_projects' %}">Bedroom</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if category == 'Dining' %}active{% endif %}" href="{% url 'dining_projects' %}">Dining</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if category == 'Living' %}active{% endif %}" href="{% url 'living_projects' %}">Living</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if category == 'Bathroom' %}active{% endif %}" href="{% url 'bathroom_projects' %}">Bathroom</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if category == 'Our Projects' %}active{% endif %}" href="{% url 'projects' %}">All</a>
+    </li>
+  </ul>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4">
+        {% for project in projects %}
+        <div class="col-lg-4 col-md-6 col-12">
+            <div class="card h-100 shadow-sm border-0 hover-shadow transition">
+                <img src="{{ project.image.url }}" class="card-img-top" alt="{{ project.name }}" style="height: 250px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ project.category }}</h5>
+                    <h6 class="card-title">{{project.name}}</h6>
+                    <p class="card-text text-muted">{{ project.description|truncatewords:20 }}</p>
+                    <a href="{% url 'project_detail' project.id %}" class="btn view-btn mt-auto">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted">No projects available.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

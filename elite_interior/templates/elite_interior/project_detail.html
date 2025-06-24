@@ -1,0 +1,197 @@
+{% extends 'elite_interior/base.html' %}
+{% load static %}
+
+{% block content %}
+{% if project.image %}
+  <div class="hero-header position-relative d-flex align-items-center justify-content-center text-center text-white"
+     style="background-image: url('{{ project.image.url }}');
+            background-size: cover;
+            background-position: center;
+            height: 90vh;">
+
+    <div class="hero-overlay position-absolute top-0 start-0 w-100 h-100" 
+         style="background: linear-gradient(to bottom, rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.31));">
+    </div>
+
+    <div class="container position-relative z-1">
+        <!-- Enhanced Heading Section -->
+        <div class="related-heading d-flex align-items-center justify-content-center gap-3 flex-wrap mb-4">
+            <span class="line"  style="background-color: rgba(255, 255, 255, 0.5);"></span>
+            <h1 class="fw-bold text-white m-0" 
+                style="font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); letter-spacing: 1px;">
+                Customized {{ project.subcategory }}
+            </h1>
+            <span class="line"  style="background-color: rgba(255, 255, 255, 0.5);"></span>
+        </div>
+
+        <p class="fs-5 fs-md-4 text-white-50" style="font-size: 1.1rem;">
+            Your Dream Home Deserves the Best
+        </p>
+    </div>
+</div>
+{% else %}
+  <div class="hero-header position-relative d-flex align-items-center justify-content-center text-center text-white"
+       style="background-image: url('{% static "images/about-hall.jpeg" %}');
+              background-size: cover;
+              background-position: center;
+              height: 90vh;">
+      <div class="hero-overlay position-absolute top-0 start-0 w-100 h-100" style="background-color: rgba(0,0,0,0.5);"></div>
+      <div class="container position-relative z-1">
+          <h1 class="fw-bold display-4 display-md-3 display-lg-2" style="font-family: 'Playfair Display', serif;">
+              Customized Interior
+          </h1>
+          <p class="fs-5 fs-md-4">Your Dream Home Deserves</p>
+      </div>
+  </div>
+{% endif %}
+
+
+
+<div class="container py-5 px-3 px-md-4">
+    <div class="row w-100">
+        <div class="col-lg-8 col-md-12 mb-5 w-100">
+            <div class="text-center text-lg-start w-100 px-1 project-name">
+                <h2 class="fw-bold">{{ project.name }}</h2>
+                <p class="text-muted">{{ project.category }}</p>
+                {% if project.image %}
+                <img src="{{ project.image.url }}" class="img-fluid rounded shadow mt-4 mb-3"
+                     alt="{{ project.name }}" style="max-height: 500px; width: 100%; object-fit: cover;">
+                {% endif %}
+                <p class="lead mt-3">{{ project.description }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5 px-2 px-md-3">
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
+    {% for project in all_projects %}
+    <div class="col d-flex">
+      <div class="card h-100 shadow-sm border-0 w-100">
+        {% if project.image %}
+        <img src="{{ project.image.url }}" class="card-img-top rounded-top" alt="{{ project.name }}"
+             style="height: 140px; object-fit: cover;">
+        {% endif %}
+        <div class="card-body p-2 d-flex flex-column">
+          <h6 class="card-title mb-1 text-truncate" style="font-size: 0.9rem;">{{ project.name }}</h6>
+          <p class="text-muted mb-1 text-truncate" style="font-size: 0.75rem;">{{ project.category }}</p>
+          <a href="{% url 'project_detail' project.id %}" class="btn btn-sm view-btn mt-auto w-100" style="font-size: 0.75rem;" onclick="simulateLoading()">View</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-center">No projects available.</p>
+    {% endfor %}
+  </div>
+</div>
+
+
+
+
+
+
+{% if related_projects %}
+<div class="mt-5 px-3 px-md-4">
+    <div class="related-heading text-center mb-5 d-flex align-items-center justify-content-center gap-3 flex-wrap">
+        <span class="line" style="background-color:black;"></span>
+        <h4 class="fw-bold m-0">Related Projects</h4>
+        <span class="line" style="background-color:black;"></span>
+    </div>
+
+
+  <div class="swiper mySwiper pb-4">
+    <div class="swiper-wrapper">
+      {% for item in related_projects %}
+      <div class="swiper-slide d-flex justify-content-center">
+        <div class="card shadow-sm border-0" style="width: 100%; max-width: 300px;">
+          <img src="{{ item.image.url }}" alt="{{ item.name }}" class="card-img-top" style="height: 180px; object-fit: cover;">
+          <div class="card-body">
+            <h6 class="card-title">{{ item.subcategory }}</h6>
+            <p class="card-text text-muted small">{{ item.description|truncatewords:10 }}</p>
+            <a href="{% url 'project_detail' item.id %}" class="btn btn-sm view-btn w-100" onclick="simulateLoading()">View</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Swiper Pagination & Arrows -->
+    <div class="swiper-pagination mt-3" style="color: var(--color-4);"></div>
+    <div class="swiper-button-next d-none d-md-block" ></div>
+    <div class="swiper-button-prev d-none d-md-block"></div>
+  </div>
+</div>
+
+
+
+<div class="container my-4">
+  <h5 class="fw-bold mb-3">Other Subcategories</h5>
+  <ul class="list-unstyled d-flex flex-wrap gap-2">
+    {% for sub in subcategories %}
+      <li>
+        {% if project.category == 'Kitchen' %}
+          <a href="{% url 'kitchen_projects' %}#{{ sub|slugify }}"
+             class="badge px-3 py-2 border rounded-pill text-decoration-none 
+             {% if sub == project.subcategory %}bg-warning text-white{% else %}bg-light text-dark{% endif %}">
+            {{ sub }}
+          </a>
+        {% elif project.category == 'Bedroom' %}
+          <a href="{% url 'bedroom_projects' %}#{{ sub|slugify }}" class="badge px-3 py-2 border rounded-pill text-decoration-none 
+             {% if sub == project.subcategory %}bg-warning text-white{% else %}bg-light text-dark{% endif %}">
+            {{ sub }}
+          </a>
+        {% elif project.category == 'Dining Room' %}
+          <a href="{% url 'dining_projects' %}#{{ sub|slugify }}" class="badge px-3 py-2 border rounded-pill text-decoration-none 
+             {% if sub == project.subcategory %}bg-warning text-white{% else %}bg-light text-dark{% endif %}">
+            {{ sub }}
+          </a>
+        {% elif project.category == 'Living Room' %}
+          <a href="{% url 'living_projects' %}#{{ sub|slugify }}" class="badge px-3 py-2 border rounded-pill text-decoration-none 
+             {% if sub == project.subcategory %}bg-warning text-white{% else %}bg-light text-dark{% endif %}">
+            {{ sub }}
+          </a>
+        {% elif project.category == 'Bathroom' %}
+          <a href="{% url 'bathroom_projects' %}#{{ sub|slugify }}" class="badge px-3 py-2 border rounded-pill text-decoration-none 
+             {% if sub == project.subcategory %}bg-warning text-white{% else %}bg-light text-dark{% endif %}">
+            {{ sub }}
+          </a>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+
+
+<!-- Swiper JS Script -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+<script>
+  const swiper = new Swiper('.mySwiper', {
+    slidesPerView: 1,
+    spaceBetween: 20,
+    loop: true,
+    grabCursor: true,
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    breakpoints: {
+      576: {
+        slidesPerView: 1.2,
+      },
+      768: {
+        slidesPerView: 2,
+      },
+      1024: {
+        slidesPerView: 4,
+      }
+    }
+  });
+</script>
+{% endif %}
+
+
+{% endblock %}

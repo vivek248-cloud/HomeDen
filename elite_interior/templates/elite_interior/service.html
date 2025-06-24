@@ -1,0 +1,205 @@
+{% extends 'elite_interior/base.html'%}
+{% load static %}
+
+{% block content %}
+<div class="hero-header position-relative text-white text-center d-flex align-items-center justify-content-center"
+     style="background-image: url('{% static "images/about-hall.jpeg" %}');
+            background-size: cover;
+            background-position: center;
+            min-height: 75vh;
+            padding: 4rem 1rem;">
+
+    <div class="hero-overlay position-absolute top-0 start-0 w-100 h-100"
+         style="background-color: rgba(0,0,0,0.5); z-index: 0;"></div>
+
+    <div class="container position-relative z-1">
+        <div class="related-heading d-flex flex-column align-items-center gap-2 mb-3">
+            <div class="d-flex justify-content-center">
+                <span class="line" style="width: 80px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
+            </div>
+
+            <h1 class="fw-bold text-white px-2"
+                style="font-family: 'Playfair Display', serif; font-size: clamp(3.75rem, 8vw, 3.2rem); letter-spacing: 1px;">
+                SERVICE
+            </h1>
+
+            <div class="d-flex justify-content-center">
+                <span class="line" style="width: 80px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
+            </div>
+        </div>
+
+        <p class="fs-6 fs-md-5 text-white-50" style="max-width: 600px; margin: 0 auto;">
+            Your Dream Home Deserves
+        </p>
+    </div>
+</div>
+
+<div class="circular-text-wrapper">
+<div class="circle-div">
+  <svg viewBox="0 0 200 200" width="210" height="210">
+    <defs>
+      <!-- Text Path slightly outside the main circle (r=90 vs visible r=85) -->
+      <path id="circlePath" d="M100,100 m-90,0 a90,90 0 1,1 180,0 a90,90 0 1,1 -180,0" />
+    </defs>
+
+    <!-- Visible Circle -->
+    <circle cx="100" cy="100" r="85" fill="#f4f1ee" stroke="#d9c6b0" stroke-width="2" />
+
+    <!-- Center Dot -->
+    <circle cx="100" cy="100" r="5" fill="#333" />
+
+    <!-- Curved Text Outside -->
+    <text font-size="32" font-family="Poppins" font-weight="500" fill="#000" dominant-baseline="middle">
+      <textPath href="#circlePath" startOffset="50%" text-anchor="middle">
+        Start Your Home Interior Design Journey.
+      </textPath>
+    </text>
+  </svg>
+</div>
+
+
+
+</div>
+
+
+<section id="package-offers" class="py-5">
+  <div class="container text-center">
+    <div class="section-header">
+      <span class="line"></span>
+      <h2>OUR SERVICE</h2>
+      <span class="line"></span>
+    </div>
+    <div class="room-grid mt-5">
+      {% for item in grid %}
+        <div class="grid-item {{ item.size|lower }} auto-show-up shadow grid-item-effect" style="background-image: url('{{ item.image.url }}');">
+          <a href="/HomeDen/{{ item.title|lower }}-projects/" class="grid-item-link">
+            <h2>{{ item.title|upper }}</h2>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Button/Link to trigger modal -->
+    <a  class="consultant-btn auto-show-up" data-bs-toggle="modal" data-bs-target="#designConsultantModal">
+      <i class="bi bi-chat-dots-fill"></i>
+      Talk to Our Design Consultant
+      <span class="btn-hover-effect"></span>
+    </a>
+</section>
+
+
+
+<section class="py-5">
+  <div class="container">
+    <div class="section-header">
+        <span class="line"></span>
+        <h2 class="text-center mb-4 fw-bold">Your Home Story, Phase by Phase</span></h2>
+        <span class="line"></span>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <ul class="nav project-category-tabs justify-content-center mb-4 gap-2" id="journeyTabs">
+      <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#booking">Booking</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#design">Design Phase</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#execution">Execution Phase</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#movein">Move-In</button></li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Booking Tab -->
+      <div class="tab-pane fade show active" id="booking">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <img src="{% static 'images/about-hall.jpeg' %}" class="img-fluid rounded-4 shadow" alt="Booking Phase">
+          </div>
+          <div class="col-md-6 mt-4 mt-md-0">
+            <h5 class="fw-bold">Booking Procedure</h5>
+            <ul class="list-unstyled">
+              <li><strong>Fill form</strong> – Provide your basic info and property details.</li>
+              <li><strong>Get a call</strong> – Our expert will understand your needs.</li>
+              <li><strong>Share your floor plan</strong> – So we match the best designer for you.</li>
+              <li><strong>Speak to our designer</strong> – Understand you and your family’s preferences.</li>
+              <li><strong>Design proposal</strong> – Created based on your budget.</li>
+              <li><strong>Revised quote</strong> – Based on your feedback.</li>
+              <li><strong>You pay 10%</strong> <span class="badge bg-warning text-dark">MILESTONE</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Design Phase Tab -->
+      <div class="tab-pane fade" id="design">
+        <!-- Similar layout -->
+           <div class="row align-items-center">
+          <div class="col-md-6">
+            <img src="{% static 'images/self-green.jpeg' %}" class="img-fluid rounded-4 shadow" alt="Booking Phase">
+          </div>
+          <div class="col-md-6 mt-4 mt-md-0">
+            <h5 class="fw-bold">Design Procedure</h5>
+            <ul class="list-unstyled">
+              <li><strong>Fill form</strong> – Provide your basic info and property details.</li>
+              <li><strong>Get a call</strong> – Our expert will understand your needs.</li>
+              <li><strong>Share your floor plan</strong> – So we match the best designer for you.</li>
+              <li><strong>Speak to our designer</strong> – Understand you and your family’s preferences.</li>
+              <li><strong>Design proposal</strong> – Created based on your budget.</li>
+              <li><strong>Revised quote</strong> – Based on your feedback.</li>
+              <li><strong>You pay 10%</strong> <span class="badge bg-warning text-dark">MILESTONE</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Execution Phase Tab -->
+      <div class="tab-pane fade" id="execution">
+        <!-- Similar layout -->
+           <div class="row align-items-center">
+          <div class="col-md-6">
+            <img src="{% static 'images/self-red.jpeg' %}" class="img-fluid rounded-4 shadow" alt="Booking Phase">
+          </div>
+          <div class="col-md-6 mt-4 mt-md-0">
+            <h5 class="fw-bold">Execution Procedure</h5>
+            <ul class="list-unstyled">
+              <li><strong>Fill form</strong> – Provide your basic info and property details.</li>
+              <li><strong>Get a call</strong> – Our expert will understand your needs.</li>
+              <li><strong>Share your floor plan</strong> – So we match the best designer for you.</li>
+              <li><strong>Speak to our designer</strong> – Understand you and your family’s preferences.</li>
+              <li><strong>Design proposal</strong> – Created based on your budget.</li>
+              <li><strong>Revised quote</strong> – Based on your feedback.</li>
+              <li><strong>You pay 10%</strong> <span class="badge bg-warning text-dark">MILESTONE</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Move-In Tab -->
+      <div class="tab-pane fade" id="movein">
+        <!-- Similar layout -->
+           <div class="row align-items-center">
+          <div class="col-md-6">
+            <img src="{% static 'images/dark-interior.jpeg' %}" class="img-fluid rounded-4 shadow" alt="Booking Phase">
+          </div>
+          <div class="col-md-6 mt-4 mt-md-0">
+            <h5 class="fw-bold">move-in Procedure</h5>
+            <ul class="list-unstyled">
+              <li><strong>Fill form</strong> – Provide your basic info and property details.</li>
+              <li><strong>Get a call</strong> – Our expert will understand your needs.</li>
+              <li><strong>Share your floor plan</strong> – So we match the best designer for you.</li>
+              <li><strong>Speak to our designer</strong> – Understand you and your family’s preferences.</li>
+              <li><strong>Design proposal</strong> – Created based on your budget.</li>
+              <li><strong>Revised quote</strong> – Based on your feedback.</li>
+              <li><strong>You pay 10%</strong> <span class="badge bg-warning text-dark">MILESTONE</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="container py-5">
+
+</section>
+
+{% endblock%}

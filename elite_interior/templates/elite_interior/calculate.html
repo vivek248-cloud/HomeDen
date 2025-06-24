@@ -1,0 +1,65 @@
+<!-- templates/budget/calculate.html -->
+{% extends 'elite_interior/base.html' %}
+{% load widget_tweaks %}
+
+{% load static %}
+{% block content %}
+
+<div class="container py-5 caluclate-div">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-lg border-0 rounded-4 bg-light">
+        <div class="card-body p-4">
+          <h3 class="text-center mb-4 text-dark fw-bold">
+            <i class="bi bi-calculator-fill text-primary me-2"></i> Budget Calculator
+          </h3>
+
+          <form method="post" id="budget-form" class="calculator-form">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    {% render_field form.item class="form-select form-control-lg shadow-sm" %}
+                </div>
+
+                <div class="mb-3">
+                    {% render_field form.quantity class="form-control form-control-lg shadow-sm" placeholder="Enter quantity" %}
+                </div>
+
+                <div class="result-box mt-4 text-center">
+                    <div class="fs-6 text-muted">Estimated Total</div>
+                    <div class="display-6 fw-bold text-success">₹<span id="total">0.00</span></div>
+                </div>
+                </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- JavaScript for live total calculation -->
+<script>
+  const budgetData = {};
+
+  // Load unit prices via template context
+  {% for item in form.fields.item.queryset %}
+    budgetData["{{ item.pk }}"] = {{ item.unit_price }};
+  {% endfor %}
+
+  const itemSelect = document.getElementById("id_item");
+  const quantityInput = document.getElementById("id_quantity");
+  const totalDisplay = document.getElementById("total");
+
+  function updateTotal() {
+    const itemId = itemSelect.value;
+    const quantity = parseInt(quantityInput.value) || 0;
+    const price = budgetData[itemId] || 0;
+    const total = price * quantity;
+    totalDisplay.textContent = total.toFixed(2);
+  }
+
+  itemSelect.addEventListener("change", updateTotal);
+  quantityInput.addEventListener("input", updateTotal);
+</script>
+
+{% endblock %}

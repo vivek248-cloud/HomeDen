@@ -1,0 +1,187 @@
+{% extends "elite_interior/base.html" %}
+{% load static %}
+{% block content %}
+<div class="hero-header position-relative text-white text-center d-flex align-items-center justify-content-center"
+     style="background-image: url('{% static "images/about-hall.jpeg" %}');
+            background-size: cover;
+            background-position: center;
+            min-height: 75vh;
+            padding: 4rem 1rem;">
+
+    <div class="hero-overlay position-absolute top-0 start-0 w-100 h-100"
+         style="background-color: rgba(0,0,0,0.5); z-index: 0;"></div>
+
+    <div class="container position-relative z-1">
+        <div class="related-heading d-flex flex-column align-items-center gap-2 mb-3">
+            <div class="d-flex justify-content-center">
+                <span class="line" style="width: 80px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
+            </div>
+
+            <h1 class="fw-bold text-white px-2"
+                style="font-family: 'Playfair Display', serif; font-size: clamp(3.75rem, 8vw, 3.2rem); letter-spacing: 1px;">
+                ABOUT US
+            </h1>
+
+            <div class="d-flex justify-content-center">
+                <span class="line" style="width: 80px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
+            </div>
+        </div>
+
+        <p class="fs-6 fs-md-5 text-white-50" style="max-width: 600px; margin: 0 auto;">
+            Your Dream Home Deserves
+        </p>
+    </div>
+</div>
+
+<section class="about-content">
+  <h2  class="heading">WHO WE ARE ?</h2>
+  <p>
+   <strong>HOME DEN</strong> is a premier interior design company based in <strong>Trichy, Tamil Nadu</strong>, established in <strong>2023</strong> . We are passionate about creating beautifully crafted interiors that blend elegance, comfort, and functionality. Our team believes that every space has the potential to tell a unique story, and we strive to bring that story to life with thoughtful design and expert execution.
+
+With a strong foundation in creativity and technical expertise, our designers work closely with clients to understand their vision, lifestyle, and needs. Whether it’s a luxury home, a stylish office, or a bespoke commercial space, we tailor each project to ensure it perfectly reflects the client’s personality and aspirations.
+
+At <strong>HOME DEN</strong>, quality is our hallmark. We combine the finest materials, skilled craftsmanship, and meticulous attention to detail to deliver interiors that stand the test of time. Our in-house production and installation teams work seamlessly to ensure every project is completed on schedule, without compromising on excellence.
+
+More than just creating beautiful interiors, <strong>HOME DEN</strong> is committed to building lasting relationships with clients through transparency, professionalism, and dedicated service. We pride ourselves on being a trusted partner from the initial consultation through to the final handover, making every step of the journey smooth and enjoyable.</p>
+
+</section>
+
+ <section class="about-section">
+    <div class="about-image">
+      <img src="{% static 'images/self-green.jpeg' %}" alt="Interior Design by HOME DEN">
+    </div>
+    <div class="about-text">
+      <h2 class="heading"> HOME DEN</h2>
+      <p>At <strong> HOME DEN</strong>, nestled in the heart of <strong>Trichy, Tamil Nadu</strong>, we craft more than just interiors — we curate refined living experiences. Our commitment to excellence lies in transforming everyday spaces into timeless expressions of luxury, comfort, and style.</p>
+      <p>From opulent living rooms to bespoke kitchens and wardrobes, every element is thoughtfully designed by our expert team to reflect your unique vision. With a blend of precision, artistry, and attention to detail, we bring spaces to life that exude elegance and sophistication.</p>
+      <p>Be it your dream residence or a contemporary commercial space, HOME DEN is your trusted partner in creating interiors that are as stunning in feel as they are in form.</p>  
+    </div>
+  </section>
+  <section class="vdo">
+     <div class="vdo1">
+      <h2 class="heading"> WHAT WE DO ?</h2>
+      <p> At <strong> HOME DEN</strong>, we offer complete interior design and execution services tailored to your lifestyle and space requirements. Our expertise spans across residential, commercial, and modular interior solutions, ensuring every project is handled with precision and creativity.</p>
+      <p>We begin with understanding your vision, followed by space planning, concept development, 3D design, material selection, and custom furniture production — all under one roof. Our team ensures seamless coordination from start to finish.</p>
+      <p>From elegant living rooms and functional kitchens to stylish wardrobes and commercial workspaces, we bring life to every corner through thoughtful design and quality craftsmanship.Whether you're building a new space or revamping an existing one, HOME DEN is your one-stop destination for interiors that are beautiful, functional, and built to last.</p>
+
+    </div>
+  <div class="video-landscape-wrapper">
+{% for video in videos %}
+  <div class="ratio ratio-16x9 mb-4">
+    <iframe
+      src="https://www.youtube.com/embed/{{ video.youtube_id }}?rel=0&autoplay=1&mute=1"
+      title="{{ video.title }}"
+      frameborder="0"
+      allowfullscreen
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+    </iframe>
+  </div>
+{% endfor %}
+
+</div>
+
+
+
+
+  </section>
+
+  {% comment %} <div class="estimate-btn-container">
+  <a  class="consultant-btn" data-bs-toggle="modal" data-bs-target="#designConsultantModal"> <i class="bi bi-chat-dots-fill"></i> Get Estimate</a>
+</div> {% endcomment %}
+<section id="about-section" class="py-5">
+  <div class="container">
+      <div class="row align-items-center">
+          <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
+              <img src="{% static 'images/about-hall.jpeg' %}" alt="Elite Interior Design" class="img-fluid rounded">
+              <h1 class="section-title mb-4">"Modern Interior Design Experts and Home Contractors in Tamil Nadu"</h1>
+              <div class="highlight-bar"></div>
+          </div>
+          <div class="col-lg-6">
+              <div class="about-content">
+                  <p class="lead">ELITE INTERIOR is the largest home interior designers in TAMIL NADU</p>
+                  
+                  <div class="stats-grid">
+                      <div class="stat-item">
+                          <span class="stat-number" data-count="20">20+</span>
+                          <span class="stat-label">Years Experience</span>
+                      </div>
+                      <div class="stat-item">
+                          <span class="stat-number" data-count="50">50+</span>
+                          <span class="stat-label">Happy Customers</span>
+                      </div>
+                      <div class="stat-item">
+                          <span class="stat-number" data-count="200">200+</span>
+                          <span class="stat-label">Employees</span>
+                      </div>
+                      <div class="stat-item">
+                          <span class="stat-number" data-count="100">100+</span>
+                          <span class="stat-label">Projects/Month</span>
+                      </div>
+                  </div>
+                  
+                  <p>We are professional, contemporary interior designers and contractors with capacity to hand over 300 projects every month. We ensure client satisfaction through quality products and systematic working.</p>
+                  
+                  <p>As the most renowned contemporary interior designers, we design and build beautiful living space within an apartment, group villa or independent villa, using our vast experience and creativity that will delight you, your family and visitors.</p>
+                  
+                  <p>Customize modular kitchen, bedroom, living and dining room furniture as per requirement and measurement of exact space with the help of the best interior design company.</p>
+                  
+                  <a href="{% url 'about' %}" class="consultant-btn" data-bs-toggle="modal" data-bs-target="#designConsultantModal" style="text-decoration: none;text-align: center;">
+                    <i class="bi bi-chat-dots-fill"></i>
+                    Get Free Consultation
+                    <span class="btn-hover-effect"></span>
+                  </a>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+
+<div class="link-div mb-5">
+<p class="hover-link">Our <a href="{% url 'service'%}" id="style-2" data-replace="Service" class="transform-link"><span>Service</span></a></p>
+</div>
+
+ <section class="timeline-section">
+   <h2 class="h22"> Just One Company for
+Interior Design, Production & Implementation</h2>
+  <div class="timeline">
+   
+    <div class="timeline-item left">
+      <div class="content">
+        <h2>Consultation</h2>
+        <p>Our sales team and design consultants help you choose the best interior solutions within your budget. 
+          From enquiry to handover, they guide you every step of the way with expert support.</p>
+      </div>
+    </div>
+    <div class="timeline-item right">
+      <div class="content">
+        <h2>Interior Design</h2>
+        <p>Our expert designers understand your needs and turn them into practical plans with
+           the best product choices and full client support</p>
+      </div>
+    </div>
+    <div class="timeline-item left">
+      <div class="content">
+        <h2>Production</h2>
+        <p>We make all furniture in our own factory, ensuring fast delivery, top craftsmanship,
+           and on-time installation with full coordination.</p>
+      </div>
+    </div>
+    <div class="timeline-item right">
+      <div class="content">
+        <h2>Execution</h2>
+        <p>Our installation team quickly starts work after delivery, 
+          with a project manager ensuring smooth progress, material flow, and quality control..</p>
+      </div>
+    </div>
+    <div class="timeline-item left">
+      <div class="content">
+        <h2>Sales Service</h2>
+        <p>Our dedicated service team quickly handles all client requests or
+           issues through call or email, led by an efficient service manager.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock content %}
+<script src="{% static 'js/interior.js' %}"></script>

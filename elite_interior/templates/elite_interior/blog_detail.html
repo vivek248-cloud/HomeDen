@@ -1,0 +1,198 @@
+{% extends 'elite_interior/base.html' %}
+{% load static %}
+{% block extra_css %}
+<style>
+  .blog-header {
+    background: url('{% static "images/pexels-pixabay-271624.jpg" %}') no-repeat center center;
+    background-size: cover;
+    color: white;
+    padding: 5rem 1rem;
+    text-align: center;
+  }
+
+  .blog-title {
+    font-weight: 700;
+    font-size: 2.2rem;
+  }
+
+  .blog-date {
+    color: #999;
+    font-size: 0.9rem;
+  }
+
+  .blog-description {
+    line-height: 1.8;
+    color: #333;
+    margin-top: 1rem;
+  }
+
+  .recent-blogs-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .recent-blog-link {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: #333;
+    text-decoration: none;
+  }
+
+  .recent-blog-link:hover {
+    text-decoration: underline;
+    color: #007b5e;
+  }
+
+  .blog-image {
+    border-radius: 8px;
+    width: 100%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .blog-layout {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .blog-content {
+      flex: 3;
+    }
+
+    .recent-blogs {
+      flex: 1;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Banner -->
+<div class="blog-banners text-white" style="background: url('{{ blog.image.url }}') no-repeat center; background-size: cover;object-fit:cover;">
+     <div class="hero-overlay position-absolute top-0 start-0 w-100 " style="background-color: rgba(0,0,0,0.5); height:75%;"></div>
+    <div class="blog-banners-container py-5 ">
+      <h1 class="display-4 fw-bold blog-banner-title">{{ blog.title|upper }} BY HOME DEN</h1>
+      <p class="lead">Creating Beautiful Interiors</p>
+    </div>
+  </div>
+
+<!-- Blog Layout -->
+<div class="container py-5">
+  <div class="blog-layout">
+    <!-- Blog Content -->
+    <div class="blog-content">
+      <img src="{{ blog.image.url }}" alt="{{ blog.title }}" class="blog-image shadow-sm">
+      <h1 class="blog-title">{{ blog.title }}</h1>
+      <div class="d-flex justify-content-between align-items-center small text-muted mb-2">
+            <span><i class="bi bi-calendar-event me-1"></i> {{ blog.created_at|date:"M d, Y" }}</span>
+            <span><i class="bi bi-eye me-1"></i> {{ blog.views }} views</span>
+          </div>
+      <div class="blog-description">
+        {{ blog.description|safe }}
+      </div>
+    </div>
+
+    <!-- Sidebar - Recent Blogs -->
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <div class="p-4 bg-light shadow-sm rounded sticky-top" style="top: 100px;">
+        <!-- Search -->
+        <form method="GET" action="{% url 'blog_list' %}" class="mb-4">
+        <div class="position-relative mb-4">
+          <input type="text" name="q" id="categorySearch" class="form-control mb-2" placeholder="Search categories..." autocomplete="off">
+          <div id="suggestions" class="list-group position-absolute w-100 bg-white border rounded shadow-sm" style="z-index: 1050;"></div>
+          <button type="submit" class="btn btn-dark w-100 btn-sm">Search</button>
+        </div>
+        </form>
+
+       <h5 class="fw-bold mb-3 border-bottom pb-2">Categories</h5>
+        <ul class="list-unstyled">
+
+        <!-- All Categories link -->
+ <li class="mb-2">
+  <a href="{% if query %}{% url 'blog_list' %}?q={{ query }}{% else %}{% url 'blog_list' %}{% endif %}"
+     class="d-block px-2 py-1 rounded {% if not selected_category %}bg-secondary text-white{% else %}text-dark{% endif %}"
+     style="text-decoration:none;">
+    All Categories
+  </a>
+</li>
+
+
+
+
+        <!-- Individual categories -->
+        {% for category in categories %}
+        <li class="mb-2">
+          <a href="{% url 'blog_list' %}?category={{ category.id }}{% if query %}&q={{ query }}{% endif %}"
+            class="d-block px-2 py-1 rounded {% if selected_category == category.id|stringformat:'s' %}bg-secondary text-white{% else %}text-dark{% endif %}"  style="text-decoration:none;">
+            {{ category.name }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const input = document.getElementById('categorySearch');
+  const suggestionBox = document.getElementById('suggestions');
+
+  input.addEventListener('input', function () {
+    const query = this.value.trim();
+
+    // Always send query (even empty)
+    fetch("{% url 'category_suggestions' %}?term=" + encodeURIComponent(query))
+      .then(res => res.json())
+      .then(data => {
+        suggestionBox.innerHTML = '';
+
+        // Always show "All Categories" at the top
+        const allItem = document.createElement('button');
+        allItem.type = 'button';
+        allItem.className = 'list-group-item list-group-item-action text-primary fw-bold';
+        allItem.textContent = 'All Categories';
+        allItem.addEventListener('click', () => {
+          input.value = '';
+          suggestionBox.innerHTML = '';
+          input.form.submit();  // Optional: auto-submit
+        });
+        suggestionBox.appendChild(allItem);
+
+        // Show matching suggestions below
+        if (data.length > 0) {
+          data.forEach(category => {
+            const item = document.createElement('button');
+            item.type = 'button';
+            item.className = 'list-group-item list-group-item-action';
+            item.textContent = category;
+            item.addEventListener('click', () => {
+              input.value = category;
+              suggestionBox.innerHTML = '';
+              //input.form.submit();  // Optional
+            });
+            suggestionBox.appendChild(item);
+          });
+        }
+      });
+  });
+
+  // Hide suggestions when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!suggestionBox.contains(e.target) && e.target !== input) {
+      suggestionBox.innerHTML = '';
+    }
+  });
+});
+
+</script>
+{% endblock %}

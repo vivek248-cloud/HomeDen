@@ -1,0 +1,541 @@
+{% extends "elite_interior/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+
+{% endblock %}
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section " style="height: 100vh;">
+    <!-- template.html -->
+    <div class="contact-container">
+        <div class="contact-bg">
+          <div class="sliders-box grid-slideshow">
+            {% for slide in home_sliders %}
+              <section class="slider-sections {% if forloop.first %}active{% endif %} " style="background-image: url('{{ slide.image.url }}'); background-size: cover; background-position: center; ">
+                <div class="scroller-content-bg">
+                  <div class="scroller-content">
+                    
+                  </div>
+                  <div class="scroller-content-2">
+                    <h1>{{ slide.healine }}</h1>
+                    <h4 class="animation slide-up">{{ slide.sub_headline }}</h4>
+                    <span class="highlight-text">
+                    <h3 class="animation slide-up">{{slide.quotes}}</h3>
+                    </span>
+                    <a href="{% url 'home' %}" data-bs-target="#designConsultantModal" data-bs-toggle="modal"  style=" text-decoration: none; width: 200px; background: var(--color-2); color: #fff;height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; margin-bottom: 20px;">GET ESTIMATE</a>
+                      <p>*T&C Apply</p>
+                  </div>
+                </div>
+              </section>
+            {% endfor %}
+          </div>
+      
+          <!-- Pagination Dots (OUTSIDE the for loop) -->
+          <div class="pagination-dots"></div>
+      
+        </div>
+      </div>
+</div>
+      <!-- Section -->
+<section id="professional-sec" class="py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="section-title">PROFESSIONAL HOME INTERIOR DESIGN COMPANY</h2>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-12">
+        <ul class="professional-list d-flex flex-wrap justify-content-center text-center">
+  
+          <li class="col-md-auto active">
+            <div class="stat-card">
+              <h3>PREMIUM</h3>
+              <p>Materials</p>
+            </div>
+          </li>
+          <li class="col-md-auto">
+            <div class="stat-card">
+              <h3>10 YEARS</h3>
+              <p>Warranty</p>
+            </div>
+          </li>
+          <li class="col-md-auto">
+            <div class="stat-card">
+              <h3>COMPLETION</h3>
+              <p>40 Working Days</p>
+            </div>
+          </li>
+          <li class="col-md-auto">
+            <div class="stat-card">
+              <h3>PROJECTS</h3>
+              <p>300 Per Month</p>
+            </div>
+          </li>
+          <li class="col-md-auto">
+            <div class="stat-card">
+              <h3>LIFELONG</h3>
+              <p>Service Support</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+<section id="package-offers" class="py-5">
+  <div class="container text-center">
+    <div class="section-header">
+      <span class="line"></span>
+      <h2>BUY DIRECT - 30% DISCOUNT ON PACKAGES</h2>
+      <span class="line"></span>
+    </div>
+    <div class="row justify-content-center g-4">
+      
+      <!-- Card 1 -->
+       {% for offer in offers %}
+          <div class="col-md-4">
+            <div class="package-card">
+              <img src="{{ offer.image.url }}" alt="{{ project.title }}" class="img-fluid">
+              <div class="package-overlay">
+                <h4>{{offer.title}}<br><strong>{{offer.subtitle}}</strong></h4>
+              </div>
+              <div class="package-footer">
+                <p class="price">
+                  OFFER <span class="strike">₹{{offer.price}} Lac</span>
+                  <span class="discounted">₹{{offer.offer_price}} Lac*</span>
+                </p>
+                <p>{{offer.discription}}</p>
+              </div>
+            </div>
+          </div>
+        {%endfor%}
+
+    </div>
+  </div>
+</section>
+
+</section>
+  <section class="counter-section">
+  <span class="line"></span>
+  <h2 class="counter-title">Why Choose Home Den in Trichy?</h2>
+  <span class="line"></span>
+  <div class="counter-container">
+    <div class="counter-box">
+      <div class="counter" data-count ="500">0</div>
+      <p>#Delivered Homes</p>
+    </div>
+    <div class="counter-box">
+      <div class="counter" data-count="30">0</div>
+      <p>Expert Interior Designers</p>
+    </div>
+    <div class="counter-box">
+      <div class="counter" data-count="2">0</div>
+      <p>Experience Centres</p>
+    </div>
+    <div class="counter-box">
+      <div class="counter" data-count="4.6" data-decimal="true">0</div>
+      <p>CSAT</p>
+    </div>
+  </div>
+</section>
+
+<section id="package-offers" class="py-5">
+  <div class="container text-center">
+    <div class="section-header">
+      <span class="line"></span>
+      <h2 class="heading">WHAT WE DO</h2>
+      <span class="line"></span>
+    </div>
+    <div class="room-grid mt-5">
+      {% for item in grid %}
+        <div class="grid-item {{ item.size|lower }} auto-show-up grid-item-effect" style="background-image: url('{{ item.image.url }}');">
+          <a href="/HomeDen/{{ item.title|lower }}-projects/" class="grid-item-link">
+            <h2>{{ item.title|upper }}</h2>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Button/Link to trigger modal -->
+    <a  class="consultant-btn auto-show-up" data-bs-toggle="modal" data-bs-target="#designConsultantModal">
+      <i class="bi bi-chat-dots-fill"></i>
+      Talk to Our Design Consultant
+      <span class="btn-hover-effect"></span>
+    </a>
+    
+    <!-- Modal Form -->
+    <div class="modal fade" id="designConsultantModal" tabindex="-1" aria-labelledby="designConsultantModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered responsive-modal"> <!-- Custom class here -->
+        <div class="modal-content elegant-modal">
+          <div class="modal-header border-0">
+            <h5 class="modal-title fw-bold text-primary" id="designConsultantModalLabel">Talk to Our Design Consultant</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+    
+          <div class="modal-body">
+            <form method="post" action="{% url 'home' %}">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control rounded-3" id="name" name="name" required>
+              </div>
+              <div class="mb-3">
+                <label for="contact" class="form-label">Contact Number</label>
+                <input type="tel" class="form-control rounded-3" id="contact" name="contact" required>
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control rounded-3" id="email" name="email" required>
+              </div>
+              <div class="mb-3">
+                <label for="location" class="form-label">Project Location</label>
+                <input type="text" class="form-control rounded-3" id="location" name="location" required>
+              </div>
+    
+              <div class="text-center mt-4">
+                <button type="submit" class="btn consultant-btn w-100 py-2">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</section>
+
+<section id="project-steps" class="py-5">
+  <div class="container">
+    <div class="section-header">
+      <span class="line"></span>
+      <h2 class="">PROJECT COMPLETION IN <span class="highlight">40 WORKING DAYS*</span></h2>
+      <span class="line"></span>
+    </div>
+    <div class="d-flex justify-content-between align-items-center steps-wrapper">
+
+      
+      <!-- Step 1 -->
+      <div class="col step active">
+        <div class="circle">
+          <img src="{% static "images/team.png" %}" alt="Talk to Designer">
+        </div>
+        <p>Talk to our Interior Designer<br>& Get an Estimate</p>
+      </div>
+
+      <div class="arrow">&#8594;</div>
+
+      <!-- Step 2 -->
+      <div class="col step">
+        <div class="circle">
+          <img src="{% static "images/aprovel.png" %}" alt="Drawing Approval">
+        </div>
+        <p>Detailed Drawing<br>and Approval</p>
+      </div>
+
+      <div class="arrow">&#8594;</div>
+
+      <!-- Step 3 -->
+      <div class="col step">
+        <div class="circle">
+          <img src="{% static "images/work.png" %}" alt="Production">
+        </div>
+        <p>Production at Own<br>Factories</p>
+      </div>
+
+      <div class="arrow">&#8594;</div>
+
+      <!-- Step 4 -->
+      <div class="col step">
+        <div class="circle">
+          <img src="{% static "images/transport.png" %}" alt="Material Delivery">
+        </div>
+        <p>Material Delivery<br>& Execution</p>
+      </div>
+
+      <div class="arrow">&#8594;</div>
+
+      <!-- Step 5 -->
+      <div class="col step">
+        <div class="circle">
+          <img src="{% static "images/key.png" %}" alt="Project Hand Over">
+        </div>
+        <p>On Time Project<br>Hand Over</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+<section class="full-section">
+  <div class="container-fluid p-0">
+    <div class="row g-0">
+      <!-- Text Column -->
+      <div class="col-md-6 d-flex align-items-center p-5 text-column">
+        <div>
+          <h2 class="mb-4" style="text-transform: uppercase;">From Conceptualization to Completion</h2>
+          <p>
+            ELITE is the largest home interior designers in TAMIL NADU . We are professional, contemporary interior designers and contractors with capacity to hand over 300 projects every month.
+          </p>
+          <p>
+            We ensure client satisfaction through quality products and systematic working.
+          </p>
+          <p>
+            Customize modular kitchen, bedroom, living and dining room furniture as per requirement and measurement of exact space with the help of the best interior design company.
+          </p>
+        </div>
+      </div>
+
+      <!-- Image Column -->
+      <div class="col-md-6 image-column">
+        <div class="h-100 w-100 bg-cover" style="background-image: url('{% static 'images/hall.jpeg' %}');"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="full-section">
+  <div class="container-fluid p-0">
+    <div class="row g-0">
+
+      <!-- Image Column -->
+      <div class="col-md-6 order-1 order-md-1 image-column">
+        <div class="h-100 w-100 bg-cover" style="background-image: url('{% static 'images/bedroom.jpeg' %}');"></div>
+      </div>
+
+
+      <!-- Text Column -->
+      <div class="col-md-6 order-2 order-md-2 d-flex align-items-center p-5 text-column">
+        <div>
+          <h2 class="mb-4"> CONTEMPORARY HOME INTERIOR DESIGNERS AND CONTRACTORS IN TAMILNADU</h2>
+          <p>
+            First of all, the design by HOME DEN is always in accordance with the latest trends in contemporary style.
+          </p>
+          <p>
+            Our interior designers in Chennai consider the interests and requirements of the clients in great detail. They visit the site and discuss with clients to choose the best possible design style. Also, the design is always considering the practicality and specifications for smooth execution. Systematic manufacturing and assembling procedures ensure the best output to match the designs as per the client requirement. Therefore, a client is sure to achieve the results as per the plan and discussions with the designer. In addition to this, there is a wide scope for selection of colors and finishes suitable for modern apartments or houses. We listen to your wants, needs, and aspirations to provide the support needed to ensure your new home meets your objectives.
+          </p>
+          <p>
+             All our products are exclusively manufactured at our state-of-the-art factories spanning 1,25,000 sq. ft. for the timeless aesthetics.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="testimonials" class="py-5 bg-light">
+  <div class="container">
+    <div class="section-header text-center mb-5">
+      <h2 class="section-title">What Our Clients Say</h2>
+    <div class="divider mx-auto"></div>
+    <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const dividers = document.querySelectorAll('.divider');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate');
+        }
+      });
+    }, {
+      threshold: 0.6
+    });
+
+    dividers.forEach(divider => observer.observe(divider));
+  });
+</script>
+
+</div>
+
+    <!-- Testimonial Swiper Wrapper -->
+<div class="container py-5">
+  <div class="swiper testimonial-swiper">
+    <div class="swiper-wrapper">
+      {% for testimonial in test %}
+      <div class="swiper-slide d-flex justify-content-center">
+        <div class="testimonial-card text-center p-4 position-relative  rounded-4"
+        style="width: 100%; max-width: 320px; min-height: 320px; display: flex; flex-direction: column; justify-content: center; margin: auto;">
+
+
+          <!-- Avatar -->
+          <div class="position-relative d-inline-block mb-2">
+          <img src="{% if testimonial.image %}{{ testimonial.image.url }}{% else %}{% static 'images/about-hall.jpeg' %}{% endif %}"
+              alt="{{ testimonial.name|default:'Client' }}"
+              class="rounded-circle border border-4 border-white shadow"
+              width="80" height="80" style="object-fit: cover;">
+
+          <div class="quote-icon position-absolute bottom-0 end-0 translate-middle p-0 bg-white rounded-circle shadow"
+              style="width: 30px; height: 30px;">
+            <i class="bi bi-quote fs-5 text-primary"></i>
+          </div>
+        </div>
+
+
+          <!-- Client Name -->
+          <h6 class="fw-bold text-dark mb-1">{{ testimonial.name }}</h6>
+
+          <!-- Comment -->
+          <p class="text-muted small mb-2 px-2">{{ testimonial.comment|truncatechars:60 }}</p>
+
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-center text-muted">No testimonials found.</p>
+      {% endfor %}
+    </div>
+
+    <!-- Swiper Navigation -->
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-pagination mt-3"></div>
+  </div>
+</div>
+
+<!-- Swiper Initialization Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    new Swiper(".testimonial-swiper", {
+      loop: true,
+      slidesPerView: 1,
+      spaceBetween: 20,
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+      },
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+      autoplay: {
+        delay: 4000,
+        disableOnInteraction: false,
+      },
+      breakpoints: {
+        768: {
+          slidesPerView: 1,
+        },
+        992: {
+          slidesPerView: 3,
+        },
+      },
+    });
+  });
+</script>
+
+</section>
+
+<section class="youtube-fullscreen">
+  {% for video in videos %}
+  <div class="video-fullscreen-wrapper">
+    <iframe src="https://www.youtube.com/embed/{{ video.youtube_link }}?autoplay=1&mute=1&enablejsapi=1" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen
+            loading="eager"
+            id="ytplayer-fullscreen"></iframe>
+  </div>
+  {% empty %}
+  <div class="no-videos-message">No videos available</div>
+  {% endfor %}
+</section>
+
+
+<section id="latest-blogs" class="py-5 bg-white">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="section-title">Latest Blogs</h2>
+      <a href="{% url 'blog_list' %}" class="btn view-btn" onclick="simulateLoading()">View All</a>
+    </div>
+
+    <!-- Swiper -->
+    <div class="swiper blog-swiper">
+      <div class="swiper-wrapper">
+        {% for blog in blogs %}
+        <div class="swiper-slide">
+          <div class="card border-0  rounded blog-slider-card">
+            <img src="{{ blog.image.url }}" class="card-img-top rounded-top" alt="{{ blog.title }}" style="height: 200px; object-fit: cover;">
+            <div class="card-body">
+              <h5 class="card-title">{{ blog.title }}</h5>
+              <p class="card-text text-muted small">{{ blog.description|truncatechars:100 }}</p>
+              <div class="d-flex justify-content-between align-items-center small text-muted mb-2">
+            <span><i class="bi bi-calendar-event me-1"></i> {{ blog.created_at|date:"M d, Y" }}</span>
+            <span><i class="bi bi-eye me-1"></i> {{ blog.views }} views</span>
+          </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Pagination -->
+      <div class="swiper-pagination mt-3"></div>
+    </div>
+  </div>
+</section>
+
+<section class="experience-section">
+    <h1 class="s3">VISIT ONE OF OUR EXPERIENCE CENTERS IN <span> TRICHY</span> </h1>
+
+    <div class="cards-container">
+      <!-- Card 1 -->
+      <div class="experience-card">
+        <h3> HOME DEN INTERIORS</h3>
+        <p>No. 99, SUSAI NAGAR ,<br>
+          AMUL NAGAR EXTENSTION POMALAIPATTI,<br>
+          TRICHY, TAMIL NADU 620004 – INDIA</p>
+        <p>Call: +91 77 8003 8004</p>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1385.7476233283046!2d78.73163232433414!3d10.774027456264436!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3baa8b4cb6a0bc2b%3A0x5fe2f960f758d79c!2sAmul%20Nagar%2C%20Thirunagar%2C%20Kilakurichy%2C%20Tiruchirappalli%2C%20Tamil%20Nadu%20620004!5e0!3m2!1sen!2sin!4v1747392848020!5m2!1sen!2sin" 
+        width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+    </div>
+  </section>
+
+<section class="partners-section">
+  <div class="container">
+    <h2>Our trusted partners</h2>
+    <p>Winning collaborations that produce winning designs.</p>
+    <div class="partners-logos">
+      <div class="partner-logo"><img src="{% static 'images/jaguar.jpeg' %}" alt="Jaquar"></div>
+      <div class="partner-logo"><img src="{% static 'images/saint-gobain.jpeg' %}" alt="Saint-Gobain"></div>
+      <div class="partner-logo"><img src="{% static 'images/centuryply.jpeg' %}" alt="Century Ply"></div>
+      <div class="partner-logo"><img src="{% static 'images/bosch.jpeg' %}" alt="Bosch"></div>
+      <div class="partner-logo siemens"><img src="{% static 'images/siemens.jpeg' %}" alt="Siemens"></div>
+      <div class="partner-logo"><img src="{% static 'images/hettich.jpeg' %}" alt="Hettich"></div>
+      <div class="partner-logo"><img src="{% static 'images/greenlam.jpeg' %}" alt="Greenlam"></div>
+      <div class="partner-logo samsung"><img src="{% static 'images/samsung.jpeg' %}" alt="Samsung"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const sections = document.querySelectorAll('.text-column');
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate');
+          observer.unobserve(entry.target); // Animate only once
+        }
+      });
+    }, {
+      threshold: 0.4
+    });
+
+    sections.forEach(section => observer.observe(section));
+  });
+</script>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+<!-- Swiper JS -->
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+{% endblock %}

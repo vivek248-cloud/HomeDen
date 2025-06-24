@@ -1,0 +1,102 @@
+{% extends 'elite_interior/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- hero_header.html or inside project_detail.html -->
+{% if first_project and first_project.image %}
+
+<div class="hero-header position-relative text-white text-center d-flex align-items-center justify-content-center"
+     style="background-image: url('{{ projects.0.image.url }}');
+            background-size: cover;
+            background-position: center;
+            min-height: 75vh;
+            padding: 4rem 1rem;">
+
+    <div class="hero-overlay position-absolute top-0 start-0 w-100 h-100" 
+         style="background: linear-gradient(to bottom, rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.31)); z-index: 0;"></div>
+
+    <div class="container position-relative z-1">
+        <div class="related-heading d-flex flex-column align-items-center gap-2 mb-3">
+            <div class="d-flex justify-content-center">
+                <span class="line" style="width: 60px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
+            </div>
+
+            <h1 class="fw-bold text-white px-2"
+                style="font-family: 'Playfair Display', serif; font-size: clamp(3.75rem, 8vw, 4.2rem); letter-spacing: 1px;">
+                Customized {{ projects.0.category }}
+            </h1>
+
+            <div class="d-flex justify-content-center">
+                <span class="line" style="width: 60px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
+            </div>
+        </div>
+
+        <p class="fs-6 fs-md-5 text-white-50" style="max-width: 600px; margin: 0 auto;">
+            Your Dream Home Deserves the Best
+        </p>
+    </div>
+</div>
+{% else %}
+<div class="hero-header position-relative text-white text-center d-flex align-items-center justify-content-center"
+     style="background-image: url('{% static "images/about-hall.jpeg" %}');
+            background-size: cover;
+            background-position: center;
+            min-height: 75vh;
+            padding: 4rem 1rem;">
+
+    <div class="hero-overlay position-absolute top-0 start-0 w-100 h-100"
+         style="background-color: rgba(0,0,0,0.5); z-index: 0;"></div>
+
+    <div class="container position-relative z-1">
+        <div class="related-heading d-flex flex-column align-items-center gap-2 mb-3">
+            <div class="d-flex justify-content-center">
+                <span class="line" style="width: 80px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
+            </div>
+
+            <h1 class="fw-bold text-white px-2"
+                style="font-family: 'Playfair Display', serif; font-size: clamp(1.75rem, 6vw, 3.2rem); letter-spacing: 1px;">
+                Customized Interior
+            </h1>
+
+            <div class="d-flex justify-content-center">
+                <span class="line" style="width: 80px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
+            </div>
+        </div>
+
+        <p class="fs-6 fs-md-5 text-white-50" style="max-width: 600px; margin: 0 auto;">
+            Your Dream Home Deserves
+        </p>
+    </div>
+</div>
+{% endif %}
+
+
+
+
+<div class="container-fluid py-5" style="margin-top: 100px;">
+    {% for project in projects %}
+    <div id="{{ project.subcategory|slugify }}" class="row align-items-center mb-2 flex-column flex-lg-row {% if forloop.counter|divisibleby:2 %}bg-white{% else %}bg-light{% endif %} py-4 px-4 auto-show-up">
+        <!-- Left: Text Content -->
+        <div class="col-lg-6 col-12 mb-4 mb-lg-0 text-center text-lg-center px-4 lg-px-5">
+            <h1 class="fw-bold" >{{ project.subcategory|upper }}</h1>
+            <p class="text-muted" style="text-align: justify;">
+                {{ project.description }}
+            </p>
+            <a href="{% url 'project_detail' project.id %}" class="btn view-btn px-4 py-1 mt-3 " onclick="simulateLoading()" >
+                View More
+            </a>
+        </div>
+
+        <!-- Right: Images -->
+        <div class="col-lg-6 col-12">
+            <div class="d-flex flex-wrap gap-3 justify-content-end px-4 right-image">
+                <img src="{{ project.image.url }}" alt="{{ project.name }}" class="img-fluid shadow rounded" style="width: 100%; max-width: 400px; height: auto; object-fit: cover;">
+                {% if project.extra_image %}
+                <img src="{{ project.extra_image.url }}" alt="Extra for {{ project.name }}" class="img-fluid shadow rounded" style="width: 100%; max-width: 300px; height: auto; object-fit: cover;">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
