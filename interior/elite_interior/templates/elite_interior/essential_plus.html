@@ -1,0 +1,201 @@
+{% extends 'elite_interior/base.html'%}
+{% load static %}
+{% block content %}
+<!-- hero_header.html or inside project_detail.html -->
+
+<div class="hero-header position-relative d-flex align-items-center justify-content-center text-center text-white"
+     style="background-image: url('{% static "images/about-hall.jpeg" %}');
+            background-size: cover;
+            background-position: center;
+            height: 90vh;">
+
+    <div class="hero-overlay position-absolute top-0 start-0 w-100 h-100" style="background-color: rgba(0,0,0,0.5);"></div>
+
+    <div class="container position-relative z-1 hero-header-container">
+        <div class="related-heading d-flex align-items-center justify-content-center flex-wrap gap-2 mb-4">
+        
+        <!-- Top Line -->
+        <div class="w-100 d-flex justify-content-center">
+            <span class="line" style="width: 60px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
+        </div>
+
+        <!-- Heading Text -->
+        <h1 class="fw-bold text-white text-center m-0 px-2" 
+            style="font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); letter-spacing: 1px;">
+            ELEGANZA PLUS
+        </h1>
+
+        <!-- Bottom Line -->
+        <div class="w-100 d-flex justify-content-center mt-2">
+            <span class="line" style="width: 60px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
+        </div>
+        </div>
+        <p class="fs-5 fs-md-4"></p>
+    </div>
+</div>
+
+
+
+<section class="furniture-list">
+  <div class="container">
+    <h2>Furniture & Interior Details</h2>
+
+    <div class="auto-show-up room-section">
+      <h3>FOYER</h3>
+      <ul>
+        <li>Shoe rack unit with cabinets and shutters</li>
+      </ul>
+    </div>
+
+    <div class="auto-show-up room-section">
+      <h3>LIVING ROOM</h3>
+      <ul>
+        <li>Premium TV display unit with aluminium profile & glass shutter</li>
+        <li>Prayer unit with open storage</li>
+      </ul>
+    </div>
+
+    <div class="auto-show-up room-section">
+      <h3>DINING ROOM</h3>
+      <ul>
+        <li>Medley black finish 6-seater dining table</li>
+        <li>Briano dining chairs (3 Nos)</li>
+        <li>3-seater dining bench (1 No)</li>
+        <li>Custom-made Living-dining partition</li>
+      </ul>
+    </div>
+
+    <div class="auto-show-up room-section">
+      <h3>MASTER BEDROOM</h3>
+      <ul>
+        <li>Soft-close 3-door hinged wardrobe with grey hardwood handles</li>
+        <li>Dressing unit with cabinet and drawer</li>
+        <li>Custom-made study table</li>
+        <li>Queen-size bed with headboard (no bottom drawer)</li>
+        <li>Bedside tables (2 Nos)</li>
+      </ul>
+    </div>
+
+    <div class="auto-show-up room-section">
+      <h3>KIDS ROOM</h3>
+      <ul>
+        <li>Soft-close hinged wardrobe (floor-to-ceiling) with grey hardwood handles</li>
+        <li>Custom-made study table</li>
+        <li>Queen-size bed with headboard (no bottom drawer)</li>
+        <li>Bedside table (1 No)</li>
+      </ul>
+    </div>
+
+    <div class="auto-show-up room-section">
+      <h3>GUEST BEDROOM</h3>
+      <ul>
+        <li>Soft-close hinged wardrobe (floor-to-ceiling) with grey hardwood handles</li>
+        <li>Queen-size bed with headboard (no bottom drawer)</li>
+        <li>Bedside table (1 No)</li>
+      </ul>
+    </div>
+
+    <div class="auto-show-up room-section">
+      <h3>MODULAR KITCHEN</h3>
+      <ul>
+        <li>Top cabinets</li>
+        <li>Bottom cabinets</li>
+        <li><strong>Hettich (German-made) Accessories</strong> – 6 Nos <small>(15-year warranty)</small></li>
+        <li>Hood & Hob: <strong>Faber</strong></li>
+        <li><strong>Accessories:</strong>
+          <ul class="accessories-list">
+            <li>Cutlery tray</li>
+            <li>Plain basket</li>
+            <li>Plate rack</li>
+            <li>Bottle pull-out</li>
+            <li>Pull-out waste bin</li>
+            <li>Detergent holder</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="notes">
+      <p><em>*Warranty and accessory counts may vary based on final specifications.</em></p>
+      <p>All materials and finishes are premium quality for durability and aesthetics.</p>
+    </div>
+  </div>
+</section>
+
+
+
+<section id="package-offers" class="py-5 auto-show-up">
+  <div class="container text-center">
+    <div class="section-header">
+      <span class="line"></span>
+      <h2>OFFER PACKAGES</h2>
+      <span class="line"></span>
+    </div>
+    <div class="row justify-content-center g-4">
+      
+      <!-- Card 1 -->
+       
+          <div class="col-md-4">
+            <div class="package-card">
+              <a href="{% url 'essential'%}">
+                <img src="{% static "images/about-hall.jpeg" %}" alt="ESSENTIAL" class="img-fluid">
+                <div class="package-overlay">
+                  <h4><strong>ESSENTIAL</strong></h4>
+                </div>
+                <div class="package-footer">
+                <p class="price">
+                  OFFER <span class="strike">₹12 Lac</span>
+                  <span class="discounted">₹8 Lac*</span>
+                </p>
+                <p>ESSENTIAL WOOD WORK FOR 2BHK</p>
+              </div>
+              </a>
+            </div>
+          </div>
+        
+
+        
+          <div class="col-md-4">
+            <div class="package-card">
+              <a href="{%url 'eleganza'%}">
+                <img src="{% static "images/bedroom.jpeg" %}" alt="ELEGANZA" class="img-fluid">
+                <div class="package-overlay">
+                  <h4><strong>ELEGANZA</strong><br>EVERYTHING</h4>
+                </div>
+                <div class="package-footer">
+                <p class="price">
+                  OFFER <span class="strike">₹12 Lac</span>
+                  <span class="discounted">₹8 Lac*</span>
+                </p>
+                <p>ESSENTIAL WOOD WORK FOR 2BHK</p>
+              </div>
+              </a>
+            </div>
+          </div>
+        
+
+        
+          <div class="col-md-4">
+            <div class="package-card">
+              <a href="{%url 'essential-plus'%}">
+                <img src="{% static "images/hall.jpeg" %}" alt="ELEGANZA PLUS" class="img-fluid">
+                <div class="package-overlay">
+                  <h4><strong>ELEGANZA</strong><br>PLUS</h4>
+                </div>
+                <div class="package-footer">
+                <p class="price">
+                  OFFER <span class="strike">₹12 Lac</span>
+                  <span class="discounted">₹8 Lac*</span>
+                </p>
+                <p>ESSENTIAL WOOD WORK FOR 2BHK</p>
+              </div>
+              </a>
+            </div>
+          </div>
+        
+    </div>
+  </div>
+</section>
+
+
+{% endblock %}

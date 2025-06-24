@@ -1,0 +1,291 @@
+{% extends "elite_interior/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+
+{% endblock %}
+{% block content %}
+<!-- Top Hero Banner -->
+<!-- Hero Banner -->
+<div class="blog-banners text-white" style="background: url('/static/images/pexels-pixabay-271624.jpg') no-repeat center; background-size: cover;">
+     <div class="hero-overlay position-absolute top-0 start-0 w-100 " style="background-color: rgba(0,0,0,0.5); height:75%;"></div>
+    <div class="blog-banners-container py-5 ">
+      <h1 class="display-4 fw-bold blog-banner-title">Amazing Experiences by HOME DEN</h1>
+      <p class="lead">Creating Beautiful Interiors</p>
+    </div>
+  </div>
+  
+  <!-- Blog Section -->
+<!-- Blog Section -->
+<div class="container py-5">
+  <!-- Title -->
+  <div class="mb-5 text-center">
+    <h2 class="fw-bold">Everything About Home Interiors in Tamil Nadu and More</h2>
+  </div>
+
+  <div class="row g-4">
+    <!-- Blog Content Column -->
+    <div class="col-lg-8 px-2">
+      <!-- Featured Blogs Slider -->
+      <div class="position-relative mb-4">
+        <!-- Arrows -->
+        <button class="btn btn-light shadow position-absolute  start-0 translate-middle-y z-1" onclick="scrollSlider(-1)" style="top:35%;">
+          ‹
+        </button>
+
+        <div id="featuredSlider" class="d-flex flex-nowrap overflow-auto px-2 gap-3" style="scroll-behavior: smooth; border-radius:10px;">
+          {% for blog in featured_blogs %}
+          <div class="card text-white p-2 border-0 shadow-sm" style="min-width: 300px; max-width: 300px; flex: 0 0 auto; background: #333;">
+            <img src="{{ blog.image.url }}" class="card-img object-fit-cover" style="height: 200px;" alt="{{ blog.title }}">
+            <div class="card-img-overlay d-flex flex-column justify-content-end bg-dark bg-opacity-50 p-2 rounded">
+              <h4 class="card-title fw-bold text-truncate">{{ blog.category }}</h4>
+              <h6 class="card-title fw-bold text-truncate">{{ blog.title }}</h6>
+              <p class="card-text small">{{ blog.created_at|date:"M d, Y" }}</p>
+              <a href="{% url 'blog_detail' blog.id %}" class="read-more-link">Read more <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <button class="btn btn-light shadow position-absolute  end-0 translate-middle-y z-1" onclick="scrollSlider(1)" style="top:35%;">
+          ›
+        </button>
+      </div>
+
+      <!-- Blog List -->
+      <div class="row">
+  {% if all_blogs %}
+  {% for blog in all_blogs %}
+  <div class="col-12 col-md-6 mb-4">
+    <div class="card h-100 shadow-sm border-0 blog-card auto-show-up">
+      <div class="row g-0 h-100 flex-column flex-md-row" style="max-height: auto;">
+        
+        <!-- Blog Image -->
+        <div class="col-md-5">
+          <img src="{{ blog.image.url }}" class="img-fluid w-100 h-100 object-fit-cover rounded-top rounded-md-start" alt="{{ blog.title }}" style="border-radius:5px;">
+        </div>
+
+        <!-- Blog Content -->
+        <div class="col-md-7 d-flex align-items-stretch">
+        <div class="card-body card-body2 d-flex flex-column bg-white shadow-sm rounded-bottom rounded-md-end p-4 w-100 text-md-start text-start">
+          
+          <!-- Category Label -->
+          <div class="mb-2">
+            <span class="badge rounded-pill bg-gradient bg-dark px-3 py-2 fs-6">
+              {{ blog.category }}
+            </span>
+          </div>
+
+          <!-- Blog Title -->
+          <h5 class="fw-bold text-dark text-truncate mb-2">
+            {{ blog.title }}
+          </h5>
+
+          <!-- Date and Views -->
+          <div class="d-flex justify-content-between align-items-center small text-muted mb-2">
+            <span><i class="bi bi-calendar-event me-1"></i> {{ blog.created_at|date:"M d, Y" }}</span>
+            <span><i class="bi bi-eye me-1"></i> {{ blog.views }} views</span>
+          </div>
+
+          <!-- Blog Snippet -->
+          <p class="small text-muted mb-3" style="text-align: justify;">
+            {{ blog.description|truncatechars:100 }}
+          </p>
+
+          <!-- CTA Button -->
+          <div class="mt-auto text-end">
+            <a href="{% url 'blog_detail' blog.id %}" class="btn view-btn btn-sm px-4">
+              Read More <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <p>No blogs found for "<strong>{{ query }}</strong>" in this category.</p>
+
+  {% if suggested_results %}
+    <h6 class="mt-4 mb-3">Suggested Blogs Based on Your Search:</h6>
+    <div class="row">
+      {% for blog in suggested_results %}
+      <div class="col-md-6 mb-4">
+        <div class="card h-100 shadow-sm border-0 blog-card">
+          <div class="row g-0 h-100 flex-column flex-md-row" style="max-height: auto;">
+            
+            <!-- Blog Image -->
+            <div class="col-md-5">
+              <img src="{{ blog.image.url }}" class="img-fluid w-100 h-100 object-fit-cover rounded-top rounded-md-start" alt="{{ blog.title }}" style="border-radius:5px;">
+            </div>
+
+            <!-- Blog Content -->
+            <!-- Blog Content -->
+        <div class="col-md-7 d-flex align-items-stretch">
+        <div class="card-body d-flex flex-column bg-white shadow-sm rounded-bottom rounded-md-end p-4 w-100 text-md-start text-start">
+          
+          <!-- Category Label -->
+          <div class="mb-2">
+            <span class="badge rounded-pill bg-gradient bg-dark px-3 py-2 fs-6">
+              {{ blog.category }}
+            </span>
+          </div>
+
+          <!-- Blog Title -->
+          <h5 class="fw-bold text-dark text-truncate mb-2">
+            {{ blog.title }}
+          </h5>
+
+          <!-- Date and Views -->
+          <div class="d-flex justify-content-between align-items-center small text-muted mb-2">
+            <span><i class="bi bi-calendar-event me-1"></i> {{ blog.created_at|date:"M d, Y" }}</span>
+            <span><i class="bi bi-eye me-1"></i> {{ blog.views }} views</span>
+          </div>
+
+          <!-- Blog Snippet -->
+          <p class="small text-muted mb-3" style="text-align: justify;">
+            {{ blog.description|truncatechars:100 }}
+          </p>
+
+          <!-- CTA Button -->
+          <div class="mt-auto text-end">
+            <a href="{% url 'blog_detail' blog.id %}" class="btn view-btn btn-sm px-4">
+              Read More <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endif %}
+
+
+</div>
+
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <div class="p-4 bg-light shadow-sm rounded sticky-top" style="top: 100px;">
+        <!-- Search -->
+        <form method="GET" action="{% url 'blog_list' %}" class="mb-4">
+        <div class="position-relative mb-4">
+          <input type="text" name="q" id="categorySearch" class="form-control mb-2" placeholder="Search categories..." autocomplete="off">
+          <div id="suggestions" class="list-group position-absolute w-100 bg-white border rounded shadow-sm" style="z-index: 1050;"></div>
+          <button type="submit" class="btn view-btn w-100 btn-sm">Search</button>
+        </div>
+        </form>
+
+       <h5 class="fw-bold mb-3 border-bottom pb-2">Categories</h5>
+        <ul class="list-unstyled">
+
+        <!-- All Categories link -->
+ <li class="mb-2">
+  <a href="{% if query %}{% url 'blog_list' %}?q={{ query }}{% else %}{% url 'blog_list' %}{% endif %}"
+     class="d-block px-2 py-1 rounded {% if not selected_category %}bg-dark text-white{% else %}text-dark{% endif %}"
+     style="text-decoration:none;">
+    All Categories
+  </a>
+</li>
+
+
+
+
+        <!-- Individual categories -->
+        {% for category in categories %}
+        <li class="mb-2">
+          <a href="{% url 'blog_list' %}?category={{ category.id }}{% if query %}&q={{ query }}{% endif %}"
+            class="d-block px-2 py-1 rounded {% if selected_category == category.id|stringformat:'s' %}bg-secondary text-white{% else %}text-dark{% endif %}"  style="text-decoration:none;">
+            {{ category.name }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const input = document.getElementById('categorySearch');
+  const suggestionBox = document.getElementById('suggestions');
+
+  input.addEventListener('input', function () {
+    const query = this.value.trim();
+
+    // Always send query (even empty)
+    fetch("{% url 'category_suggestions' %}?term=" + encodeURIComponent(query))
+      .then(res => res.json())
+      .then(data => {
+        suggestionBox.innerHTML = '';
+
+        // Always show "All Categories" at the top
+        const allItem = document.createElement('button');
+        allItem.type = 'button';
+        allItem.className = 'list-group-item list-group-item-action text-primary fw-bold';
+        allItem.textContent = 'All Categories';
+        allItem.addEventListener('click', () => {
+          input.value = '';
+          suggestionBox.innerHTML = '';
+          input.form.submit();  // Optional: auto-submit
+        });
+        suggestionBox.appendChild(allItem);
+
+        // Show matching suggestions below
+        if (data.length > 0) {
+          data.forEach(category => {
+            const item = document.createElement('button');
+            item.type = 'button';
+            item.className = 'list-group-item list-group-item-action';
+            item.textContent = category;
+            item.addEventListener('click', () => {
+              input.value = category;
+              suggestionBox.innerHTML = '';
+              //input.form.submit();  // Optional
+            });
+            suggestionBox.appendChild(item);
+          });
+        }
+      });
+  });
+
+  // Hide suggestions when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!suggestionBox.contains(e.target) && e.target !== input) {
+      suggestionBox.innerHTML = '';
+    }
+  });
+});
+
+</script>
+
+
+
+  
+<script>
+function scrollSlider(direction) {
+  const container = document.getElementById("featuredSlider");
+  const scrollAmount = 320; // adjust as needed
+  container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+}
+</script>
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+{% endblock%}

@@ -1,0 +1,128 @@
+{% extends "elite_interior/base.html" %}
+{% load static %}
+{% block content %}
+
+    <div class="hero-header position-relative d-flex align-items-center justify-content-center text-center text-white"
+     style="background-image: url('{% static "images/about-hall.jpeg" %}');
+            background-size: cover;
+            background-position: center;
+            height: 90vh;">
+
+    <div class="hero-overlay position-absolute top-0 start-0 w-100 h-100" style="background-color: rgba(0,0,0,0.5);"></div>
+
+    <div class="container position-relative z-1 hero-header-container">
+        <div class="related-heading d-flex align-items-center justify-content-center flex-wrap gap-2 mb-4">
+        
+        <!-- Top Line -->
+        <div class="w-100 d-flex justify-content-center">
+            <span class="line" style="width: 60px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
+        </div>
+
+        <!-- Heading Text -->
+        <h1 class="fw-bold text-white text-center m-0 px-2" 
+            style="font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); letter-spacing: 1px;">
+            CONTACT US
+        </h1>
+
+        <!-- Bottom Line -->
+        <div class="w-100 d-flex justify-content-center mt-2">
+            <span class="line" style="width: 60px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
+        </div>
+        </div>
+        <p class="fs-5 fs-md-4"></p>
+    </div>
+</div>
+ 
+  <section class="about-content">
+  <h2>HOME DEN</h2>
+   <p>Have a space in mind that needs a fresh perspective? We’d love to hear your vision. 
+    Whether you're planning to design your dream home, renovate an existing space, or 
+    create a unique interior for your commercial property, our team is here to guide you every step of the way. 
+    At <strong>HOME DEN</strong>, we believe great interiors start with meaningful conversations. Reach out to us through the contact form below,
+    give us a call, or drop by our studio — and let’s bring your space to life with style and purpose..</p>
+
+</section>
+<section>
+  <div class="main-container">
+
+    <div class="contact-info">
+      <div class="info-cards">
+        <div class="info-item">
+          <i class="fas fa-phone"></i>
+          <div class="info-text">
+            <strong>+91 77 8003 8004</strong>
+          </div>
+        </div>
+        <div class="info-item">
+          <i class="fas fa-envelope"></i>
+          <div class="info-text">
+            <strong>homedeninterior@gmail.com</strong>
+           
+          </div>
+        </div>
+        <div class="info-item">
+          <i class="fas fa-map-marker-alt"></i>
+          <div class="info-text">
+            <strong>Trichy , Tamilnadu</strong>
+          </div>
+        </div>
+      </div>
+      <div class="contact-image">
+        <img src="{% static 'images/hall.jpeg'%}" alt="Kitchen" />
+      </div>
+    </div>
+</section>
+
+<section>
+  <div class="main-container">
+    <div class="form-map-section">
+      <div class="modal-body">
+        <h1>CONTACT</h1>
+            <form method="post" action="{% url 'home' %}" class="mt-4">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control rounded-3" id="name" name="name" required>
+              </div>
+              <div class="mb-3">
+                <label for="contact" class="form-label">Contact Number</label>
+                <input type="tel" class="form-control rounded-3" id="contact" name="contact" required>
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control rounded-3" id="email" name="email" required>
+              </div>
+              <div class="mb-3">
+                <label for="location" class="form-label">Project Location</label>
+                <input type="text" class="form-control rounded-3" id="location" name="location" required>
+              </div>
+    
+              <div class="text-center mt-3">
+                <button type="submit" class="btn submit-btn  py-0 px-4">Submit</button>
+                <a href="{% url 'calculate' %}" class="btn btn-secondary  bg-secondary calculate-btn py-0 px-4">Calculate Budget</a>
+              </div>
+              
+            </form>
+          </div>
+
+      <div class="location-section">
+        <h3>OUR LOCATION</h3>
+        <div class="map-container">
+          <iframe 
+             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.490729913087!2d78.72917497544863!3d10.773676839374916!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3baa8b4cb6a0bc2b%3A0x5fe2f960f758d79c!2sAmul%20Nagar%2C%20Thirunagar%2C%20Kilakurichy%2C%20Tiruchirappalli%2C%20Tamil%20Nadu%20620004!5e0!3m2!1sen!2sin!4v1748258475292!5m2!1sen!2sin" 
+             style="border:0;" allowfullscreen="" loading="lazy"height="450px"width="100%"></iframe>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+<!-- Swiper JS -->
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+{% endblock %}
