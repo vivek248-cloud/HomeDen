@@ -3168,11 +3168,16 @@ p {
 }
 
 .map-container {
-  margin-top: 15px;
+  border: 2px solid var(--color-2);
 }
 
 
-
+.map-container1
+{
+  margin-top: 15px;
+   border: 2px solid var(--color-2);
+   padding: 2px;
+}
 
 
 .about-content {
