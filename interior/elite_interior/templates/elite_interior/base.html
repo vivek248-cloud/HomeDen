@@ -154,6 +154,17 @@
       {% comment %} data-bs-toggle="dropdown"  dropdown-toggle{% endcomment %}
       
     </header>
+    {% if messages %}
+  <div class="container mt-3">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
     <div class="modal fade" id="designConsultantModal" tabindex="-1" aria-labelledby="designConsultantModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered responsive-modal"> <!-- Custom class here -->
         <div class="modal-content elegant-modal">
@@ -163,7 +174,7 @@
           </div>
     
           <div class="modal-body">
-            <form method="post" action="{% url 'home' %} ">
+            <form method="post" action="{% url 'submit_form' %} ">
               {% csrf_token %}
               <div class="mb-3">
                 <label for="name" class="form-label">Name</label>

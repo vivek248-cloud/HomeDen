@@ -491,3 +491,30 @@ from elite_interior.utils.whatsapp import send_whatsapp_message
 def send_message_view(request):
     response = send_whatsapp_message("919786224099")  # change to your number
     return JsonResponse(response)
+
+from django.core.mail import send_mail
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.conf import settings
+
+def submit_contact_form(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        contact = request.POST.get('contact')
+        email = request.POST.get('email')
+        location = request.POST.get('location')
+
+        subject_admin = f"New Enquiry from {name}"
+        message_admin = f"Name: {name}\nContact: {contact}\nEmail: {email}\nLocation: {location}"
+        subject_client = "Thanks for contacting Home Den"
+        message_client = f"Hi {name},\n\nThank you for contacting us! We will be in touch soon.\n\nYour Details:\nContact: {contact}\nLocation: {location}"
+
+        try:
+            send_mail(subject_admin, message_admin, settings.EMAIL_HOST_USER, [settings.ADMIN_EMAIL])
+            send_mail(subject_client, message_client, settings.EMAIL_HOST_USER, [email])
+            messages.success(request, "Enquiry submitted successfully.")
+        except Exception as e:
+            print("Email error:", e)
+            messages.error(request, "Error sending email. Try again later.")
+
+    return redirect(request.META.get('HTTP_REFERER', '/'))  

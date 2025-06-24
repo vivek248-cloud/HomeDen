@@ -18,6 +18,7 @@ urlpatterns = [
     path('bathroom-projects/', bathroom_projects, name='bathroom_projects'),
     path('kidsroom-projects/', kidsroom_projects, name='kidsroom_projects'),
     
+    path('submit-form/', submit_contact_form, name='submit_form'),
 
     path('calculate/',calculate_budget,name='calculate'),
     path('project/' , project_list,name='projects'),
