@@ -225,28 +225,41 @@
     <!-- Floating Buttons -->
    <!-- Floating Buttons -->
 <div class="floating-buttons position-fixed end-0 bottom-0 p-3 d-flex flex-column align-items-end z-3">
-  <!-- WhatsApp -->
-  <a href="https://wa.me/8489716901?text=Hi%20HOME%20DEN%2C%20I%20would%20like%20to%20discuss%20about%20a%20home%20interior%20project%20of%20mine%2C%20and%20know%20more%20about%20your%20interior%20design%20options%20and%20services%20available.
-" class="floating-btn bg-success shadow-sm mb-2">
-    <i class="bi bi-whatsapp fs-4 text-white"></i>
-  </a>
 
-  <!-- Email -->
-  <a href="mailto:info@elitedreambuilders.in" class="floating-btn bg-primary shadow-sm mb-2">
-    <i class="bi bi-envelope-fill fs-5 text-white"></i>
-  </a>
-
-  <!-- Estimate -->
-
-  <a href="{% url 'home' %}" class="floating-btn-expand bg-dark text-white shadow-sm"
-     data-bs-target="#designConsultantModal" data-bs-toggle="modal">
-    <i class="bi bi-chat-dots-fill fs-5 me-2"></i>
-    <span class="label-text d-none d-md-inline">Free Estimate</span>
-  </a>
-
-
+<!-- Floating chat button -->
+<div id="chat-toggle" class="chat-toggle floating-buttons" onclick="toggleChat()">
+  <i class="bi bi-chat-dots-fill fs-5 me-2 px-2 py-2" style="margin-left:5px;"></i>
+</div>
 
 </div>
+<!-- ✅ Chat Box UI -->
+<div id="chat-widget" class="chat-box" style="max-width: 400px; border: 1px solid #ccc; border-radius: 8px; padding: 10px; font-family: sans-serif;">
+  <div class="chat-header" style="background-color: #2ba58b; color: #fff; padding: 10px; border-radius: 5px;">
+    <span>Home Den</span>
+    <button class="close-btn" onclick="toggleChat()" style="float: right; background: none; border: none; color: white;">×</button>
+  </div>
+
+  <div class="chat-body" id="chat-body" style="padding: 10px;">
+    <div class="chat-msg bot-msg">
+      <p>Hi there! 🏡 Welcome to Home Den – India’s Most trusted Home Interiors Brand.</p>
+    </div>
+    <div class="chat-msg bot-msg">
+      <p>How can I help you today?</p>
+      <div class="chat-options">
+        <button><a href="{% url 'home' %} "  data-bs-target="#designConsultantModal" data-bs-toggle="modal" style="text-decoration:none;color:black;">Get Free Quote</a></button>
+        <button onclick="handleOption('Connect via Email Query')">Connect via Email</button>
+        <button><a href="https://wa.me/8489716901?text=Hi%20HOME%20DEN%2C%20I%20would%20like%20to%20discuss%20about%20a%20home%20interior%20project%20of%20mine%2C%20and%20know%20more%20about%20your%20interior%20design%20options%20and%20services%20available.
+"  style="text-decoration:none;color:black;" target="_blank">Talk to Designer</a></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
 
     
 <footer class="footer">
@@ -287,7 +300,7 @@
      <div class="social-icons">
       <a href="https://www.instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
       <a href="https://www.facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
-      <a href="https://wa.me/917780038005" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      <a href="https://wa.me/8489716901?text=Hi%20HOME%20DEN%2C%20I%20would%20like%20to%20discuss%20about%20a%20home%20interior%20project%20of%20mine%2C%20and%20know%20more%20about%20your%20interior%20design%20options%20and%20services%20available."target="_blank"><i class="fab fa-whatsapp"></i></a>
       <a href="https://www.youtube.com" target="_blank"><i class="fab fa-youtube"></i></a>
       <a href="https://www.linkedin.com" target="_blank"><i class="fab fa-linkedin-in"></i></a>
     </div>

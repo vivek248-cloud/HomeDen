@@ -518,3 +518,31 @@ def submit_contact_form(request):
             messages.error(request, "Error sending email. Try again later.")
 
     return redirect(request.META.get('HTTP_REFERER', '/'))  
+
+
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
+from django.conf import settings
+import json
+
+@csrf_exempt
+def save_chat_query(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        email = data.get('email')
+        query = data.get('query')
+
+        if email and query:
+            send_mail(
+                subject="New Chat Query",
+                message=f"Query: {query}\nEmail: {email}",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[settings.ADMIN_EMAIL],
+                fail_silently=False
+            )
+            return JsonResponse({'status': 'success'})
+        return JsonResponse({'status': 'error'}, status=400)
+
+    return JsonResponse({'status': 'invalid'}, status=405)

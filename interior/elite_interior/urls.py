@@ -28,5 +28,7 @@ urlpatterns = [
     path('category-suggestions/', category_suggestions, name='category_suggestions'),
 
     path("send-message/", send_message_view, name="send-message"),
+    path('save-chat-query/', save_chat_query, name='save_chat_query')
+
 ]
 
