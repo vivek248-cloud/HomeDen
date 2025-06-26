@@ -75,7 +75,7 @@
 
 <div class="container-fluid py-5" style="margin-top: 100px;">
     {% for project in projects %}
-    <div id="{{ project.subcategory|slugify }}" class="row align-items-center mb-2 flex-column flex-lg-row {% if forloop.counter|divisibleby:2 %}bg-white{% else %}bg-light{% endif %} py-4 px-4 auto-show-up">
+    <div id="{{ project.subcategory|slugify }}" class="row align-items-end mb-2 flex-column flex-lg-row {% if forloop.counter|divisibleby:2 %}bg-white{% else %}bg-light{% endif %} py-4 px-4 auto-show-up">
         <!-- Left: Text Content -->
         <div class="col-lg-6 col-12 mb-4 mb-lg-0 text-center text-lg-center px-4 lg-px-5">
             <h1 class="fw-bold" >{{ project.subcategory|upper }}</h1>
@@ -89,7 +89,7 @@
 
         <!-- Right: Images -->
         <div class="col-lg-6 col-12">
-            <div class="d-flex flex-wrap gap-3 justify-content-end px-4 right-image">
+            <div class="d-flex flex-wrap gap-3  px-4 lg-px-5 right-image">
                 <img src="{{ project.image.url }}" alt="{{ project.name }}" class="img-fluid shadow rounded" style="width: 100%; max-width: 400px; height: auto; object-fit: cover;">
                 {% if project.extra_image %}
                 <img src="{{ project.extra_image.url }}" alt="Extra for {{ project.name }}" class="img-fluid shadow rounded" style="width: 100%; max-width: 300px; height: auto; object-fit: cover;">

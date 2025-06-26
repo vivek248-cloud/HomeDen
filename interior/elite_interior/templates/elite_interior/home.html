@@ -1,6 +1,6 @@
 {% extends "elite_interior/base.html" %}
 {% load static %}
-
+{% load format_extras %}
 {% block extra_css %}
 
 {% endblock %}
@@ -467,7 +467,7 @@
               <p class="card-text text-muted small">{{ blog.description|truncatechars:100 }}</p>
               <div class="d-flex justify-content-between align-items-center small text-muted mb-2">
             <span><i class="bi bi-calendar-event me-1"></i> {{ blog.created_at|date:"M d, Y" }}</span>
-            <span><i class="bi bi-eye me-1"></i> {{ blog.views }} views</span>
+            <span><i class="bi bi-eye me-1"></i> {{ blog.views|humanize_views  }} views</span>
           </div>
             </div>
           </div>
