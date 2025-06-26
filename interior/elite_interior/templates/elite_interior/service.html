@@ -198,8 +198,50 @@
 </section>
 
 
-<section class="container py-5">
+<section class="container my-5">
+  <h2 class="mb-4 fw-bold" id="TERMS">Terms & Conditions</h2>
+  <p>
+    By accessing this website, you agree to be bound by the Terms and Conditions outlined below...
+    (Customize your content here.)
+  </p>
 
+  <hr class="my-5">
+
+  <h2 class="mb-4 fw-bold" id="FAQ">Frequently Asked Questions</h2>
+  <div class="accordion" id="faqAccordion">
+
+    <div class="accordion-item mb-3 border rounded">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed d-flex justify-content-between align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+          <span>What is your return policy?</span>
+          <i class="bi bi-plus-lg ms-auto toggle-icon"></i>
+        </button>
+      </h2>
+      <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          We offer a 7-day return policy for all unused items...
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item mb-3 border rounded">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed d-flex justify-content-between align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+          <span>How can I contact support?</span>
+          <i class="bi bi-plus-lg ms-auto toggle-icon"></i>
+        </button>
+      </h2>
+      <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          You can reach our support team at support@example.com...
+        </div>
+      </div>
+    </div>
+
+    <!-- Add more FAQs as needed -->
+
+  </div>
 </section>
+
 
 {% endblock%}

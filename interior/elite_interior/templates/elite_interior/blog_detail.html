@@ -1,4 +1,6 @@
 {% extends 'elite_interior/base.html' %}
+{% load format_extras %}
+
 {% load static %}
 {% block extra_css %}
 <style>
@@ -86,10 +88,13 @@
     <!-- Blog Content -->
     <div class="blog-content">
       <img src="{{ blog.image.url }}" alt="{{ blog.title }}" class="blog-image shadow-sm">
+      <a href="/HomeDen/{{ blog.category|lower }}-projects/" style="text-decoration:none;">
       <h1 class="blog-title">{{ blog.title }}</h1>
+      </a>
+      <p style="text-align:end;">Category: {{ blog.category|upper }}</p>
       <div class="d-flex justify-content-between align-items-center small text-muted mb-2">
             <span><i class="bi bi-calendar-event me-1"></i> {{ blog.created_at|date:"M d, Y" }}</span>
-            <span><i class="bi bi-eye me-1"></i> {{ blog.views }} views</span>
+            <span><i class="bi bi-eye me-1"></i> {{ blog.views|humanize_views }} views</span>
           </div>
       <div class="blog-description">
         {{ blog.description|safe }}
@@ -126,13 +131,15 @@
 
         <!-- Individual categories -->
         {% for category in categories %}
-        <li class="mb-2">
-          <a href="{% url 'blog_list' %}?category={{ category.id }}{% if query %}&q={{ query }}{% endif %}"
-            class="d-block px-2 py-1 rounded {% if selected_category == category.id|stringformat:'s' %}bg-secondary text-white{% else %}text-dark{% endif %}"  style="text-decoration:none;">
-            {{ category.name }}
-          </a>
-        </li>
-        {% endfor %}
+  <li class="mb-2">
+    <a href="{% url 'blog_list' %}?category={{ category.category.id }}{% if query %}&q={{ query }}{% endif %}"
+       class="d-block px-2 py-1 rounded {% if selected_category == category.category.id|stringformat:'s' %}bg-secondary text-white{% else %}text-dark{% endif %}"
+       style="text-decoration:none;">
+      {{ category }}
+    </a>
+  </li>
+{% endfor %}
+
       </ul>
 
       </div>
@@ -150,13 +157,12 @@ document.addEventListener('DOMContentLoaded', function () {
   input.addEventListener('input', function () {
     const query = this.value.trim();
 
-    // Always send query (even empty)
     fetch("{% url 'category_suggestions' %}?term=" + encodeURIComponent(query))
       .then(res => res.json())
       .then(data => {
         suggestionBox.innerHTML = '';
 
-        // Always show "All Categories" at the top
+        // Add "All Categories" item
         const allItem = document.createElement('button');
         allItem.type = 'button';
         allItem.className = 'list-group-item list-group-item-action text-primary fw-bold';
@@ -164,35 +170,32 @@ document.addEventListener('DOMContentLoaded', function () {
         allItem.addEventListener('click', () => {
           input.value = '';
           suggestionBox.innerHTML = '';
-          input.form.submit();  // Optional: auto-submit
+          input.form.submit(); // Optional: auto-submit on "All"
         });
         suggestionBox.appendChild(allItem);
 
-        // Show matching suggestions below
-        if (data.length > 0) {
-          data.forEach(category => {
-            const item = document.createElement('button');
-            item.type = 'button';
-            item.className = 'list-group-item list-group-item-action';
-            item.textContent = category;
-            item.addEventListener('click', () => {
-              input.value = category;
-              suggestionBox.innerHTML = '';
-              //input.form.submit();  // Optional
-            });
-            suggestionBox.appendChild(item);
+        // Add matching categories
+        data.forEach(category => {
+          const item = document.createElement('button');
+          item.type = 'button';
+          item.className = 'list-group-item list-group-item-action';
+          item.textContent = category.label;  // ✅ show the name, not [object Object]
+          item.addEventListener('click', () => {
+            input.value = category.value; // fill input with selected name
+            suggestionBox.innerHTML = '';
+            // input.form.submit(); // Optional: submit form automatically
           });
-        }
+          suggestionBox.appendChild(item);
+        });
       });
   });
 
-  // Hide suggestions when clicking outside
-  document.addEventListener('click', (e) => {
+  // Hide suggestions if clicked outside
+  document.addEventListener('click', function (e) {
     if (!suggestionBox.contains(e.target) && e.target !== input) {
       suggestionBox.innerHTML = '';
     }
   });
 });
-
 </script>
 {% endblock %}

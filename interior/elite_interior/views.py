@@ -128,7 +128,8 @@ def blog_list(request):
 
     # Apply category filter
     if category_id:
-        blogs_qs = blogs_qs.filter(category_id=category_id)
+        blogs_qs = blogs_qs.filter(category__category__id=category_id)
+
 
     # Final filtered list
     blogs = list(blogs_qs)
@@ -177,6 +178,7 @@ def blog_detail(request, blog_id):
     category_id = request.GET.get('category')
     session_key = f'viewed_blog_{blog_id}'
 
+    
     if not request.session.get(session_key, False):
         blog.views += 1
         blog.save(update_fields=['views'])
@@ -228,16 +230,23 @@ def blog_detail(request, blog_id):
     }
     return render(request, 'elite_interior/blog_detail.html', context)
 
+
 from django.http import JsonResponse
 from .models import BlogCategory
 
 def category_suggestions(request):
-    term = request.GET.get('term', '')
+    query = request.GET.get('term', '')
     suggestions = []
 
-    if term:
-        categories = BlogCategory.objects.filter(name__icontains=term).values_list('name', flat=True)[:10]
-        suggestions = list(categories)
+    if query:
+        matched_categories = BlogCategory.objects.filter(
+            category__name__icontains=query
+        )[:10]
+
+        suggestions = [
+            {"id": cat.category.id, "label": cat.category.name, "value": cat.category.name}
+            for cat in matched_categories if cat.category
+        ]
 
     return JsonResponse(suggestions, safe=False)
 
@@ -279,10 +288,10 @@ def project_detail(request, project_id):
 
     # Distinct subcategories in the same category (excluding current subcategory)
     subcategories = (
-        Project.objects
+        SubCategory.objects
         .filter(category=project.category)
-        .exclude(subcategory=project.subcategory)
-        .values_list('subcategory', flat=True)
+        .exclude(id=project.subcategory.id if project.subcategory else None)
+        .values_list('name', flat=True)
         .distinct()
     )
 

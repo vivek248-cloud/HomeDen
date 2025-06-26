@@ -1306,6 +1306,28 @@ p {
 }
 
 
+.accordion-button::after {
+  display: none; /* Hide default Bootstrap arrow */
+}
+.toggle-icon {
+  transition: transform 0.3s ease;
+}
+.accordion-button:not(.collapsed) .toggle-icon {
+  transform: rotate(45deg); /* Turns + into x */
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #2ba58b !important;
+  color: white !important;
+  box-shadow: none;
+}
+
+/* Optional: Change text/icon hover color */
+.accordion-button:hover {
+  background-color: #2ba58b;
+  color: white;
+}
+
 .image-column .bg-cover {
   min-height: 50vh;
   background-size: cover;

@@ -130,14 +130,21 @@ class YouTubeVideo(models.Model):
 
 
 class BlogCategory(models.Model):
-    name = models.CharField(max_length=255)
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='category_blogs'
+    )
 
     def __str__(self):
-        return self.name
+        return self.category.name if self.category else "Unnamed Category"
+
 
 class Blog(models.Model):
     title = models.CharField(max_length=255)
     image = models.ImageField(upload_to='blog_images/')
+    project_category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     category = models.ForeignKey(BlogCategory, on_delete=models.SET_NULL, null=True)
     keyword = models.CharField(max_length=255)
     is_featured = models.BooleanField(default=False) 

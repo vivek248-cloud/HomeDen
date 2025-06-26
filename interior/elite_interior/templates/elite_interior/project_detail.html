@@ -128,38 +128,19 @@
   <h5 class="fw-bold mb-3">Other Subcategories</h5>
   <ul class="list-unstyled d-flex flex-wrap gap-2">
     {% for sub in subcategories %}
-      <li>
-        {% if project.category == 'Kitchen' %}
-          <a href="{% url 'kitchen_projects' %}#{{ sub|slugify }}"
-             class="badge px-3 py-2 border rounded-pill text-decoration-none 
-             {% if sub == project.subcategory %}bg-warning text-white{% else %}bg-light text-dark{% endif %}">
-            {{ sub }}
-          </a>
-        {% elif project.category == 'Bedroom' %}
-          <a href="{% url 'bedroom_projects' %}#{{ sub|slugify }}" class="badge px-3 py-2 border rounded-pill text-decoration-none 
-             {% if sub == project.subcategory %}bg-warning text-white{% else %}bg-light text-dark{% endif %}">
-            {{ sub }}
-          </a>
-        {% elif project.category == 'Dining Room' %}
-          <a href="{% url 'dining_projects' %}#{{ sub|slugify }}" class="badge px-3 py-2 border rounded-pill text-decoration-none 
-             {% if sub == project.subcategory %}bg-warning text-white{% else %}bg-light text-dark{% endif %}">
-            {{ sub }}
-          </a>
-        {% elif project.category == 'Living Room' %}
-          <a href="{% url 'living_projects' %}#{{ sub|slugify }}" class="badge px-3 py-2 border rounded-pill text-decoration-none 
-             {% if sub == project.subcategory %}bg-warning text-white{% else %}bg-light text-dark{% endif %}">
-            {{ sub }}
-          </a>
-        {% elif project.category == 'Bathroom' %}
-          <a href="{% url 'bathroom_projects' %}#{{ sub|slugify }}" class="badge px-3 py-2 border rounded-pill text-decoration-none 
-             {% if sub == project.subcategory %}bg-warning text-white{% else %}bg-light text-dark{% endif %}">
-            {{ sub }}
-          </a>
-        {% endif %}
-      </li>
-    {% endfor %}
+  <li>
+    <a href="{% url project.category.name|lower|slugify|add:'_projects' %}#{{ sub|slugify }}"
+       class="badge px-3 py-2 border rounded-pill text-decoration-none 
+       {% if sub == project.subcategory.name %}bg-warning text-white{% else %}bg-light text-dark{% endif %}">
+      {{ sub }}
+    </a>
+  </li>
+{% endfor %}
   </ul>
 </div>
+
+
+
 
 
 <!-- Swiper JS Script -->
