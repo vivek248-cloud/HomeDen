@@ -368,7 +368,7 @@ def eleganza(request):
     }
     return render(request,'elite_interior/eleganza.html',context)
 
-def essential_plus(request):
+def eleganza_plus(request):
     package_offers = PackageOffers.objects.all()
     context={
         'offers':package_offers

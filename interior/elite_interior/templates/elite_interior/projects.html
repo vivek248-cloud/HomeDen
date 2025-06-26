@@ -85,6 +85,9 @@
     <li class="nav-item">
       <a class="nav-link {% if category == 'Bathroom' %}active{% endif %}" href="{% url 'bathroom_projects' %}">Bathroom</a>
     </li>
+     <li class="nav-item">
+      <a class="nav-link {% if category == 'kidsroom' %}active{% endif %}" href="{% url 'kidsroom_projects' %}">Kid's room</a>
+    </li>
     <li class="nav-item">
       <a class="nav-link {% if category == 'Our Projects' %}active{% endif %}" href="{% url 'projects' %}">All</a>
     </li>
@@ -98,8 +101,8 @@
             <div class="card h-100 shadow-sm border-0 hover-shadow transition">
                 <img src="{{ project.image.url }}" class="card-img-top" alt="{{ project.name }}" style="height: 250px; object-fit: cover;">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">{{ project.category }}</h5>
-                    <h6 class="card-title">{{project.name}}</h6>
+                  <h5 class="card-title">{{project.name}}</h5>
+                    <h6 class="card-title">{{ project.category }}</h6>
                     <p class="card-text text-muted">{{ project.description|truncatewords:20 }}</p>
                     <a href="{% url 'project_detail' project.id %}" class="btn view-btn mt-auto">View Details</a>
                 </div>

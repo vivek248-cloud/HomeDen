@@ -99,7 +99,9 @@
             <div class="package-card">
               <img src="{{ offer.image.url }}" alt="{{ project.title }}" class="img-fluid">
               <div class="package-overlay">
-                <h4>{{offer.title}}<br><strong>{{offer.subtitle}}</strong></h4>
+                <a href="/HomeDen/{{ offer.title|lower }}/">
+                <h4><strong>{{offer.title}}</strong><br>{{offer.subtitle}}</h4>
+                </a>
               </div>
               <div class="package-footer">
                 <p class="price">
@@ -290,7 +292,7 @@
       </div>
 
       <!-- Image Column -->
-      <div class="col-md-6 image-column">
+      <div class="col-md-6 image-column ">
         <div class="h-100 w-100 bg-cover" style="background-image: url('{% static 'images/hall.jpeg' %}');"></div>
       </div>
     </div>
@@ -301,10 +303,7 @@
   <div class="container-fluid p-0">
     <div class="row g-0">
 
-      <!-- Image Column -->
-      <div class="col-md-6 order-1 order-md-1 image-column">
-        <div class="h-100 w-100 bg-cover" style="background-image: url('{% static 'images/bedroom.jpeg' %}');"></div>
-      </div>
+      
 
 
       <!-- Text Column -->
@@ -323,6 +322,10 @@
         </div>
       </div>
 
+    <!-- Image Column -->
+      <div class="col-md-6 order-1 order-md-1 image-column">
+        <div class="h-100 w-100 bg-cover" style="background-image: url('{% static 'images/bedroom.jpeg' %}');"></div>
+      </div>
     </div>
   </div>
 </section>

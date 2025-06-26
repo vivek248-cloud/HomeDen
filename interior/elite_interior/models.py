@@ -50,7 +50,7 @@ class Project(models.Model):
 
 class PackageOffers(models.Model):
     title = models.CharField(max_length=225)
-    subtitle = models.CharField(max_length=225)
+    subtitle = models.CharField(max_length=225,null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     offer_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     discription = models.CharField(max_length=225)

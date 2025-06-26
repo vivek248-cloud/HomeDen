@@ -76,7 +76,7 @@ path {
     opacity: 1;
   }
   50% {
-    transform: scale(1.05);
+    transform: scale(1.05 );
     opacity: 0.6;
   }
 }
@@ -251,6 +251,10 @@ body, html {
   color: #000 !important;
   font-size: 1.2rem;
 }
+.navbar-white .nav-item::after
+{
+  background-color: #000000;
+}
 .nav-link2{
   color: #ffffff !important;
   font-size: 1.2rem;
@@ -259,6 +263,50 @@ body, html {
 .nav-item2
 {
   padding: 20px;
+}
+.nav-item {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+.navbar-white .nav-item:hover::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background-color: #000; /* Adjust to your theme color */
+  transform: scaleX(1);
+  transform-origin: left;
+  transition: transform 0.3s ease-in-out;
+}
+
+.nav-item:hover::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background-color: #ffffff; /* Adjust to your theme color */
+  transform: scaleX(1);
+  transform-origin: left;
+  transition: transform 0.3s ease-in-out;
+}
+
+.nav-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background-color: #ffffff;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s ease-in-out;
 }
 
 
@@ -2265,6 +2313,7 @@ p {
   {
     font-size: 3.5rem;
     text-transform: uppercase;
+    font-weight: 700;
   }
 
   .transform-link {
