@@ -23,6 +23,8 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
     <link rel="stylesheet" href="{% static 'css/interior.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
@@ -227,6 +229,17 @@
                 <label for="email" class="form-label">Email Address</label>
                 <input type="email" class="form-control rounded-3" id="email" name="email" required>
               </div>
+              <div class="mb-3">
+                    <label for="bhk" class="form-label">Property Type</label>
+                    <select class="form-select rounded-3" id="bhk" name="bhk" required>
+                      <option value="">-- Select BHK Type --</option>
+                      <option value="2BHK">2BHK</option>
+                      <option value="3BHK">3BHK</option>
+                      <option value="4BHK">4BHK</option>
+                      <option value="5BHK">5BHK</option>
+                      <option value="More than 5BHK">More than 5BHK</option>
+                    </select>
+                  </div>
               <div class="mb-3">
                 <label for="location" class="form-label">Project Location</label>
                 <input type="text" class="form-control rounded-3" id="location" name="location" required>

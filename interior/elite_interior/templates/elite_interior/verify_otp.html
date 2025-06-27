@@ -1,0 +1,24 @@
+{% extends 'elite_interior/base.html' %}
+{% block content %}
+<div class="container py-5">
+  <div class="card p-4 shadow">
+    <h4 class="text-center fw-bold mb-4 text-primary">Verify OTP</h4>
+
+    <form method="post" action="{% url 'verify_otp' %}">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">Enter the 4-digit OTP sent to your email</label>
+        <input type="text" name="otp" class="form-control text-center fw-bold" maxlength="4" required>
+      </div>
+      <div class="text-center">
+        <button type="submit" class="btn btn-success px-4 rounded-pill">Verify</button>
+      </div>
+    </form>
+
+    <form method="post" action="{% url 'resend_otp' %}" class="text-center mt-3">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-outline-primary btn-sm">Resend OTP</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

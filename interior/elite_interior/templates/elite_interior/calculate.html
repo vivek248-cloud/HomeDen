@@ -1,65 +1,135 @@
-<!-- templates/budget/calculate.html -->
+
 {% extends 'elite_interior/base.html' %}
-{% load widget_tweaks %}
 
+{% load format_extras %}
+{% load i18n %}
 {% load static %}
+{% block extra_css %}
+
+{% endblock %}
+
+
 {% block content %}
+<div class="container py-5" style="margin-top: 100px;">
+  <div class="card shadow border-0 rounded-4 px-3 px-md-5 py-4 bg-white">
+    <h2 class="text-center fw-bold mb-4 text-dark">
+      <i class="bi bi-calculator-fill text-success me-2"></i>
+      <span class="text-muted">- Calculate Estimation</span>
+    </h2>
 
-<div class="container py-5 caluclate-div">
-  <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-      <div class="card shadow-lg border-0 rounded-4 bg-light">
-        <div class="card-body p-4">
-          <h3 class="text-center mb-4 text-dark fw-bold">
-            <i class="bi bi-calculator-fill text-primary me-2"></i> Budget Calculator
-          </h3>
+    <form method="post" id="wizardForm" action="{% url 'submit_estimation_form' %}">
+      {% csrf_token %}
 
-          <form method="post" id="budget-form" class="calculator-form">
-                {% csrf_token %}
-
-                <div class="mb-3">
-                    {% render_field form.item class="form-select form-control-lg shadow-sm" %}
-                </div>
-
-                <div class="mb-3">
-                    {% render_field form.quantity class="form-control form-control-lg shadow-sm" placeholder="Enter quantity" %}
-                </div>
-
-                <div class="result-box mt-4 text-center">
-                    <div class="fs-6 text-muted">Estimated Total</div>
-                    <div class="display-6 fw-bold text-success">₹<span id="total">0.00</span></div>
-                </div>
-                </form>
+      <!-- Step 1: Select BHK -->
+      <div class="step2" id="step1">
+        <h5 class="fw-semibold text-success mb-3">Step 1: Choose Your BHK Type</h5>
+        <div class="mb-4">
+          <select name="bhk" class="form-select form-select-lg rounded-3 shadow-sm" required style="max-width: 400px; margin: auto;">
+            <option value="">-- Select --</option>
+            <option value="2BHK">2BHK</option>
+            <option value="3BHK">3BHK</option>
+            <option value="4BHK">4BHK</option>
+            <option value="5BHK">5BHK</option>
+            <option value="More">More than 5BHK</option>
+          </select>
+        </div>
+        <div class="text-end">
+          <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(2)">Next</button>
         </div>
       </div>
-    </div>
+
+      <!-- Step 2: Add Room Counts -->
+      <div class="step2 d-none" id="step2">
+        <h5 class="fw-semibold text-success mb-4">Step 2: Select Quantities</h5>
+        <div id="roomCounters" class="mb-4">
+          {% for room in rooms %}
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+            <label class="fw-medium me-3">{{ room }}</label>
+            <div class="btn-group py-2 quantity-group" role="group">
+              <button type="button" class="btn increase-btn rounded-start" onclick="decrease('{{ room }}')">−</button>
+              <input type="number" name="rooms[{{ room }}]" id="{{ room|slugify }}"
+                     class="form-control text-center quantity-input" value="0" readonly>
+              <button type="button" class="btn increase-btn rounded-end" onclick="increase('{{ room }}')">+</button>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(1)">Back</button>
+          <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(3)">Next</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Select Package -->
+      <div class="step2 d-none" id="step3">
+        <h5 class="fw-semibold text-success mb-3">Step 3: Choose Your Package</h5>
+        <div class="row g-3 mb-4">
+          {% for pkg in packages %}
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" type="radio" name="package" value="{{ pkg }}" id="pkg_{{ forloop.counter }}" required>
+              <label class="form-check-label" for="pkg_{{ forloop.counter }}">
+                {{ pkg }}
+              </label>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(2)">Back</button>
+          <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(4)">Next</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Final Form -->
+      <div class="step2 d-none" id="step4">
+        <h5 class="fw-semibold text-success mb-3">Step 4: Your Details</h5>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Name</label>
+            <input type="text" name="name" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Contact</label>
+            <input type="tel" name="contact" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Location</label>
+            <input type="text" name="location" class="form-control shadow-sm" required>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(3)">Back</button>
+          <button type="submit" class="btn btn-success px-5 rounded-pill">Verify & Submit</button>
+        </div>
+      </div>
+    </form>
   </div>
 </div>
 
-
-<!-- JavaScript for live total calculation -->
 <script>
-  const budgetData = {};
-
-  // Load unit prices via template context
-  {% for item in form.fields.item.queryset %}
-    budgetData["{{ item.pk }}"] = {{ item.unit_price }};
-  {% endfor %}
-
-  const itemSelect = document.getElementById("id_item");
-  const quantityInput = document.getElementById("id_quantity");
-  const totalDisplay = document.getElementById("total");
-
-  function updateTotal() {
-    const itemId = itemSelect.value;
-    const quantity = parseInt(quantityInput.value) || 0;
-    const price = budgetData[itemId] || 0;
-    const total = price * quantity;
-    totalDisplay.textContent = total.toFixed(2);
-  }
-
-  itemSelect.addEventListener("change", updateTotal);
-  quantityInput.addEventListener("input", updateTotal);
+let currentStep = 1;
+function nextStep(step2) {
+  document.getElementById(`step${currentStep}`).classList.add('d-none');
+  document.getElementById(`step${step2}`).classList.remove('d-none');
+  currentStep = step2;
+}
+function prevStep(step2) {
+  document.getElementById(`step${currentStep}`).classList.add('d-none');
+  document.getElementById(`step${step2}`).classList.remove('d-none');
+  currentStep = step2;
+}
+function increase(room) {
+  const input = document.getElementById(room.toLowerCase().replace(/\s/g, '-'));
+  input.value = parseInt(input.value) + 1;
+}
+function decrease(room) {
+  const input = document.getElementById(room.toLowerCase().replace(/\s/g, '-'));
+  if (parseInt(input.value) > 0) input.value = parseInt(input.value) - 1;
+}
 </script>
-
 {% endblock %}

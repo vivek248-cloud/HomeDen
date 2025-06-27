@@ -4355,3 +4355,108 @@ margin: 0;
 
 
 /* style="background-image: url('https://media.elitedreambuilders.in/home_slider/Elevation_-_01_5_-_Photo.jpg'); background-size: cover; background-position: center;" */
+
+
+input[name="otp"] {
+  font-size: 2rem;
+  letter-spacing: 0.5rem;
+  text-align: center;
+  max-width: 180px;
+  margin: auto;
+}
+
+/* Custom button styles */
+.increase-btn {
+  background-color: var(--color-2);
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: bold;
+  width: 45px;
+  height: 45px;
+  border: none;
+  display: flex;
+  border-radius: 3px;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+
+.increase-btn:hover {
+  background-color:var(--color-1);
+}
+
+/* Input field style */
+.quantity-input {
+  width: 60px;
+  height: 45px;
+ align-items: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  background-color: #fff;
+  box-shadow: none;
+ margin-top: 19px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  text-align: center;
+}
+
+/* Button group alignment */
+.quantity-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Step container */
+.step2 {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Smooth fade-in for steps */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Room counter layout */
+#roomCounters .form-control {
+  width: 60px;
+  display: inline-block;
+  text-align: center;
+  border-radius: 0.375rem;
+  border: 1px solid #ccc;
+}
+
+/* Plus/Minus buttons */
+#roomCounters .btn-outline-secondary {
+  width: 36px;
+  height: 36px;
+  font-weight: bold;
+  padding: 0;
+  line-height: 1;
+}
+
+/* Label styling */
+#roomCounters label {
+  font-size: 1rem;
+  color: #333;
+  margin-right: 1rem;
+}
+
+/* Next/Submit buttons */
+.btn-primary, .btn-secondary {
+  border-radius: 0.5rem;
+  padding: 8px 20px;
+  font-weight: 600;
+}
+
+/* Step header */
+.step h5 {
+  color: #2ba58b;
+  border-bottom: 2px solid #2ba58b;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+
+

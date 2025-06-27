@@ -56,8 +56,9 @@
 
       <!-- Blog List -->
       <div class="row">
-  {% if all_blogs %}
-  {% for blog in all_blogs %}
+  {% if blogs_page %}
+  <div id="blog-container" class="row">
+  {% for blog in blogs_page %}
   <div class="col-12 col-md-6 mb-4">
     <div class="card h-100 shadow-sm border-0 blog-card auto-show-up">
       <div class="row g-0 h-100 flex-column flex-md-row" style="max-height: auto;">
@@ -108,7 +109,56 @@
       </div>
     </div>
   </div>
+  
   {% endfor %}
+</div>
+  {% if blogs_page.has_next %}
+    <div class="text-center mt-4">
+      <button id="loadMoreBtn" data-next-page="{{ blogs_page.next_page_number }}" class="btn btn-outline-dark">
+        Load More
+      </button>
+    </div>
+  
+  {% else %}
+    <div class="col-12">
+      <p class="text-center">No blogs found.</p>
+    </div>
+  {% endif %}
+
+  
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const btn = document.getElementById('loadMoreBtn');
+  if (btn) {
+    btn.addEventListener('click', function () {
+      const nextPage = btn.getAttribute('data-next-page');
+      const url = new URL(window.location.href);
+      url.searchParams.set('page', nextPage);
+
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const newBlogs = doc.querySelector('#blog-container').innerHTML;
+
+          document.querySelector('#blog-container').insertAdjacentHTML('beforeend', newBlogs);
+
+          // Update or remove the button
+          const newButton = doc.querySelector('#loadMoreBtn');
+          if (newButton) {
+            btn.setAttribute('data-next-page', newButton.getAttribute('data-next-page'));
+          } else {
+            btn.remove(); // no more pages
+          }
+        });
+    });
+  }
+});
+</script>
+
+
+
 {% else %}
   <p>No blogs found for "<strong>{{ query }}</strong>" in this category.</p>
 

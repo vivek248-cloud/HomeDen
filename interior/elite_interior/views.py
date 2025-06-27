@@ -10,19 +10,18 @@ from django.http import JsonResponse
 from twilio.rest import Client
 from django.core.mail import send_mail
 import json
-from .models import HomeSlider,PackageOffers
-from .models import WhatWeDo_Grid,Testimonial,YouTubeVideo
-from .models import Blog,BlogCategory
+
+
 from .models import*
 from django.db.models import Q
 from django.templatetags.static import static
 from django.db.models import F
-from django.shortcuts import render
-from django.db.models import Q
-from .models import Blog, BlogCategory
-from .models import Project
+
+
 from django.shortcuts import render, get_object_or_404
 import random
+
+from django.core.paginator import Paginator
 
 # from .models import DiagonalImages
 
@@ -108,17 +107,72 @@ def home(request):
 
 
 
-from django.db.models import Q
+
+# def blog_list(request):
+#     query = request.GET.get('q', '').strip()
+#     category_id = request.GET.get('category')
+
+    
+#     # Start with all blogs ordered by latest
+#     blogs_qs = Blog.objects.all().order_by('-created_at')
+
+#     # Apply search query
+#     if query:
+#         blogs_qs = blogs_qs.filter(
+#             Q(title__icontains=query) |
+#             Q(description__icontains=query) |
+#             Q(keyword__icontains=query)
+#         )
+
+#     # Apply category filter
+#     if category_id:
+#         blogs_qs = blogs_qs.filter(category__category__id=category_id)
+
+
+#     # Final filtered list
+#     blogs = list(blogs_qs)
+
+#     # Featured blogs from the same filtered list
+#     featured_blogs = blogs_qs.filter(is_featured=True)[:5]
+
+#     # Most viewed blogs (optional)
+#     most_viewed_blogs = Blog.objects.all().order_by('-views')[:5]
+
+#     # All blog categories
+#     categories = BlogCategory.objects.all()
+
+#     # Prepare context
+#     context = {
+#         'featured_blogs': featured_blogs,
+#         'most_viewed_blogs': most_viewed_blogs,
+#         'all_blogs': blogs,
+#         'categories': categories,
+#         'query': query,
+#         'selected_category': category_id,
+#     }
+
+#     # If no blogs found, try suggesting blogs only based on query (ignoring category)
+#     if not blogs and query and category_id:
+#         fallback_qs = Blog.objects.filter(
+#             Q(title__icontains=query) |
+#             Q(description__icontains=query) |
+#             Q(keyword__icontains=query)
+#         ).order_by('-created_at')
+#         context['suggested_results'] = fallback_qs[:5]
+
+#     return render(request, 'elite_interior/blog_list.html', context)
+
+
+
+
 
 def blog_list(request):
     query = request.GET.get('q', '').strip()
     category_id = request.GET.get('category')
+    page_number = request.GET.get('page', 1)
 
-    
-    # Start with all blogs ordered by latest
     blogs_qs = Blog.objects.all().order_by('-created_at')
 
-    # Apply search query
     if query:
         blogs_qs = blogs_qs.filter(
             Q(title__icontains=query) |
@@ -126,41 +180,24 @@ def blog_list(request):
             Q(keyword__icontains=query)
         )
 
-    # Apply category filter
     if category_id:
         blogs_qs = blogs_qs.filter(category__category__id=category_id)
 
+    paginator = Paginator(blogs_qs, 6)  # 6 blogs per page
+    blogs_page = paginator.get_page(page_number)
 
-    # Final filtered list
-    blogs = list(blogs_qs)
-
-    # Featured blogs from the same filtered list
     featured_blogs = blogs_qs.filter(is_featured=True)[:5]
-
-    # Most viewed blogs (optional)
     most_viewed_blogs = Blog.objects.all().order_by('-views')[:5]
-
-    # All blog categories
     categories = BlogCategory.objects.all()
 
-    # Prepare context
     context = {
         'featured_blogs': featured_blogs,
         'most_viewed_blogs': most_viewed_blogs,
-        'all_blogs': blogs,
+        'blogs_page': blogs_page,  # paginated page
         'categories': categories,
         'query': query,
         'selected_category': category_id,
     }
-
-    # If no blogs found, try suggesting blogs only based on query (ignoring category)
-    if not blogs and query and category_id:
-        fallback_qs = Blog.objects.filter(
-            Q(title__icontains=query) |
-            Q(description__icontains=query) |
-            Q(keyword__icontains=query)
-        ).order_by('-created_at')
-        context['suggested_results'] = fallback_qs[:5]
 
     return render(request, 'elite_interior/blog_list.html', context)
 
@@ -168,8 +205,6 @@ def blog_list(request):
 
 
 
-from django.shortcuts import render, get_object_or_404
-from .models import Blog  # assuming your Blog model is here
 
 def blog_detail(request, blog_id):
     blog = get_object_or_404(Blog, id=blog_id)
@@ -231,8 +266,7 @@ def blog_detail(request, blog_id):
     return render(request, 'elite_interior/blog_detail.html', context)
 
 
-from django.http import JsonResponse
-from .models import BlogCategory
+
 
 def category_suggestions(request):
     query = request.GET.get('term', '')
@@ -260,15 +294,28 @@ def about(request):
 
 
 
+
+
+
 def project_list(request):
     videos = YouTubeVideoProjects.objects.all()
-    projects = Project.objects.all()[:20]
+    
+    # DO NOT slice here
+    all_projects = Project.objects.all()
+    
+    paginator = Paginator(all_projects, 6)  # Paginate full queryset
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        'videos':videos,
-        'projects': projects,
-        'category': "Our Projects"
+        'videos': videos,
+        'projects': page_obj,  # Paginated result
+        'category': "Our Projects",
+        'is_paginated': page_obj.has_next(),
+        'next_page_number': page_obj.next_page_number() if page_obj.has_next() else None,
     }
     return render(request, 'elite_interior/projects.html', context)
+
 
 
 
@@ -390,11 +437,18 @@ def contact(request):
     return render(request,'elite_interior/contact.html')
 
 from .forms import BudgetCalculationForm
-from .models import BudgetItem
+
 
 def calculate_budget(request):
+    rooms = ['Living Room', 'Kitchen', 'Bathroom', 'Bedroom', 'Dining']
+    packages = ['Essential', 'Eleganza', 'Eleganza Plus']
     form = BudgetCalculationForm()
-    return render(request, 'elite_interior/calculate.html', {'form': form})
+    context={
+        'form': form,
+        'rooms': rooms,
+        'packages': packages,
+    }
+    return render(request, 'elite_interior/calculate.html', context)
 
 def service(request):
     grid = WhatWeDo_Grid.objects.all()
@@ -493,7 +547,7 @@ def serve_media(request, path):
 
 
 # yourapp/views.py
-from django.http import JsonResponse
+
 from elite_interior.utils.whatsapp import send_whatsapp_message
 
 
@@ -511,12 +565,13 @@ def submit_contact_form(request):
         name = request.POST.get('name')
         contact = request.POST.get('contact')
         email = request.POST.get('email')
+        bhk = request.POST.get('bhk')
         location = request.POST.get('location')
 
         subject_admin = f"New Enquiry from {name}"
-        message_admin = f"Name: {name}\nContact: {contact}\nEmail: {email}\nLocation: {location}"
+        message_admin = f"Name: {name}\nContact: {contact}\nEmail: {email}\nBHK: {bhk}\nLocation: {location}"
         subject_client = "Thanks for contacting Home Den"
-        message_client = f"Hi {name},\n\nThank you for contacting us! We will be in touch soon.\n\nYour Details:\nContact: {contact}\nLocation: {location}"
+        message_client = f"Hi {name},\n\nThank you for contacting us! We will be in touch soon.\n\nYour Details:\nContact: {contact}\nLocation: {location}\nBHK: {bhk}\n\nBest regards,\nHome Den Team"
 
         try:
             send_mail(subject_admin, message_admin, settings.EMAIL_HOST_USER, [settings.ADMIN_EMAIL])
@@ -527,6 +582,166 @@ def submit_contact_form(request):
             messages.error(request, "Error sending email. Try again later.")
 
     return redirect(request.META.get('HTTP_REFERER', '/'))  
+
+import random
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.conf import settings
+
+def submit_estimation_form(request):
+    if request.method == "POST":
+        # Get form data
+        bhk = request.POST.get("bhk")
+        rooms = request.POST.getlist("rooms[]")  # or manually parse if not array
+        package = request.POST.get("package")
+        name = request.POST.get("name")
+        contact = request.POST.get("contact")
+        email = request.POST.get("email")
+        location = request.POST.get("location")
+
+        # Generate 4-digit OTP
+        otp = random.randint(1000, 9999)
+        request.session["otp"] = str(otp)
+        request.session["form_data"] = {
+            "bhk": bhk,
+            "rooms": dict(request.POST.items()),  # store all data
+            "package": package,
+            "name": name,
+            "contact": contact,
+            "email": email,
+            "location": location,
+        }
+
+        # Send OTP to user email
+        send_mail(
+            subject="Your OTP for Budget Estimation Confirmation",
+            message=f"Hi {name},\n\nYour OTP is: {otp}. Please enter this to confirm your estimation request.",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+        )
+
+        return render(request, "elite_interior/verify_otp.html")
+
+    return redirect("calculate")
+
+
+
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.conf import settings
+
+def verify_otp(request):
+    if request.method == "POST":
+        user_otp = request.POST.get("otp")
+        session_otp = request.session.get("otp")
+        form_data = request.session.get("form_data")
+
+        if user_otp == session_otp and form_data:
+            # Room estimation
+            room_rates = {
+                'Living Room': 50000,
+                'Kitchen': 40000,
+                'Bathroom': 30000,
+                'Bedroom': 45000,
+                'Dining': 35000,
+            }
+
+            room_breakdown = ""
+            total_room_cost = 0
+
+            for key, value in form_data["rooms"].items():
+                if key.startswith("rooms[") and key.endswith("]"):
+                    room_name = key[6:-1]
+                    try:
+                        qty = int(value)
+                    except (ValueError, TypeError):
+                        qty = 0
+                    cost = room_rates.get(room_name, 0) * qty
+                    total_room_cost += cost
+                    room_breakdown += f"{room_name}: {qty} × ₹{room_rates.get(room_name, 0)} = ₹{cost}\n"
+
+            # Package estimation
+            package_name = form_data['package']
+            package_items = BudgetItem.objects.filter(name__icontains=package_name)
+
+
+            package_breakdown = ""
+            total_package_cost = 0
+
+            for item in package_items:
+                package_breakdown += f"{item.name}: ₹{item.unit_price}\n"
+                total_package_cost += float(item.unit_price)
+
+            grand_total = total_room_cost + total_package_cost
+
+            # Final email body
+            subject = "New Budget Estimation Request"
+            body = f"""
+Name: {form_data['name']}
+Contact: {form_data['contact']}
+Email: {form_data['email']}
+Location: {form_data['location']}
+BHK: {form_data['bhk']}
+Selected Package: {package_name}
+
+Room Breakdown:
+{room_breakdown}
+Total Room Cost: ₹{total_room_cost}
+
+Package Offers:
+{package_breakdown}
+Total Package Cost: ₹{total_package_cost}
+
+---------------------
+Grand Estimated Total: ₹{grand_total}
+"""
+
+            # Send emails
+            send_mail(
+                subject=subject,
+                message=body,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[settings.ADMIN_EMAIL],
+            )
+
+            send_mail(
+                subject="Your Interior Budget Estimation Request",
+                message="Thank you for your request. Our team will get back to you soon.\n\n" + body,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[form_data["email"]],
+            )
+
+            messages.success(request, "Your estimation request has been submitted successfully!")
+            return redirect("home")
+
+        messages.error(request, "Invalid OTP. Please try again.")
+        return render(request, "elite_interior/verify_otp.html")
+
+    return redirect("calculate")
+
+
+
+def resend_otp(request):
+    form_data = request.session.get("form_data")
+    if form_data:
+        otp = random.randint(1000, 9999)
+        request.session["otp"] = str(otp)
+
+        send_mail(
+            subject="Your OTP for Budget Estimation Confirmation (Resent)",
+            message=f"Hi {form_data['name']},\n\nYour new OTP is: {otp}. Please enter this to confirm your estimation request.",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[form_data["email"]],
+        )
+
+        messages.success(request, "A new OTP has been sent to your email.")
+    else:
+        messages.error(request, "Session expired. Please start again.")
+        return redirect("calculate")
+
+    return redirect("verify_otp")
 
 
 

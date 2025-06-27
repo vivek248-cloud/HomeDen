@@ -20,7 +20,11 @@ urlpatterns = [
     
     path('submit-form/', submit_contact_form, name='submit_form'),
 
-    path('calculate/',calculate_budget,name='calculate'),
+        path('calculate/', calculate_budget, name='calculate'),  # for GET request (show form)
+        path('submit-estimation/', submit_estimation_form, name='submit_estimation_form'),  # for POST submission
+        path('verify-otp/', verify_otp, name='verify_otp'),
+    path('resend-otp/', resend_otp, name='resend_otp'),
+
     path('project/' , project_list,name='projects'),
 
     path('project_detail/<int:project_id>/', project_detail, name='project_detail'),

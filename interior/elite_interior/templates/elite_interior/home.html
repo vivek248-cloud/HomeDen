@@ -100,7 +100,7 @@
               <img src="{{ offer.image.url }}" alt="{{ project.title }}" class="img-fluid">
               <div class="package-overlay">
                 <a href="/HomeDen/{{ offer.title|lower }}/">
-                <h4><strong>{{offer.title}}</strong><br>{{offer.subtitle}}</h4>
+                <h4><strong>{% if offer.title == "ELEGANZA-PLUS" %}ELEGANZA{% else %}{{ offer.title }}{% endif %}</strong><br>{% if offer.subtitle %}{{offer.subtitle}}{% endif %}</h4>
                 </a>
               </div>
               <div class="package-footer">
@@ -154,7 +154,7 @@
       {% for item in grid %}
         <div class="grid-item {{ item.size|lower }} auto-show-up grid-item-effect" style="background-image: url('{{ item.image.url }}');">
           <a href="/HomeDen/{{ item.title|lower }}-projects/" class="grid-item-link">
-            <h2>{{ item.title|upper }}</h2>
+            <h2> {% if item.title|upper == "KIDSROOM" %} KID'S ROOM{% else %} {{ item.title|upper }} {% endif %}</h2>
           </a>
         </div>
       {% endfor %}

@@ -173,7 +173,7 @@
               <img src="{{ offer.image.url }}" alt="{{ project.title }}" class="img-fluid">
               <div class="package-overlay">
                 <a href="/HomeDen/{{ offer.title|lower }}/">
-                <h4><strong>{{offer.title}}</strong><br>{{offer.subtitle}}</h4>
+                <h4><strong>{% if offer.title == "ELEGANZA-PLUS" %}ELEGANZA{% else %}{{ offer.title }}{% endif %}</strong><br>{% if offer.subtitle %}{{offer.subtitle}}{% endif %}</h4>
                 </a>
               </div>
               <div class="package-footer">
