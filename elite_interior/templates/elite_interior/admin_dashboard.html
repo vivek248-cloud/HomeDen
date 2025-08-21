@@ -1,0 +1,316 @@
+{% extends 'elite_interior/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="margin-top: 7rem;">
+    <!-- Page Header -->
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">Client & Materials Dashboard</h2>
+        <p class="text-muted small">Fill in client details and add materials for your project.</p>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- Client Info -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white fw-bold">Client Information</div>
+            <div class="card shadow-sm mb-3 mt-3 mx-auto" style="max-width: 600px;">
+    <div class="card-body py-3 mx-3">
+        <div class="row g-2">
+            <div class="col-12">
+                {{ client_form.client_name.label_tag }}
+                {{ client_form.client_name }}
+            </div>
+            <div class="col-12">
+                {{ client_form.client_address.label_tag }}
+                {{ client_form.client_address }}
+            </div>
+            <div class="col-12">
+                {{ client_form.phone_number.label_tag }}
+                {{ client_form.phone_number }}
+            </div>
+            <div class="col-12">
+                {{ client_form.email_address.label_tag }}
+                {{ client_form.email_address }}
+            </div>
+            <div class="col-12">
+                {{ client_form.shop_name.label_tag }}
+                {{ client_form.shop_name }}
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
+
+        <!-- Materials Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center bg-dark text-white fw-bold">
+                <span>Materials</span>
+                <button type="button" id="addMaterial" class="btn btn-light btn-sm fw-bold">+ Add Material</button>
+            </div>
+            <div class="card-body" id="materialsContainer">
+                <p class="text-muted small mb-0">Click "Add Material" to insert a new material entry.</p>
+            </div>
+        </div>
+
+        <!-- Export Button -->
+        <div class="text-end mb-4">
+            <button id="exportPdfBtn" type="button" class="btn btn-primary btn-lg px-4">
+            <i class="bi bi-download"></i> Export
+            </button>
+        </div>
+
+</div>
+
+    </form>
+</div>
+
+
+<!-- JavaScript -->
+<script>
+let materialCount = 0;
+
+document.getElementById("addMaterial").addEventListener("click", function () {
+    materialCount++;
+
+    let container = document.getElementById("materialsContainer");
+
+
+    let newRow = document.createElement("div");
+    newRow.classList.add("card", "p-3", "mx-auto", "mb-3", "shadow-sm");
+    newRow.style.maxWidth = "600px";
+
+    newRow.innerHTML = `
+        <div class="d-flex justify-content-between align-items-start mb-2">
+            <span class="badge bg-primary fs-6">${materialCount}</span>
+            <button type="button" class="btn btn-outline-danger btn-sm removeMaterial">
+                <i class="bi bi-x-circle"></i> Remove
+            </button>
+        </div>
+        <div class="row g-2">
+            <div class="col-12 col-sm-6">
+                <label class="form-label">Design place</label>
+                {{ material_form.design_place }}
+            </div>
+            <div class="col-12 col-sm-6">
+                <label class="form-label">Material</label>
+                {{ material_form.product }}
+            </div>
+            <div class="col-6 col-sm-3">
+                <label class="form-label">Height</label>
+                {{ material_form.height }}
+            </div>
+            <div class="col-6 col-sm-3">
+                <label class="form-label">Width</label>
+                {{ material_form.width }}
+            </div>
+            <div class="col-6 col-sm-3">
+                <label class="form-label">Thickness</label>
+                {{ material_form.thickness }}
+            </div>
+            <div class="col-6 col-sm-3">
+                <label class="form-label">Qty</label>
+                {{ material_form.qty }}
+            </div>
+            <div class="col-6 col-sm-3">
+                <label class="form-label">Unit</label>
+                {{ material_form.unit }}
+            </div>
+            <div class="col-12 col-sm-6">
+                <label class="form-label">Category</label>
+                {{ material_form.category }}
+            </div>
+            <div class="col-6 col-sm-3">
+                <label class="form-label">Brand</label>
+                {{ material_form.brand }}
+            </div>
+
+
+            <div class="col-6 col-sm-3">
+                <label class="form-label">Origin</label>
+                {{ material_form.origin }}
+            </div>
+
+
+            <div class="col-6 col-sm-3">
+                <label class="form-label">Series Type</label>
+                {{ material_form.series_type }}
+            </div>
+            <div class="col-6 col-sm-3">
+                <label class="form-label">Offer</label>
+                {{ material_form.offer }}
+            </div>
+            <div class="col-12">
+                <label class="form-label">Description</label>
+                {{ material_form.description }}
+            </div>
+        </div>
+        <div class="mt-2 fw-bold text-success total-display">Total: 0 Rs</div>
+        <div class="mt-2 fw-bold text-success grand-total-display">Grand Total: 0 Rs</div>
+    `;
+
+    container.appendChild(newRow);
+
+    // store price per cm in row
+    newRow.dataset.pricePerCm = 0;
+
+    // Remove row
+    newRow.querySelector(".removeMaterial").addEventListener("click", function () {
+        newRow.remove();
+        updateNumbers();
+    });
+
+    // Product change → fetch price & series
+newRow.querySelector(".product-select").addEventListener("change", function () {
+    let productId = this.value;
+    let seriesField = newRow.querySelector("input[name$='series_type']");
+    let thicknessField = newRow.querySelector("input[name$='thickness']");
+    let unitNameField = newRow.querySelector("input[name$='unit']");
+    let originField = newRow.querySelector("input[name$='origin']");
+
+    if (productId) {
+        fetch(`/get-series-type/?product_id=${productId}`)
+    .then(res => res.json())
+    .then(data => {
+        seriesField.value = data.series_type || "";
+        thicknessField.value = data.thickness || "";
+        unitNameField.value = data.unit_name || "";
+        originField.value = data.origin || "";
+        newRow.dataset.pricePerCm = data.price_per_cm || 0;
+        newRow.dataset.unitName = data.unit_name || "";
+        calculateTotal(newRow);
+    });
+
+    } else {
+        seriesField.value = "";
+        thicknessField.value = "";
+        unitNameField.value = "";
+        originField.value = "";
+        newRow.dataset.rate = 0;
+        newRow.dataset.unitName = "";
+        calculateTotal(newRow);
+    }
+});
+
+
+
+
+    // Input change → recalc
+    newRow.querySelectorAll("input, select").forEach(el => {
+    el.addEventListener("input", () => calculateTotal(newRow));
+    el.addEventListener("change", () => calculateTotal(newRow));
+});
+    
+});
+
+function updateNumbers() {
+    const badges = document.querySelectorAll("#materialsContainer .badge");
+    badges.forEach((badge, index) => {
+        badge.textContent = index + 1;
+    });
+    materialCount = badges.length;
+}
+
+function calculateTotal(row) {
+    let height = parseFloat(row.querySelector("input[name$='height']").value) || 0;
+    let width = parseFloat(row.querySelector("input[name$='width']").value) || 0;
+    let qty = parseFloat(row.querySelector("input[name$='qty']").value) || 0;
+    let offer = row.querySelector("input[name$='offer']").value || 0;
+    let price = parseFloat(row.dataset.pricePerCm) || 0;
+    let unitName = (row.dataset.unitName || "").trim();
+
+    let total = 0;
+    let offerPrice = parseFloat(offer) || 0;
+
+    total = height * width * qty * price;
+    offerPrice = total - (total * (offerPrice / 100));
+
+    row.querySelector(".total-display").textContent = `Total: ${total.toFixed(2)} Rs`;
+    row.querySelector(".grand-total-display").textContent = `Grand Total: ${offerPrice.toFixed(2)} Rs`;
+}
+
+function collectMaterialsData() {
+    let materials = [];
+    document.querySelectorAll("#materialsContainer .card").forEach((row, index) => {
+        materials.push({
+            index: index + 1,
+            design_place: row.querySelector("[name$='design_place']")?.value || "",
+            product: row.querySelector(".product-select")?.selectedOptions[0]?.text || "",
+            height: row.querySelector("[name$='height']")?.value || "",
+            width: row.querySelector("[name$='width']")?.value || "",
+            thickness: row.querySelector("[name$='thickness']")?.value || "",
+            qty: row.querySelector("[name$='qty']")?.value || "",
+            unit: row.querySelector("[name$='unit']")?.value || "",
+            category: row.querySelector("[name$='category']")?.value || "",
+            brand: row.querySelector("[name$='brand']")?.selectedOptions[0]?.text || "",
+            origin: row.querySelector("[name$='origin']")?.value || "",
+            series_type: row.querySelector("[name$='series_type']")?.value || "",
+            offer: row.querySelector(".grand-total-display")?.textContent.replace("Grand Total:", "").trim() || "0",
+            description: row.querySelector("[name$='description']")?.value || "",
+            total: row.querySelector(".total-display")?.textContent.replace("Total:", "").trim() || "0"
+        });
+    });
+    return materials;
+}
+
+function collectClientData() {
+    return {
+        client_name: document.querySelector("#clientName")?.value || "",
+        client_address: document.querySelector("#clientAddress")?.value || "",
+        phone_number: document.querySelector("#clientPhone")?.value || "",
+        email_address: document.querySelector("#clientEmail")?.value || "",
+        shop_name: document.querySelector("#shopName")?.value || ""
+    };
+}
+
+
+
+
+
+{% comment %} document.getElementById("exportPdfBtn").addEventListener("click", function () {
+    let materials = collectMaterialsData();
+    let client = collectClientData();
+
+    fetch("/export-pdf/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+        },
+        body: JSON.stringify({ materials, client:collectClientData() })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Failed to export PDF");
+        return response.blob();
+    })
+    .then(blob => {
+        let url = window.URL.createObjectURL(blob);
+        let a = document.createElement("a");
+        a.href = url;
+        a.download = "materials.pdf";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(err => alert("Error: " + err.message));
+}); {% endcomment %}
+
+document.getElementById("exportPdfBtn").addEventListener("click", function () {
+    let materials = collectMaterialsData();
+    let client = collectClientData();
+
+    // Save data in localStorage (so preview page can fetch it)
+    localStorage.setItem("pdfData", JSON.stringify({ materials, client }));
+
+    // Redirect to preview page
+    window.location.href = "/preview-pdf/";
+});
+
+
+</script>
+
+
+{% endblock %}

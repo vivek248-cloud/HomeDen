@@ -1,0 +1,336 @@
+
+{% extends 'elite_interior/base.html' %}
+
+{% load format_extras %}
+{% load i18n %}
+{% load static %}
+{% block extra_css %}
+
+{% endblock %}
+
+
+{% block content %}
+<div class="container py-5" style="margin-top: 100px;">
+  <div class="card shadow border-0 rounded-4 px-3 px-md-5 py-4 bg-white">
+    <h2 class="text-center fw-bold mb-4 text-dark">
+      <i class="bi bi-calculator-fill text-success me-2"></i>
+      <span class="text-muted">- Kids Room Estimation</span>
+    </h2>
+
+    <form method="post" id="wizardForm" action="{% url 'submit_estimation_form' %}">
+      {% csrf_token %}
+
+      <!-- Step 1: Select Dimension -->
+      <div class="step2" id="step1">
+        <h5 class="fw-semibold text-success mb-3">
+          Step 1/4: Select the nearest Kids Room dimension
+        </h5>
+
+        <div class="row g-3 mb-4">
+          {% for size in kids_room_sizes %}
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="size" 
+                     value="{{ size }}" 
+                     id="size_{{ forloop.counter }}" 
+                     required>
+              <label class="form-check-label fw-semibold" for="size_{{ forloop.counter }}">
+                {{ size }}
+              </label>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="text-end">
+          <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(2)">
+            Next
+          </button>
+        </div>
+      </div>
+
+<!-- Step 2: Select Kids Room Style -->
+<div class="step2 d-none" id="step2">
+  <h5 class="fw-semibold text-success mb-3">Step 2/4: Select the style of your Kids Room</h5>
+  <div class="row g-4 align-items-center">
+    <div class="col-md-6">
+      <div class="row g-3">
+
+        <!-- Transitional -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="kids_room_type"
+                   value="Transitional Kids Room"
+                   id="kids_room_transitional"
+                   required>
+            <label class="form-check-label fw-semibold" for="kids_room_transitional">
+              Transitional Kids Room
+            </label>
+          </div>
+        </div>
+
+        <!-- Modern -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="kids_room_type"
+                   value="Modern Kids Room"
+                   id="kids_room_modern">
+            <label class="form-check-label fw-semibold" for="kids_room_modern">
+              Modern Kids Room
+            </label>
+          </div>
+        </div>
+
+        <!-- Contemporary -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="kids_room_type"
+                   value="Contemporary Kids Room"
+                   id="kids_room_contemporary">
+            <label class="form-check-label fw-semibold" for="kids_room_contemporary">
+              Contemporary Kids Room
+            </label>
+          </div>
+        </div>
+
+        <!-- Traditional -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="kids_room_type"
+                   value="Indian Kids Room"
+                   id="kids_room_indian">
+            <label class="form-check-label fw-semibold" for="kids_room_indian">
+              Indian Kids Room
+            </label>
+          </div>
+        </div>
+
+        <!-- Farmhouse -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="kids_room_type"
+                   value="American Kids Room"
+                   id="kids_room_american">
+            <label class="form-check-label fw-semibold" for="kids_room_american">
+              American Kids Room
+            </label>
+          </div>
+        </div>
+
+        <!-- Rustic -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="kids_room_type"
+                   value="Eclectic Kids Room"
+                   id="kids_room_eclectic">
+            <label class="form-check-label fw-semibold" for="kids_room_eclectic">
+              Eclectic Kids Room
+            </label>
+          </div>
+        </div>
+
+        <!-- Industrial -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="kids_room_type"
+                   value="Industrial Kids Room"
+                   id="kids_room_industrial">
+            <label class="form-check-label fw-semibold" for="kids_room_industrial">
+              Industrial Kids Room
+            </label>
+          </div>
+        </div>
+
+        <!-- Mediterranean -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="kids_room_type"
+                   value="Mediterranean Kids Room"
+                   id="kids_room_mediterranean">
+            <label class="form-check-label fw-semibold" for="kids_room_mediterranean">
+              Mediterranean Kids Room
+            </label>
+          </div>
+        </div>
+
+        <!-- Craftsman -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="kids_room_type"
+                   value="Tropical Kids Room"
+                   id="kids_room_tropical">
+            <label class="form-check-label fw-semibold" for="kids_room_tropical">
+              Tropical Kids Room
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Dynamic Image -->
+    <div class="col-md-6 text-center">
+      <a id="kids_room_link" href="#" target="_blank">
+        <img id="kids_room_type_img"
+             src="https://st.hzcdn.com/simgs/35e1d0a205cc8351_3-1890/transitional-kids.jpg"
+             alt="Kids Room Type"
+             class="img-fluid rounded-3 shadow-sm"
+             style="height: 250px; object-fit: cover;">
+      </a>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between mt-4">
+    <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(1)">Back</button>
+    <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(3)">Next</button>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const radios = document.querySelectorAll('input[name="kids_room_type"]');
+    const img = document.getElementById("kids_room_type_img");
+    const link = document.getElementById("kids_room_link");
+
+    // Map styles to images + links
+    const images = {
+      "Transitional Kids Room": {
+        src: "https://st.hzcdn.com/simgs/35e1d0a205cc8351_3-1890/transitional-kids.jpg",
+        link: "https://www.houzz.in/photos/silver-oak-home-phvw-vp~203350271"
+      },
+      "Modern Kids Room": {
+        src: "https://st.hzcdn.com/simgs/ae11d8960345c474_3-8837/modern-kids.jpg",
+        link: "https://www.houzz.in/hznb/photos/dark-blue-modern-kids-bedroom-phvw-vp~191160946"
+      },
+      "Contemporary Kids Room": {
+        src: "https://st.hzcdn.com/simgs/e051492c06586b0e_3-0731/contemporary-kids.jpg",
+        link: "https://www.houzz.in/photos/the-nautical-escape-phvw-vp~205542293"
+      },
+      "Indian Kids Room": {
+        src: "https://st.hzcdn.com/simgs/5bb15e6e03fbab73_3-5142/indian-kids.jpg",
+        link: "https://www.houzz.in/photos/kids-room-interior-phvw-vp~195515395"
+      },
+      "American Kids Room": {
+        src: "https://st.hzcdn.com/simgs/7c91247c043cb6a5_3-0522/american-traditional-kids.jpg",
+        link: "https://www.houzz.in/hznb/photos/sherwood-penthouse-phvw-vp~196919343"
+      },
+      "Eclectic Kids Room": {
+        src: "https://st.hzcdn.com/simgs/8301f7c002c1bd89_3-4141/eclectic-kids.jpg",
+        link: "https://www.houzz.in/hznb/photos/dark-green-boy-s-room-phvw-vp~187843910"
+      },
+      "Industrial Kids Room": {
+        src: "https://st.hzcdn.com/simgs/pictures/kids-rooms/wynkoop-loft-earthwood-custom-remodeling-inc-img~ee116a7a0a281509_3-7861-1-40e6107.jpg",
+        link: "https://www.houzz.in/hznb/photos/wynkoop-loft-phvw-vp~108059544"
+      },
+      "Mediterranean Kids Room": {
+        src: "https://st.hzcdn.com/simgs/pictures/kids-rooms/santa-monica-italian-estate-christine-markatos-design-img~1ff1a9aa05f6feb2_3-8359-1-02e77f4.jpg",
+        link: "https://www.houzz.in/hznb/photos/santa-monica-italian-estate-phvw-vp~39709781"
+      },
+      "Tropical Kids Room": {
+        src: "https://st.hzcdn.com/simgs/pictures/kids-rooms/parade-of-homes-house-robin-bond-interiors-img~e01125f802541491_3-3383-1-86714d5.jpg",
+        link: "https://www.houzz.in/hznb/photos/parade-of-homes-house-phvw-vp~6118001"
+      }
+    };
+
+    // Change image & link when radio is selected
+    radios.forEach(radio => {
+      radio.addEventListener("change", function () {
+        if (images[this.value]) {
+          img.src = images[this.value].src;
+          link.href = images[this.value].link;
+        } else {
+          img.src = "{% static 'images/placeholder.jpg' %}";
+          link.href = "#";
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+      <!-- Step 3: Select Package -->
+      <div class="step2 d-none" id="step3">
+        <h5 class="fw-semibold text-success mb-3">Step 3/4: Choose Your Package</h5>
+        <div class="row g-3 mb-4">
+          {% for pkg in packages %}
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" type="radio" name="package" value="{{ pkg }}" id="pkg_{{ forloop.counter }}" required>
+              <label class="form-check-label" for="pkg_{{ forloop.counter }}">{{ pkg }}</label>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(2)">Back</button>
+          <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(4)">Next</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Final Form -->
+      <div class="step2 d-none" id="step4">
+        <h5 class="fw-semibold text-success mb-3">Step 4/4: Your Details</h5>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Name</label>
+            <input type="text" name="name" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Contact</label>
+            <input type="tel" name="contact" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Location</label>
+            <input type="text" name="location" class="form-control shadow-sm" required>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(3)">Back</button>
+          <button type="submit" class="btn btn-success px-5 rounded-pill">Verify & Submit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+let currentStep = 1;
+function nextStep(step) {
+  document.getElementById(`step${currentStep}`).classList.add('d-none');
+  document.getElementById(`step${step}`).classList.remove('d-none');
+  currentStep = step;
+}
+function prevStep(step) {
+  document.getElementById(`step${currentStep}`).classList.add('d-none');
+  document.getElementById(`step${step}`).classList.remove('d-none');
+  currentStep = step;
+}
+</script>
+{% endblock %}
+

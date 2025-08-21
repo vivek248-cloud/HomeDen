@@ -1,0 +1,323 @@
+
+{% extends 'elite_interior/base.html' %}
+
+{% load format_extras %}
+{% load i18n %}
+{% load static %}
+{% block extra_css %}
+
+{% endblock %}
+
+
+{% block content %}
+<div class="container py-5" style="margin-top: 100px;">
+  <div class="card shadow border-0 rounded-4 px-3 px-md-5 py-4 bg-white">
+    <h2 class="text-center fw-bold mb-4 text-dark">
+      <i class="bi bi-calculator-fill text-success me-2"></i>
+      <span class="text-muted">- Bedroom Estimation</span>
+    </h2>
+
+    <form method="post" id="wizardForm" action="{% url 'submit_estimation_form' %}">
+      {% csrf_token %}
+
+      <!-- Step 1: Select Dimension -->
+      <div class="step2" id="step1">
+        <h5 class="fw-semibold text-success mb-3">
+          Step 1/4: Select the nearest Bedroom dimension
+        </h5>
+
+        <div class="row g-3 mb-4">
+          {% for size in bedroom_sizes %}
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="size" 
+                     value="{{ size }}" 
+                     id="size_{{ forloop.counter }}" 
+                     required>
+              <label class="form-check-label fw-semibold" for="size_{{ forloop.counter }}">
+                {{ size }}
+              </label>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="text-end">
+          <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(2)">
+            Next
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Select Bedroom Shape -->
+<div class="step2 d-none" id="step2">
+  <h5 class="fw-semibold text-success mb-3">Step 2/4: Select the shape of your Bedroom</h5>
+  <div class="row g-4 align-items-center">
+      <div class="col-md-6">
+        <div class="row g-3">
+          
+          <!-- Contemporary Bedroom -->
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="bedroom_type" 
+                     value="Contemporary Bedroom" 
+                     id="bedroom_contemporary" 
+                     required>
+              <label class="form-check-label fw-semibold" for="bedroom_contemporary">
+                Contemporary Bedroom
+              </label>
+            </div>
+          </div>
+
+         
+
+          <!-- Industrial Style Bedroom -->
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="bedroom_type" 
+                     value="Industrial Style Bedroom" 
+                     id="bedroom_industrial">
+              <label class="form-check-label fw-semibold" for="bedroom_industrial">
+                Industrial Style Bedroom
+              </label>
+            </div>
+          </div>
+
+          <!-- Mediterranean Revival Architecture -->
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="bedroom_type" 
+                     value="Mediterranean Revival Architecture" 
+                     id="bedroom_mediterranean">
+              <label class="form-check-label fw-semibold" for="bedroom_mediterranean">
+                Mediterranean Revival Architecture
+              </label>
+            </div>
+          </div>
+
+          <!-- Scandinavian Style Bedroom -->
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="bedroom_type" 
+                     value="Scandinavian Style Bedroom" 
+                     id="bedroom_scandinavian">
+              <label class="form-check-label fw-semibold" for="bedroom_scandinavian">
+                Scandinavian Style Bedroom
+              </label>
+            </div>
+          </div>
+
+          <!-- Transitional Style Bedroom -->
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="bedroom_type" 
+                     value="Transitional Style Bedroom" 
+                     id="bedroom_transitional">
+              <label class="form-check-label fw-semibold" for="bedroom_transitional">
+                Transitional Style Bedroom
+              </label>
+            </div>
+          </div>
+
+          <!-- Eclectic Style Bedroom -->
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="bedroom_type" 
+                     value="Eclectic Style Bedroom" 
+                     id="bedroom_eclectic">
+              <label class="form-check-label fw-semibold" for="bedroom_eclectic">
+                Eclectic Style Bedroom
+              </label>
+            </div>
+          </div>
+
+          <!-- Indian Style Bedroom -->
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="bedroom_type" 
+                     value="Indian Style Bedroom" 
+                     id="bedroom_indian">
+              <label class="form-check-label fw-semibold" for="bedroom_indian">
+                Indian Style Bedroom
+              </label>
+            </div>
+          </div>
+
+          <!-- Rustic Style Bedroom -->
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="bedroom_type" 
+                     value="Coastal Style Bedroom" 
+                     id="bedroom_coastal">
+              <label class="form-check-label fw-semibold" for="bedroom_coastal">
+                Coastal Style Bedroom
+              </label>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+
+
+    <!-- Dynamic Image -->
+    <div class="col-md-6 text-center">
+    <a id="bedroom-link" href="#" target="_blank">
+        <img id="bedroom-type-img" 
+            src="https://st.hzcdn.com/simgs/2661fda4083feafe_8-9391/contemporary-bedroom.jpg" 
+            alt="Bedroom Type" 
+            class="img-fluid rounded-3 shadow-sm"
+            style="height: 250px; object-fit: cover;">
+    </a>
+    </div>
+
+  </div>
+
+  <div class="d-flex justify-content-between mt-4">
+    <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(1)">Back</button>
+    <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(3)">Next</button>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const radios = document.querySelectorAll('input[name="bedroom_type"]');
+    const img = document.getElementById("bedroom-type-img");
+    const link = document.getElementById("bedroom-link");
+
+    // Map radio values to Houzz images + links
+    const images = {
+      "Contemporary Bedroom": {
+        src: "https://st.hzcdn.com/simgs/2661fda4083feafe_8-9391/contemporary-bedroom.jpg",
+        link: "https://www.houzz.in/photos/mezzaria-residence-phvw-vp~211784832"
+      },
+
+      "Industrial Style Bedroom": {
+        src: "https://st.hzcdn.com/simgs/dda1d4860719644d_3-1442/industrial-bedroom.jpg",
+        link: "https://www.houzz.in/hznb/photos/whitney-loft-l-riverfront-condo-phvw-vp~208158053"
+      },
+      "Mediterranean Revival Architecture": {
+        src: "https://st.hzcdn.com/simgs/pictures/bedrooms/euclid-residence-shm-architects-img~a241fda80400d966_3-0118-1-102a2d1.jpg",
+        link: "https://www.houzz.in/hznb/photos/euclid-residence-phvw-vp~16511456"
+      },
+      "Scandinavian Style Bedroom": {
+        src: "https://st.hzcdn.com/simgs/3c41108f0320a434_3-3594/scandinavian-bedroom.jpg",
+        link: "https://www.houzz.in/photos/twin-house-phvw-vp~190212631"
+      },
+      "Transitional Style Bedroom": {
+        src: "https://st.hzcdn.com/simgs/92d1e4d8087e8b79_3-3707/transitional-bedroom.jpg",
+        link: "https://www.houzz.in/photos/example-traditional-bedroom"
+      },
+      "Eclectic Style Bedroom": {
+        src: "https://st.hzcdn.com/simgs/fdc17701086fcc2f_3-6675/eclectic-bedroom.jpg",
+        link: "https://www.houzz.in/hznb/photos/canonbury-phvw-vp~212476418"
+      },
+      "Indian Style Bedroom": {
+        src: "https://st.hzcdn.com/simgs/9fd18f890891c43b_3-3420/indian-bedroom.jpg",
+        link: "https://www.houzz.in/photos/interior-and-external-building-phvw-vp~212914395"
+      },
+      "Coastal Style Bedroom": {
+        src: "https://st.hzcdn.com/simgs/pictures/bedrooms/bedrooms-by-mary-hannah-interiors-mary-hannah-interiors-img~a1b1d0b20d1a3913_3-4010-1-0ec2dab.jpg",
+        link: "https://www.houzz.in/hznb/photos/bedrooms-by-mary-hannah-interiors-phvw-vp~144949816"
+      }
+    };
+
+    // Change image & link when radio is selected
+    radios.forEach(radio => {
+      radio.addEventListener("change", function () {
+        if (images[this.value]) {
+          img.src = images[this.value].src;
+          link.href = images[this.value].link;
+        } else {
+          img.src = "{% static 'images/placeholder.jpg' %}";
+          link.href = "#";
+        }
+      });
+    });
+  });
+</script>
+
+
+
+      <!-- Step 3: Select Package -->
+      <div class="step2 d-none" id="step3">
+        <h5 class="fw-semibold text-success mb-3">Step 3/4: Choose Your Package</h5>
+        <div class="row g-3 mb-4">
+          {% for pkg in packages %}
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" type="radio" name="package" value="{{ pkg }}" id="pkg_{{ forloop.counter }}" required>
+              <label class="form-check-label" for="pkg_{{ forloop.counter }}">{{ pkg }}</label>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(2)">Back</button>
+          <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(4)">Next</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Final Form -->
+      <div class="step2 d-none" id="step4">
+        <h5 class="fw-semibold text-success mb-3">Step 4/4: Your Details</h5>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Name</label>
+            <input type="text" name="name" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Contact</label>
+            <input type="tel" name="contact" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Location</label>
+            <input type="text" name="location" class="form-control shadow-sm" required>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(3)">Back</button>
+          <button type="submit" class="btn btn-success px-5 rounded-pill">Verify & Submit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+let currentStep = 1;
+function nextStep(step) {
+  document.getElementById(`step${currentStep}`).classList.add('d-none');
+  document.getElementById(`step${step}`).classList.remove('d-none');
+  currentStep = step;
+}
+function prevStep(step) {
+  document.getElementById(`step${currentStep}`).classList.add('d-none');
+  document.getElementById(`step${step}`).classList.remove('d-none');
+  currentStep = step;
+}
+</script>
+{% endblock %}
+

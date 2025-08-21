@@ -21,12 +21,14 @@ admin.site.register(SubCategory)
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'subcategory', 'created_at')
+    prepopulated_fields = {"slug": ("name",)}
     list_filter = ('category', 'subcategory')
 
 @admin.register(Blog)
 class BlogAdmin(admin.ModelAdmin):
     list_display = ('title', 'created_at')
     search_fields = ('title', 'description')
+    prepopulated_fields = {"slug": ("title",)}
     list_filter = ('created_at','date',)
     ordering = ('-created_at','-date',)
 
@@ -63,3 +65,22 @@ class MyAdminSite(AdminSite):
         return context
 
 admin_site = MyAdminSite(name='myadmin')
+
+
+# admin.py
+@admin.register(ProjectGallery)
+class ProjectGalleryAdmin(admin.ModelAdmin):
+    list_display = ("title", "caption", "created_at")
+    search_fields = ("title", "caption")
+    list_filter = ("created_at",)
+
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ("name", "category", "brand", "rate", "unit")
+    list_filter = ("category", "brand")
+    search_fields = ("name",)
+
+admin.site.register(ProductCategory)
+admin.site.register(Brand)
+admin.site.register(Unit)

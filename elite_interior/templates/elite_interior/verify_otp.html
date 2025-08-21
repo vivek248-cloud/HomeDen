@@ -1,0 +1,71 @@
+{% extends 'elite_interior/base.html' %}
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="card shadow-lg p-4 border-0 rounded-4" style="max-width: 450px; width: 100%; background: linear-gradient(135deg, #f3f9ff, #e8f0ff);">
+    
+    <!-- Title -->
+    <h3 class="text-center fw-bold mb-3 text-primary">
+      <i class="bi bi-shield-lock-fill me-2"></i>Verify OTP
+    </h3>
+    <p class="text-center text-muted small mb-4">
+      Enter the 4-digit code sent to your registered email.
+    </p>
+
+    <!-- Timer -->
+    <div class="text-center mb-4">
+      <span class="fw-bold me-1">Expires in:</span>
+      <span id="timer" class="badge bg-danger fs-6 px-3 py-2">02:00</span>
+    </div>
+
+    <!-- OTP Form -->
+    
+      <form method="post" action="{% url 'verify_otp' %}">
+        {% csrf_token %}
+        <div class="mb-4">
+          <input type="text" name="otp" 
+                class="form-control text-center fs-4 fw-bold rounded-pill border-primary shadow-sm" 
+                maxlength="4" placeholder="----" required>
+        </div>
+        <div class="text-center">
+          <button type="submit" id="verifyBtn" class="btn btn-success btn-lg rounded-pill shadow-sm px-5 " 
+                  style="width: 200px;height: 50px;">
+            <i class="bi bi-check2-circle me-1"></i> Verify
+          </button>
+        </div>
+      </form>
+
+
+    <!-- Resend OTP -->
+    <form method="post" action="{% url 'resend_otp' %}" class="text-center mt-4">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-link text-decoration-none text-white fw-semibold btn-success">
+        <i class="bi bi-arrow-repeat me-1"></i> Resend OTP
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Timer Script -->
+<script>
+  let timeLeft = 300; // 5 minutes
+  const timerEl = document.getElementById('timer');
+  const verifyBtn = document.getElementById('verifyBtn');
+
+  const countdown = setInterval(() => {
+    let minutes = Math.floor(timeLeft / 60);
+    let seconds = timeLeft % 60;
+    timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+    if (timeLeft <= 0) {
+      clearInterval(countdown);
+      timerEl.textContent = "Expired";
+      timerEl.classList.remove("bg-danger");
+      timerEl.classList.add("bg-secondary");
+      verifyBtn.disabled = true;
+      verifyBtn.classList.remove("btn-success");
+      verifyBtn.classList.add("btn-secondary");
+    }
+    timeLeft--;
+  }, 1000);
+</script>
+{% endblock %}

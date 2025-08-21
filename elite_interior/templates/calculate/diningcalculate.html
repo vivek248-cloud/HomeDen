@@ -1,0 +1,336 @@
+
+{% extends 'elite_interior/base.html' %}
+
+{% load format_extras %}
+{% load i18n %}
+{% load static %}
+{% block extra_css %}
+
+{% endblock %}
+
+
+{% block content %}
+<div class="container py-5" style="margin-top: 100px;">
+  <div class="card shadow border-0 rounded-4 px-3 px-md-5 py-4 bg-white">
+    <h2 class="text-center fw-bold mb-4 text-dark">
+      <i class="bi bi-calculator-fill text-success me-2"></i>
+      <span class="text-muted">- Dining Estimation</span>
+    </h2>
+
+    <form method="post" id="wizardForm" action="{% url 'submit_estimation_form' %}">
+      {% csrf_token %}
+
+      <!-- Step 1: Select Dimension -->
+      <div class="step2" id="step1">
+        <h5 class="fw-semibold text-success mb-3">
+          Step 1/4: Select the nearest Dining dimension
+        </h5>
+
+        <div class="row g-3 mb-4">
+          {% for size in dining_sizes %}
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="size" 
+                     value="{{ size }}" 
+                     id="size_{{ forloop.counter }}" 
+                     required>
+              <label class="form-check-label fw-semibold" for="size_{{ forloop.counter }}">
+                {{ size }}
+              </label>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="text-end">
+          <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(2)">
+            Next
+          </button>
+        </div>
+      </div>
+
+<!-- Step 2: Select Dining Style -->
+<div class="step2 d-none" id="step2">
+  <h5 class="fw-semibold text-success mb-3">Step 2/4: Select the style of your Dining</h5>
+  <div class="row g-4 align-items-center">
+    <div class="col-md-6">
+      <div class="row g-3">
+
+        <!-- Transitional -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="dining_type"
+                   value="Transitional Dining"
+                   id="dining_transitional"
+                   required>
+            <label class="form-check-label fw-semibold" for="dining_transitional">
+              Transitional Dining
+            </label>
+          </div>
+        </div>
+
+        <!-- Modern -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="dining_type"
+                   value="Modern Dining"
+                   id="dining_modern">
+            <label class="form-check-label fw-semibold" for="dining_modern">
+              Modern Dining
+            </label>
+          </div>
+        </div>
+
+        <!-- Contemporary -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="dining_type"
+                   value="Contemporary Dining"
+                   id="dining_contemporary">
+            <label class="form-check-label fw-semibold" for="dining_contemporary">
+              Contemporary Dining
+            </label>
+          </div>
+        </div>
+
+        <!-- Traditional -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="dining_type"
+                   value="Indian Dining"
+                   id="dining_indian">
+            <label class="form-check-label fw-semibold" for="dining_indian">
+              Indian Dining
+            </label>
+          </div>
+        </div>
+
+        <!-- Farmhouse -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="dining_type"
+                   value="American Dining"
+                   id="dining_american">
+            <label class="form-check-label fw-semibold" for="dining_american">
+              American Dining
+            </label>
+          </div>
+        </div>
+
+        <!-- Rustic -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="dining_type"
+                   value="Eclectic Dining"
+                   id="dining_eclectic">
+            <label class="form-check-label fw-semibold" for="dining_eclectic">
+              Eclectic Dining
+            </label>
+          </div>
+        </div>
+
+        <!-- Industrial -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="dining_type"
+                   value="Industrial Dining"
+                   id="dining_industrial">
+            <label class="form-check-label fw-semibold" for="dining_industrial">
+              Industrial Dining
+            </label>
+          </div>
+        </div>
+
+        <!-- Mediterranean -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="dining_type"
+                   value="Mediterranean Dining"
+                   id="dining_mediterranean">
+            <label class="form-check-label fw-semibold" for="dining_mediterranean">
+              Mediterranean Dining
+            </label>
+          </div>
+        </div>
+
+        <!-- Craftsman -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="dining_type"
+                   value="Tropical Dining"
+                   id="dining_tropical">
+            <label class="form-check-label fw-semibold" for="dining_tropical">
+              Tropical Dining
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Dynamic Image -->
+    <div class="col-md-6 text-center">
+      <a id="dining-link" href="#" target="_blank">
+        <img id="dining-type-img"
+             src="https://st.hzcdn.com/simgs/a601cb6a07acc2d0_3-0745/transitional-dining-room.jpg"
+             alt="Dining Type"
+             class="img-fluid rounded-3 shadow-sm"
+             style="height: 250px; object-fit: cover;">
+      </a>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between mt-4">
+    <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(1)">Back</button>
+    <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(3)">Next</button>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const radios = document.querySelectorAll('input[name="dining_type"]');
+    const img = document.getElementById("dining-type-img");
+    const link = document.getElementById("dining-link");
+
+    // Map styles to images + links
+    const images = {
+      "Transitional Dining": {
+        src: "https://st.hzcdn.com/simgs/a601cb6a07acc2d0_3-0745/transitional-dining-room.jpg",
+        link: "https://www.houzz.in/hznb/photos/english-cottage-inspired-kitchen-renovation-in-decatur-phvw-vp~209877352"
+      },
+      "Modern Dining": {
+        src: "https://st.hzcdn.com/simgs/pictures/dining-rooms/home-19-sala-architects-homes-by-architects-tour-img~3331b41201f98756_3-1670-1-a1d2954.jpg",
+        link: "https://www.houzz.in/photos/home-19-sala-architects-phvw-vp~4992446"
+      },
+      "Contemporary Dining": {
+        src: "https://st.hzcdn.com/simgs/6b7176b1082f065c_3-0616/contemporary-dining-room.jpg",
+        link: "https://www.houzz.in/photos/the-house-in-the-foothills-phvw-vp~211577183"
+      },
+      "Indian Dining": {
+        src: "https://st.hzcdn.com/simgs/96f1cf07050ac603_3-7270/indian-dining-room.jpg",
+        link: "https://www.houzz.in/photos/the-farmhouse-phvw-vp~200450769"
+      },
+      "American Dining": {
+        src: "https://st.hzcdn.com/simgs/2031988c0028b8c0_3-6231/midcentury-dining-room.jpg",
+        link: "https://www.houzz.in/hznb/photos/bh-residence-phvw-vp~169679623"
+      },
+      "Eclectic Dining": {
+        src: "https://st.hzcdn.com/simgs/pictures/sale-da-pranzo/cucine-rovegnodesign-img~8bf1b95e0748665a_3-5142-1-2a9e2f6.jpg",
+        link: "https://www.houzz.in/hznb/photos/cucine-phvw-vp~55676402"
+      },
+      "Industrial Dining": {
+        src: "https://st.hzcdn.com/simgs/pictures/dining-rooms/modern-industrial-studio-unit-m-s-studio-co-img~0001017f0908244f_3-2951-1-39ed0f3.jpg",
+        link: "https://www.houzz.in/hznb/photos/modern-industrial-studio-unit-phvw-vp~91743210"
+      },
+      "Mediterranean Dining": {
+        src: "https://st.hzcdn.com/simgs/pictures/dining-rooms/dallas-edlen-residence-l-lumpkins-architect-inc-img~a921f3470a68b894_3-1100-1-113616b.jpg",
+        link: "https://www.houzz.in/hznb/photos/dallas-edlen-residence-phvw-vp~110992220"
+      },
+      "Tropical Dining": {
+        src: "https://st.hzcdn.com/simgs/pictures/dining-rooms/luxury-bohemian-house-chris-laughter-photo-img~be6119e70ab48a50_3-0458-1-d0e28bc.jpg",
+        link: "https://www.houzz.in/hznb/photos/luxury-bohemian-house-phvw-vp~115391704"
+      }
+    };
+
+    // Change image & link when radio is selected
+    radios.forEach(radio => {
+      radio.addEventListener("change", function () {
+        if (images[this.value]) {
+          img.src = images[this.value].src;
+          link.href = images[this.value].link;
+        } else {
+          img.src = "{% static 'images/placeholder.jpg' %}";
+          link.href = "#";
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+      <!-- Step 3: Select Package -->
+      <div class="step2 d-none" id="step3">
+        <h5 class="fw-semibold text-success mb-3">Step 3/4: Choose Your Package</h5>
+        <div class="row g-3 mb-4">
+          {% for pkg in packages %}
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" type="radio" name="package" value="{{ pkg }}" id="pkg_{{ forloop.counter }}" required>
+              <label class="form-check-label" for="pkg_{{ forloop.counter }}">{{ pkg }}</label>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(2)">Back</button>
+          <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(4)">Next</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Final Form -->
+      <div class="step2 d-none" id="step4">
+        <h5 class="fw-semibold text-success mb-3">Step 4/4: Your Details</h5>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Name</label>
+            <input type="text" name="name" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Contact</label>
+            <input type="tel" name="contact" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Location</label>
+            <input type="text" name="location" class="form-control shadow-sm" required>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(3)">Back</button>
+          <button type="submit" class="btn btn-success px-5 rounded-pill">Verify & Submit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+let currentStep = 1;
+function nextStep(step) {
+  document.getElementById(`step${currentStep}`).classList.add('d-none');
+  document.getElementById(`step${step}`).classList.remove('d-none');
+  currentStep = step;
+}
+function prevStep(step) {
+  document.getElementById(`step${currentStep}`).classList.add('d-none');
+  document.getElementById(`step${step}`).classList.remove('d-none');
+  currentStep = step;
+}
+</script>
+{% endblock %}
+

@@ -5,7 +5,7 @@
 
 
 <div class="hero-header position-relative text-white text-center d-flex align-items-center justify-content-center"
-     style="background-image: url('{% static "images/about-hall.jpeg" %}');
+     style="background-image: url('{% static "images/projectbg.jpg" %}');
             background-size: cover;
             background-position: center;
             min-height: 75vh;
@@ -34,6 +34,7 @@
             Your Dream Home Deserves
         </p>
     </div>
+     
 </div>
 
 <div class="container py-5 justify-content-center">
@@ -42,21 +43,21 @@
   <h2 class="mb-4 text-center fw-bold">YouTube Videos</h2>
   <div class="projectVideo-divider mx-auto mb-4"></div>
   
-  <div class="row g-4 justify-content-center">
+<div class="container py-5">
+  <div class="row g-3 justify-content-start align-items-stretch" id="video-container">
     {% for video in videos %}
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <div class="col-12 col-md-6 col-lg-4 mb-3">
         <div class="youtube-card position-relative overflow-hidden rounded shadow-sm">
           <div class="ratio ratio-16x9" style="min-height: 200px;">
-          <iframe
-            loading="lazy"
-            src="https://www.youtube.com/embed/{{ video.youtube_link }}"
-            title="{{ video.title }}"
-            frameborder="0"
-            allowfullscreen
-            class="w-100 h-100 rounded">
-          </iframe>
-        </div>
-
+            <iframe
+              loading="lazy"
+              src="https://www.youtube.com/embed/{{ video.youtube_link }}"
+              title="{{ video.title }}"
+              frameborder="0"
+              allowfullscreen
+              class="w-100 h-100 rounded">
+            </iframe>
+          </div>
           <div class="youtube-overlay position-absolute bottom-0 start-0 w-100 p-2 text-white">
             <h6 class="m-0">{{ video.title }}</h6>
           </div>
@@ -64,6 +65,49 @@
       </div>
     {% endfor %}
   </div>
+
+  {% if is_video_paginated %}
+    <div class="text-center mt-4">
+      <button id="loadMoreVideosBtn" class="btn btn-outline-success px-4 rounded-pill"
+              data-next-video-page="{{ next_video_page }}">
+        Load More
+      </button>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const videoBtn = document.getElementById('loadMoreVideosBtn');
+
+  if (videoBtn) {
+    videoBtn.addEventListener('click', function () {
+      const nextPage = videoBtn.getAttribute('data-next-video-page');
+      const url = new URL(window.location.href);
+      url.searchParams.set('video_page', nextPage);
+
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const newVideos = doc.querySelector('#video-container').innerHTML;
+
+          document.querySelector('#video-container').insertAdjacentHTML('beforeend', newVideos);
+
+          const newButton = doc.querySelector('#loadMoreVideosBtn');
+          if (newButton) {
+            videoBtn.setAttribute('data-next-video-page', newButton.getAttribute('data-next-video-page'));
+          } else {
+            videoBtn.remove(); // no more pages
+          }
+        });
+    });
+  }
+});
+</script>
+
+  
 </div>
 
 
@@ -85,30 +129,98 @@
     <li class="nav-item">
       <a class="nav-link {% if category == 'Bathroom' %}active{% endif %}" href="{% url 'bathroom_projects' %}">Bathroom</a>
     </li>
+     <li class="nav-item">
+      <a class="nav-link {% if category == 'kidsroom' %}active{% endif %}" href="{% url 'kidsroom_projects' %}">Kid's room</a>
+    </li>
     <li class="nav-item">
       <a class="nav-link {% if category == 'Our Projects' %}active{% endif %}" href="{% url 'projects' %}">All</a>
     </li>
   </ul>
 </div>
 
-<div class="container py-5">
-    <div class="row g-4">
-        {% for project in projects %}
-        <div class="col-lg-4 col-md-6 col-12">
-            <div class="card h-100 shadow-sm border-0 hover-shadow transition">
-                <img src="{{ project.image.url }}" class="card-img-top" alt="{{ project.name }}" style="height: 250px; object-fit: cover;">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">{{ project.category }}</h5>
-                    <h6 class="card-title">{{project.name}}</h6>
-                    <p class="card-text text-muted">{{ project.description|truncatewords:20 }}</p>
-                    <a href="{% url 'project_detail' project.id %}" class="btn view-btn mt-auto">View Details</a>
-                </div>
-            </div>
+{% comment %} <div class="container py-5">
+  <div class="row g-4" id="project-container">
+    {% for project in projects %}
+    <div class="col-lg-4 col-md-6 col-12">
+      <div class="card h-100 shadow-sm border-0">
+        <img src="{{ project.image.url }}" class="card-img-top" style="height: 250px; object-fit: cover;">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ project.title }}</h5>
+          <p class="card-text text-muted">{{ project.caption|default:"No description available" }}</p>
+          <!-- Remove slug since ProjectGallery has no slug -->
         </div>
-        {% empty %}
-        <p class="text-center text-muted">No projects available.</p>
-        {% endfor %}
+      </div>
     </div>
+    {% endfor %}
+  </div>
+
+  {% if is_project_paginated %}
+  <div class="text-center mt-4">
+    <button id="loadMoreBtn" class="btn btn-outline-success px-4 rounded-pill"
+      data-next-page="{{ next_project_page }}">Load More</button>
+  </div>
+  {% endif %}
+</div> {% endcomment %}
+
+
+<div class="container py-5">
+
+  <!-- Project Grid -->
+  <div class="row g-4" id="project-container">
+    {% for project in projects %}
+    <div class="col-lg-4 col-md-6 col-12">
+      
+      <div class="card h-100 shadow-sm border-0">
+        <img src="{{ project.image.url }}" class="card-img-top" style="height: 250px; object-fit: cover;">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ project.title }}</h5>
+          <p class="card-text text-muted">{{ project.caption|default:"No description available" }}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% if is_project_paginated %}
+  <div class="text-center mt-4">
+    <button id="loadMoreBtn" class="btn btn-outline-success px-4 rounded-pill"
+      data-next-page="{{ next_project_page }}">Load More</button>
+  </div>
+  {% endif %}
 </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const btn = document.getElementById('loadMoreBtn');
+  if (btn) {
+    btn.addEventListener('click', function () {
+      const nextPage = btn.getAttribute('data-next-page');
+      const url = new URL(window.location.href);
+      url.searchParams.set('page', nextPage);
+
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const newProjectCards = doc.querySelectorAll('#project-container > .col-lg-4');
+
+          const container = document.querySelector('#project-container');
+          newProjectCards.forEach(card => container.appendChild(card));
+
+          const newButton = doc.querySelector('#loadMoreBtn');
+          if (newButton) {
+            btn.setAttribute('data-next-page', newButton.getAttribute('data-next-page'));
+          } else {
+            btn.remove(); // No more pages
+          }
+        });
+    });
+  }
+});
+</script>
+
+
 
 {% endblock %}

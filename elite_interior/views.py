@@ -1,3 +1,5 @@
+from datetime import timedelta
+from unicodedata import category
 from django.shortcuts import render,get_object_or_404
 from django.conf import settings
 import os
@@ -10,19 +12,18 @@ from django.http import JsonResponse
 from twilio.rest import Client
 from django.core.mail import send_mail
 import json
-from .models import HomeSlider,PackageOffers
-from .models import WhatWeDo_Grid,Testimonial,YouTubeVideo
-from .models import Blog,BlogCategory
+
+
 from .models import*
 from django.db.models import Q
 from django.templatetags.static import static
 from django.db.models import F
-from django.shortcuts import render
-from django.db.models import Q
-from .models import Blog, BlogCategory
-from .models import Project
+
+
 from django.shortcuts import render, get_object_or_404
 import random
+
+from django.core.paginator import Paginator
 
 # from .models import DiagonalImages
 
@@ -108,17 +109,72 @@ def home(request):
 
 
 
-from django.db.models import Q
+
+# def blog_list(request):
+#     query = request.GET.get('q', '').strip()
+#     category_id = request.GET.get('category')
+
+    
+#     # Start with all blogs ordered by latest
+#     blogs_qs = Blog.objects.all().order_by('-created_at')
+
+#     # Apply search query
+#     if query:
+#         blogs_qs = blogs_qs.filter(
+#             Q(title__icontains=query) |
+#             Q(description__icontains=query) |
+#             Q(keyword__icontains=query)
+#         )
+
+#     # Apply category filter
+#     if category_id:
+#         blogs_qs = blogs_qs.filter(category__category__id=category_id)
+
+
+#     # Final filtered list
+#     blogs = list(blogs_qs)
+
+#     # Featured blogs from the same filtered list
+#     featured_blogs = blogs_qs.filter(is_featured=True)[:5]
+
+#     # Most viewed blogs (optional)
+#     most_viewed_blogs = Blog.objects.all().order_by('-views')[:5]
+
+#     # All blog categories
+#     categories = BlogCategory.objects.all()
+
+#     # Prepare context
+#     context = {
+#         'featured_blogs': featured_blogs,
+#         'most_viewed_blogs': most_viewed_blogs,
+#         'all_blogs': blogs,
+#         'categories': categories,
+#         'query': query,
+#         'selected_category': category_id,
+#     }
+
+#     # If no blogs found, try suggesting blogs only based on query (ignoring category)
+#     if not blogs and query and category_id:
+#         fallback_qs = Blog.objects.filter(
+#             Q(title__icontains=query) |
+#             Q(description__icontains=query) |
+#             Q(keyword__icontains=query)
+#         ).order_by('-created_at')
+#         context['suggested_results'] = fallback_qs[:5]
+
+#     return render(request, 'elite_interior/blog_list.html', context)
+
+
+
+
 
 def blog_list(request):
     query = request.GET.get('q', '').strip()
     category_id = request.GET.get('category')
+    page_number = request.GET.get('page', 1)
 
-    
-    # Start with all blogs ordered by latest
     blogs_qs = Blog.objects.all().order_by('-created_at')
 
-    # Apply search query
     if query:
         blogs_qs = blogs_qs.filter(
             Q(title__icontains=query) |
@@ -126,40 +182,24 @@ def blog_list(request):
             Q(keyword__icontains=query)
         )
 
-    # Apply category filter
     if category_id:
-        blogs_qs = blogs_qs.filter(category_id=category_id)
+        blogs_qs = blogs_qs.filter(category__category__id=category_id)
 
-    # Final filtered list
-    blogs = list(blogs_qs)
+    paginator = Paginator(blogs_qs, 6)  # 6 blogs per page
+    blogs_page = paginator.get_page(page_number)
 
-    # Featured blogs from the same filtered list
     featured_blogs = blogs_qs.filter(is_featured=True)[:5]
-
-    # Most viewed blogs (optional)
     most_viewed_blogs = Blog.objects.all().order_by('-views')[:5]
-
-    # All blog categories
     categories = BlogCategory.objects.all()
 
-    # Prepare context
     context = {
         'featured_blogs': featured_blogs,
         'most_viewed_blogs': most_viewed_blogs,
-        'all_blogs': blogs,
+        'blogs_page': blogs_page,  # paginated page
         'categories': categories,
         'query': query,
         'selected_category': category_id,
     }
-
-    # If no blogs found, try suggesting blogs only based on query (ignoring category)
-    if not blogs and query and category_id:
-        fallback_qs = Blog.objects.filter(
-            Q(title__icontains=query) |
-            Q(description__icontains=query) |
-            Q(keyword__icontains=query)
-        ).order_by('-created_at')
-        context['suggested_results'] = fallback_qs[:5]
 
     return render(request, 'elite_interior/blog_list.html', context)
 
@@ -167,16 +207,15 @@ def blog_list(request):
 
 
 
-from django.shortcuts import render, get_object_or_404
-from .models import Blog  # assuming your Blog model is here
 
-def blog_detail(request, blog_id):
-    blog = get_object_or_404(Blog, id=blog_id)
-    recent_blogs = Blog.objects.exclude(id=blog_id).order_by('-created_at')[:3]
+def blog_detail(request, slug):
+    blog = get_object_or_404(Blog, slug=slug)
+    recent_blogs = Blog.objects.exclude(id=blog.id).order_by('-created_at')[:3]
     query = request.GET.get('q', '').strip()
     category_id = request.GET.get('category')
-    session_key = f'viewed_blog_{blog_id}'
+    session_key = f'viewed_blog_{blog.id}'
 
+    
     if not request.session.get(session_key, False):
         blog.views += 1
         blog.save(update_fields=['views'])
@@ -228,16 +267,22 @@ def blog_detail(request, blog_id):
     }
     return render(request, 'elite_interior/blog_detail.html', context)
 
-from django.http import JsonResponse
-from .models import BlogCategory
+
+
 
 def category_suggestions(request):
-    term = request.GET.get('term', '')
+    query = request.GET.get('term', '')
     suggestions = []
 
-    if term:
-        categories = BlogCategory.objects.filter(name__icontains=term).values_list('name', flat=True)[:10]
-        suggestions = list(categories)
+    if query:
+        matched_categories = BlogCategory.objects.filter(
+            category__name__icontains=query
+        )[:10]
+
+        suggestions = [
+            {"id": cat.category.id, "label": cat.category.name, "value": cat.category.name}
+            for cat in matched_categories if cat.category
+        ]
 
     return JsonResponse(suggestions, safe=False)
 
@@ -251,38 +296,75 @@ def about(request):
 
 
 
+
+
+
+# def project_list(request):
+#     videos = YouTubeVideoProjects.objects.all()
+    
+#     # DO NOT slice here
+#     all_projects = Project.objects.all()
+    
+#     paginator = Paginator(all_projects, 6)  # Paginate full queryset
+#     page_number = request.GET.get('page')
+#     page_obj = paginator.get_page(page_number)
+
+#     context = {
+#         'videos': videos,
+#         'projects': page_obj,  # Paginated result
+#         'category': "Our Projects",
+#         'is_paginated': page_obj.has_next(),
+#         'next_page_number': page_obj.next_page_number() if page_obj.has_next() else None,
+#     }
+#     return render(request, 'elite_interior/projects.html', context)
+
+
 def project_list(request):
-    videos = YouTubeVideoProjects.objects.all()
-    projects = Project.objects.all()[:20]
+    all_projects = ProjectGallery.objects.all()
+    all_videos = YouTubeVideoProjects.objects.all()
+
+    # Paginate projects
+    project_paginator = Paginator(all_projects, 6)
+    project_page_number = request.GET.get('page')
+    project_page_obj = project_paginator.get_page(project_page_number)
+
+    # Paginate videos
+    video_paginator = Paginator(all_videos, 3)
+    video_page_number = request.GET.get('video_page')
+    video_page_obj = video_paginator.get_page(video_page_number)
+
     context = {
-        'videos':videos,
-        'projects': projects,
-        'category': "Our Projects"
+        'projects': project_page_obj,
+        'videos': video_page_obj,
+        'category': "Our Projects",
+
+        # Pagination flags
+        'is_project_paginated': project_page_obj.has_next(),
+        'next_project_page': project_page_obj.next_page_number() if project_page_obj.has_next() else None,
+
+        'is_video_paginated': video_page_obj.has_next(),
+        'next_video_page': video_page_obj.next_page_number() if video_page_obj.has_next() else None,
     }
+
     return render(request, 'elite_interior/projects.html', context)
 
 
+def project_detail(request, slug):
+    project = get_object_or_404(Project, slug=slug)
 
-
-def project_detail(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
-
-    # All projects with the same subcategory (excluding current one)
     all_projects = Project.objects.filter(subcategory=project.subcategory).exclude(pk=project.pk)[:8]
 
-    # Related projects from the same category (limit to 3)
     related_projects = list(
-        Project.objects.filter(category=project.category).exclude(pk=project.pk)
+        Project.objects.filter(subcategory=project.subcategory).exclude(pk=project.pk)
     )
     random.shuffle(related_projects)
     related_projects = related_projects[:6]
 
-    # Distinct subcategories in the same category (excluding current subcategory)
     subcategories = (
-        Project.objects
+        SubCategory.objects
         .filter(category=project.category)
-        .exclude(subcategory=project.subcategory)
-        .values_list('subcategory', flat=True)
+        .exclude(id=project.subcategory.id if project.subcategory else None)
+        .values_list('name', flat=True)
         .distinct()
     )
 
@@ -292,6 +374,21 @@ def project_detail(request, project_id):
         'all_projects': all_projects,
         'subcategories': subcategories
     })
+
+
+def product(request, slug):
+    project = get_object_or_404(Project, slug=slug)
+    related_projects = Project.objects.filter(subcategory=project.subcategory).exclude(id=project.id)
+
+    paginator = Paginator(related_projects, 6)  # show 6 per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "elite_interior/product.html", {
+        "project": project,
+        "all_projects": page_obj
+    })
+
 
 from collections import OrderedDict
 def get_unique_projects_by_category(category_name):
@@ -349,7 +446,7 @@ def bathroom_projects(request):
 def kidsroom_projects(request):
     projects = get_unique_projects_by_category('kidsroom')
     first_project = projects[0] if projects else None
-    return render(request, 'elite_interior/bathroom_projects.html', {
+    return render(request, 'elite_interior/kids.html', {
         'projects': projects,
         'first_project': first_project
     })
@@ -368,7 +465,7 @@ def eleganza(request):
     }
     return render(request,'elite_interior/eleganza.html',context)
 
-def essential_plus(request):
+def eleganza_plus(request):
     package_offers = PackageOffers.objects.all()
     context={
         'offers':package_offers
@@ -381,11 +478,157 @@ def contact(request):
     return render(request,'elite_interior/contact.html')
 
 from .forms import BudgetCalculationForm
-from .models import BudgetItem
 
-def calculate_budget(request):
+
+def kitchen_calculate_budget(request):
+   
+
+    kitchen_sizes = [
+        "7 ft. × 10 ft.",
+        "8 ft. × 9 ft.",
+        "9 ft. × 10 ft.",
+        "10 ft. × 10 ft.",
+        "11.5 ft. × 10 ft.",
+        "Custom"
+    ]
+
+    packages = ['Essential', 'Eleganza', 'Eleganza Plus']
+
     form = BudgetCalculationForm()
-    return render(request, 'elite_interior/calculate.html', {'form': form})
+    context = {
+        'form': form,
+        'kitchen_sizes': kitchen_sizes,
+        'packages': packages,
+    }
+    return render(request, 'calculate/kitchencalculate.html', context)
+
+def bedroom_calculate_budget(request):
+
+    bedroom_sizes = [
+        "7 ft. × 10 ft.",
+        "8 ft. × 9 ft.",
+        "9 ft. × 10 ft.",
+        "10 ft. × 10 ft.",
+        "11.5 ft. × 10 ft.",
+        "Custom"
+    ]
+
+    packages = ['Essential', 'Eleganza', 'Eleganza Plus']
+
+    form = BudgetCalculationForm()
+    context = {
+        'form': form,
+        'bedroom_sizes': bedroom_sizes,
+        'packages': packages,
+    }
+    return render(request, 'calculate/bedroomcalculate.html', context)
+
+def bathroom_calculate_budget(request):
+
+    bathroom_sizes = [
+        "7 ft. × 10 ft.",
+        "8 ft. × 9 ft.",
+        "9 ft. × 10 ft.",
+        "10 ft. × 10 ft.",
+        "11.5 ft. × 10 ft.",
+        "Custom"
+    ]
+
+    packages = ['Essential', 'Eleganza', 'Eleganza Plus']
+
+    form = BudgetCalculationForm()
+    context = {
+        'form': form,
+        'bathroom_sizes': bathroom_sizes,
+        'packages': packages,
+    }
+    return render(request, 'calculate/bathroomcalculation.html', context)
+
+def kidsroom_calculate_budget(request):
+
+    kidsroom_sizes = [
+        "7 ft. × 10 ft.",
+        "8 ft. × 9 ft.",
+        "9 ft. × 10 ft.",
+        "10 ft. × 10 ft.",
+        "11.5 ft. × 10 ft.",
+        "Custom"
+    ]
+
+    packages = ['Essential', 'Eleganza', 'Eleganza Plus']
+
+    form = BudgetCalculationForm()
+    context = {
+        'form': form,
+        'kids_room_sizes': kidsroom_sizes,
+        'packages': packages,
+    }
+    return render(request, 'calculate/Kidsroomcalculate.html', context)
+
+
+def livingroom_calculate_budget(request):
+
+    livingroom_sizes = [
+        "7 ft. × 10 ft.",
+        "8 ft. × 9 ft.",
+        "9 ft. × 10 ft.",
+        "10 ft. × 10 ft.",
+        "11.5 ft. × 10 ft.",
+        "Custom"
+    ]
+
+    packages = ['Essential', 'Eleganza', 'Eleganza Plus']
+
+    form = BudgetCalculationForm()
+    context = {
+        'form': form,
+        'living_room_sizes': livingroom_sizes,
+        'packages': packages,
+    }
+    return render(request, 'calculate/livingroomcalculate.html', context)
+
+
+def wardrobe_calculate_budget(request):
+
+    wardrobe_sizes = [
+        "7 ft. × 10 ft.",
+        "8 ft. × 9 ft.",
+        "9 ft. × 10 ft.",
+        "10 ft. × 10 ft.",
+        "11.5 ft. × 10 ft.",
+        "Custom"
+    ]
+
+    packages = ['Essential', 'Eleganza', 'Eleganza Plus']
+
+    form = BudgetCalculationForm()
+    context = {
+        'form': form,
+        'wardrobe_sizes': wardrobe_sizes,
+        'packages': packages,
+    }
+    return render(request, 'calculate/wardrobescalculate.html', context)
+
+def dining_calculate_budget(request):
+
+    dining_sizes = [
+        "7 ft. × 10 ft.",
+        "8 ft. × 9 ft.",
+        "9 ft. × 10 ft.",
+        "10 ft. × 10 ft.",
+        "11.5 ft. × 10 ft.",
+        "Custom"
+    ]
+
+    packages = ['Essential', 'Eleganza', 'Eleganza Plus']
+
+    form = BudgetCalculationForm()
+    context = {
+        'form': form,
+        'dining_sizes': dining_sizes,
+        'packages': packages,
+    }
+    return render(request, 'calculate/diningcalculate.html', context)
 
 def service(request):
     grid = WhatWeDo_Grid.objects.all()
@@ -394,61 +637,7 @@ def service(request):
     }
     return render(request,'elite_interior/service.html',context)
 
-# def design_consultant(request):
-#     home_slider = HomeSlider.objects.all()
-#     package_offers =PackageOffers.objects.all()
-#     grid = WhatWeDo_Grid.objects.all()
-#     test = Testimonial.objects.all()
-#     context = {'home_sliders': home_slider,
-#                'offers':package_offers,
-#                'grid':grid,
-#                'test':test,
-#                }
-    
-#     if request.method == 'POST':
-#         name = request.POST.get('name')
-#         contact = request.POST.get('contact')
-#         email = request.POST.get('email')
-#         location = request.POST.get('location')
 
-#         subject = "Design Consultant Request"
-#         full_message = f"Name: {name}\nContact: {contact}\nEmail: {email}\nLocation: {location}"
-
-#         # Send email
-#         try:
-#             send_mail(
-#                 subject,
-#                 full_message,
-#                 settings.EMAIL_HOST_USER,
-#                 [settings.ADMIN_EMAIL],
-#                 fail_silently=False
-#             )
-#         except Exception as e:
-#             print(f"EMAIL ERROR: {e}")
-#             messages.error(request, "Failed to send email. Please try again.")
-
-#         # Send WhatsApp message via Twilio
-#         try:
-#             client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-#             client.messages.create(
-#                 from_='whatsapp:' + settings.TWILIO_WHATSAPP_NUMBER,
-#                 to='whatsapp:' + settings.ADMIN_WHATSAPP_NUMBER,
-#                 content_sid='HX3a1c16c275e148062bd56b604c5bd609',  # WhatsApp approved template SID
-#                 content_variables=json.dumps({
-#                     "1": name,
-#                     "2": contact,
-#                     "3":email,
-#                     "4": location
-#                 })
-#             )
-#         except Exception as e:
-#             print(f"WHATSAPP ERROR: {e}")
-#             messages.error(request, "Failed to send WhatsApp message.")
-
-#         messages.success(request, 'Thank you! Our design consultant will contact you soon.')
-#         return redirect('home')
-
-#     return render(request, 'elite_interior/home.html', context)
 
 
 def send_whatsapp_template(name, contact,email, location):
@@ -484,10 +673,965 @@ def serve_media(request, path):
 
 
 # yourapp/views.py
-from django.http import JsonResponse
+
 from elite_interior.utils.whatsapp import send_whatsapp_message
 
 
 def send_message_view(request):
     response = send_whatsapp_message("919786224099")  # change to your number
     return JsonResponse(response)
+
+from django.core.mail import send_mail
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.conf import settings
+
+def submit_contact_form(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        contact = request.POST.get('contact')
+        email = request.POST.get('email')
+        bhk = request.POST.get('bhk')
+        location = request.POST.get('location')
+
+        subject_admin = f"New Enquiry from {name}"
+        message_admin = f"Name: {name}\nContact: {contact}\nEmail: {email}\nBHK: {bhk}\nLocation: {location}"
+        subject_client = "Thanks for contacting Home Den"
+        message_client = f"Hi {name},\n\nThank you for contacting us! We will be in touch soon.\n\nYour Details:\nContact: {contact}\nLocation: {location}\nBHK: {bhk}\n\nBest regards,\nHome Den Team"
+
+        try:
+            send_mail(subject_admin, message_admin, settings.EMAIL_HOST_USER, [settings.ADMIN_EMAIL])
+            send_mail(subject_client, message_client, settings.EMAIL_HOST_USER, [email])
+            messages.success(request, "Thank you! Your inquiry was sent successfully.")
+        except Exception as e:
+            print("Email error:", e)
+            messages.error(request, "Error sending email. Try again later.")
+
+    return redirect(request.META.get('HTTP_REFERER', '/'))  
+
+
+###############################################################################
+
+import random
+from datetime import timedelta
+from django.utils import timezone
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.conf import settings
+
+def kitchen_submit_estimation_form(request):
+    if request.method == "POST":
+        size = request.POST.get("size")
+        shape = request.POST.get("shape")
+        package = request.POST.get("package")
+        name = request.POST.get("name")
+        contact = request.POST.get("contact")
+        email = request.POST.get("email")
+        location = request.POST.get("location")
+
+        # Generate OTP
+        otp = random.randint(1000, 9999)
+        expiry_time = timezone.now() + timedelta(minutes=5)
+
+        # Pricing logic
+        if size == '7 ft. × 10 ft.':
+            price = 50000
+        elif size == '8 ft. × 9 ft.':
+            price = 60000
+        elif size == '10 ft. × 10 ft.':
+            price = 70000
+        elif size == '11.5 ft. × 10 ft.':
+            price = 80000
+        else:
+            price = 0
+
+        if package == 'Essential':
+            price *= 0.8  # Apply 20% discount
+        elif package == 'Eleganza':
+            price *= 1.2  # Apply 20% premium
+        elif package == 'Eleganza Plus':
+            price *= 1.5  # Apply 50% premium
+
+        # Clear old session keys (instead of flush)
+        for key in ["otp", "otp_expiry", "form_data"]:
+            request.session.pop(key, None)
+
+        # Store OTP + form data in session
+        request.session["otp"] = str(otp)
+        request.session["otp_expiry"] = expiry_time.isoformat()
+        request.session["form_data"] = {
+            "room_type": "kitchen",
+            "size": size,
+            "shape": shape,
+            "package": package,
+            "price": price,
+            "name": name,
+            "contact": contact,
+            "email": email,
+            "location": location,
+        }
+
+        # Send OTP
+        send_mail(
+            subject="Your OTP for Budget Estimation Confirmation",
+            message=f"Hi {name},\n\nYour OTP is: {otp}. It will expire in 5 minutes.\n\nThank you.",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+        )
+
+        return render(request, "elite_interior/verify_otp.html", {"email": email, "name": name})
+
+    return redirect("kitchen_calculate")
+
+
+
+
+
+
+def bedroom_submit_estimation_form(request):
+    if request.method == "POST":
+        size = request.POST.get("size")
+        bedroom_type = request.POST.get("bedroom_type")
+        package = request.POST.get("package")
+        name = request.POST.get("name")
+        contact = request.POST.get("contact")
+        email = request.POST.get("email")
+        location = request.POST.get("location")
+
+        # Generate OTP
+        otp = random.randint(1000, 9999)
+        expiry_time = timezone.now() + timedelta(minutes=5)
+
+        # Pricing logic
+        if size == '7 ft. × 10 ft.':
+            price = 50000
+        elif size == '8 ft. × 9 ft.':
+            price = 60000
+        elif size == '10 ft. × 10 ft.':
+            price = 70000
+        elif size == '11.5 ft. × 10 ft.':
+            price = 80000
+        else:
+            price = 0
+
+        if package == 'Essential':
+            price *= 0.8  # Apply 20% discount
+        elif package == 'Eleganza':
+            price *= 1.2  # Apply 20% premium
+        elif package == 'Eleganza Plus':
+            price *= 1.5  # Apply 50% premium
+
+        # Clear old session keys
+        for key in ["otp", "otp_expiry", "form_data"]:
+            request.session.pop(key, None)
+
+        # Store OTP + form data in session
+        request.session["otp"] = str(otp)
+        request.session["otp_expiry"] = expiry_time.isoformat()
+        request.session["form_data"] = {
+            "room_type": "bedroom",
+            "size": size,
+            "bedroom_type": bedroom_type,
+            "package": package,
+            "price": price,
+            "name": name,
+            "contact": contact,
+            "email": email,
+            "location": location,
+        }
+
+        # Send OTP
+        send_mail(
+            subject="Your OTP for Budget Estimation Confirmation",
+            message=f"Hi {name},\n\nYour OTP is: {otp}. It will expire in 5 minutes.\n\nThank you.",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+        )
+
+        return render(request, "elite_interior/verify_otp.html", {"email": email, "name": name})
+
+    return redirect("bedroom_calculate")
+
+
+def living_submit_estimation_form(request):
+    if request.method == "POST":
+        size = request.POST.get("size")
+        living_room_type = request.POST.get("living_room_type")
+        package = request.POST.get("package")
+        name = request.POST.get("name")
+        contact = request.POST.get("contact")
+        email = request.POST.get("email")
+        location = request.POST.get("location")
+
+        # Generate OTP
+        otp = random.randint(1000, 9999)
+        expiry_time = timezone.now() + timedelta(minutes=5)
+
+        # Pricing logic
+        if size == '7 ft. × 10 ft.':
+            price = 50000
+        elif size == '8 ft. × 9 ft.':
+            price = 60000
+        elif size == '10 ft. × 10 ft.':
+            price = 70000
+        elif size == '11.5 ft. × 10 ft.':
+            price = 80000
+        else:
+            price = 0
+
+        if package == 'Essential':
+            price *= 0.8  # Apply 20% discount
+        elif package == 'Eleganza':
+            price *= 1.2  # Apply 20% premium
+        elif package == 'Eleganza Plus':
+            price *= 1.5  # Apply 50% premium
+
+        # Clear old session keys
+        for key in ["otp", "otp_expiry", "form_data"]:
+            request.session.pop(key, None)
+
+        # Store OTP + form data in session
+        request.session["otp"] = str(otp)
+        request.session["otp_expiry"] = expiry_time.isoformat()
+        request.session["form_data"] = {
+            "room_type": "living_room",
+            "size": size,
+            "living_room_type": living_room_type,
+            "package": package,
+            "price": price,
+            "name": name,
+            "contact": contact,
+            "email": email,
+            "location": location,
+        }
+
+        # Send OTP
+        send_mail(
+            subject="Your OTP for Budget Estimation Confirmation",
+            message=f"Hi {name},\n\nYour OTP is: {otp}. It will expire in 5 minutes.\n\nThank you.",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+        )
+
+        return render(request, "elite_interior/verify_otp.html", {"email": email, "name": name})
+
+    return redirect("living_room_calculate")
+
+def bathroom_submit_estimation_form(request):
+    if request.method == "POST":
+        size = request.POST.get("size")
+        bathroom_type = request.POST.get("bathroom_type")
+        package = request.POST.get("package")
+        name = request.POST.get("name")
+        contact = request.POST.get("contact")
+        email = request.POST.get("email")
+        location = request.POST.get("location")
+
+        # Generate OTP
+        otp = random.randint(1000, 9999)
+        expiry_time = timezone.now() + timedelta(minutes=5)
+
+        # Pricing logic
+        if size == '7 ft. × 10 ft.':
+            price = 50000
+        elif size == '8 ft. × 9 ft.':
+            price = 60000
+        elif size == '10 ft. × 10 ft.':
+            price = 70000
+        elif size == '11.5 ft. × 10 ft.':
+            price = 80000
+        else:
+            price = 0
+
+
+        if package == 'Essential':
+            price *= 0.8  # Apply 20% discount
+        elif package == 'Eleganza':
+            price *= 1.2  # Apply 20% premium
+        elif package == 'Eleganza Plus':
+            price *= 1.5  # Apply 50% premium
+
+
+        # Clear old session keys
+        for key in ["otp", "otp_expiry", "form_data"]:
+            request.session.pop(key, None)
+
+        # Store OTP + form data in session
+        request.session["otp"] = str(otp)
+        request.session["otp_expiry"] = expiry_time.isoformat()
+        request.session["form_data"] = {
+            "room_type": "bathroom",
+            "size": size,
+            "bathroom_type": bathroom_type,
+            "package": package,
+            "price": price,
+            "name": name,
+            "contact": contact,
+            "email": email,
+            "location": location,
+        }
+
+        # Send OTP
+        send_mail(
+            subject="Your OTP for Budget Estimation Confirmation",
+            message=f"Hi {name},\n\nYour OTP is: {otp}. It will expire in 5 minutes.\n\nThank you.",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+        )
+
+        return render(request, "elite_interior/verify_otp.html", {"email": email, "name": name})
+
+    return redirect("bath_room_calculate")
+
+
+def dining_submit_estimation_form(request):
+    if request.method == "POST":
+        size = request.POST.get("size")
+        dining_type = request.POST.get("dining_type")
+        package = request.POST.get("package")
+        name = request.POST.get("name")
+        contact = request.POST.get("contact")
+        email = request.POST.get("email")
+        location = request.POST.get("location")
+
+        # Generate OTP
+        otp = random.randint(1000, 9999)
+        expiry_time = timezone.now() + timedelta(minutes=5)
+
+        # Pricing logic
+        if size == '7 ft. × 10 ft.':
+            price = 50000
+        elif size == '8 ft. × 9 ft.':
+            price = 60000
+        elif size == '10 ft. × 10 ft.':
+            price = 70000
+        elif size == '11.5 ft. × 10 ft.':
+            price = 80000
+        else:
+            price = 0
+
+
+        if package == 'Essential':
+            price *= 0.8  # Apply 20% discount
+        elif package == 'Eleganza':
+            price *= 1.2  # Apply 20% premium
+        elif package == 'Eleganza Plus':
+            price *= 1.5  # Apply 50% premium
+
+
+        # Clear old session keys
+        for key in ["otp", "otp_expiry", "form_data"]:
+            request.session.pop(key, None)
+
+        # Store OTP + form data in session
+        request.session["otp"] = str(otp)
+        request.session["otp_expiry"] = expiry_time.isoformat()
+        request.session["form_data"] = {
+            "room_type": "dining_room",
+            "size": size,
+            "dining_type": dining_type,
+            "package": package,
+            "price": price,
+            "name": name,
+            "contact": contact,
+            "email": email,
+            "location": location,
+        }
+
+        # Send OTP
+        send_mail(
+            subject="Your OTP for Budget Estimation Confirmation",
+            message=f"Hi {name},\n\nYour OTP is: {otp}. It will expire in 5 minutes.\n\nThank you.",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+        )
+
+        return render(request, "elite_interior/verify_otp.html", {"email": email, "name": name})
+
+    return redirect("dining_calculate")
+
+def kids_submit_estimation_form(request):
+    if request.method == "POST":
+        size = request.POST.get("size")
+        kids_room_type = request.POST.get("kids_room_type")
+        package = request.POST.get("package")
+        name = request.POST.get("name")
+        contact = request.POST.get("contact")
+        email = request.POST.get("email")
+        location = request.POST.get("location")
+
+        # Generate OTP
+        otp = random.randint(1000, 9999)
+        expiry_time = timezone.now() + timedelta(minutes=5)
+
+        # Pricing logic
+        if size == '7 ft. × 10 ft.':
+            price = 50000
+        elif size == '8 ft. × 9 ft.':
+            price = 60000
+        elif size == '10 ft. × 10 ft.':
+            price = 70000
+        elif size == '11.5 ft. × 10 ft.':
+            price = 80000
+        else:
+            price = 0
+
+        if package == 'Essential':
+            price *= 0.8  # Apply 20% discount
+        elif package == 'Eleganza':
+            price *= 1.2  # Apply 20% premium
+        elif package == 'Eleganza Plus':
+            price *= 1.5  # Apply 50% premium
+
+
+        # Clear old session keys
+        for key in ["otp", "otp_expiry", "form_data"]:
+            request.session.pop(key, None)
+
+        # Store OTP + form data in session
+        request.session["otp"] = str(otp)
+        request.session["otp_expiry"] = expiry_time.isoformat()
+        request.session["form_data"] = {
+            "room_type": "living_room",
+            "size": size,
+            "kids_room_type": kids_room_type,
+            "package": package,
+            "price": price,
+            "name": name,
+            "contact": contact,
+            "email": email,
+            "location": location,
+        }
+
+        # Send OTP
+        send_mail(
+            subject="Your OTP for Budget Estimation Confirmation",
+            message=f"Hi {name},\n\nYour OTP is: {otp}. It will expire in 5 minutes.\n\nThank you.",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+        )
+
+        return render(request, "elite_interior/verify_otp.html", {"email": email, "name": name})
+
+    return redirect("kids_room_calculate")
+
+
+def wardrobes_submit_estimation_form(request):
+    if request.method == "POST":
+        size = request.POST.get("size")
+        wardrobes_type = request.POST.get("wardrobes_type")
+        package = request.POST.get("package")
+        name = request.POST.get("name")
+        contact = request.POST.get("contact")
+        email = request.POST.get("email")
+        location = request.POST.get("location")
+
+        # Generate OTP
+        otp = random.randint(1000, 9999)
+        expiry_time = timezone.now() + timedelta(minutes=5)
+
+        # Pricing logic
+        if size == '7 ft. × 10 ft.':
+            price = 50000
+        elif size == '8 ft. × 9 ft.':
+            price = 60000
+        elif size == '10 ft. × 10 ft.':
+            price = 70000
+        elif size == '11.5 ft. × 10 ft.':
+            price = 80000
+        else:
+            price = 0
+
+
+        if package == 'Essential':
+            price *= 0.8  # Apply 20% discount
+        elif package == 'Eleganza':
+            price *= 1.2  # Apply 20% premium
+        elif package == 'Eleganza Plus':
+            price *= 1.5  # Apply 50% premium
+
+
+
+        # Clear old session keys
+        for key in ["otp", "otp_expiry", "form_data"]:
+            request.session.pop(key, None)
+
+        # Store OTP + form data in session
+        request.session["otp"] = str(otp)
+        request.session["otp_expiry"] = expiry_time.isoformat()
+        request.session["form_data"] = {
+            "room_type": "living_room",
+            "size": size,
+            "wardrobes_type": wardrobes_type,
+            "package": package,
+            "price": price,
+            "name": name,
+            "contact": contact,
+            "email": email,
+            "location": location,
+        }
+
+        # Send OTP
+        send_mail(
+            subject="Your OTP for Budget Estimation Confirmation",
+            message=f"Hi {name},\n\nYour OTP is: {otp}. It will expire in 5 minutes.\n\nThank you.",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+        )
+
+        return render(request, "elite_interior/verify_otp.html", {"email": email, "name": name})
+
+    return redirect("wardrobes_calculate")
+
+######################################################################################################
+
+
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.conf import settings
+from django.utils import timezone
+
+from django.utils import timezone
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.conf import settings
+
+def verify_otp(request):
+    if request.method == "POST":
+        user_otp = request.POST.get("otp")
+        session_otp = request.session.get("otp")
+        otp_expiry = request.session.get("otp_expiry")
+        form_data = request.session.get("form_data")
+
+        # OTP expired check
+        if otp_expiry and timezone.now() > timezone.datetime.fromisoformat(otp_expiry):
+            messages.error(request, "OTP has expired. Please try again.")
+            return redirect("select_platform")
+
+        # OTP validation
+        if user_otp == session_otp and form_data:
+            name = form_data.get("name")
+            contact = form_data.get("contact")
+            email = form_data.get("email")
+            location = form_data.get("location")
+            price = form_data.get("price", 0)
+            package_name = form_data.get("package")
+            room_type = form_data.get("room_type", "N/A")
+
+            subject = "New Budget Estimation Request"
+            body = f"""
+            Name: {name}
+            Contact: {contact}
+            Email: {email}
+            Location: {location}
+
+            Selected Package: {package_name}
+            Estimated Price: ₹{price}
+            Dimension: {form_data.get("size")}
+            """
+
+
+            # Send mails
+            send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [settings.ADMIN_EMAIL])
+            send_mail(
+                "Your Budget Estimation Request",
+                "Thank you for your request. Our team will get back to you soon.\n\n" + body,
+                settings.DEFAULT_FROM_EMAIL,
+                [email],
+            )
+
+            # ✅ Clear OTP + form data after success (so no mixing happens)
+            request.session.pop("otp", None)
+            request.session.pop("otp_expiry", None)
+            request.session.pop("form_data", None)
+
+            messages.success(
+                request,
+                f"Your estimation request has been submitted successfully! Estimated Price: ₹{price}"
+            )
+            return redirect("home")
+
+        # Invalid OTP
+        messages.error(request, "Invalid OTP. Please try again.")
+        return render(request, "elite_interior/verify_otp.html")
+
+    return redirect("select_platform")
+
+
+
+
+
+
+
+def resend_otp(request):
+    form_data = request.session.get("form_data")
+    if form_data:
+        otp = random.randint(1000, 9999)
+        request.session["otp"] = str(otp)
+
+        send_mail(
+            subject="Your OTP for Budget Estimation Confirmation (Resent)",
+            message=f"Hi {form_data['name']},\n\nYour new OTP is: {otp}. Please enter this to confirm your estimation request.",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[form_data["email"]],
+        )
+
+        messages.success(request, "A new OTP has been sent to your email.")
+    else:
+        messages.error(request, "Session expired. Please start again.")
+        return redirect("kitchen_calculate")
+
+    return redirect("verify_otp")
+
+
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
+from django.conf import settings
+import json
+
+@csrf_exempt
+def save_chat_query(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        email = data.get('email')
+        query = data.get('query')
+
+        if email and query:
+            send_mail(
+                subject="New Chat Query",
+                message=f"Query: {query}\nEmail: {email}",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[settings.ADMIN_EMAIL],
+                fail_silently=False
+            )
+            return JsonResponse({'status': 'success'})
+        return JsonResponse({'status': 'error'}, status=400)
+
+    return JsonResponse({'status': 'invalid'}, status=405)
+
+
+
+
+
+
+from django.shortcuts import render
+from .forms import ClientForm, MaterialForm
+
+def dashboard(request):
+    client_form = ClientForm()
+    material_form = MaterialForm()
+    return render(request, "elite_interior/admin_dashboard.html", {
+        "client_form": client_form,
+        "material_form": material_form
+    })
+
+
+
+
+from django.http import JsonResponse
+from .models import Product
+
+def get_series_type(request):
+    product_id = request.GET.get('product_id')
+    if product_id:
+        try:
+            product = Product.objects.get(id=product_id)
+            return JsonResponse({
+                'series_type': product.series or '',
+                'thickness': product.thickness or '',  # if you want thickness later
+                'price_per_cm': float(product.rate) if product.rate else 0,
+                'unit_name': product.unit.name.lower() if product.unit else '',
+                'origin': product.origin or '',
+            })
+        except Product.DoesNotExist:
+            return JsonResponse({'series_type': '', 'thickness': '', 'price_per_cm': 0, 'unit_name': '', 'origin': ''})
+    return JsonResponse({'series_type': '', 'thickness': '', 'price_per_cm': 0, 'unit_name': '', 'origin': ''})
+
+
+
+
+
+
+
+import json
+from itertools import groupby
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
+
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+import io
+
+import os
+import io
+import json
+from itertools import groupby
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet
+
+from PyPDF2 import PdfReader, PdfWriter
+from reportlab.platypus import HRFlowable
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.enums import TA_RIGHT
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib import colors
+
+
+@csrf_exempt
+def export_pdf(request):
+    if request.method != "POST":
+        return HttpResponse("Method not allowed", status=405)
+
+    try:
+        data = json.loads(request.body)
+        materials = data.get("materials", [])
+        client_data = data.get("client", {})
+
+        # --- Generate MATERIAL PDF in memory ---
+        material_buffer = io.BytesIO()
+        doc = SimpleDocTemplate(material_buffer, pagesize=A4, topMargin=30)
+        elements = []
+        styles = getSampleStyleSheet()
+
+        # Create a centered style
+        centered_heading = ParagraphStyle(
+            name="CenteredHeading",
+            parent=styles["Heading1"],
+            alignment=TA_CENTER,textColor=colors.HexColor("#3a5169"),
+            fontName="Helvetica-Bold"
+                )
+
+   # Define a right-aligned style
+        right_align_style = ParagraphStyle(
+            name="RightAlign",
+            parent=styles["Normal"],
+            alignment=TA_RIGHT
+        )
+
+        # Title
+        elements.append(HRFlowable(
+        width="100%",        # full width of page/content
+        thickness=1,         # line thickness
+        lineCap='round',     # end style
+        color='#3a5169',       # line color
+        spaceBefore=10,      # space above the line
+        spaceAfter=10,       # space below the line
+        hAlign='CENTER',     # alignment
+        vAlign='BOTTOM'      # vertical alignment
+    ))
+        elements.append(Paragraph("CLIENT DETAILS", centered_heading))
+        elements.append(Spacer(1, 12))
+
+       # Client info
+        client_info = [
+            ["Client Name :", client_data.get("client_name", "")],
+            ["Address :", client_data.get("client_address", "")],
+            ["Phone :", client_data.get("phone_number", "")],
+            ["Email :", client_data.get("email_address", "")],
+            ["Shop :", client_data.get("shop_name", "")]
+        ]
+
+        # Center the whole table
+        client_table = Table(client_info, colWidths=[120, 200], hAlign="CENTER")
+
+        # Center text inside each cell too
+        client_table.setStyle(TableStyle([
+            ("FONTNAME", (0, 0), (-1, -1), "Helvetica"),
+            ("FONTSIZE", (0, 0), (-1, -1), 10),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("ALIGN", (0, 0), (-1, -1), "LEFT"),  # <-- Center text in all cells
+        ]))
+
+        elements.append(client_table)
+        elements.append(Spacer(1, 20))
+
+
+
+ 
+        elements.append(HRFlowable(
+            width="100%",        # full width of page/content
+            thickness=1,         # line thickness
+            lineCap='round',     # end style
+            color='black',       # line color
+            spaceBefore=10,      # space above the line
+            spaceAfter=10,       # space below the line
+            hAlign='CENTER',     # alignment
+            vAlign='BOTTOM'      # vertical alignment
+        ))
+
+        elements.append(Paragraph("MATERIAL USED", centered_heading))
+        elements.append(Spacer(1, 12))
+
+        # Table header
+        table_data = [["#", "Item", "Finish/Brand", "Material/Origin", "Unit", "Size", "Qty", "Price", "Offer Price"]]
+        row_index = 1
+
+        # Sort and group
+        materials_sorted = sorted(materials, key=lambda m: m.get("design_place", ""))
+        grouped_materials = groupby(materials_sorted, key=lambda m: m.get("design_place", ""))
+
+        for design_place, group in grouped_materials:
+            table_data.append([design_place] + [""] * (len(table_data[0]) - 1))
+
+            for m in group:
+                size = f"{m.get('height', '')} * {m.get('width', '')}"
+                if m.get("thickness"):
+                    size += f" * ({m.get('thickness', '')})"
+
+                table_data.append([
+                    row_index,
+                    m.get("product", ""),
+                    m.get("brand", ""),
+                    m.get("origin", ""),
+                    m.get("unit", ""),
+                    size,
+                    m.get("qty", ""),
+                    m.get("total", ""),
+                    m.get("offer", "")
+                ])
+                row_index += 1
+
+        materials_table = Table(table_data, repeatRows=1,
+                                colWidths=[25, 100, 80, 80, 40, 80, 40, 60, 60])
+        style_commands = [
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#3a5169")),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+            ("ALIGN", (1, 0), (1, -1), "LEFT"),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("FONTSIZE", (0, 0), (-1, 0), 9),
+            ("FONTSIZE", (0, 1), (-1, -1), 8),
+            ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
+
+            # Add borders for all cells
+            ("BOX", (0, 0), (-1, -1), 1, colors.black),     # outer border
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.black),  # inner grid
+        ]
+
+        for i, row in enumerate(table_data):
+            if i > 0 and row[1] == "":
+                style_commands.append(("SPAN", (0, i), (-1, i)))
+                style_commands.append(("BACKGROUND", (0, i), (-1, i), colors.HexColor("#dce6f1")))
+                style_commands.append(("FONTNAME", (0, i), (-1, i), "Helvetica-Bold"))
+                style_commands.append(("ALIGN", (0, i), (-1, i), "LEFT"))
+
+        materials_table.setStyle(TableStyle(style_commands))
+        elements.append(materials_table)
+
+        
+        # Grand total
+        grand_total = sum(float(str(m.get("offer", "0")).replace("Rs", "").strip() or 0) for m in materials)
+        elements.append(Spacer(1, 20))
+        elements.append(Paragraph(f"<b>GRAND TOTAL: {grand_total:.2f} Rs</b>", right_align_style))
+
+        # Build material PDF in memory
+        doc.build(elements)
+        material_buffer.seek(0)
+
+        # --- Merge with existing.pdf ---
+        pdf_writer = PdfWriter()
+
+        # Existing.pdf (static)
+        existing_pdf_path = os.path.join(settings.STATIC_ROOT, "pdf/existing.pdf")
+        existing_reader = PdfReader(existing_pdf_path)
+        for page in existing_reader.pages:
+            pdf_writer.add_page(page)
+
+        # Material.pdf (from memory)
+        material_reader = PdfReader(material_buffer)
+        for page in material_reader.pages:
+            pdf_writer.add_page(page)
+
+        # Final merged PDF
+        merged_buffer = io.BytesIO()
+        pdf_writer.write(merged_buffer)
+        merged_buffer.seek(0)
+
+        return HttpResponse(
+            merged_buffer,
+            content_type="application/pdf",
+            headers={"Content-Disposition": 'inline; filename="merged.pdf"'}
+        )
+
+    except Exception as e:
+        return HttpResponse(f"Error generating PDF: {str(e)}", status=500)
+
+
+
+def preview_pdf(request):
+    return render(request, "elite_interior/preview_pdf.html")
+
+
+
+import os
+from django.http import FileResponse
+from django.conf import settings
+from PyPDF2 import PdfReader, PdfWriter
+
+def merged_pdf_view(request):
+    # Paths to your PDFs
+    existing_pdf_path = os.path.join(settings.STATIC_ROOT, "pdf/existing.pdf")
+    material_pdf_path = os.path.join(settings.STATIC_ROOT, "pdf/material.pdf")
+    merged_pdf_path = os.path.join(settings.MEDIA_ROOT, "merged.pdf")
+
+    pdf_writer = PdfWriter()
+
+    # Add existing.pdf pages first
+    existing_reader = PdfReader(existing_pdf_path)
+    for page in existing_reader.pages:
+        pdf_writer.add_page(page)
+
+    # Add material.pdf pages after
+    material_reader = PdfReader(material_pdf_path)
+    for page in material_reader.pages:
+        pdf_writer.add_page(page)
+
+    # Save merged file
+    with open(merged_pdf_path, "wb") as output_file:
+        pdf_writer.write(output_file)
+
+    return FileResponse(open(merged_pdf_path, "rb"), content_type="application/pdf")
+
+
+
+def select_platform(request):
+    if request.method == "POST":
+        selected = request.POST.get("platform")
+
+        # Redirect to respective calculate page
+        if selected == "kitchen":
+            return redirect("kitchen_calculate")
+        elif selected == "bedroom":
+            return redirect("bedroom_calculate")
+        elif selected == "bathroom":
+            return redirect("bathroom_calculate")
+        elif selected == "dining":
+            return redirect("dining_calculate")
+        elif selected == "living":
+            return redirect("livingroom_calculate")
+        elif selected == "kids":
+            return redirect("kidsroom_calculate")
+        elif selected == "wardrobes":
+            return redirect("wardrobe_calculate")
+
+    return render(request, "select_platform.html")
+
+
+
+from django.shortcuts import render
+
+def custom_404(request, exception):
+    return render(request, "404.html", status=404)

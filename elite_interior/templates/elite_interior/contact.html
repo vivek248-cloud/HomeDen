@@ -3,7 +3,7 @@
 {% block content %}
 
     <div class="hero-header position-relative d-flex align-items-center justify-content-center text-center text-white"
-     style="background-image: url('{% static "images/about-hall.jpeg" %}');
+     style="background-image: url('{% static "images/living1.jpg" %}');
             background-size: cover;
             background-position: center;
             height: 90vh;">
@@ -34,14 +34,14 @@
 </div>
  
   <section class="about-content">
-  <h2>HOME DEN</h2>
-   <p>Have a space in mind that needs a fresh perspective? We’d love to hear your vision. 
-    Whether you're planning to design your dream home, renovate an existing space, or 
-    create a unique interior for your commercial property, our team is here to guide you every step of the way. 
-    At <strong>HOME DEN</strong>, we believe great interiors start with meaningful conversations. Reach out to us through the contact form below,
-    give us a call, or drop by our studio — and let’s bring your space to life with style and purpose..</p>
-
+  <h2>HOME DEN – Best Interior Designers in Trichy</h2>
+  <p>Looking to transform your space with a fresh, modern perspective? At <strong>HOME DEN</strong>, we specialize in creating stunning interiors for homes, apartments, villas, and commercial properties across Trichy and Tamil Nadu. </p>
+  
+  <p>Whether you’re designing your dream home, renovating an existing space, or planning a unique commercial interior, our expert team of designers and contractors will guide you at every step. We combine creativity, functionality, and premium-quality materials to deliver interiors that reflect your style and purpose.</p>
+  
+  <p>As one of the <strong>top interior design companies in Trichy</strong>, we ensure every project is handled with precision and passion — from modular kitchens and bedrooms to living rooms, dining areas, and office interiors. Reach out today through our contact form, call us, or visit our studio, and let’s bring your vision to life with elegance and excellence.</p>
 </section>
+
 <section>
   <div class="main-container">
 
@@ -64,11 +64,42 @@
           <i class="fas fa-map-marker-alt"></i>
           <div class="info-text">
             <strong>Trichy , Tamilnadu</strong>
+            <span class="d-block">India</span>
           </div>
         </div>
+        <div class="info-item" style="justify-content: center;">
+          <div class="social-icons2">
+              <div class="icon-wrapper2">
+                <a href="https://www.instagram.com" target="_blank" class="social-icon2">
+                  <i class="fab fa-instagram"></i>
+                </a>
+              </div>
+              <div class="icon-wrapper2">
+                <a href="https://www.facebook.com" target="_blank" class="social-icon2">
+                  <i class="fab fa-facebook-f"></i>
+                </a>
+              </div>
+              <div class="icon-wrapper2">
+                <a href="https://wa.me/91XXXXXXXXXX" target="_blank" class="social-icon2">
+                  <i class="fab fa-whatsapp"></i>
+                </a>
+              </div>
+              <div class="icon-wrapper2">
+                <a href="mailto:example@example.com" class="social-icon2">
+                  <i class="fas fa-envelope"></i>
+                </a>
+              </div>
+            </div>
+          </div>
       </div>
       <div class="contact-image">
-        <img src="{% static 'images/hall.jpeg'%}" alt="Kitchen" />
+        <div class="image-wrapper">
+          <img src="{% static 'images/hall.jpeg'%}" alt="Kitchen" />
+          <div class="custom-cursor">
+            <div class="cursor-dot"></div>
+            <div class="cursor-ring"></div>
+          </div>
+        </div>
       </div>
     </div>
 </section>
@@ -99,7 +130,7 @@
     
               <div class="text-center mt-3">
                 <button type="submit" class="btn submit-btn  py-0 px-4">Submit</button>
-                <a href="{% url 'calculate' %}" class="btn btn-secondary  bg-secondary calculate-btn py-0 px-4">Calculate Budget</a>
+                <a href="{% url 'select_platform' %}" class="btn btn-secondary  bg-secondary calculate-btn py-0 px-4">Calculate Budget</a>
               </div>
               
             </form>
@@ -107,6 +138,7 @@
 
       <div class="location-section">
         <h3>OUR LOCATION</h3>
+        <div class="map-container1">
         <div class="map-container">
           <iframe 
              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.490729913087!2d78.72917497544863!3d10.773676839374916!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3baa8b4cb6a0bc2b%3A0x5fe2f960f758d79c!2sAmul%20Nagar%2C%20Thirunagar%2C%20Kilakurichy%2C%20Tiruchirappalli%2C%20Tamil%20Nadu%20620004!5e0!3m2!1sen!2sin!4v1748258475292!5m2!1sen!2sin" 
@@ -114,10 +146,17 @@
         </div>
       </div>
     </div>
+    </div>
 
   </div>
 
 </section>
+<div class="big-text">
+  <h1>HOME<a  id="style-2" data-replace="DEN" class="transform-link"><span> DEN</span></a></h1>
+</div>
+
+
+
 
 {% endblock %}
 

@@ -1,0 +1,122 @@
+{% extends 'elite_interior/base.html' %}
+
+{% load format_extras %}
+{% load i18n %}
+{% load static %}
+{% block extra_css %}
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container py-5" style="margin-top: 100px;">
+  <div class="card shadow border-0 rounded-4 px-3 px-md-5 py-4 bg-white">
+    <h2 class="text-center fw-bold mb-4 text-dark">
+      <span class="text-muted">Select a Platform</span>
+    </h2>
+        <form method="post">
+                {% csrf_token %}
+                <div class="row g-3">
+
+                    <div class="col-sm-6">
+                    <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+                        <input class="form-check-input me-2"
+                            type="radio"
+                            name="platform"
+                            value="kitchen"
+                            id="platform_kitchen"
+                            required>
+                        <label class="form-check-label fw-semibold" for="platform_kitchen">
+                        Kitchen
+                        </label>
+                    </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                    <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+                        <input class="form-check-input me-2"
+                            type="radio"
+                            name="platform"
+                            value="bedroom"
+                            id="platform_bedroom">
+                        <label class="form-check-label fw-semibold" for="platform_bedroom">
+                        Bedroom
+                        </label>
+                    </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                    <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+                        <input class="form-check-input me-2"
+                            type="radio"
+                            name="platform"
+                            value="dining"
+                            id="platform_dining">
+                        <label class="form-check-label fw-semibold" for="platform_dining">
+                        Dining
+                        </label>
+                    </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                    <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+                        <input class="form-check-input me-2"
+                            type="radio"
+                            name="platform"
+                            value="bathroom"
+                            id="platform_bathroom">
+                        <label class="form-check-label fw-semibold" for="platform_bathroom">
+                        Bathroom
+                        </label>
+                    </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                    <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+                        <input class="form-check-input me-2"
+                            type="radio"
+                            name="platform"
+                            value="living"
+                            id="platform_livingroom">
+                        <label class="form-check-label fw-semibold" for="platform_livingroom">
+                        Living Room
+                        </label>
+                    </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                    <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+                        <input class="form-check-input me-2"
+                            type="radio"
+                            name="platform"
+                            value="kids"
+                            id="platform_kidsroom">
+                        <label class="form-check-label fw-semibold" for="platform_kidsroom">
+                        Kids Room
+                        </label>
+                    </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                    <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+                        <input class="form-check-input me-2"
+                            type="radio"
+                            name="platform"
+                            value="wardrobes"
+                            id="platform_wardrobes">
+                        <label class="form-check-label fw-semibold" for="platform_wardrobes">
+                        Wardrobes
+                        </label>
+                    </div>
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn btn-success rounded-pill px-4 mt-4">Submit</button>
+                </form>
+
+    </div>
+</div>    
+
+{% endblock %}

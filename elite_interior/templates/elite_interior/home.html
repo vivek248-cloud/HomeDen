@@ -1,39 +1,56 @@
 {% extends "elite_interior/base.html" %}
 {% load static %}
-
+{% load format_extras %}
 {% block extra_css %}
 
 {% endblock %}
 {% block content %}
 <!-- Hero Section -->
-<div class="hero-section " style="height: 100vh;">
+<div class="hero-section ">
     <!-- template.html -->
     <div class="contact-container">
         <div class="contact-bg">
           <div class="sliders-box grid-slideshow">
-            {% for slide in home_sliders %}
-              <section class="slider-sections {% if forloop.first %}active{% endif %} " style="background-image: url('{{ slide.image.url }}'); background-size: cover; background-position: center; ">
+              {% for slide in home_sliders %}
+              <section class="slider-sections {% if forloop.first %}active{% endif %}" style="width: 100vw;">
+                <!-- Add the image here -->
+                <img src="{{ slide.image.url }}" alt="{{ slide.headline }}" class="slider-img">
+
                 <div class="scroller-content-bg">
-                  <div class="scroller-content">
-                    
-                  </div>
+                  <div class="scroller-content"></div>
+
                   <div class="scroller-content-2">
-                    <h1>{{ slide.healine }}</h1>
+                    <h1>{{ slide.headline }}</h1>
+                    {% if slide.sub_headline %}
                     <h4 class="animation slide-up">{{ slide.sub_headline }}</h4>
-                    <span class="highlight-text">
-                    <h3 class="animation slide-up">{{slide.quotes}}</h3>
-                    </span>
-                    <a href="{% url 'home' %}" data-bs-target="#designConsultantModal" data-bs-toggle="modal"  style=" text-decoration: none; width: 200px; background: var(--color-2); color: #fff;height: 40px; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; margin-bottom: 20px;">GET ESTIMATE</a>
-                      <p>*T&C Apply</p>
+                    {% endif %}
+                    {% if slide.quotes %}
+                      <span class="highlight-text">
+                        <h3 class="animation slide-up">{{ slide.quotes }}</h3>
+                      </span>
+                    {% endif %}
+                    <a href="{% url 'home' %}" 
+                        data-bs-target="#designConsultantModal" 
+                        data-bs-toggle="modal"  
+                        class="highlight-btn">
+                        GET ESTIMATE
+                      </a>
+                    <p>*T&C Apply</p>
                   </div>
                 </div>
               </section>
-            {% endfor %}
+              {% endfor %}
           </div>
       
           <!-- Pagination Dots (OUTSIDE the for loop) -->
-          <div class="pagination-dots"></div>
+          <div class="pagination-dots">
+           
+          </div>
+
+           
+          </div>
       
+
         </div>
       </div>
 </div>
@@ -99,7 +116,9 @@
             <div class="package-card">
               <img src="{{ offer.image.url }}" alt="{{ project.title }}" class="img-fluid">
               <div class="package-overlay">
-                <h4>{{offer.title}}<br><strong>{{offer.subtitle}}</strong></h4>
+                <a href="/{{ offer.title|lower }}/">
+                <h4><strong>{% if offer.title == "ELEGANZA-PLUS" %}ELEGANZA{% else %}{{ offer.title }}{% endif %}</strong><br>{% if offer.subtitle %}{{offer.subtitle}}{% endif %}</h4>
+                </a>
               </div>
               <div class="package-footer">
                 <p class="price">
@@ -151,8 +170,8 @@
     <div class="room-grid mt-5">
       {% for item in grid %}
         <div class="grid-item {{ item.size|lower }} auto-show-up grid-item-effect" style="background-image: url('{{ item.image.url }}');">
-          <a href="/HomeDen/{{ item.title|lower }}-projects/" class="grid-item-link">
-            <h2>{{ item.title|upper }}</h2>
+          <a href="/{{ item.title|lower }}-projects/" class="grid-item-link">
+            <h2> {% if item.title|upper == "KIDSROOM" %} KID'S ROOM{% else %} {{ item.title|upper }} {% endif %}</h2>
           </a>
         </div>
       {% endfor %}
@@ -276,21 +295,28 @@
       <!-- Text Column -->
       <div class="col-md-6 d-flex align-items-center p-5 text-column">
         <div>
-          <h2 class="mb-4" style="text-transform: uppercase;">From Conceptualization to Completion</h2>
+          <h2 class="mb-4" style="text-transform: uppercase;">LUXURY INTERIOR DESIGNERS IN TRICHY</h2>
           <p>
-            ELITE is the largest home interior designers in TAMIL NADU . We are professional, contemporary interior designers and contractors with capacity to hand over 300 projects every month.
+          Looking for the best interior designers in Trichy? Our expert team specializes in creating stylish, functional, and personalized spaces. From modern kitchen interiors in Trichy to complete modular kitchen solutions, we ensure every design is tailored to your exact space and lifestyle. As one of the top interior designers in Trichy, we offer creative ideas for bedrooms, living rooms, dining areas, and more. Whether you need kitchen interior design in Trichy or a full home makeover, our attention to detail and quality craftsmanship set us apart. Transform your home with the trusted choice for modern interiors and modular kitchens in Trichy.
           </p>
+
           <p>
-            We ensure client satisfaction through quality products and systematic working.
+          HOME DEN is the largest home interior design company in Tamil Nadu. We are professional and contemporary interior designers and contractors with the capacity to deliver 100+ projects every month.
           </p>
+
           <p>
-            Customize modular kitchen, bedroom, living and dining room furniture as per requirement and measurement of exact space with the help of the best interior design company.
+          We ensure client satisfaction through premium-quality materials, innovative designs, and a systematic approach to every project.
           </p>
+
+          <p>
+          Our services include customizing modular kitchens, bedrooms, living rooms, and dining room furniture based on your exact measurements and style preferences. Whether it’s a modern kitchen interior in Trichy or complete home interiors, we create spaces that are both functional and beautiful.
+          </p>
+
         </div>
       </div>
 
       <!-- Image Column -->
-      <div class="col-md-6 image-column">
+      <div class="col-md-6 image-column ">
         <div class="h-100 w-100 bg-cover" style="background-image: url('{% static 'images/hall.jpeg' %}');"></div>
       </div>
     </div>
@@ -301,16 +327,13 @@
   <div class="container-fluid p-0">
     <div class="row g-0">
 
-      <!-- Image Column -->
-      <div class="col-md-6 order-1 order-md-1 image-column">
-        <div class="h-100 w-100 bg-cover" style="background-image: url('{% static 'images/bedroom.jpeg' %}');"></div>
-      </div>
+      
 
 
       <!-- Text Column -->
       <div class="col-md-6 order-2 order-md-2 d-flex align-items-center p-5 text-column">
         <div>
-          <h2 class="mb-4"> CONTEMPORARY HOME INTERIOR DESIGNERS AND CONTRACTORS IN TAMILNADU</h2>
+          <h2 class="mb-4"> HOME DEN BEST INTERIOR DESIGNERS IN TRICHY - TAMIL NADU</h2>
           <p>
             First of all, the design by HOME DEN is always in accordance with the latest trends in contemporary style.
           </p>
@@ -323,6 +346,10 @@
         </div>
       </div>
 
+    <!-- Image Column -->
+      <div class="col-md-6 order-1 order-md-1 image-column">
+        <div class="h-100 w-100 bg-cover" style="background-image: url('{% static 'images/bedroom.jpeg' %}');"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -464,7 +491,7 @@
               <p class="card-text text-muted small">{{ blog.description|truncatechars:100 }}</p>
               <div class="d-flex justify-content-between align-items-center small text-muted mb-2">
             <span><i class="bi bi-calendar-event me-1"></i> {{ blog.created_at|date:"M d, Y" }}</span>
-            <span><i class="bi bi-eye me-1"></i> {{ blog.views }} views</span>
+            <span><i class="bi bi-eye me-1"></i> {{ blog.views|humanize_views  }} views</span>
           </div>
             </div>
           </div>

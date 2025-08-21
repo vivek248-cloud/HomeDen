@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>404 - Home Den | Interior</title>
+  <style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #f7f7f7;
+    font-family: Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  h1 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+    padding: 0 10px;
+  }
+
+  #game {
+    width: 90%;
+    background: linear-gradient(to bottom, #e0e0e0, #cfcfcfff);
+    max-width: 800px;
+    height: 200px;
+    border: 5px double #333;
+    overflow: hidden;
+    position: relative;
+  }
+
+  #dino {
+    width: 44px;
+    height: 44px;
+    border-radius: 50% 50% 0 0;
+    background-color: #b9b2ff;
+    position: absolute;
+    bottom: 0;
+    left: 50px;
+  }
+
+  #cactus {
+    width: 34px;
+    height: 50px;
+    background: #dc3545;
+    position: absolute;
+    bottom: 0;
+    right: -50px;
+  }
+
+  #score {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .home-link:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  /* 📱 Responsive for mobiles */
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 1.2rem;
+    }
+
+    #game {
+      height: 150px; /* smaller height */
+    }
+
+    #dino {
+      width: 30px;
+      height: 30px;
+      left: 20px; /* keep dino inside */
+    }
+
+    #cactus {
+      width: 25px;
+      height: 40px;
+    }
+
+    #score {
+      font-size: 16px;
+    }
+  }
+</style>
+
+</head>
+<body>
+  <h1>404 - Page Not Found! Play Dino 🦖</h1>
+  <div id="game">
+    <div id="dino">&nbsp;&nbsp;&nbsp;<span>o</span><span>o</span></div>
+    <div id="cactus"></div>
+    <div id="score">Score: 0</div>
+  </div>
+  <a href="{% url 'home' %}" class="home-link" style="margin-top: 20px; text-decoration: none; color: #000000ff; font-size: 32px;"> > Go to Home</a>
+
+  <script>
+  const dino = document.getElementById("dino");
+  const cactus = document.getElementById("cactus");
+  const scoreDisplay = document.getElementById("score");
+  let isJumping = false;
+  let score = 0;
+  let gameOver = false;
+
+  // 🖥️ Desktop controls (Space or ArrowUp)
+  document.addEventListener("keydown", function (event) {
+    if ((event.code === "Space" || event.code === "ArrowUp") && !isJumping) {
+      jump();
+    }
+  });
+
+  // 📱 Mobile controls (tap or swipe up)
+  let touchStartY = 0;
+  document.addEventListener("touchstart", function (e) {
+    touchStartY = e.changedTouches[0].clientY;
+  });
+
+  document.addEventListener("touchend", function (e) {
+    let touchEndY = e.changedTouches[0].clientY;
+    let diffY = touchStartY - touchEndY;
+
+    if (diffY > 30 && !isJumping) {
+      // swipe up
+      jump();
+    } else if (Math.abs(diffY) < 10 && !isJumping) {
+      // simple tap
+      jump();
+    }
+  });
+
+  // 🦖 Jump logic
+  function jump() {
+    isJumping = true;
+    let position = 0;
+    let jumpHeight = 120;
+    let jumpSpeed = 5;
+
+    let upInterval = setInterval(() => {
+      if (position >= jumpHeight) {
+        clearInterval(upInterval);
+        // fall down
+        let downInterval = setInterval(() => {
+          if (position <= 0) {
+            clearInterval(downInterval);
+            isJumping = false;
+          }
+          position -= jumpSpeed;
+          dino.style.bottom = position + "px";
+          dino.style.transform = "rotate(-" + position * 4 + "deg)";
+        }, 20);
+      }
+      position += jumpSpeed;
+      dino.style.bottom = position + "px";
+      dino.style.transform = "rotate(-" + position * 4 + "deg)";
+    }, 20);
+  }
+
+  // 🌵 Cactus movement + collision detection
+function moveCactus() {
+  let cactusPosition = 800;
+  let speed = 5;
+  let levelUp = 5;
+  let multiplier = 1;
+
+  let interval = setInterval(() => {
+    if (gameOver) {
+      clearInterval(interval);
+      return;
+    }
+
+    cactusPosition -= speed * multiplier;
+
+    if (cactusPosition < -50) {
+      cactusPosition = 800;
+      score++;
+
+      if (score % levelUp === 0) {
+        speed += 1;
+        multiplier += 0.1;
+      }
+
+      scoreDisplay.textContent = "Score: " + score;
+    }
+
+    cactus.style.left = cactusPosition + "px";
+
+    // ✅ Better collision detection (works on mobile + desktop)
+    let dinoRect = dino.getBoundingClientRect();
+    let cactusRect = cactus.getBoundingClientRect();
+
+    if (
+      dinoRect.left < cactusRect.right &&
+      dinoRect.right > cactusRect.left &&
+      dinoRect.top < cactusRect.bottom &&
+      dinoRect.bottom > cactusRect.top
+    ) {
+      gameOver = true;
+      alert("💀 Game Over! Your Score: " + score);
+      window.location.reload();
+    }
+  }, 20);
+}
+
+moveCactus();
+
+</script>
+
+</body>
+</html>

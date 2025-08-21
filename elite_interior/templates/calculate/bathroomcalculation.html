@@ -1,0 +1,336 @@
+
+{% extends 'elite_interior/base.html' %}
+
+{% load format_extras %}
+{% load i18n %}
+{% load static %}
+{% block extra_css %}
+
+{% endblock %}
+
+
+{% block content %}
+<div class="container py-5" style="margin-top: 100px;">
+  <div class="card shadow border-0 rounded-4 px-3 px-md-5 py-4 bg-white">
+    <h2 class="text-center fw-bold mb-4 text-dark">
+      <i class="bi bi-calculator-fill text-success me-2"></i>
+      <span class="text-muted">- Bathroom Estimation</span>
+    </h2>
+
+    <form method="post" id="wizardForm" action="{% url 'submit_estimation_form' %}">
+      {% csrf_token %}
+
+      <!-- Step 1: Select Dimension -->
+      <div class="step2" id="step1">
+        <h5 class="fw-semibold text-success mb-3">
+          Step 1/4: Select the nearest Bathroom dimension
+        </h5>
+
+        <div class="row g-3 mb-4">
+          {% for size in bathroom_sizes %}
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="size" 
+                     value="{{ size }}" 
+                     id="size_{{ forloop.counter }}" 
+                     required>
+              <label class="form-check-label fw-semibold" for="size_{{ forloop.counter }}">
+                {{ size }}
+              </label>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="text-end">
+          <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(2)">
+            Next
+          </button>
+        </div>
+      </div>
+
+<!-- Step 2: Select Bedroom Style -->
+<div class="step2 d-none" id="step2">
+  <h5 class="fw-semibold text-success mb-3">Step 2/4: Select the style of your Bedroom</h5>
+  <div class="row g-4 align-items-center">
+    <div class="col-md-6">
+      <div class="row g-3">
+
+        <!-- Transitional -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="bathroom_type"
+                   value="Transitional Bathroom"
+                   id="bathroom_transitional"
+                   required>
+            <label class="form-check-label fw-semibold" for="bathroom_transitional">
+              Transitional Bathroom
+            </label>
+          </div>
+        </div>
+
+        <!-- Modern -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="bathroom_type"
+                   value="Modern Bathroom"
+                   id="bathroom_modern">
+            <label class="form-check-label fw-semibold" for="bathroom_modern">
+              Modern Bathroom
+            </label>
+          </div>
+        </div>
+
+        <!-- Contemporary -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="bathroom_type"
+                   value="Contemporary Bathroom"
+                   id="bathroom_contemporary">
+            <label class="form-check-label fw-semibold" for="bathroom_contemporary">
+              Contemporary Bathroom
+            </label>
+          </div>
+        </div>
+
+        <!-- Traditional -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="bathroom_type"
+                   value="Traditional Bathroom"
+                   id="bathroom_traditional">
+            <label class="form-check-label fw-semibold" for="bathroom_traditional">
+              Traditional Bathroom
+            </label>
+          </div>
+        </div>
+
+        <!-- Farmhouse -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="bathroom_type"
+                   value="Farmhouse Bathroom"
+                   id="bathroom_farmhouse">
+            <label class="form-check-label fw-semibold" for="bathroom_farmhouse">
+              Farmhouse Bathroom
+            </label>
+          </div>
+        </div>
+
+        <!-- Rustic -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="bathroom_type"
+                   value="Rustic Bathroom"
+                   id="bathroom_rustic">
+            <label class="form-check-label fw-semibold" for="bathroom_rustic">
+              Rustic Bathroom
+            </label>
+          </div>
+        </div>
+
+        <!-- Industrial -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="bathroom_type"
+                   value="Industrial Bathroom"
+                   id="bathroom_industrial">
+            <label class="form-check-label fw-semibold" for="bathroom_industrial">
+              Industrial Bathroom
+            </label>
+          </div>
+        </div>
+
+        <!-- Mediterranean -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="bathroom_type"
+                   value="Mediterranean Bathroom"
+                   id="bathroom_mediterranean">
+            <label class="form-check-label fw-semibold" for="bathroom_mediterranean">
+              Mediterranean Bathroom
+            </label>
+          </div>
+        </div>
+
+        <!-- Craftsman -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="bathroom_type"
+                   value="Craftsman Bathroom"
+                   id="bathroom_craftsman">
+            <label class="form-check-label fw-semibold" for="bathroom_craftsman">
+              Craftsman Bathroom
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Dynamic Image -->
+    <div class="col-md-6 text-center">
+      <a id="bathroom-link" href="#" target="_blank">
+        <img id="bathroom-type-img"
+             src="https://st.hzcdn.com/simgs/pictures/bathrooms/freiberg-drive-master-bathroom-liza-nicole-interiors-img~99c1fead0bf4c4eb_3-3427-1-863f06a.jpg"
+             alt="Bathroom Type"
+             class="img-fluid rounded-3 shadow-sm"
+             style="height: 250px; object-fit: cover;">
+      </a>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between mt-4">
+    <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(1)">Back</button>
+    <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(3)">Next</button>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const radios = document.querySelectorAll('input[name="bathroom_type"]');
+    const img = document.getElementById("bathroom-type-img");
+    const link = document.getElementById("bathroom-link");
+
+    // Map styles to images + links
+    const images = {
+      "Transitional Bathroom": {
+        src: "https://st.hzcdn.com/simgs/pictures/bathrooms/freiberg-drive-master-bathroom-liza-nicole-interiors-img~99c1fead0bf4c4eb_3-3427-1-863f06a.jpg",
+        link: "https://www.houzz.in/hznb/photos/freiberg-drive-master-bathroom-phvw-vp~133140321"
+      },
+      "Modern Bathroom": {
+        src: "https://st.hzcdn.com/simgs/pictures/bathrooms/memorial-modern-poet-interiors-img~3441ae6e04c42ee6_3-3824-1-5af5a1b.jpg",
+        link: "https://www.houzz.in/hznb/photos/memorial-modern-phvw-vp~22960257"
+      },
+      "Contemporary Bathroom": {
+        src: "https://st.hzcdn.com/simgs/pictures/bathrooms/barman-ii-hamilton-architects-img~8aa194da0ab1aace_3-0280-1-d7be135.jpg",
+        link: "https://www.houzz.in/hznb/photos/barman-ii-phvw-vp~115219316"
+      },
+      "Traditional Bathroom": {
+        src: "https://st.hzcdn.com/simgs/pictures/bathrooms/foxes-hollow-context-design-and-build-img~fe515d3e0a165590_3-0979-1-75ee479.jpg",
+        link: "https://www.houzz.in/hznb/photos/foxes-hollow-phvw-vp~107185321"
+      },
+      "Farmhouse Bathroom": {
+        src: "https://st.hzcdn.com/simgs/pictures/bathrooms/hidden-hills-view-showcase-home-younger-homes-img~a7515de60c084b78_3-2898-1-95534bb.jpg",
+        link: "https://www.houzz.in/hznb/photos/hidden-hills-view-showcase-home-phvw-vp~133924893"
+      },
+      "Rustic Bathroom": {
+        src: "https://st.hzcdn.com/simgs/pictures/bathrooms/teton-valley-residence-yellowstone-traditions-img~f59152ec0b4f5b76_3-8715-1-f2d865b.jpg",
+        link: "https://www.houzz.in/hznb/photos/teton-valley-residence-phvw-vp~123617024"
+      },
+      "Industrial Bathroom": {
+        src: "https://st.hzcdn.com/simgs/pictures/bathrooms/clarissa-project-andrew-heiser-img~7531d73e0ce79602_3-0876-1-532a28d.jpg",
+        link: "https://www.houzz.in/hznb/photos/clarissa-project-phvw-vp~143329364"
+      },
+      "Mediterranean Bathroom": {
+        src: "https://st.hzcdn.com/simgs/pictures/cuartos-de-bano/villa-en-playa-de-aro-a-emotional-y-estudiodom-img~0661cb3e0df36e51_3-5144-1-9a76365.jpg",
+        link: "https://www.houzz.in/hznb/photos/villa-en-playa-de-aro-phvw-vp~152573646"
+      },
+      "Craftsman Bathroom": {
+        src: "https://st.hzcdn.com/simgs/pictures/bathrooms/breath-of-fresh-air-mountain-marble-and-granite-inc-img~1e019d5007168374_3-4607-1-a986fe7.jpg",
+        link: "https://www.houzz.in/hznb/photos/breath-of-fresh-air-phvw-vp~53171974"
+      }
+    };
+
+    // Change image & link when radio is selected
+    radios.forEach(radio => {
+      radio.addEventListener("change", function () {
+        if (images[this.value]) {
+          img.src = images[this.value].src;
+          link.href = images[this.value].link;
+        } else {
+          img.src = "{% static 'images/placeholder.jpg' %}";
+          link.href = "#";
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+      <!-- Step 3: Select Package -->
+      <div class="step2 d-none" id="step3">
+        <h5 class="fw-semibold text-success mb-3">Step 3/4: Choose Your Package</h5>
+        <div class="row g-3 mb-4">
+          {% for pkg in packages %}
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" type="radio" name="package" value="{{ pkg }}" id="pkg_{{ forloop.counter }}" required>
+              <label class="form-check-label" for="pkg_{{ forloop.counter }}">{{ pkg }}</label>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(2)">Back</button>
+          <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(4)">Next</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Final Form -->
+      <div class="step2 d-none" id="step4">
+        <h5 class="fw-semibold text-success mb-3">Step 4/4: Your Details</h5>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Name</label>
+            <input type="text" name="name" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Contact</label>
+            <input type="tel" name="contact" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Location</label>
+            <input type="text" name="location" class="form-control shadow-sm" required>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(3)">Back</button>
+          <button type="submit" class="btn btn-success px-5 rounded-pill">Verify & Submit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+let currentStep = 1;
+function nextStep(step) {
+  document.getElementById(`step${currentStep}`).classList.add('d-none');
+  document.getElementById(`step${step}`).classList.remove('d-none');
+  currentStep = step;
+}
+function prevStep(step) {
+  document.getElementById(`step${currentStep}`).classList.add('d-none');
+  document.getElementById(`step${step}`).classList.remove('d-none');
+  currentStep = step;
+}
+</script>
+{% endblock %}
+

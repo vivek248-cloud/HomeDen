@@ -1,0 +1,122 @@
+{% extends 'elite_interior/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5 px-3 px-md-4" style="margin-top: 80px;">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-muted text-decoration-none" style="font-size: 1rem;font-weight:800;">Home</a></li>
+            {% if all_projects %}
+            <li class="breadcrumb-item text-muted" style="font-size: 1rem;font-weight:800;"><a href="/{{ project.category|lower }}-projects/" class="text-muted text-decoration-none" style="font-size: 1rem;font-weight:800;">{{ project.category}}</a></li>
+            <li class="breadcrumb-item active" aria-current="page" style="font-size: 1rem;font-weight:800;">{{ project.subcategory }}</li>
+            {% endif %}
+        </ol>
+    </nav>
+
+    <!-- Title -->
+    <h2 class="text-center mb-3">{{ category.name }}</h2>
+
+    <!-- Description -->
+    <p class="text-center text-muted mb-5">
+        Kitchen of a house should be made and maintained in proper shape, design and color. 
+        Everything should be arranged perfectly to match the requirements. 
+        These models are fully customizable to fit your space and style.
+    </p>
+
+    <!-- Product Grid -->
+<div class="container py-5 px-2 px-md-3">
+  <div class="row g-4" id="project-container">
+    {% for project in all_projects %}
+    <div class="col-lg-3 col-md-4 col-sm-6 col-12 d-flex">
+      <div class="card h-100 shadow-sm border-0 w-100">
+        {% if project.image %}
+        <img src="{{ project.image.url }}" class="card-img-top rounded-top" alt="{{ project.name }}"
+             style="height: 250px; object-fit: cover;">
+        {% endif %}
+        <div class="card-body p-3 d-flex flex-column">
+          <!-- Responsive titles -->
+          <h6 class="card-title mb-1" style="font-size: 1rem; white-space: normal; overflow: hidden; text-overflow: ellipsis;">
+            {{ project.name }}
+          </h6>
+          <p class="text-muted mb-2" style="font-size: 0.85rem; white-space: normal; overflow: hidden; text-overflow: ellipsis;">
+            {{ project.subcategory }}
+          </p>
+          <a href="{% url 'project_detail' project.slug %}" 
+             class="btn btn-sm view-btn mt-auto w-100" 
+             style="font-size: 0.85rem;">View</a>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <p class="text-center">No projects available.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Load More Button -->
+  {% if is_project_paginated %}
+  <div class="text-center mt-4">
+    <button id="loadMoreBtn" 
+            class="btn btn-outline-success px-4 rounded-pill d-inline-flex align-items-center justify-content-center gap-2"
+            data-next-page="{{ next_project_page }}">
+      <span id="btnText" class="fw-semibold">Load More</span>
+      <div id="spinner" class="spinner-border spinner-border-sm text-success d-none" role="status"></div>
+    </button>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Load More Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const btn = document.getElementById('loadMoreBtn');
+  const spinner = document.getElementById('spinner');
+  const btnText = document.getElementById('btnText');
+
+  if (btn) {
+    btn.addEventListener('click', function () {
+      const nextPage = btn.getAttribute('data-next-page');
+      const url = new URL(window.location.href);
+      url.searchParams.set('page', nextPage);
+
+      // Disable button & show spinner
+      btn.disabled = true;
+      spinner.classList.remove('d-none');
+      btnText.textContent = "Loading...";
+
+      fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const newProjectCards = doc.querySelectorAll('#project-container > .col-lg-3, #project-container > .col-md-4, #project-container > .col-sm-6');
+
+          const container = document.querySelector('#project-container');
+          newProjectCards.forEach(card => container.appendChild(card));
+
+          const newButton = doc.querySelector('#loadMoreBtn');
+          if (newButton) {
+            btn.setAttribute('data-next-page', newButton.getAttribute('data-next-page'));
+            btn.disabled = false;
+          } else {
+            btn.remove(); // No more pages
+          }
+        })
+        .finally(() => {
+          // Hide spinner and reset text
+          spinner.classList.add('d-none');
+          btnText.textContent = "Load More";
+          btn.disabled = false;
+        });
+    });
+  }
+});
+</script>
+
+
+
+
+</div>
+{% endblock %}

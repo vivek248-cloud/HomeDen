@@ -1,0 +1,336 @@
+
+{% extends 'elite_interior/base.html' %}
+
+{% load format_extras %}
+{% load i18n %}
+{% load static %}
+{% block extra_css %}
+
+{% endblock %}
+
+
+{% block content %}
+<div class="container py-5" style="margin-top: 100px;">
+  <div class="card shadow border-0 rounded-4 px-3 px-md-5 py-4 bg-white">
+    <h2 class="text-center fw-bold mb-4 text-dark">
+      <i class="bi bi-calculator-fill text-success me-2"></i>
+      <span class="text-muted">- Living Room Estimation</span>
+    </h2>
+
+    <form method="post" id="wizardForm" action="{% url 'submit_estimation_form' %}">
+      {% csrf_token %}
+
+      <!-- Step 1: Select Dimension -->
+      <div class="step2" id="step1">
+        <h5 class="fw-semibold text-success mb-3">
+          Step 1/4: Select the nearest Living Room dimension
+        </h5>
+
+        <div class="row g-3 mb-4">
+          {% for size in living_room_sizes %}
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="size" 
+                     value="{{ size }}" 
+                     id="size_{{ forloop.counter }}" 
+                     required>
+              <label class="form-check-label fw-semibold" for="size_{{ forloop.counter }}">
+                {{ size }}
+              </label>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="text-end">
+          <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(2)">
+            Next
+          </button>
+        </div>
+      </div>
+
+<!-- Step 2: Select Living Room Style -->
+<div class="step2 d-none" id="step2">
+  <h5 class="fw-semibold text-success mb-3">Step 2/4: Select the style of your Living Room</h5>
+  <div class="row g-4 align-items-center">
+    <div class="col-md-6">
+      <div class="row g-3">
+
+        <!-- Transitional -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="living_room_type"
+                   value="Transitional Living Room"
+                   id="living_room_transitional"
+                   required>
+            <label class="form-check-label fw-semibold" for="living_room_transitional">
+              Transitional Living Room
+            </label>
+          </div>
+        </div>
+
+        <!-- Modern -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="living_room_type"
+                   value="Modern Living Room"
+                   id="living_room_modern">
+            <label class="form-check-label fw-semibold" for="living_room_modern">
+              Modern Living Room
+            </label>
+          </div>
+        </div>
+
+        <!-- Contemporary -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="living_room_type"
+                   value="Contemporary Living Room"
+                   id="living_room_contemporary">
+            <label class="form-check-label fw-semibold" for="living_room_contemporary">
+              Contemporary Living Room
+            </label>
+          </div>
+        </div>
+
+        <!-- Traditional -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="living_room_type"
+                   value="Indian Living Room"
+                   id="living_room_indian">
+            <label class="form-check-label fw-semibold" for="living_room_indian">
+              Indian Living Room
+            </label>
+          </div>
+        </div>
+
+        <!-- Farmhouse -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="living_room_type"
+                   value="American Living Room"
+                   id="living_room_american">
+            <label class="form-check-label fw-semibold" for="living_room_american">
+              American Living Room
+            </label>
+          </div>
+        </div>
+
+        <!-- Rustic -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="living_room_type"
+                   value="Eclectic Living Room"
+                   id="living_room_eclectic">
+            <label class="form-check-label fw-semibold" for="living_room_eclectic">
+              Eclectic Living Room
+            </label>
+          </div>
+        </div>
+
+        <!-- Industrial -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="living_room_type"
+                   value="Industrial Living Room"
+                   id="living_room_industrial">
+            <label class="form-check-label fw-semibold" for="living_room_industrial">
+              Industrial Living Room
+            </label>
+          </div>
+        </div>
+
+        <!-- Mediterranean -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="living_room_type"
+                   value="Mediterranean Living Room"
+                   id="living_room_mediterranean">
+            <label class="form-check-label fw-semibold" for="living_room_mediterranean">
+              Mediterranean Living Room
+            </label>
+          </div>
+        </div>
+
+        <!-- Craftsman -->
+        <div class="col-sm-6">
+          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <input class="form-check-input me-2"
+                   type="radio"
+                   name="living_room_type"
+                   value="Tropical Living Room"
+                   id="living_room_tropical">
+            <label class="form-check-label fw-semibold" for="living_room_tropical">
+              Tropical Living Room
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Dynamic Image -->
+    <div class="col-md-6 text-center">
+      <a id="living_room_link" href="#" target="_blank">
+        <img id="living_room_type_img"
+             src="https://st.hzcdn.com/simgs/pictures/living-rooms/domingo-road-great-room-project-lace-and-grace-interiors-img~81b1817c0e87a3af_3-6170-1-b727062.jpg"
+             alt="Living Room Type"
+             class="img-fluid rounded-3 shadow-sm"
+             style="height: 250px; object-fit: cover;">
+      </a>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between mt-4">
+    <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(1)">Back</button>
+    <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(3)">Next</button>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const radios = document.querySelectorAll('input[name="living_room_type"]');
+    const img = document.getElementById("living_room_type_img");
+    const link = document.getElementById("living_room_link");
+
+    // Map styles to images + links
+    const images = {
+      "Transitional Living Room": {
+        src: "https://st.hzcdn.com/simgs/pictures/living-rooms/domingo-road-great-room-project-lace-and-grace-interiors-img~81b1817c0e87a3af_3-6170-1-b727062.jpg",
+        link: "https://www.houzz.in/hznb/photos/domingo-road-great-room-project-phvw-vp~156920739"
+      },
+      "Modern Living Room": {
+        src: "https://st.hzcdn.com/simgs/2821eb900822c142_3-3375/modern-living-room.jpg",
+        link: "https://www.houzz.in/photos/tenang-house-phvw-vp~211404173"
+      },
+      "Contemporary Living Room": {
+        src: "https://st.hzcdn.com/simgs/efd12a9508345339_3-9647/contemporary-living-room.jpg",
+        link: "https://www.houzz.in/photos/tank-bunglow-phvw-vp~211633216"
+      },
+      "Indian Living Room": {
+        src: "https://st.hzcdn.com/simgs/7e91e55e05703b46_3-6575/indian-living-room.jpg",
+        link: "https://www.houzz.in/photos/avasthia-phvw-vp~202001776"
+      },
+      "American Living Room": {
+        src: "https://st.hzcdn.com/simgs/pictures/living-rooms/lake-front-country-estate-markalunas-architecture-group-img~e68124f303a85dff_3-3500-1-7411697.jpg",
+        link: "https://www.houzz.in/hznb/photos/lake-front-country-estate-phvw-vp~13771358"
+      },
+      "Eclectic Living Room": {
+        src: "https://st.hzcdn.com/simgs/8e8172ad063d0eeb_3-7606/eclectic-living-room.jpg",
+        link: "https://www.houzz.in/hznb/photos/dark-green-living-room-phvw-vp~187843910"
+      },
+      "Industrial Living Room": {
+        src: "https://st.hzcdn.com/simgs/pictures/living-rooms/jamesthomas-llc-jamesthomas-interiors-img~69c10b3b0f2c2d1f_3-8005-1-3ab7c14.jpg",
+        link: "https://www.houzz.in/hznb/photos/wynkoop-loft-phvw-vp~108059544"
+      },
+      "Mediterranean Living Room": {
+        src: "https://st.hzcdn.com/simgs/c0e165dd03c65f33_3-7788/mediterranean-living-room.jpg",
+        link: "https://www.houzz.in/hznb/photos/santa-monica-italian-estate-phvw-vp~39709781"
+      },
+      "Tropical Living Room": {
+        src: "https://st.hzcdn.com/simgs/3a7110e300bc5a6f_3-7388/tropical-living-room.jpg",
+        link: "https://www.houzz.in/hznb/photos/parade-of-homes-house-phvw-vp~6118001"
+      }
+    };
+
+    // Change image & link when radio is selected
+    radios.forEach(radio => {
+      radio.addEventListener("change", function () {
+        if (images[this.value]) {
+          img.src = images[this.value].src;
+          link.href = images[this.value].link;
+        } else {
+          img.src = "{% static 'images/placeholder.jpg' %}";
+          link.href = "#";
+        }
+      });
+    });
+  });
+</script>
+
+
+
+
+      <!-- Step 3: Select Package -->
+      <div class="step2 d-none" id="step3">
+        <h5 class="fw-semibold text-success mb-3">Step 3/4: Choose Your Package</h5>
+        <div class="row g-3 mb-4">
+          {% for pkg in packages %}
+          <div class="col-sm-6">
+            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+              <input class="form-check-input me-2" type="radio" name="package" value="{{ pkg }}" id="pkg_{{ forloop.counter }}" required>
+              <label class="form-check-label" for="pkg_{{ forloop.counter }}">{{ pkg }}</label>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(2)">Back</button>
+          <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(4)">Next</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Final Form -->
+      <div class="step2 d-none" id="step4">
+        <h5 class="fw-semibold text-success mb-3">Step 4/4: Your Details</h5>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Name</label>
+            <input type="text" name="name" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Contact</label>
+            <input type="tel" name="contact" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control shadow-sm" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Location</label>
+            <input type="text" name="location" class="form-control shadow-sm" required>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(3)">Back</button>
+          <button type="submit" class="btn btn-success px-5 rounded-pill">Verify & Submit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+let currentStep = 1;
+function nextStep(step) {
+  document.getElementById(`step${currentStep}`).classList.add('d-none');
+  document.getElementById(`step${step}`).classList.remove('d-none');
+  currentStep = step;
+}
+function prevStep(step) {
+  document.getElementById(`step${currentStep}`).classList.add('d-none');
+  document.getElementById(`step${step}`).classList.remove('d-none');
+  currentStep = step;
+}
+</script>
+{% endblock %}
+

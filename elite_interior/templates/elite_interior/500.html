@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>404 - Home Den | Interior</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f7f7f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    #game {
+      width: 800px;
+      height: 200px;
+      background: white;
+      border: 5px double #333;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #dino {
+      width: 44px;
+      height: 44px;
+      border-radius: 50% 50% 0 0;
+      background-color: #b9b2ffff;
+      position: absolute;
+      bottom: 0;
+      left: 50px;
+    }
+
+    #cactus {
+      width: 34px;
+      height: 50px;
+      background: #dc3545;
+      position: absolute;
+      bottom: 0;
+      right: -50px;
+    }
+
+    #score {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+    .home-link:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>500 - Internal Server Error! Play Dino 🦖</h1>
+  <div id="game">
+    <div id="dino"></div>
+    <div id="cactus"></div>
+    <div id="score">Score: 0</div>
+  </div>
+  <a href="{% url 'home' %}" class="home-link" style="margin-top: 20px; text-decoration: none; color: #000000ff; font-size: 32px;"> > Go to Home</a>
+
+  <script>
+    const dino = document.getElementById("dino");
+    const cactus = document.getElementById("cactus");
+    const scoreDisplay = document.getElementById("score");
+    let isJumping = false;
+    let score = 0;
+    let gameOver = false;
+
+    // Jump logic
+    document.addEventListener("keydown", function (event) {
+      if ((event.code === "Space" || event.code === "ArrowUp") && !isJumping) {
+        jump();
+      }
+    });
+
+    function jump() {
+      isJumping = true;
+      let position = 0;
+      
+      let upInterval = setInterval(() => {
+        if (position >= 120) {
+          clearInterval(upInterval);
+          // fall down
+          let downInterval = setInterval(() => {
+            if (position <= 0) {
+              clearInterval(downInterval);
+              isJumping = false;
+            }
+            position -= 5;
+            dino.style.bottom = position + "px";
+            dino.style.transform = "rotate(-" + position * 4 + "deg)";
+          }, 20);
+        }
+        position += 5;
+        dino.style.bottom = position + "px";
+        dino.style.transform = "rotate(-" + position * 4 + "deg)";
+      }, 20);
+    }
+
+   // Cactus movement + collision detection
+function moveCactus() {
+  let cactusPosition = 800;   // starting X position
+  let speed = 5;              // movement speed (px per frame)
+  let levelUp = 5;            // increase speed every 5 points
+  let multiplier = 1;         // speed multiplier
+
+  let interval = setInterval(() => {
+    if (gameOver) {
+      clearInterval(interval);
+      return;
+    }
+
+    // Move cactus left
+    cactusPosition -= speed * multiplier;
+
+    // Reset cactus when it goes out of screen
+    if (cactusPosition < -50) {
+      cactusPosition = 800;
+      score++;
+
+      // Increase difficulty
+      if (score % levelUp === 0) {
+        speed += 1; // cactus runs faster 🚀
+        multiplier += 0.1; // increase difficulty
+      }
+
+      scoreDisplay.textContent = "Score: " + score;
+    }
+
+    cactus.style.left = cactusPosition + "px";
+
+    // Collision detection
+    let dinoBottom = parseInt(window.getComputedStyle(dino).getPropertyValue("bottom"));
+    if (cactusPosition < 90 && cactusPosition > 40 && dinoBottom < 50) {
+      gameOver = true;
+      alert("💀 Game Over! Your Score: " + score);
+      window.location.reload();
+    }
+  }, 20); // fixed smooth frame rate
+}
+
+moveCactus();
+
+  </script>
+</body>
+</html>

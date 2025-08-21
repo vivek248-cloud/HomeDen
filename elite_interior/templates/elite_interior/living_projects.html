@@ -6,11 +6,11 @@
 {% if first_project and first_project.image %}
 
 <div class="hero-header position-relative text-white text-center d-flex align-items-center justify-content-center"
-     style="background-image: url('{{ projects.0.image.url }}');
-            background-size: cover;
-            background-position: center;
-            min-height: 75vh;
-            padding: 4rem 1rem;">
+     style="min-height: 75vh; padding: 4rem 1rem;">
+
+    <img src="{% static 'images/living1.jpg' %}" 
+         alt="Hero Background"
+         style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-1;">
 
     <div class="hero-overlay position-absolute top-0 start-0 w-100 h-100" 
          style="background: linear-gradient(to bottom, rgba(0, 0, 0, 0.32), rgba(0, 0, 0, 0.31)); z-index: 0;"></div>
@@ -38,11 +38,11 @@
 </div>
 {% else %}
 <div class="hero-header position-relative text-white text-center d-flex align-items-center justify-content-center"
-     style="background-image: url('{% static "images/about-hall.jpeg" %}');
-            background-size: cover;
-            background-position: center;
-            min-height: 75vh;
-            padding: 4rem 1rem;">
+     style="min-height: 75vh; padding: 4rem 1rem;">
+
+    <img src="{% static 'images/living1.jpg' %}" 
+         alt="Hero Background"
+         style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-1;">
 
     <div class="hero-overlay position-absolute top-0 start-0 w-100 h-100"
          style="background-color: rgba(0,0,0,0.5); z-index: 0;"></div>
@@ -70,7 +70,31 @@
 </div>
 {% endif %}
 
-
+<div class="container mb-4">
+  <ul class="nav justify-content-center flex-wrap gap-2 project-category-tabs">
+    <li class="nav-item">
+      <a class="nav-link {% if category == 'Kitchen' %}active{% endif %}" href="{% url 'kitchen_projects' %}">Kitchen</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if category == 'Bedroom' %}active{% endif %}" href="{% url 'bedroom_projects' %}">Bedroom</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if category == 'Dining' %}active{% endif %}" href="{% url 'dining_projects' %}">Dining</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if category == 'Living' %}active{% endif %}" href="{% url 'living_projects' %}">Living</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if category == 'Bathroom' %}active{% endif %}" href="{% url 'bathroom_projects' %}">Bathroom</a>
+    </li>
+     <li class="nav-item">
+      <a class="nav-link {% if category == 'kidsroom' %}active{% endif %}" href="{% url 'kidsroom_projects' %}">Kid's room</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if category == 'Our Projects' %}active{% endif %}" href="{% url 'projects' %}">All</a>
+    </li>
+  </ul>
+</div>
 
 
 <div class="container-fluid py-5" style="margin-top: 100px;">
@@ -82,14 +106,14 @@
             <p class="text-muted" style="text-align: justify;">
                 {{ project.description }}
             </p>
-            <a href="{% url 'project_detail' project.id %}" class="btn view-btn px-4 py-1 mt-3 " onclick="simulateLoading()" >
+            <a href="{% url 'product' project.slug %}" class="btn view-btn px-4 py-1 mt-3 " onclick="simulateLoading()" >
                 View More
             </a>
         </div>
 
         <!-- Right: Images -->
         <div class="col-lg-6 col-12">
-            <div class="d-flex flex-wrap gap-3 justify-content-end px-4 right-image">
+            <div class="d-flex flex-wrap gap-3  px-4 right-image">
                 <img src="{{ project.image.url }}" alt="{{ project.name }}" class="img-fluid shadow rounded" style="width: 100%; max-width: 400px; height: auto; object-fit: cover;">
                 {% if project.extra_image %}
                 <img src="{{ project.extra_image.url }}" alt="Extra for {{ project.name }}" class="img-fluid shadow rounded" style="width: 100%; max-width: 300px; height: auto; object-fit: cover;">

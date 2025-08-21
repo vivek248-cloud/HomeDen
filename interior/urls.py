@@ -24,9 +24,11 @@ import os
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('HomeDen/', include('elite_interior.urls')),  # link app urls
+    path('', include('elite_interior.urls')),  # link app urls
     path('i18n/', include('django.conf.urls.i18n')), 
 ]
+
+
 
 # Development: Serve media and static files
 if settings.DEBUG:
@@ -40,6 +42,3 @@ else:
         re_path(r'^media/(?P<path>.*)$', serve_media),
     ]
 
-
-
-    
