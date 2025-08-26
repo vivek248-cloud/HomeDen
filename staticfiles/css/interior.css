@@ -696,9 +696,12 @@ body, html {
   filter: brightness(0.5);
 }
   .scroller-content-2 h1 {
-    font-size: 4rem;
+    font-size: 3.1rem;
     font-weight: 600;
     animation: fadeInUp 1s ease-in-out;
+  }
+  .scroller-content-2 h4{
+    font-size: 3rem;
   }
   /* .scroller-content-2 h1::first-letter {
     font-size: 6rem;
@@ -1021,9 +1024,10 @@ body, html {
 
 .package-overlay h4 {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.5rem!important;
   text-transform: uppercase;
-  font-weight: 600;
+  font-family: 'Playfair Display', serif!important;
+  font-weight: 800;
 }
 
 .package-footer {
@@ -1579,6 +1583,7 @@ p {
   opacity: 1;
   transform: scaleX(1);
 }
+
 .line.animate
 {
   width: 200px;
@@ -1912,6 +1917,10 @@ p {
 @media (max-width: 767px) {
   .blog-card img {
     height: 200px; /* Limit image height on mobile */
+  }
+  .blog-slider-card
+  {
+    width: 300px;
   }
 }
 
@@ -2461,7 +2470,7 @@ p {
     color: #666;
     margin-top: 20px;
     padding-top: 10px;
-    border-top: 1px dashed #ddd;
+    border-top: 1px dashed #3d3a3a;
   }
 
   .link-div
@@ -2539,7 +2548,9 @@ p {
 	font-weight: 700;
 	vertical-align: top;
 }
-
+input[type="radio"]:hover {
+  cursor: pointer;
+}
 
   /* Mobile Responsiveness */
   @media (max-width: 768px) {
@@ -4050,7 +4061,7 @@ font-size: 3.5rem!important;
 
 } */
 .scroller-content-2 h4 {
-font-size: 1.5rem!important;
+font-size: 2rem!important;
 font-weight: 300;
 }
 .scroller-content-2 p {
@@ -4267,8 +4278,11 @@ margin: 0;
     box-sizing: border-box;
   }
 
-  .section-header {
+  .divider{
     display: none;
+  }
+  .section-header {
+    display: block !important;
   }
     .right-image
 {
@@ -4284,9 +4298,9 @@ margin: 0;
 @media (max-width: 767px) {
   
     .section-header h2 {
-      font-size: 1rem;
-      font-weight: 400;
-      white-space: nowrap;
+      font-size: 1.2rem;
+      font-weight: 700;
+      white-space: wrap;
     }
     .highlight-text
   {
@@ -4800,3 +4814,22 @@ input[name="otp"] {
 
 
 
+ /* Default (mobile first) */
+    .project-img {
+        height: 120px;   /* small on mobiles */
+        object-fit: cover;
+    }
+
+    /* Tablets */
+    @media (min-width: 768px) {
+        .project-img {
+            height: 180px;
+        }
+    }
+
+    /* Desktop and larger */
+    @media (min-width: 992px) {
+        .project-img {
+            height: 250px;   /* bigger image */
+        }
+    }

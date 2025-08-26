@@ -375,19 +375,17 @@ def project_detail(request, slug):
         'subcategories': subcategories
     })
 
-
 def product(request, slug):
     project = get_object_or_404(Project, slug=slug)
-    related_projects = Project.objects.filter(subcategory=project.subcategory).exclude(id=project.id)
+    related_projects = Project.objects.filter(subcategory=project.subcategory).all()
 
-    paginator = Paginator(related_projects, 6)  # show 6 per page
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    return render(request, "elite_interior/product.html", {
+    context = {
         "project": project,
-        "all_projects": page_obj
-    })
+        "all_projects": related_projects,  # send all without pagination
+    }
+    return render(request, "elite_interior/product.html", context)
+
+
 
 
 from collections import OrderedDict
@@ -492,7 +490,7 @@ def kitchen_calculate_budget(request):
         "Custom"
     ]
 
-    packages = ['Essential', 'Eleganza', 'Eleganza Plus']
+    packages = ['silver', 'gold', 'platinum']
 
     form = BudgetCalculationForm()
     context = {
@@ -513,7 +511,7 @@ def bedroom_calculate_budget(request):
         "Custom"
     ]
 
-    packages = ['Essential', 'Eleganza', 'Eleganza Plus']
+    packages = ['silver', 'gold', 'platinum']
 
     form = BudgetCalculationForm()
     context = {
@@ -534,7 +532,7 @@ def bathroom_calculate_budget(request):
         "Custom"
     ]
 
-    packages = ['Essential', 'Eleganza', 'Eleganza Plus']
+    packages = ['silver', 'gold', 'platinum']
 
     form = BudgetCalculationForm()
     context = {
@@ -555,7 +553,7 @@ def kidsroom_calculate_budget(request):
         "Custom"
     ]
 
-    packages = ['Essential', 'Eleganza', 'Eleganza Plus']
+    packages = ['silver', 'gold', 'platinum']
 
     form = BudgetCalculationForm()
     context = {
@@ -577,7 +575,7 @@ def livingroom_calculate_budget(request):
         "Custom"
     ]
 
-    packages = ['Essential', 'Eleganza', 'Eleganza Plus']
+    packages = ['silver', 'gold', 'platinum']
 
     form = BudgetCalculationForm()
     context = {
@@ -599,7 +597,7 @@ def wardrobe_calculate_budget(request):
         "Custom"
     ]
 
-    packages = ['Essential', 'Eleganza', 'Eleganza Plus']
+    packages = ['silver', 'gold', 'platinum']
 
     form = BudgetCalculationForm()
     context = {
@@ -620,7 +618,7 @@ def dining_calculate_budget(request):
         "Custom"
     ]
 
-    packages = ['Essential', 'Eleganza', 'Eleganza Plus']
+    packages = ['silver', 'gold', 'platinum']
 
     form = BudgetCalculationForm()
     context = {
@@ -739,19 +737,22 @@ def kitchen_submit_estimation_form(request):
             price = 50000
         elif size == '8 ft. × 9 ft.':
             price = 60000
-        elif size == '10 ft. × 10 ft.':
+        elif size == '9 ft. × 10 ft.':
             price = 70000
-        elif size == '11.5 ft. × 10 ft.':
+        elif size == '10 ft. × 10 ft.':
             price = 80000
+        elif size == '11.5 ft. × 10 ft.':
+            price = 90000
         else:
-            price = 0
+            price = 1 # Default price
 
-        if package == 'Essential':
+        if package == 'silver':
             price *= 0.8  # Apply 20% discount
-        elif package == 'Eleganza':
+        elif package == 'gold':
             price *= 1.2  # Apply 20% premium
-        elif package == 'Eleganza Plus':
+        elif package == 'platinum':
             price *= 1.5  # Apply 50% premium
+
 
         # Clear old session keys (instead of flush)
         for key in ["otp", "otp_expiry", "form_data"]:
@@ -761,7 +762,6 @@ def kitchen_submit_estimation_form(request):
         request.session["otp"] = str(otp)
         request.session["otp_expiry"] = expiry_time.isoformat()
         request.session["form_data"] = {
-            "room_type": "kitchen",
             "size": size,
             "shape": shape,
             "package": package,
@@ -770,6 +770,8 @@ def kitchen_submit_estimation_form(request):
             "contact": contact,
             "email": email,
             "location": location,
+            "room_type": request.session.get("room_type"),  # ✅ Pull it from session
+            "style": request.session.get("style"),  # ✅ Pull it from session
         }
 
         # Send OTP
@@ -792,7 +794,7 @@ def kitchen_submit_estimation_form(request):
 def bedroom_submit_estimation_form(request):
     if request.method == "POST":
         size = request.POST.get("size")
-        bedroom_type = request.POST.get("bedroom_type")
+        shape = request.POST.get("shape")
         package = request.POST.get("package")
         name = request.POST.get("name")
         contact = request.POST.get("contact")
@@ -808,18 +810,20 @@ def bedroom_submit_estimation_form(request):
             price = 50000
         elif size == '8 ft. × 9 ft.':
             price = 60000
-        elif size == '10 ft. × 10 ft.':
+        elif size == '9 ft. × 10 ft.':
             price = 70000
-        elif size == '11.5 ft. × 10 ft.':
+        elif size == '10 ft. × 10 ft.':
             price = 80000
+        elif size == '11.5 ft. × 10 ft.':
+            price = 90000
         else:
             price = 0
 
-        if package == 'Essential':
+        if package == 'silver':
             price *= 0.8  # Apply 20% discount
-        elif package == 'Eleganza':
+        elif package == 'gold':
             price *= 1.2  # Apply 20% premium
-        elif package == 'Eleganza Plus':
+        elif package == 'platinum':
             price *= 1.5  # Apply 50% premium
 
         # Clear old session keys
@@ -830,9 +834,9 @@ def bedroom_submit_estimation_form(request):
         request.session["otp"] = str(otp)
         request.session["otp_expiry"] = expiry_time.isoformat()
         request.session["form_data"] = {
-            "room_type": "bedroom",
+            "room_type": request.session.get("room_type"),
             "size": size,
-            "bedroom_type": bedroom_type,
+            "shape": shape,
             "package": package,
             "price": price,
             "name": name,
@@ -857,7 +861,7 @@ def bedroom_submit_estimation_form(request):
 def living_submit_estimation_form(request):
     if request.method == "POST":
         size = request.POST.get("size")
-        living_room_type = request.POST.get("living_room_type")
+        shape = request.POST.get("shape")
         package = request.POST.get("package")
         name = request.POST.get("name")
         contact = request.POST.get("contact")
@@ -873,19 +877,22 @@ def living_submit_estimation_form(request):
             price = 50000
         elif size == '8 ft. × 9 ft.':
             price = 60000
+        elif size =='9 ft. × 10 ft.':
+            price =70000
         elif size == '10 ft. × 10 ft.':
-            price = 70000
-        elif size == '11.5 ft. × 10 ft.':
             price = 80000
+        elif size == '11.5 ft. × 10 ft.':
+            price = 90000
         else:
             price = 0
 
-        if package == 'Essential':
+        if package == 'silver':
             price *= 0.8  # Apply 20% discount
-        elif package == 'Eleganza':
+        elif package == 'gold':
             price *= 1.2  # Apply 20% premium
-        elif package == 'Eleganza Plus':
+        elif package == 'platinum':
             price *= 1.5  # Apply 50% premium
+
 
         # Clear old session keys
         for key in ["otp", "otp_expiry", "form_data"]:
@@ -895,9 +902,9 @@ def living_submit_estimation_form(request):
         request.session["otp"] = str(otp)
         request.session["otp_expiry"] = expiry_time.isoformat()
         request.session["form_data"] = {
-            "room_type": "living_room",
+            "room_type": request.session.get("room_type"),  # ✅ Pull it from session
             "size": size,
-            "living_room_type": living_room_type,
+            "shape": shape,
             "package": package,
             "price": price,
             "name": name,
@@ -921,7 +928,7 @@ def living_submit_estimation_form(request):
 def bathroom_submit_estimation_form(request):
     if request.method == "POST":
         size = request.POST.get("size")
-        bathroom_type = request.POST.get("bathroom_type")
+        shape = request.POST.get("shape")
         package = request.POST.get("package")
         name = request.POST.get("name")
         contact = request.POST.get("contact")
@@ -937,19 +944,21 @@ def bathroom_submit_estimation_form(request):
             price = 50000
         elif size == '8 ft. × 9 ft.':
             price = 60000
-        elif size == '10 ft. × 10 ft.':
+        elif size == '9 ft. × 10 ft.':
             price = 70000
-        elif size == '11.5 ft. × 10 ft.':
+        elif size == '10 ft. × 10 ft.':
             price = 80000
+        elif size == '11.5 ft. × 10 ft.':
+            price = 90000
         else:
             price = 0
 
 
-        if package == 'Essential':
+        if package == 'silver':
             price *= 0.8  # Apply 20% discount
-        elif package == 'Eleganza':
+        elif package == 'gold':
             price *= 1.2  # Apply 20% premium
-        elif package == 'Eleganza Plus':
+        elif package == 'platinum':
             price *= 1.5  # Apply 50% premium
 
 
@@ -961,9 +970,9 @@ def bathroom_submit_estimation_form(request):
         request.session["otp"] = str(otp)
         request.session["otp_expiry"] = expiry_time.isoformat()
         request.session["form_data"] = {
-            "room_type": "bathroom",
+            "room_type": request.session.get("room_type", "N/A"),
             "size": size,
-            "bathroom_type": bathroom_type,
+            "shape": shape,
             "package": package,
             "price": price,
             "name": name,
@@ -988,7 +997,7 @@ def bathroom_submit_estimation_form(request):
 def dining_submit_estimation_form(request):
     if request.method == "POST":
         size = request.POST.get("size")
-        dining_type = request.POST.get("dining_type")
+        shape = request.POST.get("shape")
         package = request.POST.get("package")
         name = request.POST.get("name")
         contact = request.POST.get("contact")
@@ -1004,19 +1013,21 @@ def dining_submit_estimation_form(request):
             price = 50000
         elif size == '8 ft. × 9 ft.':
             price = 60000
-        elif size == '10 ft. × 10 ft.':
+        elif size == '9 ft. × 10 ft.':
             price = 70000
-        elif size == '11.5 ft. × 10 ft.':
+        elif size == '10 ft. × 10 ft.':
             price = 80000
+        elif size == '11.5 ft. × 10 ft.':
+            price = 90000
         else:
             price = 0
 
 
-        if package == 'Essential':
+        if package == 'silver':
             price *= 0.8  # Apply 20% discount
-        elif package == 'Eleganza':
+        elif package == 'gold':
             price *= 1.2  # Apply 20% premium
-        elif package == 'Eleganza Plus':
+        elif package == 'platinum':
             price *= 1.5  # Apply 50% premium
 
 
@@ -1028,9 +1039,9 @@ def dining_submit_estimation_form(request):
         request.session["otp"] = str(otp)
         request.session["otp_expiry"] = expiry_time.isoformat()
         request.session["form_data"] = {
-            "room_type": "dining_room",
+            "room_type": request.session.get("room_type", "N/A"),
             "size": size,
-            "dining_type": dining_type,
+            "shape": shape,
             "package": package,
             "price": price,
             "name": name,
@@ -1054,7 +1065,7 @@ def dining_submit_estimation_form(request):
 def kids_submit_estimation_form(request):
     if request.method == "POST":
         size = request.POST.get("size")
-        kids_room_type = request.POST.get("kids_room_type")
+        shape = request.POST.get("shape")
         package = request.POST.get("package")
         name = request.POST.get("name")
         contact = request.POST.get("contact")
@@ -1070,18 +1081,20 @@ def kids_submit_estimation_form(request):
             price = 50000
         elif size == '8 ft. × 9 ft.':
             price = 60000
-        elif size == '10 ft. × 10 ft.':
+        elif size == '9 ft. × 10 ft.':
             price = 70000
-        elif size == '11.5 ft. × 10 ft.':
+        elif size == '10 ft. × 10 ft.':
             price = 80000
+        elif size == '11.5 ft. × 10 ft.':
+            price = 90000
         else:
             price = 0
 
-        if package == 'Essential':
+        if package == 'silver':
             price *= 0.8  # Apply 20% discount
-        elif package == 'Eleganza':
+        elif package == 'gold':
             price *= 1.2  # Apply 20% premium
-        elif package == 'Eleganza Plus':
+        elif package == 'platinum':
             price *= 1.5  # Apply 50% premium
 
 
@@ -1093,9 +1106,9 @@ def kids_submit_estimation_form(request):
         request.session["otp"] = str(otp)
         request.session["otp_expiry"] = expiry_time.isoformat()
         request.session["form_data"] = {
-            "room_type": "living_room",
+            "room_type": request.session.get("room_type", "N/A"),
             "size": size,
-            "kids_room_type": kids_room_type,
+            "shape": shape,
             "package": package,
             "price": price,
             "name": name,
@@ -1120,7 +1133,7 @@ def kids_submit_estimation_form(request):
 def wardrobes_submit_estimation_form(request):
     if request.method == "POST":
         size = request.POST.get("size")
-        wardrobes_type = request.POST.get("wardrobes_type")
+        shape = request.POST.get("shape")
         package = request.POST.get("package")
         name = request.POST.get("name")
         contact = request.POST.get("contact")
@@ -1136,19 +1149,21 @@ def wardrobes_submit_estimation_form(request):
             price = 50000
         elif size == '8 ft. × 9 ft.':
             price = 60000
-        elif size == '10 ft. × 10 ft.':
+        elif size == '9 ft. × 10 ft.':
             price = 70000
-        elif size == '11.5 ft. × 10 ft.':
+        elif size == '10 ft. × 10 ft.':
             price = 80000
+        elif size == '11.5 ft. × 10 ft.':
+            price = 90000
         else:
             price = 0
 
 
-        if package == 'Essential':
+        if package == 'silver':
             price *= 0.8  # Apply 20% discount
-        elif package == 'Eleganza':
+        elif package == 'gold':
             price *= 1.2  # Apply 20% premium
-        elif package == 'Eleganza Plus':
+        elif package == 'platinum':
             price *= 1.5  # Apply 50% premium
 
 
@@ -1161,9 +1176,9 @@ def wardrobes_submit_estimation_form(request):
         request.session["otp"] = str(otp)
         request.session["otp_expiry"] = expiry_time.isoformat()
         request.session["form_data"] = {
-            "room_type": "living_room",
+            "room_type": request.session.get("room_type", "N/A"),
             "size": size,
-            "wardrobes_type": wardrobes_type,
+            "shape": shape,
             "package": package,
             "price": price,
             "name": name,
@@ -1199,6 +1214,31 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
 
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+from io import BytesIO
+from PyPDF2 import PdfMerger
+import os
+from django.http import FileResponse
+
+
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.contrib import messages
+from django.utils import timezone
+from django.conf import settings
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from PyPDF2 import PdfReader, PdfWriter
+from io import BytesIO
+import os
+from django.core.mail import EmailMessage
+import base64
+from django.core.mail import EmailMessage
+from io import BytesIO
+from django.urls import reverse
+
+
 def verify_otp(request):
     if request.method == "POST":
         user_otp = request.POST.get("otp")
@@ -1206,59 +1246,157 @@ def verify_otp(request):
         otp_expiry = request.session.get("otp_expiry")
         form_data = request.session.get("form_data")
 
-        # OTP expired check
+        # ✅ OTP expired check
         if otp_expiry and timezone.now() > timezone.datetime.fromisoformat(otp_expiry):
             messages.error(request, "OTP has expired. Please try again.")
             return redirect("select_platform")
 
-        # OTP validation
         if user_otp == session_otp and form_data:
             name = form_data.get("name")
             contact = form_data.get("contact")
             email = form_data.get("email")
             location = form_data.get("location")
+            room_type = form_data.get("room_type", "N/A")
+            shape = form_data.get("shape", "N/A")
             price = form_data.get("price", 0)
             package_name = form_data.get("package")
-            room_type = form_data.get("room_type", "N/A")
+            dimension = form_data.get("size")
 
-            subject = "New Budget Estimation Request"
-            body = f"""
-            Name: {name}
-            Contact: {contact}
-            Email: {email}
-            Location: {location}
+            # --- Generate Styled PDF into memory ---
+            buffer = BytesIO()
+            doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=30)
+            elements = []
+            styles = getSampleStyleSheet()
 
-            Selected Package: {package_name}
-            Estimated Price: ₹{price}
-            Dimension: {form_data.get("size")}
-            """
-
-
-            # Send mails
-            send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [settings.ADMIN_EMAIL])
-            send_mail(
-                "Your Budget Estimation Request",
-                "Thank you for your request. Our team will get back to you soon.\n\n" + body,
-                settings.DEFAULT_FROM_EMAIL,
-                [email],
+            centered_heading = ParagraphStyle(
+                name="CenteredHeading",
+                parent=styles["Heading1"],
+                alignment=TA_CENTER,
+                textColor=colors.HexColor("#3a5169"),
+                fontName="Helvetica-Bold"
             )
 
-            # ✅ Clear OTP + form data after success (so no mixing happens)
+            # Title
+            elements.append(HRFlowable(width="100%", thickness=1, color="#3a5169"))
+            elements.append(Paragraph("BUDGET ESTIMATION REPORT", centered_heading))
+            elements.append(Spacer(1, 20))
+
+            client_info = [
+                ["Name :", name],
+                ["Contact :", contact],
+                ["Email :", email],
+                ["Location :", location],
+                ["Room Type :", room_type.replace("_", " ").title()],
+                ["Style :", shape.replace("_", " ").title()],
+                ["Package :", package_name],
+                ["Dimension :", dimension],
+                ["Estimated Price :", f"Rs: {price}"],
+            ]
+
+            table = Table(client_info, colWidths=[150, 350], hAlign="CENTER")
+            table.setStyle(TableStyle([
+                ("FONTNAME", (0, 0), (-1, -1), "Helvetica"),
+                ("FONTSIZE", (0, 0), (-1, -1), 12),
+                ("ALIGN", (0, 0), (0, -1), "LEFT"),
+                ("TEXTCOLOR", (0, 0), (0, -1), colors.HexColor("#3a5169")),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("ROWHEIGHT", (0, 0), (-1, -1), 22),
+                ("BOX", (0, 0), (-1, -1), 1, colors.black),
+                ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.grey),
+                ("BACKGROUND", (0, 0), (-1, -1), colors.whitesmoke),
+                ("BACKGROUND", (0, 1), (-1, -1), colors.white),
+            ]))
+            elements.append(table)
+            elements.append(Spacer(1, 20))
+
+            doc.build(elements)
+            buffer.seek(0)
+
+            # --- Merge with existing.pdf into memory ---
+            pdf_writer = PdfWriter()
+
+            existing_pdf_path = os.path.join(settings.STATIC_ROOT, "pdf/existing.pdf")
+            if not os.path.exists(existing_pdf_path):
+                return HttpResponse("Error: existing.pdf not found", status=500)
+
+            existing_reader = PdfReader(existing_pdf_path)
+            for page in existing_reader.pages:
+                pdf_writer.add_page(page)
+
+            new_reader = PdfReader(buffer)
+            for page in new_reader.pages:
+                pdf_writer.add_page(page)
+
+            # ✅ Instead of saving to file, write merged PDF into memory
+            final_buffer = BytesIO()
+            pdf_writer.write(final_buffer)
+            final_buffer.seek(0)
+
+            # ✅ Send email with in-memory PDF
+            subject = f"New Estimation Request - {name}"
+            body = (
+                f"A new estimation request has been submitted.\n\n"
+                f"Name: {name}\n"
+                f"Contact: {contact}\n"
+                f"Email: {email}\n"
+                f"Location: {location}\n"
+                f"Package: {package_name}\n"
+                f"Dimension: {dimension}\n"
+                f"Estimated Price: Rs {price}\n\n"
+                "Please find the attached PDF for details."
+            )
+
+            email_message = EmailMessage(
+                subject=subject,
+                body=body,
+                from_email=settings.EMAIL_HOST_USER,
+                to=[settings.ADMIN_EMAIL],
+            )
+            email_message.attach(f"estimation_{name}.pdf", final_buffer.read(), "application/pdf")
+            email_message.send(fail_silently=False)
+
+            # ✅ Clear OTP + form data
             request.session.pop("otp", None)
             request.session.pop("otp_expiry", None)
             request.session.pop("form_data", None)
 
-            messages.success(
-                request,
-                f"Your estimation request has been submitted successfully! Estimated Price: ₹{price}"
-            )
-            return redirect("home")
+            # ✅ Save the generated PDF bytes in session for download
+            request.session["last_verified_data"] = form_data  
+            request.session["last_pdf"] = base64.b64encode(final_buffer.getvalue()).decode("utf-8")
 
-        # Invalid OTP
+            return render(
+                request,
+                "elite_interior/verify_otp.html",
+                {
+                    "price": price,
+                    "download_pdf": reverse("download_estimation")  # 👈 link to download view
+                }
+            )
+
+
         messages.error(request, "Invalid OTP. Please try again.")
         return render(request, "elite_interior/verify_otp.html")
 
     return redirect("select_platform")
+
+
+from django.http import HttpResponse
+
+def download_estimation(request):
+    pdf_data_b64 = request.session.get("last_pdf")
+    if not pdf_data_b64:
+        return HttpResponse("No PDF available", status=404)
+
+    pdf_data = base64.b64decode(pdf_data_b64)
+
+    form_data = request.session.get("last_verified_data", {})
+    name = form_data.get("name", "estimation")
+
+    response = HttpResponse(pdf_data, content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="estimation_{name}.pdf"'
+    return response
+
+
 
 
 
@@ -1571,6 +1709,10 @@ def export_pdf(request):
 
 
 
+
+
+
+
 def preview_pdf(request):
     return render(request, "elite_interior/preview_pdf.html")
 
@@ -1610,6 +1752,9 @@ def merged_pdf_view(request):
 def select_platform(request):
     if request.method == "POST":
         selected = request.POST.get("platform")
+
+        # Save room_type in session
+        request.session["room_type"] = selected  
 
         # Redirect to respective calculate page
         if selected == "kitchen":

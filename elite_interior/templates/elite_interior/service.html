@@ -72,7 +72,7 @@
     <div class="room-grid mt-5">
       {% for item in grid %}
         <div class="grid-item {{ item.size|lower }} auto-show-up shadow grid-item-effect" style="background-image: url('{{ item.image.url }}');">
-          <a href="/{{ item.title|lower }}-projects/" class="grid-item-link">
+          <a href="/{{ item.title|lower }}/" class="grid-item-link">
             <h2> {% if item.title|upper == "KIDSROOM" %} KID'S ROOM{% else %} {{ item.title|upper }} {% endif %}</h2>
           </a>
         </div>

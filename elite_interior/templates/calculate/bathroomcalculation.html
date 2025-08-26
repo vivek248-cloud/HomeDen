@@ -63,7 +63,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="bathroom_type"
+                   name="shape"
                    value="Transitional Bathroom"
                    id="bathroom_transitional"
                    required>
@@ -78,7 +78,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="bathroom_type"
+                   name="shape"
                    value="Modern Bathroom"
                    id="bathroom_modern">
             <label class="form-check-label fw-semibold" for="bathroom_modern">
@@ -92,7 +92,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="bathroom_type"
+                   name="shape"
                    value="Contemporary Bathroom"
                    id="bathroom_contemporary">
             <label class="form-check-label fw-semibold" for="bathroom_contemporary">
@@ -106,7 +106,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="bathroom_type"
+                   name="shape"
                    value="Traditional Bathroom"
                    id="bathroom_traditional">
             <label class="form-check-label fw-semibold" for="bathroom_traditional">
@@ -120,7 +120,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="bathroom_type"
+                   name="shape"
                    value="Farmhouse Bathroom"
                    id="bathroom_farmhouse">
             <label class="form-check-label fw-semibold" for="bathroom_farmhouse">
@@ -134,7 +134,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="bathroom_type"
+                   name="shape"
                    value="Rustic Bathroom"
                    id="bathroom_rustic">
             <label class="form-check-label fw-semibold" for="bathroom_rustic">
@@ -148,7 +148,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="bathroom_type"
+                   name="shape"
                    value="Industrial Bathroom"
                    id="bathroom_industrial">
             <label class="form-check-label fw-semibold" for="bathroom_industrial">
@@ -162,7 +162,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="bathroom_type"
+                   name="shape"
                    value="Mediterranean Bathroom"
                    id="bathroom_mediterranean">
             <label class="form-check-label fw-semibold" for="bathroom_mediterranean">
@@ -176,7 +176,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="bathroom_type"
+                   name="shape"
                    value="Craftsman Bathroom"
                    id="bathroom_craftsman">
             <label class="form-check-label fw-semibold" for="bathroom_craftsman">
@@ -208,7 +208,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const radios = document.querySelectorAll('input[name="bathroom_type"]');
+    const radios = document.querySelectorAll('input[name="shape"]');
     const img = document.getElementById("bathroom-type-img");
     const link = document.getElementById("bathroom-link");
 
@@ -216,39 +216,39 @@
     const images = {
       "Transitional Bathroom": {
         src: "https://st.hzcdn.com/simgs/pictures/bathrooms/freiberg-drive-master-bathroom-liza-nicole-interiors-img~99c1fead0bf4c4eb_3-3427-1-863f06a.jpg",
-        link: "https://www.houzz.in/hznb/photos/freiberg-drive-master-bathroom-phvw-vp~133140321"
+        link: "#"
       },
       "Modern Bathroom": {
         src: "https://st.hzcdn.com/simgs/pictures/bathrooms/memorial-modern-poet-interiors-img~3441ae6e04c42ee6_3-3824-1-5af5a1b.jpg",
-        link: "https://www.houzz.in/hznb/photos/memorial-modern-phvw-vp~22960257"
+        link: "#"
       },
       "Contemporary Bathroom": {
         src: "https://st.hzcdn.com/simgs/pictures/bathrooms/barman-ii-hamilton-architects-img~8aa194da0ab1aace_3-0280-1-d7be135.jpg",
-        link: "https://www.houzz.in/hznb/photos/barman-ii-phvw-vp~115219316"
+        link: ""
       },
       "Traditional Bathroom": {
         src: "https://st.hzcdn.com/simgs/pictures/bathrooms/foxes-hollow-context-design-and-build-img~fe515d3e0a165590_3-0979-1-75ee479.jpg",
-        link: "https://www.houzz.in/hznb/photos/foxes-hollow-phvw-vp~107185321"
+        link: "#"
       },
       "Farmhouse Bathroom": {
         src: "https://st.hzcdn.com/simgs/pictures/bathrooms/hidden-hills-view-showcase-home-younger-homes-img~a7515de60c084b78_3-2898-1-95534bb.jpg",
-        link: "https://www.houzz.in/hznb/photos/hidden-hills-view-showcase-home-phvw-vp~133924893"
+        link: "#"
       },
       "Rustic Bathroom": {
         src: "https://st.hzcdn.com/simgs/pictures/bathrooms/teton-valley-residence-yellowstone-traditions-img~f59152ec0b4f5b76_3-8715-1-f2d865b.jpg",
-        link: "https://www.houzz.in/hznb/photos/teton-valley-residence-phvw-vp~123617024"
+        link: "#"
       },
       "Industrial Bathroom": {
         src: "https://st.hzcdn.com/simgs/pictures/bathrooms/clarissa-project-andrew-heiser-img~7531d73e0ce79602_3-0876-1-532a28d.jpg",
-        link: "https://www.houzz.in/hznb/photos/clarissa-project-phvw-vp~143329364"
+        link: "#"
       },
       "Mediterranean Bathroom": {
         src: "https://st.hzcdn.com/simgs/pictures/cuartos-de-bano/villa-en-playa-de-aro-a-emotional-y-estudiodom-img~0661cb3e0df36e51_3-5144-1-9a76365.jpg",
-        link: "https://www.houzz.in/hznb/photos/villa-en-playa-de-aro-phvw-vp~152573646"
+        link: "#"
       },
       "Craftsman Bathroom": {
         src: "https://st.hzcdn.com/simgs/pictures/bathrooms/breath-of-fresh-air-mountain-marble-and-granite-inc-img~1e019d5007168374_3-4607-1-a986fe7.jpg",
-        link: "https://www.houzz.in/hznb/photos/breath-of-fresh-air-phvw-vp~53171974"
+        link: "#"
       }
     };
 

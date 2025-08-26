@@ -6,9 +6,9 @@ class BudgetCalculationForm(forms.Form):
         queryset=BudgetItem.objects.all(),
         empty_label="Select a budget item",
         widget=forms.Select(attrs={
-        'class': 'form-select shadow-sm w-100',  # ✅ full width
+        'class': 'form-select shadow-sm w-100 text-left',  # ✅ full width
         'aria-label': 'Select Budget Item',
-        'style': 'max-width: 100%; min-width: 100%;'  # ✅ enforce full responsiveness
+        'style': 'max-width: 100%; min-width: 100%; text-align: left;'  # ✅ enforce full responsiveness
     })
     )
     quantity = forms.IntegerField(

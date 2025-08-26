@@ -18,6 +18,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@900&display=swap" rel="stylesheet">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tangerine:wght@400;700&display=swap" rel="stylesheet">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -114,9 +121,9 @@
                     Offers
                   </a>
                   <ul class="dropdown-menu bg-white">
-                    <li><a class="dropdown-item" href="{% url 'essential' %}" >Essential</a></li>
-                    <li><a class="dropdown-item" href="{% url 'eleganza' %}" >Eleganza Everything</a></li>
-                    <li><a class="dropdown-item" href="{% url 'eleganza-plus' %}" >Eleganza Plus</a></li>
+                    <li><a class="dropdown-item" href="{% url 'silver' %}" >Silver</a></li>
+                    <li><a class="dropdown-item" href="{% url 'gold' %}" >Gold</a></li>
+                    <li><a class="dropdown-item" href="{% url 'platinum' %}" >Platinum</a></li>
                   </ul>
                 </li>
 
@@ -163,9 +170,9 @@
                   Offers<span class="dropdown-icon">&#9662;</span>
                 </a> 
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{% url 'essential'%}">ESSENTIAL</a></li>
-                  <li><a class="dropdown-item" href="{% url 'eleganza'%}">ELEGANZA EVERYTHING</a></li>
-                  <li><a class="dropdown-item" href="{% url 'eleganza-plus'%}">ELEGANZA PLUS</a></li>
+                  <li><a class="dropdown-item" href="{% url 'silver' %}">Silver</a></li>
+                  <li><a class="dropdown-item" href="{% url 'gold' %}">Gold</a></li>
+                  <li><a class="dropdown-item" href="{% url 'platinum' %}">Platinum</a></li>
                 </ul>
               </li>
               <li class="nav-item"><a class="nav-link" href="{% url 'contact'%}">Contact</a></li>
@@ -227,15 +234,15 @@
               {% csrf_token %}
               <div class="mb-3">
                 <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control rounded-3" id="name" name="name" required>
+                <input type="text" class="form-control text-left rounded-3" style="text-align: left;" id="name" name="name" required>
               </div>
               <div class="mb-3">
                 <label for="contact" class="form-label">Contact Number</label>
-                <input type="tel" class="form-control rounded-3" id="contact" name="contact" required>
+                <input type="tel" class="form-control text-left rounded-3" style="text-align: left;" id="contact" name="contact" required>
               </div>
               <div class="mb-3">
                 <label for="email" class="form-label">Email Address</label>
-                <input type="email" class="form-control rounded-3" id="email" name="email" required>
+                <input type="email" class="form-control text-left rounded-3" style="text-align: left;" id="email" name="email" required>
               </div>
               <div class="mb-3">
                     <label for="bhk" class="form-label">Property Type</label>
@@ -250,7 +257,7 @@
                   </div>
               <div class="mb-3">
                 <label for="location" class="form-label">Project Location</label>
-                <input type="text" class="form-control rounded-3" id="location" name="location" required>
+                <input type="text" class="form-control text-left rounded-3" style="text-align: left;" id="location" name="location" required>
               </div>
     
               <div class="text-center mt-3">

@@ -63,7 +63,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="kids_room_type"
+                   name="shape"
                    value="Transitional Kids Room"
                    id="kids_room_transitional"
                    required>
@@ -78,7 +78,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="kids_room_type"
+                   name="shape"
                    value="Modern Kids Room"
                    id="kids_room_modern">
             <label class="form-check-label fw-semibold" for="kids_room_modern">
@@ -92,7 +92,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="kids_room_type"
+                   name="shape"
                    value="Contemporary Kids Room"
                    id="kids_room_contemporary">
             <label class="form-check-label fw-semibold" for="kids_room_contemporary">
@@ -106,7 +106,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="kids_room_type"
+                   name="shape"
                    value="Indian Kids Room"
                    id="kids_room_indian">
             <label class="form-check-label fw-semibold" for="kids_room_indian">
@@ -120,7 +120,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="kids_room_type"
+                   name="shape"
                    value="American Kids Room"
                    id="kids_room_american">
             <label class="form-check-label fw-semibold" for="kids_room_american">
@@ -134,7 +134,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="kids_room_type"
+                   name="shape"
                    value="Eclectic Kids Room"
                    id="kids_room_eclectic">
             <label class="form-check-label fw-semibold" for="kids_room_eclectic">
@@ -148,7 +148,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="kids_room_type"
+                   name="shape"
                    value="Industrial Kids Room"
                    id="kids_room_industrial">
             <label class="form-check-label fw-semibold" for="kids_room_industrial">
@@ -162,7 +162,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="kids_room_type"
+                   name="shape"
                    value="Mediterranean Kids Room"
                    id="kids_room_mediterranean">
             <label class="form-check-label fw-semibold" for="kids_room_mediterranean">
@@ -176,7 +176,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="kids_room_type"
+                   name="shape"
                    value="Tropical Kids Room"
                    id="kids_room_tropical">
             <label class="form-check-label fw-semibold" for="kids_room_tropical">
@@ -208,7 +208,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const radios = document.querySelectorAll('input[name="kids_room_type"]');
+    const radios = document.querySelectorAll('input[name="shape"]');
     const img = document.getElementById("kids_room_type_img");
     const link = document.getElementById("kids_room_link");
 
@@ -216,39 +216,39 @@
     const images = {
       "Transitional Kids Room": {
         src: "https://st.hzcdn.com/simgs/35e1d0a205cc8351_3-1890/transitional-kids.jpg",
-        link: "https://www.houzz.in/photos/silver-oak-home-phvw-vp~203350271"
+        link: "#"
       },
       "Modern Kids Room": {
         src: "https://st.hzcdn.com/simgs/ae11d8960345c474_3-8837/modern-kids.jpg",
-        link: "https://www.houzz.in/hznb/photos/dark-blue-modern-kids-bedroom-phvw-vp~191160946"
+        link: "#"
       },
       "Contemporary Kids Room": {
         src: "https://st.hzcdn.com/simgs/e051492c06586b0e_3-0731/contemporary-kids.jpg",
-        link: "https://www.houzz.in/photos/the-nautical-escape-phvw-vp~205542293"
+        link: "#"
       },
       "Indian Kids Room": {
         src: "https://st.hzcdn.com/simgs/5bb15e6e03fbab73_3-5142/indian-kids.jpg",
-        link: "https://www.houzz.in/photos/kids-room-interior-phvw-vp~195515395"
+        link: "#"
       },
       "American Kids Room": {
         src: "https://st.hzcdn.com/simgs/7c91247c043cb6a5_3-0522/american-traditional-kids.jpg",
-        link: "https://www.houzz.in/hznb/photos/sherwood-penthouse-phvw-vp~196919343"
+        link: "#"
       },
       "Eclectic Kids Room": {
         src: "https://st.hzcdn.com/simgs/8301f7c002c1bd89_3-4141/eclectic-kids.jpg",
-        link: "https://www.houzz.in/hznb/photos/dark-green-boy-s-room-phvw-vp~187843910"
+        link: "#"
       },
       "Industrial Kids Room": {
         src: "https://st.hzcdn.com/simgs/pictures/kids-rooms/wynkoop-loft-earthwood-custom-remodeling-inc-img~ee116a7a0a281509_3-7861-1-40e6107.jpg",
-        link: "https://www.houzz.in/hznb/photos/wynkoop-loft-phvw-vp~108059544"
+        link: "#"
       },
       "Mediterranean Kids Room": {
         src: "https://st.hzcdn.com/simgs/pictures/kids-rooms/santa-monica-italian-estate-christine-markatos-design-img~1ff1a9aa05f6feb2_3-8359-1-02e77f4.jpg",
-        link: "https://www.houzz.in/hznb/photos/santa-monica-italian-estate-phvw-vp~39709781"
+        link: "#"
       },
       "Tropical Kids Room": {
         src: "https://st.hzcdn.com/simgs/pictures/kids-rooms/parade-of-homes-house-robin-bond-interiors-img~e01125f802541491_3-3383-1-86714d5.jpg",
-        link: "https://www.houzz.in/hznb/photos/parade-of-homes-house-phvw-vp~6118001"
+        link: "#"
       }
     };
 

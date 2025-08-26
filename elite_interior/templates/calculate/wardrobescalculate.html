@@ -63,7 +63,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="wardrobe_type"
+                   name="shape"
                    value="Transitional Wardrobe"
                    id="wardrobe_transitional"
                    required>
@@ -78,7 +78,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="wardrobe_type"
+                   name="shape"
                    value="Modern Wardrobe"
                    id="wardrobe_modern">
             <label class="form-check-label fw-semibold" for="wardrobe_modern">
@@ -92,7 +92,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="wardrobe_type"
+                   name="shape"
                    value="Contemporary Wardrobe"
                    id="wardrobe_contemporary">
             <label class="form-check-label fw-semibold" for="wardrobe_contemporary">
@@ -106,7 +106,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="wardrobe_type"
+                   name="shape"
                    value="Indian Wardrobe"
                    id="wardrobe_indian">
             <label class="form-check-label fw-semibold" for="wardrobe_indian">
@@ -120,7 +120,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="wardrobe_type"
+                   name="shape"
                    value="American Wardrobe"
                    id="wardrobe_american">
             <label class="form-check-label fw-semibold" for="wardrobe_american">
@@ -134,7 +134,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="wardrobe_type"
+                   name="shape"
                    value="Eclectic Wardrobe"
                    id="wardrobe_eclectic">
             <label class="form-check-label fw-semibold" for="wardrobe_eclectic">
@@ -148,7 +148,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="wardrobe_type"
+                   name="shape"
                    value="Industrial Wardrobe"
                    id="wardrobe_industrial">
             <label class="form-check-label fw-semibold" for="wardrobe_industrial">
@@ -162,7 +162,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="wardrobe_type"
+                   name="shape"
                    value="Mediterranean Wardrobe"
                    id="wardrobe_mediterranean">
             <label class="form-check-label fw-semibold" for="wardrobe_mediterranean">
@@ -176,7 +176,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="wardrobe_type"
+                   name="shape"
                    value="Tropical Wardrobe"
                    id="wardrobe_tropical">
             <label class="form-check-label fw-semibold" for="wardrobe_tropical">
@@ -208,7 +208,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const radios = document.querySelectorAll('input[name="wardrobe_type"]');
+    const radios = document.querySelectorAll('input[name="shape"]');
     const img = document.getElementById("wardrobe_type_img");
     const link = document.getElementById("wardrobe_link");
 
@@ -216,39 +216,39 @@
     const images = {
       "Transitional Wardrobe": {
         src: "https://st.hzcdn.com/simgs/pictures/closets/april-2015-closet-spacemakers-of-atlanta-img~d451b3cb053a8a11_3-2636-1-7749f0e.jp",
-        link: "https://www.houzz.in/hznb/photos/domingo-road-great-room-project-phvw-vp~156920739"
+        link: "#"
       },
       "Modern Wardrobe": {
         src: "https://st.hzcdn.com/simgs/a891ca1c01d56a2c_3-4145/modern-wardrobe.jpg",
-        link: "https://www.houzz.in/photos/tenang-house-phvw-vp~211404173"
+        link: "#"
       },
       "Contemporary Wardrobe": {
         src: "https://st.hzcdn.com/simgs/pictures/wardrobes/cosy-house-malone-architecture-img~bb51496c0b336de1_3-6585-1-39a3bad.jpg",
-        link: "https://www.houzz.in/photos/tank-bunglow-phvw-vp~211633216"
+        link: "#"
       },
       "Indian Wardrobe": {
         src: "https://st.hzcdn.com/simgs/2b51236105f49a28_3-1139/indian-wardrobe.jpg",
-        link: "https://www.houzz.in/photos/avasthia-phvw-vp~202001776"
+        link: "#"
       },
       "American Wardrobe": {
         src: "https://st.hzcdn.com/simgs/pictures/closets/kitchen-nicholson-builders-img~6de1339e01a5fb52_3-1259-1-fe196b5.jpg",
-        link: "https://www.houzz.in/hznb/photos/lake-front-country-estate-phvw-vp~13771358"
+        link: "#"
       },
       "Eclectic Wardrobe": {
         src: "https://st.hzcdn.com/simgs/pictures/closets/my-houzz-1921-portland-bungalow-gone-glam-teness-herman-img~8f61c46304e3b7ca_3-3941-1-f22ee8c.jpg",
-        link: "https://www.houzz.in/hznb/photos/dark-green-living-room-phvw-vp~187843910"
+        link: "#"
       },
       "Industrial Wardrobe": {
         src: "https://st.hzcdn.com/simgs/pictures/closets/newport-master-closet-cabteq-solutions-img~d1d198f90c950896_3-0823-1-64883b5.jpg",
-        link: "https://www.houzz.in/hznb/photos/wynkoop-loft-phvw-vp~108059544"
+        link: "#"
       },
       "Mediterranean Wardrobe": {
         src: "https://st.hzcdn.com/simgs/pictures/closets/santa-barbara-in-texas-joseph-volpe-designer-img~ef814bdf0217747c_3-9029-1-74aa0fd.jpg",
-        link: "https://www.houzz.in/hznb/photos/santa-monica-italian-estate-phvw-vp~39709781"
+        link: "#"
       },
       "Tropical Wardrobe": {
         src: "https://st.hzcdn.com/simgs/pictures/closets/tropical-closet-easyclosets-img~240136f000323581_3-9592-1-cba39e6.jpg",
-        link: "https://www.houzz.in/hznb/photos/parade-of-homes-house-phvw-vp~6118001"
+        link: "#"
       }
     };
 

@@ -63,7 +63,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="dining_type"
+                   name="shape"
                    value="Transitional Dining"
                    id="dining_transitional"
                    required>
@@ -78,7 +78,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="dining_type"
+                   name="shape"
                    value="Modern Dining"
                    id="dining_modern">
             <label class="form-check-label fw-semibold" for="dining_modern">
@@ -92,7 +92,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="dining_type"
+                   name="shape"
                    value="Contemporary Dining"
                    id="dining_contemporary">
             <label class="form-check-label fw-semibold" for="dining_contemporary">
@@ -106,7 +106,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="dining_type"
+                   name="shape"
                    value="Indian Dining"
                    id="dining_indian">
             <label class="form-check-label fw-semibold" for="dining_indian">
@@ -120,7 +120,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="dining_type"
+                   name="shape"
                    value="American Dining"
                    id="dining_american">
             <label class="form-check-label fw-semibold" for="dining_american">
@@ -134,7 +134,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="dining_type"
+                   name="shape"
                    value="Eclectic Dining"
                    id="dining_eclectic">
             <label class="form-check-label fw-semibold" for="dining_eclectic">
@@ -148,7 +148,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="dining_type"
+                   name="shape"
                    value="Industrial Dining"
                    id="dining_industrial">
             <label class="form-check-label fw-semibold" for="dining_industrial">
@@ -162,7 +162,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="dining_type"
+                   name="shape"
                    value="Mediterranean Dining"
                    id="dining_mediterranean">
             <label class="form-check-label fw-semibold" for="dining_mediterranean">
@@ -176,7 +176,7 @@
           <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
             <input class="form-check-input me-2"
                    type="radio"
-                   name="dining_type"
+                   name="shape"
                    value="Tropical Dining"
                    id="dining_tropical">
             <label class="form-check-label fw-semibold" for="dining_tropical">
@@ -208,7 +208,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const radios = document.querySelectorAll('input[name="dining_type"]');
+    const radios = document.querySelectorAll('input[name="shape"]');
     const img = document.getElementById("dining-type-img");
     const link = document.getElementById("dining-link");
 
@@ -216,39 +216,39 @@
     const images = {
       "Transitional Dining": {
         src: "https://st.hzcdn.com/simgs/a601cb6a07acc2d0_3-0745/transitional-dining-room.jpg",
-        link: "https://www.houzz.in/hznb/photos/english-cottage-inspired-kitchen-renovation-in-decatur-phvw-vp~209877352"
+        link: "#"
       },
       "Modern Dining": {
         src: "https://st.hzcdn.com/simgs/pictures/dining-rooms/home-19-sala-architects-homes-by-architects-tour-img~3331b41201f98756_3-1670-1-a1d2954.jpg",
-        link: "https://www.houzz.in/photos/home-19-sala-architects-phvw-vp~4992446"
+        link: "#"
       },
       "Contemporary Dining": {
         src: "https://st.hzcdn.com/simgs/6b7176b1082f065c_3-0616/contemporary-dining-room.jpg",
-        link: "https://www.houzz.in/photos/the-house-in-the-foothills-phvw-vp~211577183"
+        link: "#"
       },
       "Indian Dining": {
         src: "https://st.hzcdn.com/simgs/96f1cf07050ac603_3-7270/indian-dining-room.jpg",
-        link: "https://www.houzz.in/photos/the-farmhouse-phvw-vp~200450769"
+        link: "#"
       },
       "American Dining": {
         src: "https://st.hzcdn.com/simgs/2031988c0028b8c0_3-6231/midcentury-dining-room.jpg",
-        link: "https://www.houzz.in/hznb/photos/bh-residence-phvw-vp~169679623"
+        link: "#"
       },
       "Eclectic Dining": {
         src: "https://st.hzcdn.com/simgs/pictures/sale-da-pranzo/cucine-rovegnodesign-img~8bf1b95e0748665a_3-5142-1-2a9e2f6.jpg",
-        link: "https://www.houzz.in/hznb/photos/cucine-phvw-vp~55676402"
+        link: "#"
       },
       "Industrial Dining": {
         src: "https://st.hzcdn.com/simgs/pictures/dining-rooms/modern-industrial-studio-unit-m-s-studio-co-img~0001017f0908244f_3-2951-1-39ed0f3.jpg",
-        link: "https://www.houzz.in/hznb/photos/modern-industrial-studio-unit-phvw-vp~91743210"
+        link: "#"
       },
       "Mediterranean Dining": {
         src: "https://st.hzcdn.com/simgs/pictures/dining-rooms/dallas-edlen-residence-l-lumpkins-architect-inc-img~a921f3470a68b894_3-1100-1-113616b.jpg",
-        link: "https://www.houzz.in/hznb/photos/dallas-edlen-residence-phvw-vp~110992220"
+        link: "#"
       },
       "Tropical Dining": {
         src: "https://st.hzcdn.com/simgs/pictures/dining-rooms/luxury-bohemian-house-chris-laughter-photo-img~be6119e70ab48a50_3-0458-1-d0e28bc.jpg",
-        link: "https://www.houzz.in/hznb/photos/luxury-bohemian-house-phvw-vp~115391704"
+        link: "#"
       }
     };
 

@@ -267,37 +267,6 @@ function collectClientData() {
 
 
 
-
-
-{% comment %} document.getElementById("exportPdfBtn").addEventListener("click", function () {
-    let materials = collectMaterialsData();
-    let client = collectClientData();
-
-    fetch("/export-pdf/", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
-        },
-        body: JSON.stringify({ materials, client:collectClientData() })
-    })
-    .then(response => {
-        if (!response.ok) throw new Error("Failed to export PDF");
-        return response.blob();
-    })
-    .then(blob => {
-        let url = window.URL.createObjectURL(blob);
-        let a = document.createElement("a");
-        a.href = url;
-        a.download = "materials.pdf";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-    })
-    .catch(err => alert("Error: " + err.message));
-}); {% endcomment %}
-
 document.getElementById("exportPdfBtn").addEventListener("click", function () {
     let materials = collectMaterialsData();
     let client = collectClientData();

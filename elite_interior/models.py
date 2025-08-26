@@ -103,7 +103,7 @@ class WhatWeDo_Grid(models.Model):
 
 class Testimonial(models.Model):
     name = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='review_img/')
+    image = models.ImageField(upload_to='review_img/' , blank=True, null=True)
     comment = models.TextField()
     rating = models.PositiveIntegerField(default=5)
     created_at = models.DateTimeField(auto_now_add=True)

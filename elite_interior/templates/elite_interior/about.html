@@ -55,7 +55,7 @@
 
  <section class="about-section">
     <div class="about-image">
-      <img src="{% static 'images/sofa.jpeg' %}" alt="Interior Design by HOME DEN">
+      <img src="{% static 'images/sofa.jpg' %}" alt="Interior Design by HOME DEN">
     </div>
     <div class="about-text">
   <h2 class="heading">HOME DEN – Interior Designers in Trichy</h2>
@@ -79,9 +79,10 @@
     We blend modern concepts with timeless designs to deliver 
     interiors that inspire and enhance your lifestyle.
   </p>
-</div>
 
-  </section>
+</div>
+</section>
+
   <section class="vdo">
      <div class="vdo1">
       <h2 class="heading"> WHAT WE DO </h2>
@@ -90,11 +91,21 @@
       <p>Our process begins with understanding your aspirations, followed by detailed space planning, concept development, 3D visualization, material curation, and customized furniture solutions — all seamlessly managed under one roof. Every step is executed with precision and passion to ensure flawless results.</p>
       
       <p>Be it luxurious living rooms, modern kitchens, stylish wardrobes, or inspiring workspaces, we design and execute interiors that transform your vision into reality. At <strong>HOME DEN</strong>, we don’t just create spaces — we craft experiences that are beautiful, functional, and built to last.</p>
+      <p><strong>Our key services include:</strong></p>
+      <ul class="elegant-list">
+        <li><i class="fas fa-drafting-compass"></i> Space Planning & 2D/3D Designs</li>
+        <li><i class="fas fa-cubes"></i> Modular Kitchen & Wardrobes</li>
+        <li><i class="fas fa-lightbulb"></i> False Ceiling & Lighting Solutions</li>
+        <li><i class="fas fa-hard-hat"></i> Civil Modifications</li>
+        <li><i class="fas fa-paint-roller"></i> Painting, Wall Decor & Wallpapers</li>
+        <li><i class="fas fa-chair"></i> Furniture & Decor Selection</li>
+      </ul>
+
     </div>
 
   <div class="video-landscape-wrapper">
 {% for video in videos %}
-  <div class="ratio ratio-16x9 mb-4">
+  <div class="ratio ratio-16x9">
     <iframe
       src="https://www.youtube.com/embed/{{ video.youtube_id }}?rel=0&autoplay=1&mute=1"
       title="{{ video.title }}"
@@ -119,30 +130,30 @@
   <div class="container">
       <div class="row align-items-center">
           <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
-              <img src="{% static 'images/about-hall.jpeg' %}" alt="Elite Interior Design" class="img-fluid rounded">
+              <img src="{% static 'images/self-green.jpeg' %}" alt="Elite Interior Design" class="img-fluid rounded">
               <h1 class="section-title mb-4">"Leading Modern Interior Designers and Home Contractors in Tamil Nadu"</h1>
               <div class="highlight-bar"></div>
           </div>
           <div class="col-lg-6">
               <div class="about-content">
-                  <p class="lead">ELITE INTERIOR is the largest home interior designers in TAMIL NADU</p>
+                  <p class="lead">HOME DEN is the largest home interior designers in TAMIL NADU</p>
                   
                   <div class="stats-grid">
                       <div class="stat-item">
                           <span class="stat-number" data-count="20">20+</span>
-                          <span class="stat-label">Years Experience</span>
+                          <span class="stat-label">Expert Designers</span>
                       </div>
                       <div class="stat-item">
-                          <span class="stat-number" data-count="50">50+</span>
-                          <span class="stat-label">Happy Customers</span>
+                          <span class="stat-number" data-count="30">30+</span>
+                          <span class="stat-label">Designs</span>
                       </div>
                       <div class="stat-item">
-                          <span class="stat-number" data-count="200">200+</span>
-                          <span class="stat-label">Employees</span>
+                          <span class="stat-number" data-count="80">80+</span>
+                          <span class="stat-label">Projects</span>
                       </div>
                       <div class="stat-item">
-                          <span class="stat-number" data-count="100">100+</span>
-                          <span class="stat-label">Projects/Month</span>
+                          <span class="stat-number" data-count="8">8+</span>
+                          <span class="stat-label">Materials partners</span>
                       </div>
                   </div>
                   

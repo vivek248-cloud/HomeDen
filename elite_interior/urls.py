@@ -7,19 +7,19 @@ urlpatterns = [
     path('contact/',contact,name='contact'),
     path('service/',service,name='service'),
 
-    path('essential/',essential,name='essential'),
-    path('eleganza/',eleganza,name='eleganza'),
-    path('eleganza-plus/',eleganza_plus,name='eleganza-plus'),
+    path('silver/',essential,name='silver'),
+    path('gold/',eleganza,name='gold'),
+    path('platinum/',eleganza_plus,name='platinum'),
 
     path('blogs/', blog_list, name='blog_list'),
     path('blogs/<slug:slug>/', blog_detail, name='blog_detail'),
 
-    path('kitchen-projects/', kitchen_projects, name='kitchen_projects'),
-    path('bedroom-projects/', bedroom_projects, name='bedroom_projects'),
-    path('dining-projects/', dining_projects, name='dining_projects'),
-    path('living-projects/', living_projects, name='living_projects'),
-    path('bathroom-projects/', bathroom_projects, name='bathroom_projects'),
-    path('kidsroom-projects/', kidsroom_projects, name='kidsroom_projects'),
+    path('kitchen/', kitchen_projects, name='kitchen_projects'),
+    path('bedroom/', bedroom_projects, name='bedroom_projects'),
+    path('dining/', dining_projects, name='dining_projects'),
+    path('living/', living_projects, name='living_projects'),
+    path('bathroom/', bathroom_projects, name='bathroom_projects'),
+    path('kidsroom/', kidsroom_projects, name='kidsroom_projects'),
     
     path('submit-form/', submit_contact_form, name='submit_form'),
 
@@ -60,6 +60,7 @@ urlpatterns = [
 
     path('export-pdf/', export_pdf, name='export_pdf'),
     path('preview-pdf/', preview_pdf, name='preview_pdf'),
+    path("download-estimation/", download_estimation, name="download_estimation"),
 ]
 
 from django.conf.urls import handler404

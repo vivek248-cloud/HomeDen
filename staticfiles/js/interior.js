@@ -611,3 +611,19 @@ const wrapper = document.querySelector(".image-wrapper");
   });
 
 
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const dividers = document.querySelectorAll('.divider');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate');
+        }
+      });
+    }, {
+      threshold: 0.6
+    });
+
+    dividers.forEach(divider => observer.observe(divider));
+  });

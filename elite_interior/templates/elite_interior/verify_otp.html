@@ -3,22 +3,29 @@
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
   <div class="card shadow-lg p-4 border-0 rounded-4" style="max-width: 450px; width: 100%; background: linear-gradient(135deg, #f3f9ff, #e8f0ff);">
     
-    <!-- Title -->
+
+
+
+
+    <!-- OTP Form -->
+    
+
+    {% if not download_pdf %}
+
+        <!-- Title -->
     <h3 class="text-center fw-bold mb-3 text-primary">
       <i class="bi bi-shield-lock-fill me-2"></i>Verify OTP
     </h3>
     <p class="text-center text-muted small mb-4">
       Enter the 4-digit code sent to your registered email.
     </p>
-
-    <!-- Timer -->
-    <div class="text-center mb-4">
-      <span class="fw-bold me-1">Expires in:</span>
-      <span id="timer" class="badge bg-danger fs-6 px-3 py-2">02:00</span>
-    </div>
-
-    <!-- OTP Form -->
     
+        <!-- Timer -->
+      <div class="text-center mb-4">
+        <span class="fw-bold me-1">Expires in:</span>
+        <span id="timer" class="badge bg-danger fs-6 px-3 py-2">02:00</span>
+      </div>
+
       <form method="post" action="{% url 'verify_otp' %}">
         {% csrf_token %}
         <div class="mb-4">
@@ -34,14 +41,26 @@
         </div>
       </form>
 
-
-    <!-- Resend OTP -->
+      <!-- Resend OTP -->
     <form method="post" action="{% url 'resend_otp' %}" class="text-center mt-4">
       {% csrf_token %}
       <button type="submit" class="btn btn-link text-decoration-none text-white fw-semibold btn-success">
         <i class="bi bi-arrow-repeat me-1"></i> Resend OTP
       </button>
     </form>
+
+
+    {% endif %}
+
+    
+    <!-- Download Button (Only after verification) -->
+  {% if download_pdf %}
+    <div class="text-center mt-4">
+      <a href="{{ download_pdf }}" class="btn btn-primary btn-lg rounded-pill shadow-sm px-4" download>
+        📥 Download Your Estimation PDF
+      </a>
+    </div>
+  {% endif %}
   </div>
 </div>
 

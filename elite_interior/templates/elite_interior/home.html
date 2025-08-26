@@ -20,13 +20,15 @@
                   <div class="scroller-content"></div>
 
                   <div class="scroller-content-2">
-                    <h1>{{ slide.headline }}</h1>
+                    {% if slide.healine %}
+                      <h1>{{ slide.healine }}</h1>
+                    {% endif %}
                     {% if slide.sub_headline %}
-                    <h4 class="animation slide-up">{{ slide.sub_headline }}</h4>
+                    <h4 class="animation slide-up" style="font-family:'Tangerine', cursive; font-weight:700;">{{ slide.sub_headline }}</h4>
                     {% endif %}
                     {% if slide.quotes %}
                       <span class="highlight-text">
-                        <h3 class="animation slide-up">{{ slide.quotes }}</h3>
+                        <h3 class="animation slide-up" >{{ slide.quotes }}</h3>
                       </span>
                     {% endif %}
                     <a href="{% url 'home' %}" 
@@ -67,34 +69,46 @@
   
           <li class="col-md-auto active">
             <div class="stat-card">
-              <h3>PREMIUM</h3>
-              <p>Materials</p>
+              <h3>3D Visualizations</h3>
+              <p>See your space
+                in 3D</p>
             </div>
           </li>
           <li class="col-md-auto">
             <div class="stat-card">
-              <h3>10 YEARS</h3>
-              <p>Warranty</p>
+              <h3>Budget</h3>
+              <p>Friendly Packages</p>
+            </div>
+          </li>
+
+          <li class="col-md-auto">
+            <div class="stat-card">
+              <h3>On-Site Project</h3>
+              <p>Tracking work
+              progress</p>
+            </div>
+          </li>
+
+          <li class="col-md-auto">
+            <div class="stat-card">
+              <h3>Fast Turnaround</h3>
+              <p>delivered faster</p>
             </div>
           </li>
           <li class="col-md-auto">
             <div class="stat-card">
-              <h3>COMPLETION</h3>
-              <p>40 Working Days</p>
+              <h3>10 Year Warranty</h3>
+              <p>Life time Service</p>
             </div>
           </li>
+
           <li class="col-md-auto">
             <div class="stat-card">
-              <h3>PROJECTS</h3>
-              <p>300 Per Month</p>
+              <h3>100% Hardwood</h3>
+              <p>Moisture/Borer Proof</p>
             </div>
           </li>
-          <li class="col-md-auto">
-            <div class="stat-card">
-              <h3>LIFELONG</h3>
-              <p>Service Support</p>
-            </div>
-          </li>
+
         </ul>
       </div>
     </div>
@@ -105,7 +119,7 @@
   <div class="container text-center">
     <div class="section-header">
       <span class="line"></span>
-      <h2>BUY DIRECT - 30% DISCOUNT ON PACKAGES</h2>
+      <h2>BUY DIRECT - 25% DISCOUNT ON PACKAGES</h2>
       <span class="line"></span>
     </div>
     <div class="row justify-content-center g-4">
@@ -142,20 +156,20 @@
   <span class="line"></span>
   <div class="counter-container">
     <div class="counter-box">
-      <div class="counter" data-count ="500">0</div>
-      <p>#Delivered Homes</p>
+      <div class="counter" data-count ="20">0</div>
+      <p>#Expert Designers</p>
     </div>
     <div class="counter-box">
       <div class="counter" data-count="30">0</div>
-      <p>Expert Interior Designers</p>
+      <p>#Designs</p>
     </div>
     <div class="counter-box">
-      <div class="counter" data-count="2">0</div>
-      <p>Experience Centres</p>
+      <div class="counter" data-count="80">0</div>
+      <p>#Projects</p>
     </div>
     <div class="counter-box">
-      <div class="counter" data-count="4.6" data-decimal="true">0</div>
-      <p>CSAT</p>
+      <div class="counter" data-count="8" >0</div>
+      <p>#Materials Partner</p>
     </div>
   </div>
 </section>
@@ -170,7 +184,7 @@
     <div class="room-grid mt-5">
       {% for item in grid %}
         <div class="grid-item {{ item.size|lower }} auto-show-up grid-item-effect" style="background-image: url('{{ item.image.url }}');">
-          <a href="/{{ item.title|lower }}-projects/" class="grid-item-link">
+          <a href="/{{ item.title|lower }}/" class="grid-item-link">
             <h2> {% if item.title|upper == "KIDSROOM" %} KID'S ROOM{% else %} {{ item.title|upper }} {% endif %}</h2>
           </a>
         </div>
@@ -238,9 +252,9 @@
       <!-- Step 1 -->
       <div class="col step active">
         <div class="circle">
-          <img src="{% static "images/team.png" %}" alt="Talk to Designer">
+          <img src="{% static "images/01.png" %}" alt="Talk to Designer">
         </div>
-        <p>Talk to our Interior Designer<br>& Get an Estimate</p>
+        <p>CONNECT WITH OUR DESIGN EXPERT </p>
       </div>
 
       <div class="arrow">&#8594;</div>
@@ -248,9 +262,10 @@
       <!-- Step 2 -->
       <div class="col step">
         <div class="circle">
-          <img src="{% static "images/aprovel.png" %}" alt="Drawing Approval">
+          <img src="{% static "images/02.png" %}" alt="Drawing Approval">
         </div>
-        <p>Detailed Drawing<br>and Approval</p>
+        <p>ARCHITECTURAL
+        DETAILING </p>
       </div>
 
       <div class="arrow">&#8594;</div>
@@ -258,9 +273,10 @@
       <!-- Step 3 -->
       <div class="col step">
         <div class="circle">
-          <img src="{% static "images/work.png" %}" alt="Production">
+          <img src="{% static "images/03.png" %}" alt="Production">
         </div>
-        <p>Production at Own<br>Factories</p>
+        <p>PRODUCTION AT
+          OWN FACTORY</p>
       </div>
 
       <div class="arrow">&#8594;</div>
@@ -268,9 +284,9 @@
       <!-- Step 4 -->
       <div class="col step">
         <div class="circle">
-          <img src="{% static "images/transport.png" %}" alt="Material Delivery">
+          <img src="{% static "images/04.png" %}" alt="Material Delivery">
         </div>
-        <p>Material Delivery<br>& Execution</p>
+        <p>DELIVERY WITHIN 15 WORKING DAYS*</p>
       </div>
 
       <div class="arrow">&#8594;</div>
@@ -278,9 +294,19 @@
       <!-- Step 5 -->
       <div class="col step">
         <div class="circle">
-          <img src="{% static "images/key.png" %}" alt="Project Hand Over">
+          <img src="{% static "images/05.png" %}" alt="Project Hand Over">
         </div>
-        <p>On Time Project<br>Hand Over</p>
+        <p>INSTALLATION AT SITE</p>
+      </div>
+
+      <div class="arrow">&#8594;</div>
+      <!-- Step 6 -->
+
+      <div class="col step">
+        <div class="circle">
+          <img src="{% static "images/06.png" %}" alt="Project Hand Over">
+        </div>
+        <p>ON-TIME PROJEC HANDOVER</p>
       </div>
 
     </div>
@@ -348,7 +374,7 @@
 
     <!-- Image Column -->
       <div class="col-md-6 order-1 order-md-1 image-column">
-        <div class="h-100 w-100 bg-cover" style="background-image: url('{% static 'images/bedroom.jpeg' %}');"></div>
+        <div class="h-100 w-100 bg-cover" style="background-image: url('{% static 'images/bedroom.jpg' %}');"></div>
       </div>
     </div>
   </div>
@@ -356,7 +382,7 @@
 
 <section id="testimonials" class="py-5 bg-light">
   <div class="container">
-    <div class="section-header text-center mb-5">
+    <div class="section-header text-center mb-5 mt-5">
       <h2 class="section-title">What Our Clients Say</h2>
     <div class="divider mx-auto"></div>
     <script>
@@ -391,7 +417,7 @@
 
           <!-- Avatar -->
           <div class="position-relative d-inline-block mb-2">
-          <img src="{% if testimonial.image %}{{ testimonial.image.url }}{% else %}{% static 'images/about-hall.jpeg' %}{% endif %}"
+          <img src="{% if testimonial.image %}{{ testimonial.image.url }}{% else %}{% static 'images/man-avatar.png' %}{% endif %}"
               alt="{{ testimonial.name|default:'Client' }}"
               class="rounded-circle border border-4 border-white shadow"
               width="80" height="80" style="object-fit: cover;">
@@ -478,7 +504,7 @@
       <h2 class="section-title">Latest Blogs</h2>
       <a href="{% url 'blog_list' %}" class="btn view-btn" onclick="simulateLoading()">View All</a>
     </div>
-
+    
     <!-- Swiper -->
     <div class="swiper blog-swiper">
       <div class="swiper-wrapper">
@@ -506,7 +532,7 @@
 </section>
 
 <section class="experience-section">
-    <h1 class="s3">VISIT ONE OF OUR EXPERIENCE CENTERS IN <span> TRICHY</span> </h1>
+    <h1 class="s3">VISIT OUR WAREHOUSE IN <span> TRICHY</span> </h1>
 
     <div class="cards-container">
       <!-- Card 1 -->
