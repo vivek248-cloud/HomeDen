@@ -254,7 +254,7 @@ body, html {
 /* CSS for the navbars */
 #navbar
 {
-  background-color: rgba(0, 0, 0, 0.351);
+  background-color: rgba(0, 0, 0, 0);
 }
 
 .navbar-white {
@@ -1715,6 +1715,7 @@ p {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: grab;
 }
 .card{
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.034);

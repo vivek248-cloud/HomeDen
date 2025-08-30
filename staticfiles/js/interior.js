@@ -456,111 +456,68 @@ function toggleChat() {
 }
 
 function handleOption(option) {
-  alert(`You clicked: ${option}`);
-  // You can handle form display, redirect or AJAX here
-}
-
-
-
-function handleOption(option) {
   const chatBody = document.getElementById("chat-body");
 
-  // Show the user’s selection
-  const userMsg = document.createElement("div");
-  userMsg.className = "chat-msg user-msg";
-  userMsg.innerHTML = `<p><strong>You:</strong> ${option}</p>`;
-  chatBody.appendChild(userMsg);
+  // Add user selection
+  appendMessage("user", `You: ${option}`);
 
   // Ask for email input
- // Ask for email input with elegant design
-  const botMsg = document.createElement("div");
-  botMsg.className = "chat-msg bot-msg";
-  botMsg.innerHTML = `
-    <div style="
-      background: #f8f9fa;
-      border-radius: 12px;
-      padding: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      margin-top: 10px;
-    ">
-      <p style="margin-bottom: 8px; font-weight: 500; color: #333;">Please enter your email to continue:</p>
-      <input type="email" id="user-email" placeholder="you@example.com"
-        style="
-          width: 100%;
-          padding: 10px 12px;
-          font-size: 14px;
-          border: 1px solid #ccc;
-          border-radius: 8px;
-          outline: none;
-          margin-bottom: 10px;
-          box-sizing: border-box;
-        ">
-      <button onclick="submitEmail('${option}')" style="
-        background-color: #6c5ce7;
-        color: white;
-        border: none;
-        padding: 10px 16px;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.3s ease;
-      " onmouseover="this.style.backgroundColor='#5a4bdc'" onmouseout="this.style.backgroundColor='#6c5ce7'">Send</button>
-    </div>
-  `;
-  chatBody.appendChild(botMsg);
-    // Auto-scroll to bottom
-  chatBody.scrollTop = chatBody.scrollHeight;
+  const botMsg = `
+    <div class="chat-card">
+      <p class="chat-prompt">Please enter your email to continue:</p>
+      <input type="email" id="user-email" class="chat-input" placeholder="you@example.com">
+      <button onclick="submitEmail('${option}')" class="chat-btn">Send</button>
+    </div>`;
+  appendMessage("bot", botMsg);
 }
 
 function submitEmail(option) {
   const emailInput = document.getElementById("user-email");
-  const email = emailInput.value.trim();
+  if (!emailInput) return;
 
+  const email = emailInput.value.trim();
   if (!email || !email.includes("@")) {
     alert("Please enter a valid email address.");
     return;
   }
 
-  const chatBody = document.getElementById("chat-body");
+  appendMessage("user", `Email Submitted: ${email}`);
 
-  // Show user's entered email
-  const userEmailMsg = document.createElement("div");
-  userEmailMsg.className = "chat-msg user-msg";
-  userEmailMsg.innerHTML = `<p><strong>Email Submitted:</strong> ${email}</p>`;
-  chatBody.appendChild(userEmailMsg);
-
-  // Send email + query to backend
-  fetch("/HomeDen/save-chat-query/", {
+  fetch("/save-chat-query/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "X-CSRFToken": getCSRFToken(), // 🔥 Needed for Django
     },
-    body: JSON.stringify({
-      email: email,
-      query: option,
-    }),
+    body: JSON.stringify({ email, query: option }),
   })
-  .then(response => response.json())
+  .then(res => res.json())
   .then(data => {
-    const confirmMsg = document.createElement("div");
-    confirmMsg.className = "chat-msg bot-msg";
-
     if (data.status === "success") {
-      confirmMsg.innerHTML = `<p>✅ Thanks! We've received your "<strong>${option}</strong>" request. Our team will contact you at <strong>${email}</strong>.</p>`;
+      appendMessage("bot", `✅ Thanks! We've received your "<strong>${option}</strong>" request. Our team will contact you at <strong>${email}</strong>.`);
     } else {
-      confirmMsg.innerHTML = `<p>⚠️ Oops! Something went wrong. Please try again later.</p>`;
+      appendMessage("bot", `⚠️ Oops! Something went wrong. Please try again later.`);
     }
-
-    chatBody.appendChild(confirmMsg);
   })
-  .catch(error => {
-    console.error("Error:", error);
-
-    const errorMsg = document.createElement("div");
-    errorMsg.className = "chat-msg bot-msg";
-    errorMsg.innerHTML = `<p>❌ Failed to send your request. Please try again later.</p>`;
-    chatBody.appendChild(errorMsg);
+  .catch(err => {
+    console.error("Error:", err);
+    appendMessage("bot", `❌ Failed to send your request. Please try again later.`);
   });
+}
+
+// Helpers
+function appendMessage(sender, html) {
+  const chatBody = document.getElementById("chat-body");
+  const msg = document.createElement("div");
+  msg.className = `chat-msg ${sender}-msg`;
+  msg.innerHTML = `<p>${html}</p>`;
+  chatBody.appendChild(msg);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function getCSRFToken() {
+  const match = document.cookie.match(/csrftoken=([^;]+)/);
+  return match ? match[1] : "";
 }
 
 
@@ -611,19 +568,3 @@ const wrapper = document.querySelector(".image-wrapper");
   });
 
 
-
-  document.addEventListener("DOMContentLoaded", function () {
-    const dividers = document.querySelectorAll('.divider');
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('animate');
-        }
-      });
-    }, {
-      threshold: 0.6
-    });
-
-    dividers.forEach(divider => observer.observe(divider));
-  });
