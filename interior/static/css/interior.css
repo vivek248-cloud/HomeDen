@@ -4919,3 +4919,10 @@ input[name="otp"] {
         }
 }
 
+.chat-msg { margin: 8px 0; }
+.user-msg p { text-align: right; background: #e1f7d5; padding: 8px 12px; border-radius: 12px; display: inline-block; }
+.bot-msg p { text-align: left; background: #f1f1f1; padding: 8px 12px; border-radius: 12px; display: inline-block; }
+.chat-card { background: #f8f9fa; border-radius: 12px; padding: 12px; margin-top: 8px; }
+.chat-input { width: 100%; padding: 8px; margin-top: 8px; border: 1px solid #ccc; border-radius: 6px; }
+.chat-btn { background: #6c5ce7; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; margin-top: 6px; }
+.chat-btn:hover { background: #5a4bdc; }

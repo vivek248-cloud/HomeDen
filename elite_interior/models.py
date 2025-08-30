@@ -100,6 +100,9 @@ class WhatWeDo_Grid(models.Model):
     
     def get_slug(self):
         return slugify(self.title)
+    
+    class Meta:
+        verbose_name = "OUR SERVICE GRID"
 
 class Testimonial(models.Model):
     name = models.CharField(max_length=100)

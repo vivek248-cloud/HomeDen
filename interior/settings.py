@@ -154,9 +154,9 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = 'smtp.gmail.com'  # Use your SMTP provider
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'kuttyvivek248@gmail.com'
+EMAIL_HOST_USER = 'homedeninterior@gmail.com'
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD") # Use environment variables instead for security
-ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "kuttyvivek248@gmail.com")
+ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "homedeninterior@gmail.com")
 
 
 # for whatsapp message

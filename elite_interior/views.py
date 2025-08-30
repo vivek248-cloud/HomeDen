@@ -1774,6 +1774,37 @@ def select_platform(request):
 
     return render(request, "select_platform.html")
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.core.mail import send_mail
+from django.conf import settings
+
+@csrf_exempt
+def save_chat_query(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body.decode("utf-8"))
+            email = data.get("email")
+            query = data.get("query")
+
+            if not email or "@" not in email:
+                return JsonResponse({"status": "error", "message": "Invalid email"})
+
+            subject_admin = f"Chat Query: {query}"
+            message_admin = f"User Email: {email}\nQuery: {query}"
+
+            subject_client = "Thanks for contacting Home Den"
+            message_client = f"Hi,\n\nWe received your request about: {query}\nOur team will reach out to you at {email}.\n\nBest,\nHome Den"
+
+            # Send emails
+            send_mail(subject_admin, message_admin, settings.EMAIL_HOST_USER, [settings.ADMIN_EMAIL])
+            send_mail(subject_client, message_client, settings.EMAIL_HOST_USER, [email])
+
+            return JsonResponse({"status": "success"})
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)})
+    return JsonResponse({"status": "error", "message": "Invalid request"})
 
 
 from django.shortcuts import render
