@@ -3,6 +3,10 @@ import datetime
 from django.utils import timezone
 from django.utils.html import mark_safe
 from django.utils.text import slugify
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+import os
+
 
 # Create your models here.
 class HomeSlider(models.Model):
@@ -18,6 +22,12 @@ class HomeSlider(models.Model):
     def __str__(self):
         return self.title
     
+# ✅ Auto delete image file when model instance is deleted
+@receiver(post_delete, sender=HomeSlider)
+def delete_image_on_instance_delete(sender, instance, **kwargs):
+    if instance.image and os.path.isfile(instance.image.path):
+        os.remove(instance.image.path)
+
 # models.py
 
 class Category(models.Model):
@@ -69,6 +79,11 @@ class Project(models.Model):
     class Meta:
         verbose_name = "Product"
 
+# ✅ Auto delete image file when Project is deleted
+@receiver(post_delete, sender=Project)
+def delete_project_image(sender, instance, **kwargs):
+    if instance.image and os.path.isfile(instance.image.path):
+        instance.image.delete(save=False)
 
 class ProjectGallery(models.Model):
     title = models.CharField(max_length=200)
@@ -89,7 +104,13 @@ class PackageOffers(models.Model):
 
     def __str__(self):
         return self.title
-    
+
+# ✅ Auto delete image file when PackageOffers is deleted
+@receiver(post_delete, sender=PackageOffers)
+def delete_package_offers_image(sender, instance, **kwargs):
+    if instance.image and os.path.isfile(instance.image.path):
+        instance.image.delete(save=False)
+
 class WhatWeDo_Grid(models.Model):
     title = models.CharField(max_length=225)
     image = models.ImageField(upload_to='what_we_do_images/')
@@ -104,6 +125,12 @@ class WhatWeDo_Grid(models.Model):
     class Meta:
         verbose_name = "OUR SERVICE GRID"
 
+# ✅ Auto delete image file when WhatWeDo_Grid is deleted
+@receiver(post_delete, sender=WhatWeDo_Grid)
+def delete_what_we_do_image(sender, instance, **kwargs):
+    if instance.image and os.path.isfile(instance.image.path):
+        instance.image.delete(save=False)
+
 class Testimonial(models.Model):
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to='review_img/' , blank=True, null=True)
@@ -115,6 +142,11 @@ class Testimonial(models.Model):
     def __str__(self):
         return f"{self.name} - {self.rating}/5"
 
+# ✅ Auto delete image file when Testimonial is deleted
+@receiver(post_delete, sender=Testimonial)
+def delete_testimonial_image(sender, instance, **kwargs):
+    if instance.image and os.path.isfile(instance.image.path):
+        instance.image.delete(save=False)
 # youtube videos
 
 class YouTubeVideo(models.Model):
@@ -206,6 +238,12 @@ class Blog(models.Model):
     def __str__(self):
         return self.title
 
+# ✅ Auto delete image file when Blog is deleted
+@receiver(post_delete, sender=Blog)
+def delete_blog_image(sender, instance, **kwargs):
+    if instance.image and os.path.isfile(instance.image.path):
+        instance.image.delete(save=False)
+
 class AboutVideo(models.Model):
     title = models.CharField(max_length=225)
     youtube_id = models.CharField(
@@ -296,3 +334,9 @@ class Product(models.Model):
 
     class Meta:
         verbose_name = "material"
+
+# ✅ Auto delete image file when Product is deleted
+@receiver(post_delete, sender=Product)
+def delete_product_image(sender, instance, **kwargs):
+    if instance.image and os.path.isfile(instance.image.path):
+        instance.image.delete(save=False)
