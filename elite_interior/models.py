@@ -6,8 +6,8 @@ from django.utils.text import slugify
 
 # Create your models here.
 class HomeSlider(models.Model):
-    healine = models.CharField(max_length=255)
-    sub_headline = models.CharField(max_length=255)
+    headline = models.CharField(max_length=255, blank=True, null=True)
+    sub_headline = models.CharField(max_length=255, blank=True, null=True)
     quotes = models.TextField(blank=True, null=True)  # Optional quotes field
     title = models.CharField(max_length=255)
     image = models.ImageField(upload_to='home_slider/')

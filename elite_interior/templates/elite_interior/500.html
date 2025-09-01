@@ -149,7 +149,7 @@ function moveCactus() {
     let dinoBottom = parseInt(window.getComputedStyle(dino).getPropertyValue("bottom"));
     if (cactusPosition < 90 && cactusPosition > 40 && dinoBottom < 50) {
       gameOver = true;
-      alert("💀 Game Over! Your Score: " + score);
+      window.alert("💀 Game Over! Your Score: " + score);
       window.location.reload();
     }
   }, 20); // fixed smooth frame rate

@@ -254,7 +254,7 @@ body, html {
 /* CSS for the navbars */
 #navbar
 {
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgba(19, 19, 19, 0);
 }
 
 .navbar-white {
@@ -382,6 +382,7 @@ body, html {
 .firm-highlight {
   color: var(--color-2);
 }
+
 
 
 .navbar-dark-icon .navbar-toggler-icon {
@@ -705,6 +706,7 @@ body, html {
   }
   .scroller-content-2 h4{
     font-size: 3rem;
+    
   }
   /* .scroller-content-2 h1::first-letter {
     font-size: 6rem;
@@ -3284,11 +3286,11 @@ input[type="radio"]:hover {
   background: white;
   padding: 15px;
   border-radius: 8px;
-  box-shadow: 8px 8px 8px 8px rgba(0, 0, 0, 0.356);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
   transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 .info-item:hover {
-  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  box-shadow: 8px 8px 8px 8px rgba(0, 0, 0, 0.356);
   transform: translateY(-2px);
 }
 .info-item i {
