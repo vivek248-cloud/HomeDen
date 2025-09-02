@@ -29,17 +29,17 @@
         <div class="row g-3 mb-4">
           {% for size in dining_sizes %}
           <div class="col-sm-6">
-            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="size_{{ forloop.counter }}">
               <input class="form-check-input me-2" 
                      type="radio" 
                      name="size" 
                      value="{{ size }}" 
                      id="size_{{ forloop.counter }}" 
                      required>
-              <label class="form-check-label fw-semibold" for="size_{{ forloop.counter }}">
+              <span class="form-check-label fw-semibold" for="size_{{ forloop.counter }}">
                 {{ size }}
-              </label>
-            </div>
+              </span>
+            </label>
           </div>
           {% endfor %}
         </div>
@@ -60,129 +60,129 @@
 
         <!-- Transitional -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_transitional">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Transitional Dining"
                    id="dining_transitional"
                    required>
-            <label class="form-check-label fw-semibold" for="dining_transitional">
+            <span class="form-check-label fw-semibold" for="dining_transitional">
               Transitional Dining
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Modern -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_modern">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Modern Dining"
                    id="dining_modern">
-            <label class="form-check-label fw-semibold" for="dining_modern">
+            <span class="form-check-label fw-semibold" for="dining_modern">
               Modern Dining
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Contemporary -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_contemporary">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Contemporary Dining"
                    id="dining_contemporary">
-            <label class="form-check-label fw-semibold" for="dining_contemporary">
+            <span class="form-check-label fw-semibold" for="dining_contemporary">
               Contemporary Dining
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Traditional -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_indian">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Indian Dining"
                    id="dining_indian">
-            <label class="form-check-label fw-semibold" for="dining_indian">
+            <span class="form-check-label fw-semibold" for="dining_indian">
               Indian Dining
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Farmhouse -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_american">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="American Dining"
                    id="dining_american">
-            <label class="form-check-label fw-semibold" for="dining_american">
+            <span class="form-check-label fw-semibold" for="dining_american">
               American Dining
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Rustic -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_eclectic">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Eclectic Dining"
                    id="dining_eclectic">
-            <label class="form-check-label fw-semibold" for="dining_eclectic">
+            <span class="form-check-label fw-semibold" for="dining_eclectic">
               Eclectic Dining
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Industrial -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_industrial">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Industrial Dining"
                    id="dining_industrial">
-            <label class="form-check-label fw-semibold" for="dining_industrial">
+            <span class="form-check-label fw-semibold" for="dining_industrial">
               Industrial Dining
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Mediterranean -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_mediterranean">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Mediterranean Dining"
                    id="dining_mediterranean">
-            <label class="form-check-label fw-semibold" for="dining_mediterranean">
+            <span class="form-check-label fw-semibold" for="dining_mediterranean">
               Mediterranean Dining
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Craftsman -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_tropical">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Tropical Dining"
                    id="dining_tropical">
-            <label class="form-check-label fw-semibold" for="dining_tropical">
+            <span class="form-check-label fw-semibold" for="dining_tropical">
               Tropical Dining
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
       </div>
@@ -276,10 +276,10 @@
         <div class="row g-3 mb-4">
           {% for pkg in packages %}
           <div class="col-sm-6">
-            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
               <input class="form-check-input me-2" type="radio" name="package" value="{{ pkg }}" id="pkg_{{ forloop.counter }}" required>
-              <label class="form-check-label" for="pkg_{{ forloop.counter }}">{{ pkg }}</label>
-            </div>
+              <span class="form-check-label" for="pkg_{{ forloop.counter }}">{{ pkg }}</span>
+            </label>
           </div>
           {% endfor %}
         </div>

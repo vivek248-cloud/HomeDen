@@ -9,6 +9,7 @@
   --color-3:#4cb748; /* Green */
   --color-4:orange; /* Orange */
   --color-5:#0e0a09; /* Dark (likely the background) */
+  --darkoverlay: rgba(0, 0, 0, 0.336);
 }
 
 
@@ -487,7 +488,7 @@ body, html {
   border: 1px solid #ced4da;
   padding: 0 20px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  text-align: center;
+  text-align: left;
 }
 
 .elegant-modal .form-control:focus {
@@ -683,7 +684,7 @@ body, html {
   .scroller-content-bg {
       width: 100%;
       height: 100%;
-    background-color: rgba(0, 0, 0, 0.623);
+    background-color: var(--darkoverlay);
     padding: 2rem;
     border-radius: 10px;
     color: white;
@@ -697,7 +698,7 @@ body, html {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(0.5);
+  filter: brightness(0.7);
 }
   .scroller-content-2 h1 {
     font-size: 3.1rem;
@@ -4929,3 +4930,127 @@ input[name="otp"] {
 .chat-input { width: 100%; padding: 8px; margin-top: 8px; border: 1px solid #ccc; border-radius: 6px; }
 .chat-btn { background: #6c5ce7; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; margin-top: 6px; }
 .chat-btn:hover { background: #5a4bdc; }
+
+  .terms-section {
+    background: #f9f9f9;
+    padding: 60px 20px;
+    font-family: "Poppins", sans-serif;
+  }
+
+  .terms-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 40px;
+    color: #222;
+    position: relative;
+  }
+
+  .terms-title::after {
+    content: "";
+    width: 60px;
+    height: 3px;
+    background: #c19a6b; /* elegant gold accent */
+    display: block;
+    margin: 10px auto 0;
+    border-radius: 2px;
+  }
+
+  .terms-list {
+    max-width: 900px;
+    margin: 0 auto;
+    list-style: none;
+    padding: 0;
+  }
+
+  .terms-list li {
+    background: #fff;
+    margin-bottom: 25px;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease;
+  }
+
+    .terms-list li.active {
+    transform: scale(1.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .terms-list li:hover {
+    transform: translateY(-4px);
+  }
+
+  .terms-list h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .terms-list h4 i {
+    color: #c19a6b; /* gold tone for icons */
+    font-size: 1.1rem;
+  }
+
+  .terms-list p {
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+
+  .bhk-card {
+  cursor: pointer;
+  background: #fff;
+  transition: all 0.2s ease-in-out;
+}
+.bhk-card:hover {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.bhk-check:checked + span {
+  color: var(--color-2); /* highlight selected */
+}
+
+/* Buttons */
+.counter button {
+  background-color: var(--color-1);
+  border: none;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  padding: 0;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Align and reduce spacing */
+.counter {
+  gap: 6px;
+}
+.counter .count {
+  font-size: 16px!important;
+  min-width: 22px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* RESPONSIVE */
+@media (max-width: 576px) {
+  .bhk-option {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .counter {
+    margin-top: 8px;
+    justify-content: flex-start;
+  }
+}

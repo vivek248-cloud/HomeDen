@@ -55,11 +55,27 @@
     
     <!-- Download Button (Only after verification) -->
   {% if download_pdf %}
-    <div class="text-center mt-4">
-      <a href="{{ download_pdf }}" class="btn btn-primary btn-lg rounded-pill shadow-sm px-4" download>
-        📥 Download Your Estimation PDF
-      </a>
-    </div>
+ <div class="text-center mt-4">
+  <a id="downloadBtn"
+     href="{{ download_pdf }}"
+     class="btn btn-primary btn-lg rounded-pill shadow-sm px-4"
+     download>
+     📥 Download Your Estimation PDF
+  </a>
+</div>
+
+<script>
+  const downloadBtn = document.getElementById("downloadBtn");
+
+  downloadBtn.addEventListener("click", function (e) {
+    // wait 2 seconds after download starts, then redirect
+    setTimeout(function () {
+      window.location.href = "{{ home_url }}";
+    }, 2000);
+  });
+</script>
+
+
   {% endif %}
   </div>
 </div>

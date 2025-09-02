@@ -29,17 +29,17 @@
         <div class="row g-3 mb-4">
           {% for size in living_room_sizes %}
           <div class="col-sm-6">
-            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="size_{{ forloop.counter }}">
               <input class="form-check-input me-2" 
                      type="radio" 
                      name="size" 
                      value="{{ size }}" 
                      id="size_{{ forloop.counter }}" 
                      required>
-              <label class="form-check-label fw-semibold" for="size_{{ forloop.counter }}">
+              <span class="form-check-label fw-semibold" for="size_{{ forloop.counter }}">
                 {{ size }}
-              </label>
-            </div>
+              </span>
+            </label>
           </div>
           {% endfor %}
         </div>
@@ -60,129 +60,129 @@
 
         <!-- Transitional -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="living_room_transitional">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Transitional Living Room"
                    id="living_room_transitional"
                    required>
-            <label class="form-check-label fw-semibold" for="living_room_transitional">
+            <span class="form-check-label fw-semibold" for="living_room_transitional">
               Transitional Living Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Modern -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="living_room_modern">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Modern Living Room"
                    id="living_room_modern">
-            <label class="form-check-label fw-semibold" for="living_room_modern">
+            <span class="form-check-label fw-semibold" for="living_room_modern">
               Modern Living Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Contemporary -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="living_room_contemporary">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Contemporary Living Room"
                    id="living_room_contemporary">
-            <label class="form-check-label fw-semibold" for="living_room_contemporary">
+            <span class="form-check-label fw-semibold" for="living_room_contemporary">
               Contemporary Living Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Traditional -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="living_room_indian">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Indian Living Room"
                    id="living_room_indian">
-            <label class="form-check-label fw-semibold" for="living_room_indian">
+            <span class="form-check-label fw-semibold" for="living_room_indian">
               Indian Living Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Farmhouse -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="living_room_american">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="American Living Room"
                    id="living_room_american">
-            <label class="form-check-label fw-semibold" for="living_room_american">
+            <span class="form-check-label fw-semibold" for="living_room_american">
               American Living Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Rustic -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="living_room_eclectic">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Eclectic Living Room"
                    id="living_room_eclectic">
-            <label class="form-check-label fw-semibold" for="living_room_eclectic">
+            <span class="form-check-label fw-semibold" for="living_room_eclectic">
               Eclectic Living Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Industrial -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="living_room_industrial">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Industrial Living Room"
                    id="living_room_industrial">
-            <label class="form-check-label fw-semibold" for="living_room_industrial">
+            <span class="form-check-label fw-semibold" for="living_room_industrial">
               Industrial Living Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Mediterranean -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="living_room_mediterranean">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Mediterranean Living Room"
                    id="living_room_mediterranean">
-            <label class="form-check-label fw-semibold" for="living_room_mediterranean">
+            <span class="form-check-label fw-semibold" for="living_room_mediterranean">
               Mediterranean Living Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Craftsman -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="living_room_tropical">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Tropical Living Room"
                    id="living_room_tropical">
-            <label class="form-check-label fw-semibold" for="living_room_tropical">
+            <span class="form-check-label fw-semibold" for="living_room_tropical">
               Tropical Living Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
       </div>
@@ -276,10 +276,10 @@
         <div class="row g-3 mb-4">
           {% for pkg in packages %}
           <div class="col-sm-6">
-            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
               <input class="form-check-input me-2" type="radio" name="package" value="{{ pkg }}" id="pkg_{{ forloop.counter }}" required>
-              <label class="form-check-label" for="pkg_{{ forloop.counter }}">{{ pkg }}</label>
-            </div>
+              <span class="form-check-label" for="pkg_{{ forloop.counter }}">{{ pkg }}</span>
+            </label>
           </div>
           {% endfor %}
         </div>

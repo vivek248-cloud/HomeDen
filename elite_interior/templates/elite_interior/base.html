@@ -235,42 +235,202 @@
           </div>
     
           <div class="modal-body">
-            <form method="post" action="{% url 'submit_form' %} ">
-              {% csrf_token %}
-              <div class="mb-3">
-                <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control text-left rounded-3" style="text-align: left;" id="name" name="name" required>
-              </div>
-              <div class="mb-3">
-                <label for="contact" class="form-label">Contact Number</label>
-                <input type="tel" class="form-control text-left rounded-3" style="text-align: left;" id="contact" name="contact" required>
-              </div>
-              <div class="mb-3">
-                <label for="email" class="form-label">Email Address</label>
-                <input type="email" class="form-control text-left rounded-3" style="text-align: left;" id="email" name="email" required>
-              </div>
-              <div class="mb-3">
-                    <label for="bhk" class="form-label">Property Type</label>
-                    <select class="form-select rounded-3" id="bhk" name="bhk" required>
-                      <option value="">-- Select BHK Type --</option>
-                      <option value="2BHK">2BHK</option>
-                      <option value="3BHK">3BHK</option>
-                      <option value="4BHK">4BHK</option>
-                      <option value="5BHK">5BHK</option>
-                      <option value="More than 5BHK">More than 5BHK</option>
-                    </select>
-                  </div>
-              <div class="mb-3">
-                <label for="location" class="form-label">Project Location</label>
-                <input type="text" class="form-control text-left rounded-3" style="text-align: left;" id="location" name="location" required>
-              </div>
-    
-              <div class="text-center mt-3">
-                <button type="submit" class="btn submit-btn  py-0 px-4">Submit</button>
-                <a href="{% url 'select_platform' %}" class="btn btn-secondary calculate-btn bg-secondary py-0 px-4">Calculate Budget</a>
-              </div>
-              
-            </form>
+            <form method="post" action="{% url 'submit_form' %}">
+    {% csrf_token %}
+
+    <!-- Name -->
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" class="form-control text-left rounded-3"
+               id="name" name="name" required>
+    </div>
+
+    <!-- Contact -->
+    <div class="mb-3">
+        <label for="contact" class="form-label">Contact Number</label>
+        <input type="tel" class="form-control text-left rounded-3"
+               id="contact" name="contact" required>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" class="form-control text-left rounded-3"
+               id="email" name="email" required>
+    </div>
+
+    <!-- Property Type -->
+    <div class="mb-3">
+        <label class="form-label d-block">Property Type</label>
+        <div class="row g-2">
+
+            <!-- Kitchen -->
+            <div class="col-12 col-sm-6">
+                <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
+                     data-value="Kitchen">
+                    <div>
+                        <input type="checkbox" class="form-check-input me-2 bhk-check">
+                        <span>Kitchen</span>
+                    </div>
+                    <div class="counter d-flex align-items-center d-none">
+                        <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
+                        <span class="mx-2 count">01</span>
+                        <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Master Bedroom -->
+            <div class="col-12 col-sm-6">
+                <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
+                     data-value="Master Bedroom">
+                    <div>
+                        <input type="checkbox" class="form-check-input me-2 bhk-check">
+                        <span>Master Bedroom</span>
+                    </div>
+                    <div class="counter d-flex align-items-center d-none">
+                        <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
+                        <span class="mx-2 count">01</span>
+                        <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kids Room -->
+            <div class="col-12 col-sm-6">
+                <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
+                     data-value="Kids Room">
+                    <div>
+                        <input type="checkbox" class="form-check-input me-2 bhk-check">
+                        <span>Kids Room</span>
+                    </div>
+                    <div class="counter d-flex align-items-center d-none">
+                        <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
+                        <span class="mx-2 count">01</span>
+                        <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Living Room -->
+            <div class="col-12 col-sm-6">
+                <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
+                     data-value="Living Room">
+                    <div>
+                        <input type="checkbox" class="form-check-input me-2 bhk-check">
+                        <span>Living Room</span>
+                    </div>
+                    <div class="counter d-flex align-items-center d-none">
+                        <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
+                        <span class="mx-2 count">01</span>
+                        <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guest Room -->
+            <div class="col-12 col-sm-6">
+                <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
+                     data-value="Guest Room">
+                    <div>
+                        <input type="checkbox" class="form-check-input me-2 bhk-check">
+                        <span>Guest Room</span>
+                    </div>
+                    <div class="counter d-flex align-items-center d-none">
+                        <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
+                        <span class="mx-2 count">01</span>
+                        <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Study Room -->
+            <div class="col-12 col-sm-6">
+                <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
+                     data-value="Study Room">
+                    <div>
+                        <input type="checkbox" class="form-check-input me-2 bhk-check">
+                        <span>Study Room</span>
+                    </div>
+                    <div class="counter d-flex align-items-center d-none">
+                        <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
+                        <span class="mx-2 count">01</span>
+                        <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Hidden input -->
+        <input type="hidden" id="bhk" name="bhk">
+    </div>
+
+    <!-- Project Location -->
+    <div class="mb-3">
+        <label for="location" class="form-label">Project Location</label>
+        <input type="text" class="form-control text-left rounded-3"
+               id="location" name="location" required>
+    </div>
+
+    <!-- Buttons -->
+    <div class="text-center mt-3">
+        <button type="submit" class="btn submit-btn py-0 px-4">Submit</button>
+        <a href="{% url 'select_platform' %}" class="btn btn-secondary calculate-btn bg-secondary py-0 px-4">Calculate Budget</a>
+    </div>
+</form>
+
+<!-- JS Script -->
+<script>
+    document.querySelectorAll(".bhk-check").forEach(check => {
+        check.addEventListener("change", function () {
+            const card = this.closest(".bhk-option");
+            const counter = card.querySelector(".counter");
+
+            if (this.checked) {
+                counter.classList.remove("d-none");
+            } else {
+                counter.classList.add("d-none");
+                counter.querySelector(".count").textContent = "01"; // reset count
+            }
+            updateHiddenInput();
+        });
+    });
+
+    document.querySelectorAll(".plus").forEach(btn => {
+        btn.addEventListener("click", function () {
+            let countSpan = this.parentElement.querySelector(".count");
+            let value = parseInt(countSpan.textContent);
+            countSpan.textContent = (value + 1).toString().padStart(2, "0");
+            updateHiddenInput();
+        });
+    });
+
+    document.querySelectorAll(".minus").forEach(btn => {
+        btn.addEventListener("click", function () {
+            let countSpan = this.parentElement.querySelector(".count");
+            let value = parseInt(countSpan.textContent);
+            if (value > 1) {
+                countSpan.textContent = (value - 1).toString().padStart(2, "0");
+                updateHiddenInput();
+            }
+        });
+    });
+
+    function updateHiddenInput() {
+        let selections = [];
+        document.querySelectorAll(".bhk-option").forEach(option => {
+            let check = option.querySelector(".bhk-check");
+            if (check.checked) {
+                let room = option.dataset.value;
+                let count = option.querySelector(".count").textContent;
+                selections.push(`${room}:${count}`);
+            }
+        });
+        document.getElementById("bhk").value = selections.join(",");
+    }
+</script>
+
           </div>
         </div>
       </div>

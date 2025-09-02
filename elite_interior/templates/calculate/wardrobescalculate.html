@@ -29,17 +29,17 @@
         <div class="row g-3 mb-4">
           {% for size in wardrobe_sizes %}
           <div class="col-sm-6">
-            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="size_{{ forloop.counter }}">
               <input class="form-check-input me-2" 
                      type="radio" 
                      name="size" 
                      value="{{ size }}" 
                      id="size_{{ forloop.counter }}" 
                      required>
-              <label class="form-check-label fw-semibold" for="size_{{ forloop.counter }}">
+              <span class="form-check-label fw-semibold" for="size_{{ forloop.counter }}">
                 {{ size }}
-              </label>
-            </div>
+              </span>
+            </label>
           </div>
           {% endfor %}
         </div>
@@ -60,129 +60,129 @@
 
         <!-- Transitional -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="wardrobe_transitional">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Transitional Wardrobe"
                    id="wardrobe_transitional"
                    required>
-            <label class="form-check-label fw-semibold" for="wardrobe_transitional">
+            <span class="form-check-label fw-semibold" for="wardrobe_transitional">
               Transitional Wardrobe
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Modern -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="wardrobe_modern">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Modern Wardrobe"
                    id="wardrobe_modern">
-            <label class="form-check-label fw-semibold" for="wardrobe_modern">
+            <span class="form-check-label fw-semibold" for="wardrobe_modern">
               Modern Wardrobe
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Contemporary -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="wardrobe_contemporary">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Contemporary Wardrobe"
                    id="wardrobe_contemporary">
-            <label class="form-check-label fw-semibold" for="wardrobe_contemporary">
+            <span class="form-check-label fw-semibold" for="wardrobe_contemporary">
               Contemporary Wardrobe
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Traditional -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="wardrobe_indian">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Indian Wardrobe"
                    id="wardrobe_indian">
-            <label class="form-check-label fw-semibold" for="wardrobe_indian">
+            <span class="form-check-label fw-semibold" for="wardrobe_indian">
               Indian Wardrobe
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Farmhouse -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="wardrobe_american">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="American Wardrobe"
                    id="wardrobe_american">
-            <label class="form-check-label fw-semibold" for="wardrobe_american">
+            <span class="form-check-label fw-semibold" for="wardrobe_american">
               American Wardrobe
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Rustic -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="wardrobe_eclectic">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Eclectic Wardrobe"
                    id="wardrobe_eclectic">
-            <label class="form-check-label fw-semibold" for="wardrobe_eclectic">
+            <span class="form-check-label fw-semibold" for="wardrobe_eclectic">
               Eclectic Wardrobe
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Industrial -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="wardrobe_industrial">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Industrial Wardrobe"
                    id="wardrobe_industrial">
-            <label class="form-check-label fw-semibold" for="wardrobe_industrial">
+            <span class="form-check-label fw-semibold" for="wardrobe_industrial">
               Industrial Wardrobe
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Mediterranean -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="wardrobe_mediterranean">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Mediterranean Wardrobe"
                    id="wardrobe_mediterranean">
-            <label class="form-check-label fw-semibold" for="wardrobe_mediterranean">
+            <span class="form-check-label fw-semibold" for="wardrobe_mediterranean">
               Mediterranean Wardrobe
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Craftsman -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="wardrobe_tropical">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Tropical Wardrobe"
                    id="wardrobe_tropical">
-            <label class="form-check-label fw-semibold" for="wardrobe_tropical">
+            <span class="form-check-label fw-semibold" for="wardrobe_tropical">
               Tropical Wardrobe
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
       </div>
@@ -276,10 +276,10 @@
         <div class="row g-3 mb-4">
           {% for pkg in packages %}
           <div class="col-sm-6">
-            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="pkg_{{ forloop.counter }}">
               <input class="form-check-input me-2" type="radio" name="package" value="{{ pkg }}" id="pkg_{{ forloop.counter }}" required>
-              <label class="form-check-label" for="pkg_{{ forloop.counter }}">{{ pkg }}</label>
-            </div>
+              <span class="form-check-label" for="pkg_{{ forloop.counter }}">{{ pkg }}</span>
+            </label>
           </div>
           {% endfor %}
         </div>

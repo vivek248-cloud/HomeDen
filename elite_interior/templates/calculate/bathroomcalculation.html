@@ -29,17 +29,17 @@
         <div class="row g-3 mb-4">
           {% for size in bathroom_sizes %}
           <div class="col-sm-6">
-            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="size_{{ forloop.counter }}">
               <input class="form-check-input me-2" 
                      type="radio" 
                      name="size" 
                      value="{{ size }}" 
                      id="size_{{ forloop.counter }}" 
                      required>
-              <label class="form-check-label fw-semibold" for="size_{{ forloop.counter }}">
+              <span class="form-check-label fw-semibold" for="size_{{ forloop.counter }}">
                 {{ size }}
-              </label>
-            </div>
+              </span>
+            </label>
           </div>
           {% endfor %}
         </div>
@@ -60,129 +60,131 @@
 
         <!-- Transitional -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="bathroom_transitional">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Transitional Bathroom"
                    id="bathroom_transitional"
                    required>
-            <label class="form-check-label fw-semibold" for="bathroom_transitional">
+            <span class="form-check-label fw-semibold" for="bathroom_transitional">
               Transitional Bathroom
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Modern -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="bathroom_modern">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Modern Bathroom"
-                   id="bathroom_modern">
-            <label class="form-check-label fw-semibold" for="bathroom_modern">
+                   id="bathroom_modern"
+                   required>
+            <span class="form-check-label fw-semibold" for="bathroom_modern">
               Modern Bathroom
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
+
 
         <!-- Contemporary -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="bathroom_contemporary">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Contemporary Bathroom"
                    id="bathroom_contemporary">
-            <label class="form-check-label fw-semibold" for="bathroom_contemporary">
+            <span class="form-check-label fw-semibold" for="bathroom_contemporary">
               Contemporary Bathroom
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Traditional -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="bathroom_traditional">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Traditional Bathroom"
                    id="bathroom_traditional">
-            <label class="form-check-label fw-semibold" for="bathroom_traditional">
+            <span class="form-check-label fw-semibold" for="bathroom_traditional">
               Traditional Bathroom
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Farmhouse -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="bathroom_farmhouse">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Farmhouse Bathroom"
                    id="bathroom_farmhouse">
-            <label class="form-check-label fw-semibold" for="bathroom_farmhouse">
+            <span class="form-check-label fw-semibold" for="bathroom_farmhouse">
               Farmhouse Bathroom
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Rustic -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="bathroom_rustic">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Rustic Bathroom"
                    id="bathroom_rustic">
-            <label class="form-check-label fw-semibold" for="bathroom_rustic">
+            <span class="form-check-label fw-semibold" for="bathroom_rustic">
               Rustic Bathroom
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Industrial -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+           <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="bathroom_industrial">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Industrial Bathroom"
                    id="bathroom_industrial">
-            <label class="form-check-label fw-semibold" for="bathroom_industrial">
+            <span class="form-check-label fw-semibold" for="bathroom_industrial">
               Industrial Bathroom
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Mediterranean -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+           <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="bathroom_mediterranean">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Mediterranean Bathroom"
                    id="bathroom_mediterranean">
-            <label class="form-check-label fw-semibold" for="bathroom_mediterranean">
+            <span class="form-check-label fw-semibold" for="bathroom_mediterranean">
               Mediterranean Bathroom
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Craftsman -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+           <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="bathroom_craftsman">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Craftsman Bathroom"
                    id="bathroom_craftsman">
-            <label class="form-check-label fw-semibold" for="bathroom_craftsman">
+            <span class="form-check-label fw-semibold" for="bathroom_craftsman">
               Craftsman Bathroom
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
       </div>
@@ -276,10 +278,10 @@
         <div class="row g-3 mb-4">
           {% for pkg in packages %}
           <div class="col-sm-6">
-            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+             <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="pkg_{{ forloop.counter }}">
               <input class="form-check-input me-2" type="radio" name="package" value="{{ pkg }}" id="pkg_{{ forloop.counter }}" required>
-              <label class="form-check-label" for="pkg_{{ forloop.counter }}">{{ pkg }}</label>
-            </div>
+              <span class="form-check-label" for="pkg_{{ forloop.counter }}">{{ pkg }}</span>
+            </label>
           </div>
           {% endfor %}
         </div>

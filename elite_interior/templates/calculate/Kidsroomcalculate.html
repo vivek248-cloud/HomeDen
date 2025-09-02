@@ -29,17 +29,17 @@
         <div class="row g-3 mb-4">
           {% for size in kids_room_sizes %}
           <div class="col-sm-6">
-            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="size_{{ forloop.counter }}">
               <input class="form-check-input me-2" 
                      type="radio" 
                      name="size" 
                      value="{{ size }}" 
                      id="size_{{ forloop.counter }}" 
                      required>
-              <label class="form-check-label fw-semibold" for="size_{{ forloop.counter }}">
+              <span class="form-check-label fw-semibold">
                 {{ size }}
-              </label>
-            </div>
+              </span>
+            </label>
           </div>
           {% endfor %}
         </div>
@@ -60,129 +60,129 @@
 
         <!-- Transitional -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="kids_room_transitional">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Transitional Kids Room"
                    id="kids_room_transitional"
                    required>
-            <label class="form-check-label fw-semibold" for="kids_room_transitional">
+            <span class="form-check-label fw-semibold" for="kids_room_transitional">
               Transitional Kids Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Modern -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="kids_room_modern">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Modern Kids Room"
                    id="kids_room_modern">
-            <label class="form-check-label fw-semibold" for="kids_room_modern">
+            <span class="form-check-label fw-semibold" for="kids_room_modern">
               Modern Kids Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Contemporary -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="kids_room_contemporary">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Contemporary Kids Room"
                    id="kids_room_contemporary">
-            <label class="form-check-label fw-semibold" for="kids_room_contemporary">
+            <span class="form-check-label fw-semibold" for="kids_room_contemporary">
               Contemporary Kids Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Traditional -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="kids_room_indian">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Indian Kids Room"
                    id="kids_room_indian">
-            <label class="form-check-label fw-semibold" for="kids_room_indian">
+            <span class="form-check-label fw-semibold" for="kids_room_indian">
               Indian Kids Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Farmhouse -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="kids_room_american">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="American Kids Room"
                    id="kids_room_american">
-            <label class="form-check-label fw-semibold" for="kids_room_american">
+            <span class="form-check-label fw-semibold" for="kids_room_american">
               American Kids Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Rustic -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="kids_room_eclectic">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Eclectic Kids Room"
                    id="kids_room_eclectic">
-            <label class="form-check-label fw-semibold" for="kids_room_eclectic">
+            <span class="form-check-label fw-semibold" for="kids_room_eclectic">
               Eclectic Kids Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Industrial -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="kids_room_industrial">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Industrial Kids Room"
                    id="kids_room_industrial">
-            <label class="form-check-label fw-semibold" for="kids_room_industrial">
+            <span class="form-check-label fw-semibold" for="kids_room_industrial">
               Industrial Kids Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Mediterranean -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="kids_room_mediterranean">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Mediterranean Kids Room"
                    id="kids_room_mediterranean">
-            <label class="form-check-label fw-semibold" for="kids_room_mediterranean">
+            <span class="form-check-label fw-semibold" for="kids_room_mediterranean">
               Mediterranean Kids Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
         <!-- Craftsman -->
         <div class="col-sm-6">
-          <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="kids_room_tropical">
             <input class="form-check-input me-2"
                    type="radio"
                    name="shape"
                    value="Tropical Kids Room"
                    id="kids_room_tropical">
-            <label class="form-check-label fw-semibold" for="kids_room_tropical">
+            <span class="form-check-label fw-semibold" for="kids_room_tropical">
               Tropical Kids Room
-            </label>
-          </div>
+            </span>
+          </label>
         </div>
 
       </div>
@@ -276,10 +276,10 @@
         <div class="row g-3 mb-4">
           {% for pkg in packages %}
           <div class="col-sm-6">
-            <div class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light">
+            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="pkg_{{ forloop.counter }}">
               <input class="form-check-input me-2" type="radio" name="package" value="{{ pkg }}" id="pkg_{{ forloop.counter }}" required>
-              <label class="form-check-label" for="pkg_{{ forloop.counter }}">{{ pkg }}</label>
-            </div>
+              <span class="form-check-label" for="pkg_{{ forloop.counter }}">{{ pkg }}</span>
+            </label>
           </div>
           {% endfor %}
         </div>

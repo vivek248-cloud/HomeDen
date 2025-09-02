@@ -680,32 +680,59 @@ def send_message_view(request):
     return JsonResponse(response)
 
 from django.core.mail import send_mail
-from django.shortcuts import redirect
-from django.contrib import messages
 from django.conf import settings
+from django.contrib import messages
+from django.shortcuts import redirect
+import logging
+
+logger = logging.getLogger(__name__)
 
 def submit_contact_form(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
-        contact = request.POST.get('contact')
-        email = request.POST.get('email')
-        bhk = request.POST.get('bhk')
-        location = request.POST.get('location')
+        name = request.POST.get('name', '').strip()
+        contact = request.POST.get('contact', '').strip()
+        email = request.POST.get('email', '').strip()
+        bhk_raw = request.POST.get('bhk', '')
+        location = request.POST.get('location', '').strip()
+
+        # Format BHK properly
+        bhk_list = []
+        if bhk_raw:
+            for item in bhk_raw.split(','):
+                room, count = item.split(':')
+                bhk_list.append(f"{room} - {count}")
+        bhk_formatted = "\n".join(bhk_list) if bhk_list else "Not specified"
 
         subject_admin = f"New Enquiry from {name}"
-        message_admin = f"Name: {name}\nContact: {contact}\nEmail: {email}\nBHK: {bhk}\nLocation: {location}"
+        message_admin = (
+            f"Name: {name}\n"
+            f"Contact: {contact}\n"
+            f"Email: {email}\n"
+            f"Location: {location}\n\n"
+            f"Selected Rooms:\n{bhk_formatted}"
+        )
+
         subject_client = "Thanks for contacting Home Den"
-        message_client = f"Hi {name},\n\nThank you for contacting us! We will be in touch soon.\n\nYour Details:\nContact: {contact}\nLocation: {location}\nBHK: {bhk}\n\nBest regards,\nHome Den Team"
+        message_client = (
+            f"Hi {name},\n\n"
+            f"Thank you for contacting us! We will be in touch soon.\n\n"
+            f"Your Details:\n"
+            f"Contact: {contact}\n"
+            f"Location: {location}\n"
+            f"Rooms:\n{bhk_formatted}\n\n"
+            f"Best regards,\nHome Den Team"
+        )
 
         try:
             send_mail(subject_admin, message_admin, settings.EMAIL_HOST_USER, [settings.ADMIN_EMAIL])
             send_mail(subject_client, message_client, settings.EMAIL_HOST_USER, [email])
             messages.success(request, "Thank you! Your inquiry was sent successfully.")
         except Exception as e:
-            print("Email error:", e)
+            logger.error("Email sending failed", exc_info=e)
             messages.error(request, "Error sending email. Try again later.")
 
-    return redirect(request.META.get('HTTP_REFERER', '/'))  
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
 
 
 ###############################################################################
@@ -744,7 +771,7 @@ def kitchen_submit_estimation_form(request):
         elif size == '11.5 ft. × 10 ft.':
             price = 90000
         else:
-            price = 1 # Default price
+            price = 0 # Default price
 
         if package == 'silver':
             price *= 0.8  # Apply 20% discount
@@ -1369,7 +1396,8 @@ def verify_otp(request):
                 "elite_interior/verify_otp.html",
                 {
                     "price": price,
-                    "download_pdf": reverse("download_estimation")  # 👈 link to download view
+                    "download_pdf": reverse("download_estimation"), # 👈 link to download view
+                     "home_url": reverse("home"),
                 }
             )
 
