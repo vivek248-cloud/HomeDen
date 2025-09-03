@@ -47,7 +47,7 @@
 </div> {% endcomment %}
 <div class="loader-overlay" id="loader" style="display: flex;">
   <div class="svg-loader-wrapper">
-  <svg  width="800" height="603" xmlns="http://www.w3.org/2000/svg">
+  <svg  viewBox="0 0 800 603" xmlns="http://www.w3.org/2000/svg" class="loader-svg">
  <g id="Layer_1">
   <title>HOME DEN</title>
   <g>
@@ -236,149 +236,149 @@
     
           <div class="modal-body">
             <form method="post" action="{% url 'submit_form' %}">
-    {% csrf_token %}
+          {% csrf_token %}
 
-    <!-- Name -->
-    <div class="mb-3">
-        <label for="name" class="form-label">Name</label>
-        <input type="text" class="form-control text-left rounded-3"
-               id="name" name="name" required>
-    </div>
+          <!-- Name -->
+          <div class="mb-3">
+              <label for="name" class="form-label">Name</label>
+              <input type="text" class="form-control text-left rounded-3"
+                    id="name" name="name" required>
+          </div>
 
-    <!-- Contact -->
-    <div class="mb-3">
-        <label for="contact" class="form-label">Contact Number</label>
-        <input type="tel" class="form-control text-left rounded-3"
-               id="contact" name="contact" required>
-    </div>
+          <!-- Contact -->
+          <div class="mb-3">
+              <label for="contact" class="form-label">Contact Number</label>
+              <input type="tel" class="form-control text-left rounded-3"
+                    id="contact" name="contact" required>
+          </div>
 
-    <!-- Email -->
-    <div class="mb-3">
-        <label for="email" class="form-label">Email Address</label>
-        <input type="email" class="form-control text-left rounded-3"
-               id="email" name="email" required>
-    </div>
+          <!-- Email -->
+          <div class="mb-3">
+              <label for="email" class="form-label">Email Address</label>
+              <input type="email" class="form-control text-left rounded-3"
+                    id="email" name="email" required>
+          </div>
 
-    <!-- Property Type -->
-    <div class="mb-3">
-        <label class="form-label d-block">Property Type</label>
-        <div class="row g-2">
+          <!-- Property Type -->
+          <div class="mb-3">
+              <label class="form-label d-block">Property Type</label>
+              <div class="row g-2">
 
-            <!-- Kitchen -->
-            <div class="col-12 col-sm-6">
-                <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
-                     data-value="Kitchen">
-                    <div>
-                        <input type="checkbox" class="form-check-input me-2 bhk-check">
-                        <span>Kitchen</span>
-                    </div>
-                    <div class="counter d-flex align-items-center d-none">
-                        <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
-                        <span class="mx-2 count">01</span>
-                        <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
-                    </div>
-                </div>
-            </div>
+                  <!-- Kitchen -->
+                  <div class="col-12 col-sm-6">
+                      <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
+                          data-value="Kitchen">
+                          <div>
+                              <input type="checkbox" class="form-check-input me-2 bhk-check">
+                              <span>Kitchen</span>
+                          </div>
+                          <div class="counter d-flex align-items-center d-none">
+                              <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
+                              <span class="mx-2 count">01</span>
+                              <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
+                          </div>
+                      </div>
+                  </div>
 
-            <!-- Master Bedroom -->
-            <div class="col-12 col-sm-6">
-                <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
-                     data-value="Master Bedroom">
-                    <div>
-                        <input type="checkbox" class="form-check-input me-2 bhk-check">
-                        <span>Master Bedroom</span>
-                    </div>
-                    <div class="counter d-flex align-items-center d-none">
-                        <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
-                        <span class="mx-2 count">01</span>
-                        <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
-                    </div>
-                </div>
-            </div>
+                  <!-- Master Bedroom -->
+                  <div class="col-12 col-sm-6">
+                      <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
+                          data-value="Master Bedroom">
+                          <div>
+                              <input type="checkbox" class="form-check-input me-2 bhk-check">
+                              <span>Master Bedroom</span>
+                          </div>
+                          <div class="counter d-flex align-items-center d-none">
+                              <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
+                              <span class="mx-2 count">01</span>
+                              <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
+                          </div>
+                      </div>
+                  </div>
 
-            <!-- Kids Room -->
-            <div class="col-12 col-sm-6">
-                <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
-                     data-value="Kids Room">
-                    <div>
-                        <input type="checkbox" class="form-check-input me-2 bhk-check">
-                        <span>Kids Room</span>
-                    </div>
-                    <div class="counter d-flex align-items-center d-none">
-                        <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
-                        <span class="mx-2 count">01</span>
-                        <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
-                    </div>
-                </div>
-            </div>
+                  <!-- Kids Room -->
+                  <div class="col-12 col-sm-6">
+                      <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
+                          data-value="Kids Room">
+                          <div>
+                              <input type="checkbox" class="form-check-input me-2 bhk-check">
+                              <span>Kids Room</span>
+                          </div>
+                          <div class="counter d-flex align-items-center d-none">
+                              <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
+                              <span class="mx-2 count">01</span>
+                              <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
+                          </div>
+                      </div>
+                  </div>
 
-            <!-- Living Room -->
-            <div class="col-12 col-sm-6">
-                <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
-                     data-value="Living Room">
-                    <div>
-                        <input type="checkbox" class="form-check-input me-2 bhk-check">
-                        <span>Living Room</span>
-                    </div>
-                    <div class="counter d-flex align-items-center d-none">
-                        <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
-                        <span class="mx-2 count">01</span>
-                        <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
-                    </div>
-                </div>
-            </div>
+                  <!-- Living Room -->
+                  <div class="col-12 col-sm-6">
+                      <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
+                          data-value="Living Room">
+                          <div>
+                              <input type="checkbox" class="form-check-input me-2 bhk-check">
+                              <span>Living Room</span>
+                          </div>
+                          <div class="counter d-flex align-items-center d-none">
+                              <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
+                              <span class="mx-2 count">01</span>
+                              <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
+                          </div>
+                      </div>
+                  </div>
 
-            <!-- Guest Room -->
-            <div class="col-12 col-sm-6">
-                <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
-                     data-value="Guest Room">
-                    <div>
-                        <input type="checkbox" class="form-check-input me-2 bhk-check">
-                        <span>Guest Room</span>
-                    </div>
-                    <div class="counter d-flex align-items-center d-none">
-                        <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
-                        <span class="mx-2 count">01</span>
-                        <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
-                    </div>
-                </div>
-            </div>
+                  <!-- Guest Room -->
+                  <div class="col-12 col-sm-6">
+                      <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
+                          data-value="Guest Room">
+                          <div>
+                              <input type="checkbox" class="form-check-input me-2 bhk-check">
+                              <span>Guest Room</span>
+                          </div>
+                          <div class="counter d-flex align-items-center d-none">
+                              <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
+                              <span class="mx-2 count">01</span>
+                              <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
+                          </div>
+                      </div>
+                  </div>
 
-            <!-- Study Room -->
-            <div class="col-12 col-sm-6">
-                <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
-                     data-value="Study Room">
-                    <div>
-                        <input type="checkbox" class="form-check-input me-2 bhk-check">
-                        <span>Study Room</span>
-                    </div>
-                    <div class="counter d-flex align-items-center d-none">
-                        <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
-                        <span class="mx-2 count">01</span>
-                        <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
-                    </div>
-                </div>
-            </div>
+                  <!-- Study Room -->
+                  <div class="col-12 col-sm-6">
+                      <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
+                          data-value="Study Room">
+                          <div>
+                              <input type="checkbox" class="form-check-input me-2 bhk-check">
+                              <span>Study Room</span>
+                          </div>
+                          <div class="counter d-flex align-items-center d-none">
+                              <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
+                              <span class="mx-2 count">01</span>
+                              <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
+                          </div>
+                      </div>
+                  </div>
 
-        </div>
+              </div>
 
-        <!-- Hidden input -->
-        <input type="hidden" id="bhk" name="bhk">
-    </div>
+              <!-- Hidden input -->
+              <input type="hidden" id="bhk" name="bhk">
+          </div>
 
-    <!-- Project Location -->
-    <div class="mb-3">
-        <label for="location" class="form-label">Project Location</label>
-        <input type="text" class="form-control text-left rounded-3"
-               id="location" name="location" required>
-    </div>
+          <!-- Project Location -->
+          <div class="mb-3">
+              <label for="location" class="form-label">Project Location</label>
+              <input type="text" class="form-control text-left rounded-3"
+                    id="location" name="location" required>
+          </div>
 
-    <!-- Buttons -->
-    <div class="text-center mt-3">
-        <button type="submit" class="btn submit-btn py-0 px-4">Submit</button>
-        <a href="{% url 'select_platform' %}" class="btn btn-secondary calculate-btn bg-secondary py-0 px-4">Calculate Budget</a>
-    </div>
-</form>
+          <!-- Buttons -->
+          <div class="text-center mt-3">
+              <button type="submit" class="btn submit-btn py-0 px-4">Submit</button>
+              <a href="{% url 'select_platform' %}" class="btn btn-secondary calculate-btn bg-secondary py-0 px-4">Calculate Budget</a>
+          </div>
+      </form>
 
 <!-- JS Script -->
 <script>
