@@ -340,3 +340,33 @@ class Product(models.Model):
 def delete_product_image(sender, instance, **kwargs):
     if instance.image and os.path.isfile(instance.image.path):
         instance.image.delete(save=False)
+
+
+
+from django.db import models
+from django.utils import timezone
+from datetime import timedelta
+
+class OtpVerification(models.Model):
+    email = models.EmailField()
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+
+    def is_expired(self):
+        return timezone.now() > self.expires_at
+
+
+class TeamMember(models.Model):
+    name = models.CharField(max_length=100)
+    role = models.CharField(max_length=100)
+    photo = models.ImageField(upload_to="team_photos/")  # requires MEDIA setup
+
+    def __str__(self):
+        return self.name
+
+# ✅ Auto delete image file when TeamMember is deleted
+@receiver(post_delete, sender=TeamMember)
+def delete_team_member_photo(sender, instance, **kwargs):
+    if instance.photo and os.path.isfile(instance.photo.path):
+        instance.photo.delete(save=False)

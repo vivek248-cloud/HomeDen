@@ -166,8 +166,8 @@ document.addEventListener('DOMContentLoaded', function () {
     <h6 class="mt-4 mb-3">Suggested Blogs Based on Your Search:</h6>
     <div class="row">
       {% for blog in suggested_results %}
-      <div class="col-md-6 mb-4">
-        <div class="card h-100 shadow-sm border-0 blog-card">
+      <div class="col-md-6 mb-4 ">
+        <div class="card h-100 shadow-sm  blog-card">
           <div class="row g-0 h-100 flex-column flex-md-row" style="max-height: auto;">
             
             <!-- Blog Image -->
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
 
             <!-- Blog Content -->
-            <!-- Blog Content -->
+           
         <div class="col-md-7 d-flex align-items-stretch">
         <div class="card-body d-flex flex-column bg-white shadow-sm rounded-bottom rounded-md-end p-4 w-100 text-md-start text-start">
           
@@ -241,32 +241,31 @@ document.addEventListener('DOMContentLoaded', function () {
        <h5 class="fw-bold mb-3 border-bottom pb-2">Categories</h5>
         <ul class="list-unstyled">
 
-        <!-- All Categories link -->
- <li class="mb-2">
-  <a href="{% if query %}{% url 'blog_list' %}?q={{ query }}{% else %}{% url 'blog_list' %}{% endif %}"
-     class="d-block px-2 py-1 rounded {% if not selected_category %}bg-dark text-white{% else %}text-dark{% endif %}"
-     style="text-decoration:none;">
-    All Categories
-  </a>
-</li>
+          <!-- All Categories link -->
+          <li class="mb-2">
+            <a href="{% url 'blog_list' %}{% if query %}?q={{ query }}{% endif %}"
+              class="d-block px-2 py-1 rounded {% if not selected_category %}bg-dark text-white{% else %}text-dark{% endif %}"
+              style="text-decoration:none;">
+              All Categories
+            </a>
+          </li>
 
+          <!-- Individual categories -->
+          {% for category in categories %}
+            <li class="mb-2">
+              <a href="{% url 'blog_list' %}?category={{ category.category.id }}"
+                class="d-block px-2 py-1 rounded {% if selected_category == category.category.id|stringformat:'s' %}bg-secondary text-white{% else %}text-dark{% endif %}"
+                style="text-decoration:none;">
+                {{ category }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
 
-
-
-        <!-- Individual categories -->
-             {% for category in categories %}
-  <li class="mb-2">
-    <a href="{% url 'blog_list' %}?category={{ category.category.id }}{% if query %}&q={{ query }}{% endif %}"
-       class="d-block px-2 py-1 rounded {% if selected_category == category.category.id|stringformat:'s' %}bg-secondary text-white{% else %}text-dark{% endif %}"
-       style="text-decoration:none;">
-      {{ category }}
-    </a>
-  </li>
-{% endfor %}
-      </ul>
 
       </div>
     </div>
+
   </div>
 </div>
 

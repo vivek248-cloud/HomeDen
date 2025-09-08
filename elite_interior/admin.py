@@ -6,7 +6,14 @@ from .models import*
 
 
 
-admin.site.register(HomeSlider)
+class HomeSliderAdmin(admin.ModelAdmin):
+    class Media:
+        css = {
+            'all': ('interior/admin.css',)
+        }
+
+admin.site.register(HomeSlider, HomeSliderAdmin)
+
 admin.site.register(PackageOffers)
 admin.site.register(WhatWeDo_Grid)
 admin.site.register(Testimonial)
@@ -16,7 +23,7 @@ admin.site.register(YouTubeVideoProjects)
 admin.site.register(BudgetItem)
 admin.site.register(Category)
 admin.site.register(SubCategory)
-
+admin.site.register(OtpVerification)
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
@@ -84,3 +91,9 @@ class ProductAdmin(admin.ModelAdmin):
 admin.site.register(ProductCategory)
 admin.site.register(Brand)
 admin.site.register(Unit)
+
+
+
+@admin.register(TeamMember)
+class TeamMemberAdmin(admin.ModelAdmin):
+    list_display = ("name", "role")

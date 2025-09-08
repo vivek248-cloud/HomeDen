@@ -215,12 +215,12 @@ def blog_detail(request, slug):
     category_id = request.GET.get('category')
     session_key = f'viewed_blog_{blog.id}'
 
-    
+    # Count unique views
     if not request.session.get(session_key, False):
         blog.views += 1
         blog.save(update_fields=['views'])
         request.session[session_key] = True
-        
+
     # Start with all blogs ordered by latest
     blogs_qs = Blog.objects.all().order_by('-created_at')
 
@@ -232,8 +232,6 @@ def blog_detail(request, slug):
             Q(keyword__icontains=query)
         )
 
-
-
     # Apply category filter
     if category_id:
         blogs_qs = blogs_qs.filter(category_id=category_id)
@@ -241,47 +239,85 @@ def blog_detail(request, slug):
     # Final filtered list
     blogs = list(blogs_qs)
 
-    # Featured blogs from the same filtered list
+    # Featured blogs
     featured_blogs = blogs_qs.filter(is_featured=True)[:5]
 
-    # All blog categories
+    # All categories
     categories = BlogCategory.objects.all()
 
-
-    # If no blogs found, try suggesting blogs only based on query (ignoring category)
+    # Suggested fallback if no blogs found
+    suggested_results = []
     if not blogs and query and category_id:
         fallback_qs = Blog.objects.filter(
             Q(title__icontains=query) |
             Q(description__icontains=query) |
             Q(keyword__icontains=query)
         ).order_by('-created_at')
-        context['suggested_results'] = fallback_qs[:5]
+        suggested_results = fallback_qs[:5]
+
     context = {
         'blog': blog,
         'recent_blogs': recent_blogs,
-         'featured_blogs': featured_blogs,
+        'featured_blogs': featured_blogs,
         'all_blogs': blogs,
         'categories': categories,
         'query': query,
         'selected_category': category_id,
+        'suggested_results': suggested_results,
     }
     return render(request, 'elite_interior/blog_detail.html', context)
 
 
 
 
+
+# def category_suggestions(request):
+#     query = request.GET.get('term', '')
+#     suggestions = []
+
+#     if query:
+#         matched_categories = BlogCategory.objects.filter(
+#             category__name__icontains=query
+#         )[:10]
+
+#         suggestions = [
+#             {"id": cat.category.id, "label": cat.category.name, "value": cat.category.name}
+#             for cat in matched_categories if cat.category
+#         ]
+
+#     return JsonResponse(suggestions, safe=False)
+
+
 def category_suggestions(request):
-    query = request.GET.get('term', '')
+    query = request.GET.get('term', '').strip()
     suggestions = []
 
     if query:
-        matched_categories = BlogCategory.objects.filter(
+        # Blog Categories (via related Category model)
+        category_matches = BlogCategory.objects.filter(
             category__name__icontains=query
-        )[:10]
+        )[:5]
+        suggestions += [
+            {"id": cat.id, "label": f"Category - {cat.category.name}", "value": cat.category.name}
+            for cat in category_matches if cat.category
+        ]
 
-        suggestions = [
-            {"id": cat.category.id, "label": cat.category.name, "value": cat.category.name}
-            for cat in matched_categories if cat.category
+        # Project Categories
+        project_matches = Category.objects.filter(
+            name__icontains=query
+        )[:5]
+        suggestions += [
+            {"id": proj.id, "label": f"Project - {proj.name}", "value": proj.name}
+            for proj in project_matches
+        ]
+
+        # Blogs (Title + Keywords)
+        blog_matches = Blog.objects.filter(
+            Q(title__icontains=query) | Q(keyword__icontains=query)
+        )[:10]
+        suggestions += [
+            {"id": blog.id, "label": f"Blog - {blog.title}", "value": blog.title}
+            for blog in blog_matches
         ]
 
     return JsonResponse(suggestions, safe=False)
@@ -289,9 +325,10 @@ def category_suggestions(request):
 
 
 def about(request):
+    members = TeamMember.objects.all()
+    
     videos = AboutVideo.objects.all()
-    context = {'videos': videos,
-    }
+    context = {'videos': videos, 'members': members}
     return render(request, 'elite_interior/about.html', context)
 
 
@@ -745,6 +782,9 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
 
+from .models import OtpVerification
+
+
 def kitchen_submit_estimation_form(request):
     if request.method == "POST":
         size = request.POST.get("size")
@@ -756,7 +796,7 @@ def kitchen_submit_estimation_form(request):
         location = request.POST.get("location")
 
         # Generate OTP
-        otp = random.randint(1000, 9999)
+        otp = str(random.randint(1000, 9999))
         expiry_time = timezone.now() + timedelta(minutes=5)
 
         # Pricing logic
@@ -771,7 +811,7 @@ def kitchen_submit_estimation_form(request):
         elif size == '11.5 ft. × 10 ft.':
             price = 90000
         else:
-            price = 0 # Default price
+            price = 0  # Default price
 
         if package == 'silver':
             price *= 0.8  # Apply 20% discount
@@ -780,14 +820,16 @@ def kitchen_submit_estimation_form(request):
         elif package == 'platinum':
             price *= 1.5  # Apply 50% premium
 
+        # ✅ Save or update OTP in DB (unique per email)
+        OtpVerification.objects.update_or_create(
+            email=email,
+            defaults={
+                "otp": otp,
+                "expires_at": expiry_time
+            }
+        )
 
-        # Clear old session keys (instead of flush)
-        for key in ["otp", "otp_expiry", "form_data"]:
-            request.session.pop(key, None)
-
-        # Store OTP + form data in session
-        request.session["otp"] = str(otp)
-        request.session["otp_expiry"] = expiry_time.isoformat()
+        # Store form data in session (without OTP)
         request.session["form_data"] = {
             "size": size,
             "shape": shape,
@@ -797,11 +839,11 @@ def kitchen_submit_estimation_form(request):
             "contact": contact,
             "email": email,
             "location": location,
-            "room_type": request.session.get("room_type"),  # ✅ Pull it from session
-            "style": request.session.get("style"),  # ✅ Pull it from session
+            "room_type": request.session.get("room_type"),
+            "style": request.session.get("style"),
         }
 
-        # Send OTP
+        # Send OTP email
         send_mail(
             subject="Your OTP for Budget Estimation Confirmation",
             message=f"Hi {name},\n\nYour OTP is: {otp}. It will expire in 5 minutes.\n\nThank you.",
@@ -812,7 +854,6 @@ def kitchen_submit_estimation_form(request):
         return render(request, "elite_interior/verify_otp.html", {"email": email, "name": name})
 
     return redirect("kitchen_calculate")
-
 
 
 
@@ -853,9 +894,14 @@ def bedroom_submit_estimation_form(request):
         elif package == 'platinum':
             price *= 1.5  # Apply 50% premium
 
-        # Clear old session keys
-        for key in ["otp", "otp_expiry", "form_data"]:
-            request.session.pop(key, None)
+        # ✅ Save or update OTP in DB (unique per email)
+        OtpVerification.objects.update_or_create(
+            email=email,
+            defaults={
+                "otp": otp,
+                "expires_at": expiry_time
+            }
+        )
 
         # Store OTP + form data in session
         request.session["otp"] = str(otp)
@@ -921,9 +967,14 @@ def living_submit_estimation_form(request):
             price *= 1.5  # Apply 50% premium
 
 
-        # Clear old session keys
-        for key in ["otp", "otp_expiry", "form_data"]:
-            request.session.pop(key, None)
+        # ✅ Save or update OTP in DB (unique per email)
+        OtpVerification.objects.update_or_create(
+            email=email,
+            defaults={
+                "otp": otp,
+                "expires_at": expiry_time
+            }
+        )
 
         # Store OTP + form data in session
         request.session["otp"] = str(otp)
@@ -989,9 +1040,14 @@ def bathroom_submit_estimation_form(request):
             price *= 1.5  # Apply 50% premium
 
 
-        # Clear old session keys
-        for key in ["otp", "otp_expiry", "form_data"]:
-            request.session.pop(key, None)
+        # ✅ Save or update OTP in DB (unique per email)
+        OtpVerification.objects.update_or_create(
+            email=email,
+            defaults={
+                "otp": otp,
+                "expires_at": expiry_time
+            }
+        )
 
         # Store OTP + form data in session
         request.session["otp"] = str(otp)
@@ -1058,9 +1114,14 @@ def dining_submit_estimation_form(request):
             price *= 1.5  # Apply 50% premium
 
 
-        # Clear old session keys
-        for key in ["otp", "otp_expiry", "form_data"]:
-            request.session.pop(key, None)
+        # ✅ Save or update OTP in DB (unique per email)
+        OtpVerification.objects.update_or_create(
+            email=email,
+            defaults={
+                "otp": otp,
+                "expires_at": expiry_time
+            }
+        )
 
         # Store OTP + form data in session
         request.session["otp"] = str(otp)
@@ -1125,9 +1186,14 @@ def kids_submit_estimation_form(request):
             price *= 1.5  # Apply 50% premium
 
 
-        # Clear old session keys
-        for key in ["otp", "otp_expiry", "form_data"]:
-            request.session.pop(key, None)
+        # ✅ Save or update OTP in DB (unique per email)
+        OtpVerification.objects.update_or_create(
+            email=email,
+            defaults={
+                "otp": otp,
+                "expires_at": expiry_time
+            }
+        )
 
         # Store OTP + form data in session
         request.session["otp"] = str(otp)
@@ -1195,9 +1261,14 @@ def wardrobes_submit_estimation_form(request):
 
 
 
-        # Clear old session keys
-        for key in ["otp", "otp_expiry", "form_data"]:
-            request.session.pop(key, None)
+        # ✅ Save or update OTP in DB (unique per email)
+        OtpVerification.objects.update_or_create(
+            email=email,
+            defaults={
+                "otp": otp,
+                "expires_at": expiry_time
+            }
+        )
 
         # Store OTP + form data in session
         request.session["otp"] = str(otp)
@@ -1249,163 +1320,177 @@ import os
 from django.http import FileResponse
 
 
-from django.shortcuts import render, redirect
+from django.core.mail import EmailMessage
 from django.http import HttpResponse
+from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.utils import timezone
-from django.conf import settings
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from PyPDF2 import PdfReader, PdfWriter
-from io import BytesIO
-import os
-from django.core.mail import EmailMessage
-import base64
-from django.core.mail import EmailMessage
-from io import BytesIO
 from django.urls import reverse
+from django.utils import timezone
+from io import BytesIO
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib import colors
+from reportlab.platypus.flowables import HRFlowable
+from PyPDF2 import PdfReader, PdfWriter
+import os, base64
+
+from .models import OtpVerification
+from django.conf import settings
 
 
 def verify_otp(request):
     if request.method == "POST":
         user_otp = request.POST.get("otp")
-        session_otp = request.session.get("otp")
-        otp_expiry = request.session.get("otp_expiry")
-        form_data = request.session.get("form_data")
+        email = request.POST.get("email")  # should be passed as hidden field in form
 
-        # ✅ OTP expired check
-        if otp_expiry and timezone.now() > timezone.datetime.fromisoformat(otp_expiry):
-            messages.error(request, "OTP has expired. Please try again.")
+        # ✅ Fetch OTP entry from DB
+        try:
+            otp_entry = OtpVerification.objects.get(email=email)
+        except OtpVerification.DoesNotExist:
+            messages.error(request, "No OTP found for this email. Please try again.")
             return redirect("select_platform")
 
-        if user_otp == session_otp and form_data:
-            name = form_data.get("name")
-            contact = form_data.get("contact")
-            email = form_data.get("email")
-            location = form_data.get("location")
-            room_type = form_data.get("room_type", "N/A")
-            shape = form_data.get("shape", "N/A")
-            price = form_data.get("price", 0)
-            package_name = form_data.get("package")
-            dimension = form_data.get("size")
+        # ✅ Check expiry
+        if otp_entry.is_expired():
+            otp_entry.delete()
+            messages.error(request, "OTP has expired. Please request a new one.")
+            return redirect("select_platform")
 
-            # --- Generate Styled PDF into memory ---
-            buffer = BytesIO()
-            doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=30)
-            elements = []
-            styles = getSampleStyleSheet()
+        # ✅ Validate OTP
+        if otp_entry.otp != user_otp:
+            messages.error(request, "Invalid OTP. Please try again.")
+            return render(request, "elite_interior/verify_otp.html", {"email": email})
 
-            centered_heading = ParagraphStyle(
-                name="CenteredHeading",
-                parent=styles["Heading1"],
-                alignment=TA_CENTER,
-                textColor=colors.HexColor("#3a5169"),
-                fontName="Helvetica-Bold"
-            )
+        # ✅ OTP valid → use form_data from session
+        form_data = request.session.get("form_data")
+        if not form_data:
+            messages.error(request, "Session expired. Please fill the form again.")
+            return redirect("select_platform")
 
-            # Title
-            elements.append(HRFlowable(width="100%", thickness=1, color="#3a5169"))
-            elements.append(Paragraph("BUDGET ESTIMATION REPORT", centered_heading))
-            elements.append(Spacer(1, 20))
+        name = form_data.get("name")
+        contact = form_data.get("contact")
+        location = form_data.get("location")
+        room_type = form_data.get("room_type", "N/A")
+        shape = form_data.get("shape", "N/A")
+        price = form_data.get("price", 0)
+        package_name = form_data.get("package")
+        dimension = form_data.get("size")
 
-            client_info = [
-                ["Name :", name],
-                ["Contact :", contact],
-                ["Email :", email],
-                ["Location :", location],
-                ["Room Type :", room_type.replace("_", " ").title()],
-                ["Style :", shape.replace("_", " ").title()],
-                ["Package :", package_name],
-                ["Dimension :", dimension],
-                ["Estimated Price :", f"Rs: {price}"],
-            ]
+        # --- Generate Styled PDF into memory ---
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=30)
+        elements = []
+        styles = getSampleStyleSheet()
 
-            table = Table(client_info, colWidths=[150, 350], hAlign="CENTER")
-            table.setStyle(TableStyle([
-                ("FONTNAME", (0, 0), (-1, -1), "Helvetica"),
-                ("FONTSIZE", (0, 0), (-1, -1), 12),
-                ("ALIGN", (0, 0), (0, -1), "LEFT"),
-                ("TEXTCOLOR", (0, 0), (0, -1), colors.HexColor("#3a5169")),
-                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-                ("ROWHEIGHT", (0, 0), (-1, -1), 22),
-                ("BOX", (0, 0), (-1, -1), 1, colors.black),
-                ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.grey),
-                ("BACKGROUND", (0, 0), (-1, -1), colors.whitesmoke),
-                ("BACKGROUND", (0, 1), (-1, -1), colors.white),
-            ]))
-            elements.append(table)
-            elements.append(Spacer(1, 20))
+        centered_heading = ParagraphStyle(
+            name="CenteredHeading",
+            parent=styles["Heading1"],
+            alignment=TA_CENTER,
+            textColor=colors.HexColor("#3a5169"),
+            fontName="Helvetica-Bold"
+        )
 
-            doc.build(elements)
-            buffer.seek(0)
+        # Title
+        elements.append(HRFlowable(width="100%", thickness=1, color="#3a5169"))
+        elements.append(Paragraph("BUDGET ESTIMATION REPORT", centered_heading))
+        elements.append(Spacer(1, 20))
 
-            # --- Merge with existing.pdf into memory ---
-            pdf_writer = PdfWriter()
+        client_info = [
+            ["Name :", name],
+            ["Contact :", contact],
+            ["Email :", email],
+            ["Location :", location],
+            ["Room Type :", room_type.replace("_", " ").title()],
+            ["Style :", shape.replace("_", " ").title()],
+            ["Package :", package_name],
+            ["Dimension :", dimension],
+            ["Estimated Price :", f"Rs: {price}"],
+        ]
 
-            existing_pdf_path = os.path.join(settings.STATIC_ROOT, "pdf/existing.pdf")
-            if not os.path.exists(existing_pdf_path):
-                return HttpResponse("Error: existing.pdf not found", status=500)
+        table = Table(client_info, colWidths=[150, 350], hAlign="CENTER")
+        table.setStyle(TableStyle([
+            ("FONTNAME", (0, 0), (-1, -1), "Helvetica"),
+            ("FONTSIZE", (0, 0), (-1, -1), 12),
+            ("ALIGN", (0, 0), (0, -1), "LEFT"),
+            ("TEXTCOLOR", (0, 0), (0, -1), colors.HexColor("#3a5169")),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("ROWHEIGHT", (0, 0), (-1, -1), 22),
+            ("BOX", (0, 0), (-1, -1), 1, colors.black),
+            ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.grey),
+            ("BACKGROUND", (0, 0), (-1, -1), colors.whitesmoke),
+            ("BACKGROUND", (0, 1), (-1, -1), colors.white),
+        ]))
+        elements.append(table)
+        elements.append(Spacer(1, 20))
 
-            existing_reader = PdfReader(existing_pdf_path)
-            for page in existing_reader.pages:
-                pdf_writer.add_page(page)
+        doc.build(elements)
+        buffer.seek(0)
 
-            new_reader = PdfReader(buffer)
-            for page in new_reader.pages:
-                pdf_writer.add_page(page)
+        # --- Merge with existing.pdf ---
+        pdf_writer = PdfWriter()
+        existing_pdf_path = os.path.join(settings.STATIC_ROOT, "pdf/existing.pdf")
 
-            # ✅ Instead of saving to file, write merged PDF into memory
-            final_buffer = BytesIO()
-            pdf_writer.write(final_buffer)
-            final_buffer.seek(0)
+        if not os.path.exists(existing_pdf_path):
+            return HttpResponse("Error: existing.pdf not found", status=500)
 
-            # ✅ Send email with in-memory PDF
-            subject = f"New Estimation Request - {name}"
-            body = (
-                f"A new estimation request has been submitted.\n\n"
-                f"Name: {name}\n"
-                f"Contact: {contact}\n"
-                f"Email: {email}\n"
-                f"Location: {location}\n"
-                f"Package: {package_name}\n"
-                f"Dimension: {dimension}\n"
-                f"Estimated Price: Rs {price}\n\n"
-                "Please find the attached PDF for details."
-            )
+        existing_reader = PdfReader(existing_pdf_path)
+        for page in existing_reader.pages:
+            pdf_writer.add_page(page)
 
-            email_message = EmailMessage(
-                subject=subject,
-                body=body,
-                from_email=settings.EMAIL_HOST_USER,
-                to=[settings.ADMIN_EMAIL],
-            )
-            email_message.attach(f"estimation_{name}.pdf", final_buffer.read(), "application/pdf")
-            email_message.send(fail_silently=False)
+        new_reader = PdfReader(buffer)
+        for page in new_reader.pages:
+            pdf_writer.add_page(page)
 
-            # ✅ Clear OTP + form data
-            request.session.pop("otp", None)
-            request.session.pop("otp_expiry", None)
-            request.session.pop("form_data", None)
+        # ✅ Write merged PDF into memory
+        final_buffer = BytesIO()
+        pdf_writer.write(final_buffer)
+        final_buffer.seek(0)
 
-            # ✅ Save the generated PDF bytes in session for download
-            request.session["last_verified_data"] = form_data  
-            request.session["last_pdf"] = base64.b64encode(final_buffer.getvalue()).decode("utf-8")
+        # ✅ Send email with in-memory PDF
+        subject = f"New Estimation Request - {name}"
+        body = (
+            f"A new estimation request has been submitted.\n\n"
+            f"Name: {name}\n"
+            f"Contact: {contact}\n"
+            f"Email: {email}\n"
+            f"Location: {location}\n"
+            f"Package: {package_name}\n"
+            f"Dimension: {dimension}\n"
+            f"Estimated Price: Rs {price}\n\n"
+            "Please find the attached PDF for details."
+        )
 
-            return render(
-                request,
-                "elite_interior/verify_otp.html",
-                {
-                    "price": price,
-                    "download_pdf": reverse("download_estimation"), # 👈 link to download view
-                     "home_url": reverse("home"),
-                }
-            )
+        email_message = EmailMessage(
+            subject=subject,
+            body=body,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[settings.ADMIN_EMAIL],
+        )
+        email_message.attach(f"estimation_{name}.pdf", final_buffer.read(), "application/pdf")
+        email_message.send(fail_silently=False)
 
+        # ✅ Cleanup: remove OTP + session data
+        otp_entry.delete()
+        request.session.pop("form_data", None)
 
-        messages.error(request, "Invalid OTP. Please try again.")
-        return render(request, "elite_interior/verify_otp.html")
+        # ✅ Save PDF bytes in session for download
+        request.session["last_verified_data"] = form_data
+        request.session["last_pdf"] = base64.b64encode(final_buffer.getvalue()).decode("utf-8")
+
+        return render(
+            request,
+            "elite_interior/verify_otp.html",
+            {
+                "price": price,
+                "download_pdf": reverse("download_estimation"),
+                "home_url": reverse("home"),
+            }
+        )
 
     return redirect("select_platform")
+
 
 
 from django.http import HttpResponse

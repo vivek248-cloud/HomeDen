@@ -26,9 +26,9 @@ ALLOWED_HOSTS = ['*']  # Allow all hosts for now, adjust as needed in production
 # Application definition
 
 INSTALLED_APPS = [
-    "admin_interface",
-    "colorfield",#FOR ADMIN INTERFACE
-    # 'jazzmin',
+    # "admin_interface",
+    # "colorfield",#FOR ADMIN INTERFACE
+    'jazzmin',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,6 +40,73 @@ INSTALLED_APPS = [
     
     'widget_tweaks',
 ]
+
+
+JAZZMIN_SETTINGS = {
+    "site_title": "HOME DEN Admin",
+    "site_header": "HOME DEN Admin",
+    "site_brand": "HOME DEN",
+    "welcome_sign": "Welcome to HOME DEN Admin",
+    "copyright": "HOME DEN",
+
+    # 👇 Add your logo here
+    "site_logo": "images/home_den.png",  # path inside STATICFILES_DIRS
+    "site_logo_classes": "img-fluid",  # optional (can use img-square, img-fluid, etc.)
+    "login_logo": "images/home_den.png",    # logo for login page (optional)
+    "login_logo_dark": None,            # alternative for dark mode (optional)
+
+    "topmenu_links": [
+        {"name": "Home",  "url": "/", "permissions": ["auth.view_user"]},
+        {"model": "your_app.homeslider"},
+    ],
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": True,
+    "footer_small_text": True,
+    "body_small_text": False,
+    "brand_small_text": True,
+    "brand_colour": "navbar-dark",
+    "accent": "accent-info",
+    "navbar": "navbar-dark navbar-primary",
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar_nav_small_text": True,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": True,
+    "sidebar_nav_compact_style": True,
+}
+
+
+JAZZMIN_SETTINGS["icons"] = {
+        # Built-in auth models
+        "auth.User": "fas fa-user",        # Users
+        "auth.Group": "fas fa-users-cog",  # Groups
+
+        "elite_interior.HomeSlider": "fas fa-image",
+        "elite_interior.PackageOffers": "fas fa-tags",
+        "elite_interior.WhatWeDo_Grid": "fas fa-th-large",
+        "elite_interior.Testimonial": "fas fa-comment-dots",
+        "elite_interior.BlogCategory": "fas fa-folder-open",
+        "elite_interior.AboutVideo": "fas fa-video",
+        "elite_interior.YouTubeVideoProjects": "fab fa-youtube",
+        "elite_interior.BudgetItem": "fas fa-file-invoice-dollar",
+        "elite_interior.Category": "fas fa-list",
+        "elite_interior.SubCategory": "fas fa-list-ul",
+        "elite_interior.OtpVerification": "fas fa-key",
+        "elite_interior.Project": "fas fa-project-diagram",
+        "elite_interior.Blog": "fas fa-blog",
+        "elite_interior.YouTubeVideo": "fab fa-youtube",
+        "elite_interior.ProjectGallery": "fas fa-images",
+        "elite_interior.Product": "fas fa-box",
+        "elite_interior.ProductCategory": "fas fa-tags",
+        "elite_interior.Brand": "fas fa-copyright",
+        "elite_interior.Unit": "fas fa-ruler-combined",
+        "elite_interior.TeamMember": "fas fa-users",
+}
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

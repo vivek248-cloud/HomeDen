@@ -88,7 +88,7 @@
     <!-- Blog Content -->
     <div class="blog-content">
       <img src="{{ blog.image.url }}" alt="{{ blog.title }}" class="blog-image shadow-sm">
-      <a href="/HomeDen/{{ blog.category|lower }}-projects/" style="text-decoration:none;">
+      <a href="/{{ blog.category|lower }}" style="text-decoration:none;">
       <h1 class="blog-title">{{ blog.title }}</h1>
       </a>
       <p style="text-align:end;">Category: {{ blog.category|upper }}</p>
@@ -117,33 +117,30 @@
        <h5 class="fw-bold mb-3 border-bottom pb-2">Categories</h5>
         <ul class="list-unstyled">
 
-        <!-- All Categories link -->
- <li class="mb-2">
-  <a href="{% if query %}{% url 'blog_list' %}?q={{ query }}{% else %}{% url 'blog_list' %}{% endif %}"
-     class="d-block px-2 py-1 rounded {% if not selected_category %}bg-secondary text-white{% else %}text-dark{% endif %}"
-     style="text-decoration:none;">
-    All Categories
-  </a>
-</li>
+          <!-- All Categories link -->
+          <li class="mb-2">
+            <a href="{% url 'blog_list' %}{% if query %}?q={{ query }}{% endif %}"
+              class="d-block px-2 py-1 rounded {% if not selected_category %}bg-dark text-white{% else %}text-dark{% endif %}"
+              style="text-decoration:none;">
+              All Categories
+            </a>
+          </li>
 
-
-
-
-        <!-- Individual categories -->
-        {% for category in categories %}
-  <li class="mb-2">
-    <a href="{% url 'blog_list' %}?category={{ category.category.id }}{% if query %}&q={{ query }}{% endif %}"
-       class="d-block px-2 py-1 rounded {% if selected_category == category.category.id|stringformat:'s' %}bg-secondary text-white{% else %}text-dark{% endif %}"
-       style="text-decoration:none;">
-      {{ category }}
-    </a>
-  </li>
-{% endfor %}
-
-      </ul>
+          <!-- Individual categories -->
+          {% for category in categories %}
+            <li class="mb-2">
+              <a href="{% url 'blog_list' %}?category={{ category.category.id }}"
+                class="d-block px-2 py-1 rounded {% if selected_category == category.category.id|stringformat:'s' %}bg-secondary text-white{% else %}text-dark{% endif %}"
+                style="text-decoration:none;">
+                {{ category }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
 
       </div>
     </div>
+
   </div>
 </div>
   </div>
@@ -156,6 +153,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
   input.addEventListener('input', function () {
     const query = this.value.trim();
+
+    if (!query) {
+      suggestionBox.innerHTML = '';
+      return;
+    }
 
     fetch("{% url 'category_suggestions' %}?term=" + encodeURIComponent(query))
       .then(res => res.json())
@@ -170,20 +172,20 @@ document.addEventListener('DOMContentLoaded', function () {
         allItem.addEventListener('click', () => {
           input.value = '';
           suggestionBox.innerHTML = '';
-          input.form.submit(); // Optional: auto-submit on "All"
+          input.form.submit();
         });
         suggestionBox.appendChild(allItem);
 
-        // Add matching categories
+        // Add matching categories / projects / blogs
         data.forEach(category => {
           const item = document.createElement('button');
           item.type = 'button';
           item.className = 'list-group-item list-group-item-action';
-          item.textContent = category.label;  // ✅ show the name, not [object Object]
+          item.textContent = category.label;  // ✅ correct key
           item.addEventListener('click', () => {
-            input.value = category.value; // fill input with selected name
+            input.value = category.value; // fill input with selected value
             suggestionBox.innerHTML = '';
-            // input.form.submit(); // Optional: submit form automatically
+            input.form.submit(); // auto-submit when clicked
           });
           suggestionBox.appendChild(item);
         });
@@ -198,4 +200,5 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 });
 </script>
+
 {% endblock %}

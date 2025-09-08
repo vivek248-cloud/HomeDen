@@ -1,0 +1,25 @@
+/* admin.css */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
+
+/* Example: Add icons to models by their CSS class */
+.model-homeslider .model-name::before {
+    content: "\f03e"; /* Font Awesome icon code for image */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 5px;
+}
+
+.model-product .model-name::before {
+    content: "\f291"; /* Font Awesome icon code for cube/product */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 5px;
+}
+
+/* Apply a default icon to all models */
+.model-homeslider .model-name::before {
+    content: "\f03e"; /* slide/image icon */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 5px;
+}

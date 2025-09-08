@@ -29,6 +29,7 @@
       <form method="post" action="{% url 'verify_otp' %}">
         {% csrf_token %}
         <div class="mb-4">
+          <input type="hidden" name="email" value="{{ email }}">
           <input type="text" name="otp" 
                 class="form-control text-center fs-4 fw-bold rounded-pill border-primary shadow-sm" 
                 maxlength="4" placeholder="----" required>
@@ -64,6 +65,16 @@
   </a>
 </div>
 
+
+    {% if messages %}
+      <div class="mt-3">
+        {% for message in messages %}
+          <div class="alert alert-danger py-2 px-3">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    
 <script>
   const downloadBtn = document.getElementById("downloadBtn");
 

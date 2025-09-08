@@ -36,7 +36,7 @@
 <section class="about-content">
   <h2 class="heading">WHO WE ARE ?</h2>
   <p>
-    <strong>HOME DEN</strong> is one of the leading <strong>interior designers in Trichy</strong>, Tamil Nadu, established in <strong>2023</strong>. We specialize in transforming homes, offices, and commercial spaces with creative, functional, and modern interior design solutions. Whether you are looking for <strong>luxury interior designers in Trichy</strong>, a <strong>modular kitchen in Trichy</strong>, or <strong>small kitchen interior design</strong>, our expert team is here to deliver tailor-made designs that reflect your lifestyle and vision.
+    <strong>HOME DEN</strong> is one of the leading <strong>interior designers in Trichy</strong>, Tamil Nadu, established in <strong>2025</strong>. We specialize in transforming homes, offices, and commercial spaces with creative, functional, and modern interior design solutions. Whether you are looking for <strong>luxury interior designers in Trichy</strong>, a <strong>modular kitchen in Trichy</strong>, or <strong>small kitchen interior design</strong>, our expert team is here to deliver tailor-made designs that reflect your lifestyle and vision.
   </p>
 
   <p>
@@ -173,6 +173,43 @@
       </div>
   </div>
 </section>
+
+<section class="team-section mb-5">
+  <div class="team-container">
+    
+    <!-- Left Text -->
+    <div class="team-intro">
+      <h4 class="team-subtitle">Team Members ↗</h4>
+      <h2 class="team-title">We Have The Most Dedicated Team Ever!</h2>
+      <p class="team-desc">
+        Our  team blends creativity with functionality to craft spaces that reflect your lifestyle. 
+        From concept to execution, we work closely with clients to deliver timeless designs, premium quality, 
+        and unmatched attention to detail.
+      </p>
+      <a href="mailto:homedeninterior@gmail.com" class="team-btn">JOIN WITH US  ↗</a>
+    </div>
+
+    <!-- Right Team Members -->
+    <div class="team-members">
+      {% for member in members %}
+      <div class="team-card">
+        {% if member.photo %}
+          <img src="{{ member.photo.url }}" alt="{{ member.name }}" loading="lazy">
+        {% else %}
+          <img src="{% static 'images/default-team.png' %}" alt="Default Team Member" loading="lazy">
+        {% endif %}
+        <h3>{{ member.name }}</h3>
+        <p>{{ member.role }}</p>
+      </div>
+      {% empty %}
+        <p class="no-members">No team members available right now.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+
+
 
 <div class="link-div mb-5">
 <p class="hover-link"><a href="{% url 'service'%}" id="style-2" data-replace="Goto" class="transform-link"><span>Goto</span>&ensp; <a href="{% url 'service'%}" id="style-2" data-replace="Service" class="transform-link"><span>Service</span></a>&ensp;<a href="{% url 'service'%}" id="style-2" data-replace="Page" class="transform-link"><span>Page</span></a></p>

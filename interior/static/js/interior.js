@@ -373,6 +373,7 @@ function scrollSlider(direction) {
     observer.observe(section);
   });
 
+// timeline section animation
 document.addEventListener("DOMContentLoaded", function () {
     const items = document.querySelectorAll(".timeline-item");
 
@@ -389,6 +390,23 @@ document.addEventListener("DOMContentLoaded", function () {
     items.forEach(item => observer.observe(item));
   });
 
+// team section animation
+  document.addEventListener("DOMContentLoaded", function () {
+  const teamCards = document.querySelectorAll(".team-card");
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("show");
+        observer.unobserve(entry.target); // optional: stop observing after animation
+      }
+    });
+  }, {
+    threshold: 0.4,
+  });
+
+  teamCards.forEach(card => observer.observe(card));
+});
 
 
 
