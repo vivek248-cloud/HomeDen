@@ -271,22 +271,6 @@ def blog_detail(request, slug):
 
 
 
-# def category_suggestions(request):
-#     query = request.GET.get('term', '')
-#     suggestions = []
-
-#     if query:
-#         matched_categories = BlogCategory.objects.filter(
-#             category__name__icontains=query
-#         )[:10]
-
-#         suggestions = [
-#             {"id": cat.category.id, "label": cat.category.name, "value": cat.category.name}
-#             for cat in matched_categories if cat.category
-#         ]
-
-#     return JsonResponse(suggestions, safe=False)
-
 
 def category_suggestions(request):
     query = request.GET.get('term', '').strip()
@@ -298,7 +282,7 @@ def category_suggestions(request):
             category__name__icontains=query
         )[:5]
         suggestions += [
-            {"id": cat.id, "label": f"Category - {cat.category.name}", "value": cat.category.name}
+            {"id": cat.id, "label": f"{cat.category.name}", "value": cat.category.name}
             for cat in category_matches if cat.category
         ]
 
@@ -307,7 +291,7 @@ def category_suggestions(request):
             name__icontains=query
         )[:5]
         suggestions += [
-            {"id": proj.id, "label": f"Project - {proj.name}", "value": proj.name}
+            {"id": proj.id, "label": f"{proj.name}", "value": proj.name}
             for proj in project_matches
         ]
 
@@ -316,7 +300,7 @@ def category_suggestions(request):
             Q(title__icontains=query) | Q(keyword__icontains=query)
         )[:10]
         suggestions += [
-            {"id": blog.id, "label": f"Blog - {blog.title}", "value": blog.title}
+            {"id": blog.id, "label": f" {blog.title}", "value": blog.title}
             for blog in blog_matches
         ]
 
