@@ -57,6 +57,74 @@
       </div>
 </div>
       <!-- Section -->
+
+      <!-- Ad Modal Code -->
+{% if ad %}
+<!-- Ad Modal -->
+<div class="modal fade" id="adModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+
+      <div class="ad-banner">
+        <!-- Custom Close Button -->
+        <button type="button" class="ad-close-btn" data-bs-dismiss="modal" aria-label="Close">
+          <i class="bi bi-x-circle-fill"></i>
+        </button>
+
+        <!-- Ad Image -->
+        <img src="{{ ad.image.url }}" alt="{{ ad.title }}">
+
+        <!-- Overlay Content -->
+        <div class="ad-overlay">
+          <h2>{{ ad.title }}</h2>
+          <p>{{ ad.description }}</p>
+
+          {% if ad.offer_price %}
+          <h3>{{ ad.offer_price }}₹</h3>
+          {% endif %}
+
+          <!-- Trigger Button -->
+          <a href="#" class="btn" data-bs-toggle="modal" data-bs-target="#designConsultantModal">
+            Grab the Deal
+          </a>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% comment %} {% if ad %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // check if ad was already shown
+    if (!localStorage.getItem("adShown")) {
+      setTimeout(function () {
+        var adModal = new bootstrap.Modal(document.getElementById('adModal'));
+        adModal.show();
+
+        // mark as shown when closed
+        document.getElementById('adModal').addEventListener('hidden.bs.modal', function () {
+          localStorage.setItem("adShown", "true");
+        });
+      }, 2000);
+    }
+  });
+</script>
+{% endif %} {% endcomment %}
+
+{% if ad %} <script> document.addEventListener("DOMContentLoaded", function () { setTimeout(function () 
+  { var adModal = new bootstrap.Modal(document.getElementById('adModal')); adModal.show(); }, 2000); }); 
+</script> {% endif %}
+
+
+
+      
+
+<!--- Professional Section -->
+
 <section id="professional-sec" class="py-5">
   <div class="container">
     <div class="text-center mb-5">
@@ -126,13 +194,14 @@
       
       <!-- Card 1 -->
        {% for offer in offers %}
-          <div class="col-md-4">
+          <div class="col-md-4 offer-card">
+            <a href="/{{ offer.title|lower }}/">
             <div class="package-card">
               <img src="{{ offer.image.url }}" alt="{{ project.title }}" class="img-fluid">
               <div class="package-overlay">
-                <a href="/{{ offer.title|lower }}/">
+                
                 <h4><strong>{% if offer.title == "ELEGANZA-PLUS" %}ELEGANZA{% else %}{{ offer.title }}{% endif %}</strong><br>{% if offer.subtitle %}{{offer.subtitle}}{% endif %}</h4>
-                </a>
+                
               </div>
               <div class="package-footer">
                 <p class="price">
@@ -142,6 +211,7 @@
                 <p>{{offer.discription}}</p>
               </div>
             </div>
+            </a>
           </div>
         {%endfor%}
 
@@ -183,13 +253,21 @@
     </div>
     <div class="room-grid mt-5">
       {% for item in grid %}
-        <div class="grid-item {{ item.size|lower }} auto-show-up grid-item-effect" style="background-image: url('{{ item.image.url }}');">
+        <div class="grid-item {{ item.size|lower }} auto-show-up grid-item-effect">
           <a href="/{{ item.title|lower }}/" class="grid-item-link">
-            <h2> {% if item.title|upper == "KIDSROOM" %} KID'S ROOM{% else %} {{ item.title|upper }} {% endif %}</h2>
+            <img src="{{ item.image.url }}" alt="{{ item.title }}" class="grid-img">
+            <h2>
+              {% if item.title|upper == "KIDSROOM" %}
+                KID'S ROOM
+              {% else %}
+                {{ item.title|upper }}
+              {% endif %}
+            </h2>
           </a>
         </div>
       {% endfor %}
     </div>
+
 
     <!-- Button/Link to trigger modal -->
     <a  class="consultant-btn auto-show-up" data-bs-toggle="modal" data-bs-target="#designConsultantModal">

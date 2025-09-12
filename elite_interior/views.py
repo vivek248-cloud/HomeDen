@@ -40,12 +40,13 @@ def home(request):
     test = Testimonial.objects.all().order_by('-created_at')
     videos = YouTubeVideo.objects.filter(is_active=True)
     blogs = Blog.objects.all().order_by('-created_at')
-
+    ad = Ad.objects.filter(is_active=True).order_by('-created_at').first()
     
     context = {'home_sliders': home_slider,
                'offers':package_offers,
                'grid':grid,
                'test':test,
+               'ad': ad,
                'videos':videos,
                'blogs':blogs,
                }
@@ -104,65 +105,6 @@ def home(request):
         return redirect('home')
     
     return render(request, 'elite_interior/home.html', context)
-
-
-
-
-
-
-# def blog_list(request):
-#     query = request.GET.get('q', '').strip()
-#     category_id = request.GET.get('category')
-
-    
-#     # Start with all blogs ordered by latest
-#     blogs_qs = Blog.objects.all().order_by('-created_at')
-
-#     # Apply search query
-#     if query:
-#         blogs_qs = blogs_qs.filter(
-#             Q(title__icontains=query) |
-#             Q(description__icontains=query) |
-#             Q(keyword__icontains=query)
-#         )
-
-#     # Apply category filter
-#     if category_id:
-#         blogs_qs = blogs_qs.filter(category__category__id=category_id)
-
-
-#     # Final filtered list
-#     blogs = list(blogs_qs)
-
-#     # Featured blogs from the same filtered list
-#     featured_blogs = blogs_qs.filter(is_featured=True)[:5]
-
-#     # Most viewed blogs (optional)
-#     most_viewed_blogs = Blog.objects.all().order_by('-views')[:5]
-
-#     # All blog categories
-#     categories = BlogCategory.objects.all()
-
-#     # Prepare context
-#     context = {
-#         'featured_blogs': featured_blogs,
-#         'most_viewed_blogs': most_viewed_blogs,
-#         'all_blogs': blogs,
-#         'categories': categories,
-#         'query': query,
-#         'selected_category': category_id,
-#     }
-
-#     # If no blogs found, try suggesting blogs only based on query (ignoring category)
-#     if not blogs and query and category_id:
-#         fallback_qs = Blog.objects.filter(
-#             Q(title__icontains=query) |
-#             Q(description__icontains=query) |
-#             Q(keyword__icontains=query)
-#         ).order_by('-created_at')
-#         context['suggested_results'] = fallback_qs[:5]
-
-#     return render(request, 'elite_interior/blog_list.html', context)
 
 
 
@@ -1902,6 +1844,13 @@ def save_chat_query(request):
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)})
     return JsonResponse({"status": "error", "message": "Invalid request"})
+
+
+
+
+
+def mesurement_cal(request):
+    return render(request, "elite_interior/measurement_cal.html")
 
 
 from django.shortcuts import render

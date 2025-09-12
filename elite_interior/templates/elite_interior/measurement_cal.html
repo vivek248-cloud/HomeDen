@@ -1,0 +1,80 @@
+{% extends "elite_interior/base.html" %}
+{% load static %}
+
+
+
+
+{% block content %}
+
+<section class="container my-5 d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="converter">
+    <h2>Measurement Converter</h2>
+    <input type="number" id="inputValue" placeholder="Enter value">
+    
+    <select id="fromUnit">
+      <option value="sqft">Square Feet (sqft)</option>
+      <option value="sqm">Square Meter (m²)</option>
+      <option value="mm">Millimeter (mm)</option>
+      <option value="cm">Centimeter (cm)</option>
+      <option value="m">Meter (m)</option>
+      <option value="ft">Feet (ft)</option>
+      <option value="inch">Inches (in)</option>
+    </select>
+    
+    <select id="toUnit">
+      <option value="sqft">Square Feet (sqft)</option>
+      <option value="sqm">Square Meter (m²)</option>
+      <option value="mm">Millimeter (mm)</option>
+      <option value="cm">Centimeter (cm)</option>
+      <option value="m">Meter (m)</option>
+      <option value="ft">Feet (ft)</option>
+      <option value="inch">Inches (in)</option>
+    </select>
+    
+    <button onclick="convert()">Convert</button>
+    
+    <div class="result" id="result">Result will appear here</div>
+  </div>
+
+  <script>
+    function convert() {
+      let value = parseFloat(document.getElementById("inputValue").value);
+      let from = document.getElementById("fromUnit").value;
+      let to = document.getElementById("toUnit").value;
+      let result = 0;
+
+      if (isNaN(value)) {
+        document.getElementById("result").innerText = "Please enter a number!";
+        return;
+      }
+
+      // Convert everything to meters (base unit for length) or sqm (for area)
+      let base;
+      switch(from) {
+        case "mm": base = value / 1000; break;
+        case "cm": base = value / 100; break;
+        case "m": base = value; break;
+        case "ft": base = value * 0.3048; break;
+        case "inch": base = value * 0.0254; break;
+        case "sqft": base = value * 0.092903; break; // area to sqm
+        case "sqm": base = value; break;
+      }
+
+      // Convert from base to target
+      switch(to) {
+        case "mm": result = base * 1000; break;
+        case "cm": result = base * 100; break;
+        case "m": result = base; break;
+        case "ft": result = base / 0.3048; break;
+        case "inch": result = base / 0.0254; break;
+        case "sqft": result = base / 0.092903; break;
+        case "sqm": result = base; break;
+      }
+
+      document.getElementById("result").innerText =
+        `${value} ${from} = ${result.toFixed(4)} ${to}`;
+    }
+  </script>
+</section>
+{% endblock content %}
+<script src="{% static 'js/interior.js' %}"></script>

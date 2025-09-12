@@ -2,11 +2,17 @@
 {% load static %}
 
 {% block content %}
+
 <div class="container" style="margin-top: 7rem;">
     <!-- Page Header -->
     <div class="text-center mb-4">
         <h2 class="fw-bold">Client & Materials Dashboard</h2>
         <p class="text-muted small">Fill in client details and add materials for your project.</p>
+        <div class="text-end mb-4">
+            <a href="{% url 'measurement_calculator' %}" target="_blank" class="btn btn-secondary btn-lg px-4">
+            <i class="bi bi-calculator"></i> Measurement Converter
+            </a>
+        </div>
     </div>
 
     <form method="POST">

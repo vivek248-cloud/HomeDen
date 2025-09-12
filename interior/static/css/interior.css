@@ -843,31 +843,72 @@ body, html {
     }
   }
 
-  .pagination-dots {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    position: absolute; /* Change to absolute */
-    bottom: 30px; /* Move it near bottom of slider */
-    width: 100%;
-    z-index: 12;
+.pagination-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  bottom: 30px;
+  left: 50%;         /* center horizontally */
+  transform: translateX(-50%); /* adjust center */
+  z-index: 20;
+}
+
+
+.pagination-dots .dot {
+  width: 30px;
+  height: 6px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.3); /* subtle base */
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.pagination-dots .dot::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff9a00, #ff6a00); /* gradient effect */
+  border-radius: 12px;
+  transition: width 0.4s ease-in-out;
+}
+
+.pagination-dots .dot.active::before {
+  width: 100%; /* fill bar when active */
+}
+
+.pagination-dots .dot:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+
+/* Optional: adjust dot size on smaller screens */
+@media (max-width: 768px) {
+  .pagination-dots .dot {
+    width: 25px;
+    height: 5px;
   }
   
-  .dot {
-    height: 12px;
-    width: 12px;
-    margin: 0 5px;
-    background-color: #bbb;
-    border-radius: 50%;
-    display: inline-block;
-    cursor: pointer;
-    transition: background-color 0.3s;
+}
+
+@media (max-width: 480px) {
+  .pagination-dots .dot {
+    width: 20px;
+    height: 4px;
   }
-  
-  .dot.active {
-    background-color:orange;
+  .pagination-dots
+  {
+    left: 40%;         /* center horizontally */
+    transform: translateX(-40%); /* adjust center */
   }
-  
+}
+
 /* Professional Section Styles */
 #professional-sec {
   background-color: #f8f9fa;
@@ -1127,74 +1168,6 @@ body, html {
   width: 100%;
   height: 70%;
   object-fit: cover;
-}
-.grid-item h2 {
-  color: white;
-  font-size: 3rem;
-  font-weight: 800;
-  z-index: 2;
-  text-transform: uppercase;
-}
-
-.grid-item::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 1;
-}
-
-
-.room-grid {
-  max-height: 200vh;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  grid-auto-rows: minmax(300px, auto);
-  gap: 13px;
-  max-height: none;
-}
-
-.grid-item {
-  position: relative;
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  color: #fff;
-  font-size: 2.5rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  transition: transform 0.3s ease;
-}
-
-.grid-item.tall {
-  grid-row: span 2;
-}
-
-.grid-item.large {
-  grid-column: span 2;
-}
-.grid-item:hover
-{
-  transform: scale(1.02);
-}
-/* Keep text above shine */
-.grid-item h2 {
-  position: relative;
-  z-index: 3;
-}
-
-
-
-
-.grid-item::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 1;
 }
 
 
@@ -3577,12 +3550,62 @@ input[type="radio"]:hover {
 }
 
 
-.grid-item-effect
-{
-  border-radius: 15px;
+/* Grid Container */
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-auto-rows: minmax(300px, auto);
+  gap: 13px;
+  max-height: none;
 }
 
+/* Grid Item */
+.grid-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
 
+/* Size Variants */
+.grid-item.tall {
+  grid-row: span 2;
+}
+.grid-item.large {
+  grid-column: span 2;
+}
+
+/* Overlay */
+.grid-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.199);
+  z-index: 1;
+  transition: background 0.4s ease;
+}
+
+/* Hover Effects */
+.grid-item:hover {
+  transform: scale(1.03);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+.grid-item:hover::before {
+  background: rgba(0, 0, 0, 0.452);
+}
+
+/* Link Layer */
 .grid-item-link {
   display: flex;
   position: relative;
@@ -3590,57 +3613,42 @@ input[type="radio"]:hover {
   align-items: center;
   height: 100%;
   width: 100%;
-  background-color: #0000003b;
   text-decoration: none;
   color: inherit;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  overflow: hidden;
+  z-index: 2;
 }
 
-.grid-item-link:hover .grid-item-effect {
-  transform: scale(1.03);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
-}
-
-.grid-item-link h2 {
+/* Text */
+.grid-item h2 {
+  position: relative;
+  z-index: 3;
+  color: white;
+  font-size: 3rem;
+  font-weight: 800;
+  text-transform: uppercase;
   transition: color 0.3s ease;
 }
-
 .grid-item-link:hover h2 {
-  color: whitesmoke; /* Change this to your accent color */
+  color: whitesmoke;
 }
 
 
-.grid-item-effect {
-  border-radius: 15px;
-  overflow: hidden;
-  position: relative;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-}
-
-/* Zoom and elevate effect on hover */
-.grid-item-effect:hover {
-  transform: scale(1.03);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-}
-
-/* Optional: dark overlay on hover */
-.grid-item-effect::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
+.grid-img {
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0);
-  transition: background 0.3s ease;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  transition: transform 0.4s ease;
+  filter: brightness(0.8);
 }
 
-.grid-item-effect:hover::before {
-  background: rgba(0, 0, 0, 0.2);
+.grid-item:hover .grid-img {
+  transform: scale(1.05);
+  filter: brightness(0.5);
 }
+
 
 /* .circle-div
 {
@@ -4975,6 +4983,7 @@ input[name="otp"] {
     margin: 0 auto;
     list-style: none;
     padding: 0;
+    cursor:zoom-in !important;
   }
 
   .terms-list li {
@@ -5124,15 +5133,15 @@ input[name="otp"] {
 .team-members {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* responsive */
-  gap: 20px;
+  gap: 5px;
   justify-items: center;
 }
 
 .team-card {
-  width: 220px; /* fixed width */
+  width: 240px; /* fixed width */
   position: relative;
   text-align: center;
-  padding: 20px;
+  padding: 0;
   border-radius: 20px;
   background: linear-gradient(135deg, #ffffff, #f4f4f9);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
@@ -5155,8 +5164,8 @@ input[name="otp"] {
 
 
 .team-card img {
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
   object-fit: cover;
   border-radius: 50%;
   border: 5px solid #fff;
@@ -5292,3 +5301,161 @@ input[name="otp"] {
   color: #777;
 }
 
+.offer-card a
+{
+  text-decoration: none;
+  color: inherit;
+}
+
+
+/* ad */
+
+/* Modal Base */
+#adModal .modal-content {
+  border-radius: 20px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  animation: popupScale 0.4s ease;
+  overflow: hidden;
+}
+
+/* Popup Animation */
+@keyframes popupScale {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Ad Wrapper */
+#adModal .ad-banner {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+/* Ad Image */
+#adModal .ad-banner img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  border-radius: 20px;
+}
+
+/* Overlay */
+#adModal .ad-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.2) 30%, rgba(0,0,0,0.9) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: center;
+  padding: 30px 20px;
+  color: #fff;
+}
+
+/* Title */
+#adModal .ad-overlay h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-shadow: 0 2px 5px rgba(0,0,0,0.6);
+}
+
+/* Description */
+#adModal .ad-overlay p {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #eee;
+}
+
+/* Offer Price */
+#adModal .ad-overlay h3 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffcc00;
+  margin-bottom: 20px;
+  text-shadow: 0 2px 5px rgba(0,0,0,0.6);
+}
+
+/* Call to Action Button */
+#adModal .ad-overlay .btn {
+  background: linear-gradient(90deg, #ff9a00, #ff6a00);
+  border: none;
+  padding: 12px 30px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 30px;
+  color: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#adModal .ad-overlay .btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(255, 106, 0, 0.5);
+}
+
+/* Custom Close Button */
+#adModal .ad-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  color: #fff;
+  z-index: 10;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+#adModal .ad-close-btn:hover {
+  color: #ff4d4d;
+  transform: scale(1.1);
+}
+
+
+
+/*  */
+
+
+.converter {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+    .converter h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+    .converter input, .converter select, .converter button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .converter button {
+      background: #7b3fe4;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .converter button:hover {
+      background: #5e2ac6;
+    }
+    .converter .result {
+      margin-top: 15px;
+      padding: 12px;
+      background: #f3f3f3;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+    }

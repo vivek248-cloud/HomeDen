@@ -168,13 +168,14 @@
       
       <!-- Card 1 -->
        {% for offer in offers %}
-          <div class="col-md-4">
+          <div class="col-md-4 offer-card">
+            <a href="/{{ offer.title|lower }}/">
             <div class="package-card">
               <img src="{{ offer.image.url }}" alt="{{ project.title }}" class="img-fluid">
               <div class="package-overlay">
-                <a href="/{{ offer.title|lower }}/">
+                
                 <h4><strong>{% if offer.title == "ELEGANZA-PLUS" %}ELEGANZA{% else %}{{ offer.title }}{% endif %}</strong><br>{% if offer.subtitle %}{{offer.subtitle}}{% endif %}</h4>
-                </a>
+                
               </div>
               <div class="package-footer">
                 <p class="price">
@@ -184,6 +185,7 @@
                 <p>{{offer.discription}}</p>
               </div>
             </div>
+            </a>
           </div>
         {%endfor%}
 

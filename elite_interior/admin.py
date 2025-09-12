@@ -97,3 +97,9 @@ admin.site.register(Unit)
 @admin.register(TeamMember)
 class TeamMemberAdmin(admin.ModelAdmin):
     list_display = ("name", "role")
+
+
+@admin.register(Ad)
+class AdAdmin(admin.ModelAdmin):
+    list_display = ("title", "offer_price", "is_active", "created_at")
+    list_filter = ("is_active",)

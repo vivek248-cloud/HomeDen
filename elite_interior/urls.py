@@ -61,6 +61,8 @@ urlpatterns = [
     path('export-pdf/', export_pdf, name='export_pdf'),
     path('preview-pdf/', preview_pdf, name='preview_pdf'),
     path("download-estimation/", download_estimation, name="download_estimation"),
+
+    path('measurement-calculator/', mesurement_cal, name='measurement_calculator'),
 ]
 
 from django.conf.urls import handler404

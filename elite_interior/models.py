@@ -370,3 +370,26 @@ class TeamMember(models.Model):
 def delete_team_member_photo(sender, instance, **kwargs):
     if instance.photo and os.path.isfile(instance.photo.path):
         instance.photo.delete(save=False)
+
+
+# models.py
+from django.db import models
+
+class Ad(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True, null=True)
+    offer_price = models.CharField(max_length=50, blank=True, null=True)
+    image = models.ImageField(upload_to='ads/')
+    is_active = models.BooleanField(default=True)  # show only active ad
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+
+
+# ✅ Auto delete image file when Ad is deleted
+@receiver(post_delete, sender=Ad)
+def delete_ad_image(sender, instance, **kwargs):
+    if instance.image and os.path.isfile(instance.image.path):
+        instance.image.delete(save=False)
