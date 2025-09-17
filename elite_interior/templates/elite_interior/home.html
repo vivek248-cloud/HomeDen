@@ -109,14 +109,14 @@
         document.getElementById('adModal').addEventListener('hidden.bs.modal', function () {
           localStorage.setItem("adShown", "true");
         });
-      }, 2000);
+      }, 8000);
     }
   });
 </script>
 {% endif %} {% endcomment %}
 
 {% if ad %} <script> document.addEventListener("DOMContentLoaded", function () { setTimeout(function () 
-  { var adModal = new bootstrap.Modal(document.getElementById('adModal')); adModal.show(); }, 2000); }); 
+  { var adModal = new bootstrap.Modal(document.getElementById('adModal')); adModal.show(); }, 8000); }); 
 </script> {% endif %}
 
 

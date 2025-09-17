@@ -5459,3 +5459,34 @@ input[name="otp"] {
       text-align: center;
       font-weight: bold;
     }
+
+
+  /* ✅ Make nav arrows always visible */
+  .glightbox-clean .gprev,
+  .glightbox-clean .gnext {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transition: opacity 0.15s ease-in-out !important;
+  }
+
+  /* ✅ Adjust arrow button size for mobile */
+  .glightbox-clean .gprev,
+  .glightbox-clean .gnext {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+
+  /* ✅ Responsive image scaling */
+  .gslide img {
+    max-height: 85vh;
+    width: auto;
+    margin: auto;
+    object-fit: contain;
+  }
+
+  @media (max-width: 768px) {
+    .gslide img {
+      max-height: 70vh;
+    }
+  }
