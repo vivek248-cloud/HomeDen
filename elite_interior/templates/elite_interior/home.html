@@ -115,6 +115,9 @@
 </script>
 {% endif %} {% endcomment %}
 
+
+{% comment %} ad script to show modal after 8 seconds --> {% endcomment %}
+
 {% if ad %} <script> document.addEventListener("DOMContentLoaded", function () { setTimeout(function () 
   { var adModal = new bootstrap.Modal(document.getElementById('adModal')); adModal.show(); }, 8000); }); 
 </script> {% endif %}
