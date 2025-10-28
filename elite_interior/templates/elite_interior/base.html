@@ -34,6 +34,27 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
+
+        <!-- ✅ Google tag (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NJE0S8FHJW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-NJE0S8FHJW');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}" />
+
+    <title>{% block title %}Home Den | Best Interior Designers in Trichy{% endblock %}</title>
+
+    <!-- ... your SEO meta tags here ... -->
+
+    <!-- Fonts, CSS, Scripts, etc. -->
+
+    
     <!-- ✅ Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/interior.css' %}">
     {% block extra_css %}{% endblock %}
