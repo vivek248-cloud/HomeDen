@@ -350,7 +350,7 @@ body, html {
 .brand-main {
   font-size: 1.94rem;
   font-weight: 600;
-  color: var(--color-2);
+  color: var(--color-2)!important;
   text-decoration: none;
   margin-bottom: 0;
   line-height: 1.1;

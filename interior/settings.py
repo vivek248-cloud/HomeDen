@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     # "colorfield",#FOR ADMIN INTERFACE
     'jazzmin',
 
+    'django.contrib.sitemaps',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
