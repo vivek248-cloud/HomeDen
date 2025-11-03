@@ -3690,7 +3690,7 @@ input[type="radio"]:hover {
    Wrapper – fixed size, centered
    ------------------------------------------------- */
 .circular-text-wrapper {
-  position: sticky;
+  position: relative;
   top: 50px;                       /* stick near the top while scrolling */
   width: 220px;
   height: 220px;
