@@ -3650,24 +3650,15 @@ input[type="radio"]:hover {
 }
 
 
-/* .circle-div
-{
-  height: 200px!important;
-  width: 200px !important;;
-  border-radius: 50%;
-  position: fixed;
-  top: 50%;
-  left: -100px;
-} */
-
-
-/* .circular-text-wrapper {
+.circular-text-wrapper {
   position: relative;
-  width: 180px;
-  height: 180px;
   margin-top:50px;
   margin-left: auto;
   margin-right: auto;
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
 }
 
 
@@ -3691,7 +3682,7 @@ input[type="radio"]:hover {
   width: 100%;
   height: 100%;
   text-align: center;
-  /* transform: rotate(0deg); 
+  /* transform: rotate(0deg); */
   display: block;
   white-space: pre;
   letter-spacing: 3px;
@@ -3701,6 +3692,14 @@ input[type="radio"]:hover {
   -webkit-mask: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/circular-text-path.svg') center/contain no-repeat;
   mask: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/circular-text-path.svg') center/contain no-repeat;
 }
+
+
+.circle-div img
+{
+  height: 200px;
+  width: 250px;
+}
+
 
 .dot {
   width: 10px;
@@ -3717,48 +3716,13 @@ input[type="radio"]:hover {
 @keyframes rotate {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-} */
+}
 
 
 
 
-/* Center wrapper */
-    .circular-text-wrapper {
-      position: relative;
-      width: 220px;
-      height: 220px;
-      margin: 50px auto;
-      overflow: hidden;
-    }
 
-    /* Circle container with rotation */
-    .circle-div {
-      position: relative;
-      height: 600px!important;
-      width: 600px!important;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      /* Scroll-driven rotation */
-      animation: rotate linear;
-      animation-timeline: scroll(root);
-      animation-range: 0vh 300vh; /* Adjust speed: larger = slower */
-    }
 
-    /* PNG Image */
-    .circular-text-image {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-    }
-
-    /* Rotation Keyframes */
-    @keyframes rotate {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
-    }
 
 
     
