@@ -3682,7 +3682,47 @@ input[type="radio"]:hover {
   justify-content: center;
   animation: rotate  linear both;
   animation-timeline: view();
+} */
+
+
+
+/* -------------------------------------------------
+   Wrapper – fixed size, centered
+   ------------------------------------------------- */
+.circular-text-wrapper {
+  position: sticky;
+  top: 50px;                       /* stick near the top while scrolling */
+  width: 220px;
+  height: 220px;
+  margin: 0 auto;
 }
+
+/* -------------------------------------------------
+   SVG – 100% of wrapper
+   ------------------------------------------------- */
+.circular-text-wrapper svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* -------------------------------------------------
+   Scroll-driven rotation
+   ------------------------------------------------- */
+.circular-text-wrapper svg {
+  /* 0° at the top of the viewport → 360° after scrolling 200vh */
+  animation: rotate linear;
+  animation-timeline: scroll(root);
+  animation-range: 0vh 200vh;       /* adjust range to control speed */
+}
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+
+
+
 
 .circle-div span {
   font-family: 'Poppins', sans-serif;
@@ -3692,7 +3732,7 @@ input[type="radio"]:hover {
   width: 100%;
   height: 100%;
   text-align: center;
-  /* transform: rotate(0deg); 
+  /* transform: rotate(0deg); */
   display: block;
   white-space: pre;
   letter-spacing: 3px;
@@ -3718,39 +3758,8 @@ input[type="radio"]:hover {
 @keyframes rotate {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-} */
-
-
-
-/* -------------------------------------------------
-   Wrapper – give it a fixed size so nothing collapses
-   ------------------------------------------------- */
-.circular-text-wrapper {
-  width: 220px;          /* enough room for the SVG */
-  height: 220px;
-  margin: 50px auto;
 }
 
-/* -------------------------------------------------
-   SVG – 100% of wrapper, no extra margins/padding
-   ------------------------------------------------- */
-.circular-text-wrapper svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-/* -------------------------------------------------
-   Rotation animation (optional)
-   ------------------------------------------------- */
-.circular-text-wrapper svg {
-    animation: rotate  linear both;
-  animation-timeline: view();
-}
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
 
 .chat-box {
   position: fixed;

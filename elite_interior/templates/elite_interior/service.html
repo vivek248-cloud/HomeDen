@@ -55,37 +55,37 @@
       </textPath>
     </text>
   </svg>
+</div>
+
+
+
 </div> {% endcomment %}
+
 
 <div class="circular-text-wrapper">
   <svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">
-    <!-- 1. Path that the text follows – radius 85 (same as visible circle) -->
+    <!-- Path radius = visible circle radius (85) -->
     <defs>
       <path id="circlePath"
-            d="M 100,100
-               m -85,0
-               a 85,85 0 1,1 170,0
-               a 85,85 0 1,1 -170,0" />
+            d="M100,100 m-85,0 a85,85 0 1,1 170,0 a85,85 0 1,1 -170,0" />
     </defs>
 
-    <!-- 2. Visible circle (fill + stroke) -->
+    <!-- Visible circle -->
     <circle cx="100" cy="100" r="85"
             fill="#f4f1ee" stroke="#d9c6b0" stroke-width="2"/>
 
-    <!-- 3. Center dot -->
+    <!-- Center dot -->
     <circle cx="100" cy="100" r="5" fill="#333"/>
 
-    <!-- 4. Curved text – startOffset 50% puts the middle of the string at the top -->
+    <!-- Curved text (centered at the top) -->
     <text font-family="Poppins, sans-serif"
-          font-size="16" font-weight="500"
+          font-size="30" font-weight="500"
           fill="#000" dominant-baseline="middle">
       <textPath href="#circlePath" startOffset="50%" text-anchor="middle">
         Start Your Home Interior Design Journey.
       </textPath>
     </text>
   </svg>
-</div>
-
 </div>
 
 
