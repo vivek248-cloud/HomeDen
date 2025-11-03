@@ -3652,10 +3652,9 @@ input[type="radio"]:hover {
 
 /* .circle-div
 {
-  height: 200px;
-  width:200px;
+  height: 200px!important;
+  width: 200px !important;;
   border-radius: 50%;
-  background-color: skyblue;
   position: fixed;
   top: 50%;
   left: -100px;
@@ -3735,8 +3734,8 @@ input[type="radio"]:hover {
     /* Circle container with rotation */
     .circle-div {
       position: relative;
-      width: 100%;
-      height: 100%;
+    height: 200px!important;
+      width: 200px !important;
       display: flex;
       align-items: center;
       justify-content: center;
