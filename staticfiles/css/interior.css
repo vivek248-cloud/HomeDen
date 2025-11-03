@@ -350,7 +350,7 @@ body, html {
 .brand-main {
   font-size: 1.94rem;
   font-weight: 600;
-  color: var(--color-2);
+  color: var(--color-2)!important;
   text-decoration: none;
   margin-bottom: 0;
   line-height: 1.1;
@@ -3652,17 +3652,16 @@ input[type="radio"]:hover {
 
 /* .circle-div
 {
-  height: 200px;
-  width:200px;
+  height: 200px!important;
+  width: 200px !important;;
   border-radius: 50%;
-  background-color: skyblue;
   position: fixed;
   top: 50%;
   left: -100px;
 } */
 
 
-.circular-text-wrapper {
+/* .circular-text-wrapper {
   position: relative;
   width: 180px;
   height: 180px;
@@ -3692,7 +3691,7 @@ input[type="radio"]:hover {
   width: 100%;
   height: 100%;
   text-align: center;
-  /* transform: rotate(0deg); */
+  /* transform: rotate(0deg); 
   display: block;
   white-space: pre;
   letter-spacing: 3px;
@@ -3718,9 +3717,51 @@ input[type="radio"]:hover {
 @keyframes rotate {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
+} */
 
 
+
+
+/* Center wrapper */
+    .circular-text-wrapper {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      margin: 50px auto;
+      overflow: hidden;
+    }
+
+    /* Circle container with rotation */
+    .circle-div {
+      position: relative;
+      height: 600px!important;
+      width: 600px!important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      /* Scroll-driven rotation */
+      animation: rotate linear;
+      animation-timeline: scroll(root);
+      animation-range: 0vh 300vh; /* Adjust speed: larger = slower */
+    }
+
+    /* PNG Image */
+    .circular-text-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    /* Rotation Keyframes */
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+
+    
 .chat-box {
   position: fixed;
   bottom: 90px;
