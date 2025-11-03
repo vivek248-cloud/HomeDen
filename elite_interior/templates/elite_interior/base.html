@@ -215,13 +215,20 @@
                   <li><a class="dropdown-item" href="{% url 'service'%}#TERMS">Terms & Condition</a></li>
                 </ul>
               </li>
+              <li>  <!-- ✅ Right-side button -->
+              <a href="{% url 'home' %}" 
+                data-bs-toggle="modal" 
+                data-bs-target="#designConsultantModal"
+                class="elegant-quote-btn" style="margin-top:-5px;">
+                Get Free Quote
+              </a></li>
               </ul>
             </div>
           </div>
 
       
           <!-- Desktop Nav -->
-          <div class="collapse navbar-collapse d-none d-lg-block" style="font-size:1.2rem;">
+          {% comment %} <div class="collapse navbar-collapse d-none d-lg-block" style="font-size:1.2rem;">
 
             <ul class="navbar-nav ms-auto" style="text-transform:uppercase;">
               <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
@@ -265,7 +272,67 @@
               </li>
             </ul>
           </div>
-        </div>
+        </div> {% endcomment %}
+
+
+        <div class="collapse navbar-collapse d-none d-lg-block" style="font-size:1.2rem;">
+  <ul class="navbar-nav ms-auto" style="text-transform:uppercase;">
+    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About Us</a></li>
+
+    <li class="nav-item dropdown">
+      <a class="nav-link " href="#" data-bs-toggle="dropdown">
+        Products<span class="dropdown-icon">&#9662;</span>
+      </a>                               
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="{% url 'kitchen_projects' %}">KITCHEN</a></li>
+        <li><a class="dropdown-item" href="{% url 'bedroom_projects' %}">BEDROOM</a></li>
+        <li><a class="dropdown-item" href="{% url 'dining_projects' %}">DINNING</a></li>
+        <li><a class="dropdown-item" href="{% url 'living_projects' %}">LIVING ROOM</a></li>
+        <li><a class="dropdown-item" href="{% url 'bathroom_projects' %}">BATH ROOM</a></li>
+        <li><a class="dropdown-item" href="{% url 'kidsroom_projects' %}">KID'S ROOM</a></li>
+      </ul>
+    </li>
+
+    <li class="nav-item"><a class="nav-link" href="{% url 'projects' %}">Projects</a></li>
+
+    <li class="nav-item dropdown">
+      <a class="nav-link " href="#" data-bs-toggle="dropdown">
+        Offers<span class="dropdown-icon">&#9662;</span>
+      </a> 
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="{% url 'silver' %}">Silver</a></li>
+        <li><a class="dropdown-item" href="{% url 'gold' %}">Gold</a></li>
+        <li><a class="dropdown-item" href="{% url 'platinum' %}">Platinum</a></li>
+      </ul>
+    </li>
+
+    <li class="nav-item"><a class="nav-link" href="{% url 'contact'%}">Contact</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'service'%}">Service</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'blog_list'%}">Blog</a></li>
+
+    <li class="nav-item dropdown">
+      <a class="nav-link " href="#" data-bs-toggle="dropdown">
+        <i class="bi bi-list"></i>
+      </a> 
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="{% url 'service'%}#FAQ">FAQ</a></li>
+        <li><a class="dropdown-item" href="{% url 'service'%}#TERMS">Terms & Condition</a></li>
+      </ul>
+    </li>
+  </ul>
+
+<!-- Elegant Right-Side Button with Modal Trigger -->
+<a href="#" 
+   data-bs-toggle="modal" 
+   data-bs-target="#designConsultantModal"
+   class="elegant-quote-btn">
+   Get Free Quote
+</a>
+
+
+</div>
+
       </nav>
       {% comment %} data-bs-toggle="dropdown"  dropdown-toggle{% endcomment %}
       
@@ -515,6 +582,33 @@
 
 <div class="floating-buttons position-fixed end-0 bottom-0 p-3 d-flex flex-column align-items-end z-3">
  
+
+  <!-- WhatsApp Quote Button with Icon -->
+<a href="https://wa.me/7780038004?text=Hi%20HOME%20DEN%2C%20I%20would%20like%20to%20discuss%20about%20a%20home%20interior%20project%20of%20mine%2C%20and%20know%20more%20about%20your%20interior%20design%20options%20and%20services%20available."
+   class="elegant-quote-btn whatsapp-btn"
+   id="whatsappExpandBtn" target="_blank">
+
+   <i class="fab fa-whatsapp"></i>
+   <span>Get Free Quote</span>
+</a>
+
+
+<script>
+const wBtn = document.getElementById("whatsappExpandBtn");
+
+wBtn.addEventListener("mouseenter", function () {
+  wBtn.classList.add("expanded");
+});
+
+wBtn.addEventListener("mouseleave", function () {
+  wBtn.classList.remove("expanded");
+});
+</script>
+
+
+
+
+
    <div  class="floating-btn">
   <a href="tel:+917780038004" style="text-decoration:none;color:white;"><i class="bi bi-telephone-fill"></i></a>
 </div>
@@ -592,7 +686,7 @@
      <div class="social-icons">
       <a href="https://www.instagram.com/elitedreambuilders/" target="_blank"><i class="fab fa-instagram"></i></a>
       <a href="https://www.facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
-      <a href="https://wa.me/8489716901?text=Hi%20HOME%20DEN%2C%20I%20would%20like%20to%20discuss%20about%20a%20home%20interior%20project%20of%20mine%2C%20and%20know%20more%20about%20your%20interior%20design%20options%20and%20services%20available."target="_blank"><i class="fab fa-whatsapp"></i></a>
+      <a href="https://wa.me/7780038004?text=Hi%20HOME%20DEN%2C%20I%20would%20like%20to%20discuss%20about%20a%20home%20interior%20project%20of%20mine%2C%20and%20know%20more%20about%20your%20interior%20design%20options%20and%20services%20available."target="_blank"><i class="fab fa-whatsapp"></i></a>
       <a href="https://www.youtube.com" target="_blank"><i class="fab fa-youtube"></i></a>
       <a href="https://www.linkedin.com" target="_blank"><i class="fab fa-linkedin-in"></i></a>
     </div>

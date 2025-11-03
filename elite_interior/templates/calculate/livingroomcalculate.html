@@ -20,36 +20,70 @@
     <form method="post" id="wizardForm" action="{% url 'submit_estimation_form' %}">
       {% csrf_token %}
 
-      <!-- Step 1: Select Dimension -->
-      <div class="step2" id="step1">
-        <h5 class="fw-semibold text-success mb-3">
-          Step 1/4: Select the nearest Living Room dimension
-        </h5>
+    <!-- Step 1: Select Dimension -->
+<div class="step2" id="step1">
+  <h5 class="fw-semibold text-success mb-3">
+    Step 1/4: Select the nearest Living Room dimension
+  </h5>
 
-        <div class="row g-3 mb-4">
-          {% for size in living_room_sizes %}
-          <div class="col-sm-6">
-            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light" for="size_{{ forloop.counter }}">
-              <input class="form-check-input me-2" 
-                     type="radio" 
-                     name="size" 
-                     value="{{ size }}" 
-                     id="size_{{ forloop.counter }}" 
-                     required>
-              <span class="form-check-label fw-semibold" for="size_{{ forloop.counter }}">
-                {{ size }}
-              </span>
-            </label>
-          </div>
-          {% endfor %}
-        </div>
+  <div class="row g-3 mb-4">
+    {% for size in living_room_sizes %}
+    <div class="col-sm-6">
+      <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light cursor-pointer" for="living_size_{{ forloop.counter }}">
+        <input class="form-check-input me-2"
+               type="radio"
+               name="size"
+               value="{{ size }}"
+               id="living_size_{{ forloop.counter }}"
+               required
+               onclick="toggleLivingSize('{{ size }}')">
 
-        <div class="text-end">
-          <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(2)">
-            Next
-          </button>
-        </div>
-      </div>
+        <span class="fw-semibold">{{ size }}</span>
+      </label>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- ✅ Custom Size fields -->
+  <div id="customSizeInputsLiving" class="row g-3 mb-4 d-none">
+    <div class="col-6">
+      <input type="number" min="1" name="custom_length" id="custom_length" class="form-control"
+             placeholder="Length (ft)" />
+    </div>
+
+    <div class="col-6">
+      <input type="number" min="1" name="custom_width" id="custom_width" class="form-control"
+             placeholder="Width (ft)" />
+    </div>
+  </div>
+
+  <div class="text-end">
+    <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(2)">
+      Next
+    </button>
+  </div>
+</div>
+
+
+
+<script>
+function toggleLivingSize(selected) {
+  const div = document.getElementById("customSizeInputsLiving");
+
+  if (selected === "Custom") {
+    div.classList.remove("d-none");
+    document.getElementById("custom_length").setAttribute("required", true);
+    document.getElementById("custom_width").setAttribute("required", true);
+  } else {
+    div.classList.add("d-none");
+    document.getElementById("custom_length").removeAttribute("required");
+    document.getElementById("custom_width").removeAttribute("required");
+  }
+}
+</script>
+
+
+
 
 <!-- Step 2: Select Living Room Style -->
 <div class="step2 d-none" id="step2">

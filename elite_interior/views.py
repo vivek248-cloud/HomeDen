@@ -714,6 +714,14 @@ from .models import OtpVerification
 def kitchen_submit_estimation_form(request):
     if request.method == "POST":
         size = request.POST.get("size")
+        custom_length = request.POST.get("custom_length")
+        custom_width = request.POST.get("custom_width")
+
+        # If custom, convert to numeric size
+        if size == "Custom" and custom_length and custom_width:
+            size = f"{custom_length} ft × {custom_width} ft"
+
+
         shape = request.POST.get("shape")
         package = request.POST.get("package")
         name = request.POST.get("name")
@@ -736,8 +744,15 @@ def kitchen_submit_estimation_form(request):
             price = 80000
         elif size == '11.5 ft. × 10 ft.':
             price = 90000
+
+        elif "ft ×" in size:  # custom size logic
+            l = float(custom_length)
+            w = float(custom_width)
+            sqft = l * w
+            price = sqft * 500  # price per sq ft — adjust your price logic
+
         else:
-            price = 0  # Default price
+            price = 0
 
         if package == 'silver':
             price *= 0.8  # Apply 20% discount
@@ -788,6 +803,13 @@ def kitchen_submit_estimation_form(request):
 def bedroom_submit_estimation_form(request):
     if request.method == "POST":
         size = request.POST.get("size")
+        custom_length = request.POST.get("custom_length")
+        custom_width = request.POST.get("custom_width")
+
+        # If custom, convert to numeric size
+        if size == "Custom" and custom_length and custom_width:
+            size = f"{custom_length} ft × {custom_width} ft"
+
         shape = request.POST.get("shape")
         package = request.POST.get("package")
         name = request.POST.get("name")
@@ -810,6 +832,12 @@ def bedroom_submit_estimation_form(request):
             price = 80000
         elif size == '11.5 ft. × 10 ft.':
             price = 90000
+        elif "ft ×" in size:  # custom size logic
+            l = float(custom_length)
+            w = float(custom_width)
+            sqft = l * w
+            price = sqft * 500  # price per sq ft — adjust your price logic
+
         else:
             price = 0
 
@@ -860,6 +888,13 @@ def bedroom_submit_estimation_form(request):
 def living_submit_estimation_form(request):
     if request.method == "POST":
         size = request.POST.get("size")
+        custom_length = request.POST.get("custom_length")
+        custom_width = request.POST.get("custom_width")
+
+        # If custom, convert to numeric size
+        if size == "Custom" and custom_length and custom_width:
+            size = f"{custom_length} ft × {custom_width} ft"
+
         shape = request.POST.get("shape")
         package = request.POST.get("package")
         name = request.POST.get("name")
@@ -882,6 +917,12 @@ def living_submit_estimation_form(request):
             price = 80000
         elif size == '11.5 ft. × 10 ft.':
             price = 90000
+        elif "ft ×" in size:  # custom size logic
+            l = float(custom_length)
+            w = float(custom_width)
+            sqft = l * w
+            price = sqft * 500  # price per sq ft — adjust your price logic
+
         else:
             price = 0
 
@@ -932,6 +973,13 @@ def living_submit_estimation_form(request):
 def bathroom_submit_estimation_form(request):
     if request.method == "POST":
         size = request.POST.get("size")
+        custom_length = request.POST.get("custom_length")
+        custom_width = request.POST.get("custom_width")
+
+        # If custom, convert to numeric size
+        if size == "Custom" and custom_length and custom_width:
+            size = f"{custom_length} ft × {custom_width} ft"
+
         shape = request.POST.get("shape")
         package = request.POST.get("package")
         name = request.POST.get("name")
@@ -954,6 +1002,11 @@ def bathroom_submit_estimation_form(request):
             price = 80000
         elif size == '11.5 ft. × 10 ft.':
             price = 90000
+        elif "ft ×" in size:  # custom size logic
+            l = float(custom_length)
+            w = float(custom_width)
+            sqft = l * w
+            price = sqft * 500  # price per sq ft — adjust your price logic
         else:
             price = 0
 
@@ -1006,6 +1059,14 @@ def bathroom_submit_estimation_form(request):
 def dining_submit_estimation_form(request):
     if request.method == "POST":
         size = request.POST.get("size")
+        custom_length = request.POST.get("custom_length")
+        custom_width = request.POST.get("custom_width")
+
+        # If custom, convert to numeric size
+        if size == "Custom" and custom_length and custom_width:
+            size = f"{custom_length} ft × {custom_width} ft"
+
+
         shape = request.POST.get("shape")
         package = request.POST.get("package")
         name = request.POST.get("name")
@@ -1028,6 +1089,11 @@ def dining_submit_estimation_form(request):
             price = 80000
         elif size == '11.5 ft. × 10 ft.':
             price = 90000
+        elif "ft ×" in size:  # custom size logic
+            l = float(custom_length)
+            w = float(custom_width)
+            sqft = l * w
+            price = sqft * 500  # price per sq ft — adjust your price logic
         else:
             price = 0
 
@@ -1079,6 +1145,13 @@ def dining_submit_estimation_form(request):
 def kids_submit_estimation_form(request):
     if request.method == "POST":
         size = request.POST.get("size")
+        custom_length = request.POST.get("custom_length")
+        custom_width = request.POST.get("custom_width")
+
+        # If custom, convert to numeric size
+        if size == "Custom" and custom_length and custom_width:
+            size = f"{custom_length} ft × {custom_width} ft"
+
         shape = request.POST.get("shape")
         package = request.POST.get("package")
         name = request.POST.get("name")
@@ -1101,6 +1174,11 @@ def kids_submit_estimation_form(request):
             price = 80000
         elif size == '11.5 ft. × 10 ft.':
             price = 90000
+        elif "ft ×" in size:  # custom size logic
+            l = float(custom_length)
+            w = float(custom_width)
+            sqft = l * w
+            price = sqft * 500  # price per sq ft — adjust your price logic
         else:
             price = 0
 
@@ -1152,6 +1230,13 @@ def kids_submit_estimation_form(request):
 def wardrobes_submit_estimation_form(request):
     if request.method == "POST":
         size = request.POST.get("size")
+        custom_length = request.POST.get("custom_length")
+        custom_width = request.POST.get("custom_width")
+
+        # If custom, convert to numeric size
+        if size == "Custom" and custom_length and custom_width:
+            size = f"{custom_length} ft × {custom_width} ft"
+
         shape = request.POST.get("shape")
         package = request.POST.get("package")
         name = request.POST.get("name")
@@ -1174,6 +1259,11 @@ def wardrobes_submit_estimation_form(request):
             price = 80000
         elif size == '11.5 ft. × 10 ft.':
             price = 90000
+        elif "ft ×" in size:  # custom size logic
+            l = float(custom_length)
+            w = float(custom_width)
+            sqft = l * w
+            price = sqft * 500  # price per sq ft — adjust your price logic
         else:
             price = 0
 

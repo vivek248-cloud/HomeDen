@@ -5495,3 +5495,123 @@ input[name="otp"] {
       max-height: 70vh;
     }
   }
+
+
+
+
+
+/* ───────────────────────────────────────
+   Elegant Quote Button – Red-Orange Theme
+   ─────────────────────────────────────── */
+.elegant-quote-btn {
+  --shadow-sm: 0 4px 15px rgba(230, 75, 3, 0.3);
+  --shadow-lg: 0 8px 25px rgba(230, 75, 3, 0.4);
+  --gradient-base: linear-gradient(135deg, #e64b03, #ff6a00);   /* Red-Orange → Bright Orange */
+  --gradient-hover: linear-gradient(135deg, #ff6a00, #e64b03);  /* Reverse on hover */
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 32px;
+  margin-top: -5px;
+  font: 600 1rem/1 'Segoe UI', 'Helvetica Neue', sans-serif;
+  color: #fff;
+  text-decoration: none;
+  background: var(--gradient-base);
+  border: none;
+  border-radius: 50px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.4s ease;
+  will-change: transform, box-shadow;
+  z-index: 1;
+}
+
+/* Shimmer effect – golden-white glow */
+.elegant-quote-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Hover: Lift + Reverse Gradient */
+.elegant-quote-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+  background: var(--gradient-hover);
+}
+
+.elegant-quote-btn:hover::before {
+  left: 100%;
+}
+
+/* Active / Click */
+.elegant-quote-btn:active {
+  transform: translateY(-1px);
+  transition-duration: 0.1s;
+}
+
+/* Focus */
+.elegant-quote-btn:focus-visible {
+  outline: 2px solid #ff8533;
+  outline-offset: 2px;
+}
+
+
+
+/* Collapsed initial state */
+
+
+.whatsapp-btn {
+  width: 55px;
+  height: 55px;
+  padding: 0;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-top: -175px!important;
+  transition: all .35s ease;
+}
+/* Smooth expand */
+.whatsapp-btn.expanded {
+  width: 200px;
+  height: 55px;
+  padding: 12px 22px;
+  border-radius: 50px;
+  gap: 8px;
+}
+
+/* Text hidden initially */
+.whatsapp-btn span {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: opacity .3s ease, width .3s ease;
+  font-size: 1rem;
+}
+
+/* Show text when expanded */
+.whatsapp-btn.expanded span {
+  opacity: 1;
+  width: auto;
+}
+
+/* Icon a bit bigger */
+.whatsapp-btn i {
+  font-size: 1.5rem;
+}

@@ -29,19 +29,49 @@
         <div class="row g-3 mb-4">
           {% for size in bathroom_sizes %}
           <div class="col-sm-6">
-            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="size_{{ forloop.counter }}">
-              <input class="form-check-input me-2" 
-                     type="radio" 
-                     name="size" 
-                     value="{{ size }}" 
-                     id="size_{{ forloop.counter }}" 
-                     required>
-              <span class="form-check-label fw-semibold" for="size_{{ forloop.counter }}">
-                {{ size }}
-              </span>
+            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="bath_size_{{ forloop.counter }}">
+              <input class="form-check-input me-2"
+                    type="radio"
+                    name="size"
+                    value="{{ size }}"
+                    id="bath_size_{{ forloop.counter }}"
+                    required
+                    onclick="toggleBathroomSize('{{ size }}')">
+
+              <span class="fw-semibold">{{ size }}</span>
             </label>
           </div>
           {% endfor %}
+        </div>
+
+
+      <script>
+    function toggleBathroomSize(selected) {
+      const div = document.getElementById("bathCustomSizeInputs");
+
+      if (selected === "Custom") {
+        div.classList.remove("d-none");
+        document.getElementById("custom_length").setAttribute("required", true);
+        document.getElementById("custom_width").setAttribute("required", true);
+      } else {
+        div.classList.add("d-none");
+        document.getElementById("custom_length").removeAttribute("required");
+        document.getElementById("custom_width").removeAttribute("required");
+      }
+    }
+    </script>
+
+
+        <!-- ✅ Custom Size fields -->
+        <div id="bathCustomSizeInputs" class="row g-3 mb-4 d-none">
+          <div class="col-6">
+            <input type="number" min="1" name="custom_length" id="custom_length" class="form-control"
+                  placeholder="Length (ft)">
+          </div>
+          <div class="col-6">
+            <input type="number" min="1" name="custom_width" id="custom_width" class="form-control"
+                  placeholder="Width (ft)">
+          </div>
         </div>
 
         <div class="text-end">
@@ -50,6 +80,7 @@
           </button>
         </div>
       </div>
+
 
 <!-- Step 2: Select Bedroom Style -->
 <div class="step2 d-none" id="step2">

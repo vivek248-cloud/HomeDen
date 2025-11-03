@@ -21,35 +21,66 @@
       {% csrf_token %}
 
       <!-- Step 1: Select Dimension -->
-      <div class="step2" id="step1">
-        <h5 class="fw-semibold text-success mb-3">
-          Step 1/4: Select the nearest Bedroom dimension
-        </h5>
+    <div class="step2" id="step1">
+      <h5 class="fw-semibold text-success mb-3">
+        Step 1/4: Select the nearest Bedroom dimension
+      </h5>
 
-        <div class="row g-3 mb-4">
-          {% for size in bedroom_sizes %}
-          <div class="col-sm-6">
-            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="size_{{ forloop.counter }}">
-              <input class="form-check-input me-2" 
-                     type="radio" 
-                     name="size" 
-                     value="{{ size }}" 
-                     id="size_{{ forloop.counter }}" 
-                     required>
-              <span class="form-check-label fw-semibold" >
-                {{ size }}
-              </span>
-            </label>
-          </div>
-          {% endfor %}
+      <div class="row g-3 mb-4">
+        {% for size in bedroom_sizes %}
+        <div class="col-sm-6">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="bed_size_{{ forloop.counter }}">
+            <input class="form-check-input me-2"
+                  type="radio"
+                  name="size"
+                  value="{{ size }}"
+                  id="bed_size_{{ forloop.counter }}"
+                  required
+                  onclick="toggleBedroomSize('{{ size }}')">
+
+            <span class="fw-semibold">{{ size }}</span>
+          </label>
         </div>
+        {% endfor %}
+      </div>
 
-        <div class="text-end">
-          <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(2)">
-            Next
-          </button>
+      <!-- ✅ Custom Size fields (same IDs as requested) -->
+      <div id="customSizeInputsBedroom" class="row g-3 mb-4 d-none">
+        <div class="col-6">
+          <input type="number" min="1" name="custom_length" id="custom_length" class="form-control"
+                placeholder="Length (ft)" />
+        </div>
+        <div class="col-6">
+          <input type="number" min="1" name="custom_width" id="custom_width" class="form-control"
+                placeholder="Width (ft)" />
         </div>
       </div>
+
+      <div class="text-end">
+        <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(2)">
+          Next
+        </button>
+      </div>
+    </div>
+
+
+    <script>
+  function toggleBedroomSize(selected) {
+    const div = document.getElementById("customSizeInputsBedroom");
+
+    if (selected === "Custom") {
+      div.classList.remove("d-none");
+      document.getElementById("custom_length").setAttribute("required", true);
+      document.getElementById("custom_width").setAttribute("required", true);
+    } else {
+      div.classList.add("d-none");
+      document.getElementById("custom_length").removeAttribute("required");
+      document.getElementById("custom_width").removeAttribute("required");
+    }
+  }
+  </script>
+
+
 
       <!-- Step 2: Select Bedroom Shape -->
 <div class="step2 d-none" id="step2">
