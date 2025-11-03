@@ -34,58 +34,10 @@
     </div>
 </div>
 
-{% comment %} <div class="circular-text-wrapper">
-<div class="circle-div">
-  <svg viewBox="0 0 200 200" width="210" height="210">
-    <defs>
-      <!-- Text Path slightly outside the main circle (r=90 vs visible r=85) -->
-      <path id="circlePath" d="M100,100 m-90,0 a90,90 0 1,1 180,0 a90,90 0 1,1 -180,0" />
-    </defs>
-
-    <!-- Visible Circle -->
-    <circle cx="100" cy="100" r="85" fill="#f4f1ee" stroke="#d9c6b0" stroke-width="2" />
-
-    <!-- Center Dot -->
-    <circle cx="100" cy="100" r="5" fill="#333" />
-
-    <!-- Curved Text Outside -->
-    <text font-size="30" font-family="Poppins" font-weight="500" fill="#000" dominant-baseline="middle">
-      <textPath href="#circlePath" startOffset="50%" text-anchor="middle">
-        Start Your Home Interior Design Journey.
-      </textPath>
-    </text>
-  </svg>
-</div>
-
-
-
-</div> {% endcomment %}
-
-
 <div class="circular-text-wrapper">
-  <svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">
-    <!-- Path radius = visible circle radius (85) -->
-    <defs>
-      <path id="circlePath"
-            d="M100,100 m-85,0 a85,85 0 1,1 170,0 a85,85 0 1,1 -170,0" />
-    </defs>
-
-    <!-- Visible circle -->
-    <circle cx="100" cy="100" r="85"
-            fill="#f4f1ee" stroke="#d9c6b0" stroke-width="2"/>
-
-    <!-- Center dot -->
-    <circle cx="100" cy="100" r="5" fill="#333"/>
-
-    <!-- Curved text (centered at the top) -->
-    <text font-family="Poppins, sans-serif"
-          font-size="30" font-weight="500"
-          fill="#000" dominant-baseline="middle">
-      <textPath href="#circlePath" startOffset="50%" text-anchor="middle">
-        Start Your Home Interior Design Journey.
-      </textPath>
-    </text>
-  </svg>
+  <div class="circle-div">
+    <img src="{% static 'images/ruby-circle.png' %}" alt="Circular Text" class="circular-text-image">
+  </div>
 </div>
 
 
