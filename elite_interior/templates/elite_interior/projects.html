@@ -246,12 +246,16 @@ document.addEventListener('DOMContentLoaded', function () {
           if (newButton) {
             btn.setAttribute('data-next-page', newButton.getAttribute('data-next-page'));
           } else {
-            btn.remove(); // No more pages
+            btn.remove();
           }
+
+          // ✅ Reinitialize GLightbox after adding new elements
+          lightbox.reload();
         });
     });
   }
 });
+
 </script>
 
 
