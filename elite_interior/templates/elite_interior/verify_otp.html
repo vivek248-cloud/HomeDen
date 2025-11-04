@@ -1,117 +1,239 @@
 {% extends 'elite_interior/base.html' %}
+{% load static %}
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-  <div class="card shadow-lg p-4 border-0 rounded-4" style="max-width: 450px; width: 100%; background: linear-gradient(135deg, #f3f9ff, #e8f0ff);">
-    
-
-
-
-
-    <!-- OTP Form -->
-    
+<div class="otp-container">
+  <div class="glass-card">
+    <!-- Header -->
+    <div class="header">
+      <div class="icon-lock">
+        <i class="bi bi-shield-lock-fill"></i>
+      </div>
+      <h3>Verify Your Email</h3>
+      <p>Enter the <strong>4-digit</strong> code sent to <strong>{{ email }}</strong></p>
+    </div>
 
     {% if not download_pdf %}
-
-        <!-- Title -->
-    <h3 class="text-center fw-bold mb-3 text-primary">
-      <i class="bi bi-shield-lock-fill me-2"></i>Verify OTP
-    </h3>
-    <p class="text-center text-muted small mb-4">
-      Enter the 4-digit code sent to your registered email.
-    </p>
-    
-        <!-- Timer -->
-      <div class="text-center mb-4">
-        <span class="fw-bold me-1">Expires in:</span>
-        <span id="timer" class="badge bg-danger fs-6 px-3 py-2">02:00</span>
+      <!-- Timer Circle -->
+      <div class="timer-circle">
+        <svg class="progress-ring" width="80" height="80">
+          <circle class="progress-ring__circle-bg" stroke="#e0e0e0" stroke-width="6" fill="transparent" r="36" cx="40" cy="40"/>
+          <circle class="progress-ring__circle" stroke="#e64b03" stroke-width="6" fill="transparent" r="36" cx="40" cy="40"/>
+        </svg>
+        <div class="timer-text" id="timer">05:00</div>
       </div>
 
-      <form method="post" action="{% url 'verify_otp' %}">
+      <!-- OTP Inputs (4 boxes) -->
+      <div class="otp-inputs" id="otpInputs">
+        <input type="text" maxlength="1" class="otp-box" data-index="0">
+        <input type="text" maxlength="1" class="otp-box" data-index="1">
+        <input type="text" maxlength="1" class="otp-box" data-index="2">
+        <input type="text" maxlength="1" class="otp-box" data-index="3">
+      </div>
+
+      <!-- Hidden Form -->
+      <form method="post" action="{% url 'verify_otp' %}" id="otpForm">
         {% csrf_token %}
-        <div class="mb-4">
-          <input type="hidden" name="email" value="{{ email }}">
-          <input type="text" name="otp" 
-                class="form-control text-center fs-4 fw-bold rounded-pill border-primary shadow-sm" 
-                maxlength="4" placeholder="----" required>
-        </div>
-        <div class="text-center">
-          <button type="submit" id="verifyBtn" class="btn btn-success btn-lg rounded-pill shadow-sm px-5 " 
-                  style="width: 200px;height: 50px;">
-            <i class="bi bi-check2-circle me-1"></i> Verify
-          </button>
-        </div>
+        <input type="hidden" name="email" value="{{ email }}">
+        <input type="hidden" name="otp" id="otpValue">
       </form>
 
-      <!-- Resend OTP -->
-    <form method="post" action="{% url 'resend_otp' %}" class="text-center mt-4">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-link text-decoration-none text-white fw-semibold btn-success">
-        <i class="bi bi-arrow-repeat me-1"></i> Resend OTP
+      <!-- Verify Button -->
+      <button type="submit" form="otpForm" id="verifyBtn" class="btn-3d">
+        <span>Verify Code</span>
+        <div class="ripple"></div>
       </button>
-    </form>
 
+      <!-- Resend -->
+      <div class="resend">
+        <button type="submit" formaction="{% url 'resend_otp' %}" form="resendForm" id="resendBtn" class="btn-link" disabled>
+          <i class="bi bi-arrow-repeat"></i> Resend Code
+        </button>
+        <span class="cooldown" id="cooldown"> in <span id="cooldownSec">60</span>s</span>
+      </div>
+      <form method="post" action="{% url 'resend_otp' %}" id="resendForm">{% csrf_token %}</form>
 
-    {% endif %}
+   {% else %}
+    <!-- Success + 10-second Countdown -->
+    <div class="success-state">
+      <div class="check-icon"><i class="bi bi-check-circle-fill"></i></div>
+      <h4>Verified Successfully!</h4>
+      <p>Your estimation PDF is ready.</p>
 
-    
-    <!-- Download Button (Only after verification) -->
-  {% if download_pdf %}
- <div class="text-center mt-4">
-  <a id="downloadBtn"
-     href="{{ download_pdf }}"
-     class="btn btn-primary btn-lg rounded-pill shadow-sm px-4"
-     download>
-     📥 Download Your Estimation PDF
-  </a>
-</div>
+      <!-- Download Button + Countdown -->
+      <div class="download-wrapper">
+        <a href="{{ download_pdf }}" download id="downloadBtn" class="btn-3d download">
+          <i class="bi bi-download"></i> Download PDF
+          <div class="ripple"></div>
+        </a>
 
+        <div class="countdown-badge" id="countdownBadge">
+          Redirecting in <span id="countdownTimer">10</span>s
+        </div>
+      </div>
 
+      <!-- Auto-redirect after 10s -->
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const timerEl = document.getElementById('countdownTimer');
+          const downloadBtn = document.getElementById('downloadBtn');
+          let seconds = 10;
+
+          // Disable button initially (optional)
+          downloadBtn.style.pointerEvents = 'auto';
+          downloadBtn.style.opacity = '1';
+
+          const countdown = setInterval(() => {
+            seconds--;
+            timerEl.textContent = seconds;
+
+            // Optional: pulse effect
+            timerEl.parentElement.style.transform = 'scale(1.05)';
+            setTimeout(() => timerEl.parentElement.style.transform = '', 100);
+
+            if (seconds <= 0) {
+              clearInterval(countdown);
+              window.location.href = "{{ home_url }}";
+            }
+          }, 1000);
+
+          // Optional: Allow manual download during countdown
+          downloadBtn.addEventListener('click', (e) => {
+            clearInterval(countdown);
+            timerEl.parentElement.textContent = 'Downloading...';
+            timerEl.parentElement.style.background = '#28a745';
+          });
+        });
+      </script>
+    </div>
+  {% endif %}
+
+    <!-- Messages -->
     {% if messages %}
-      <div class="mt-3">
+      <div class="messages">
         {% for message in messages %}
-          <div class="alert alert-danger py-2 px-3">{{ message }}</div>
+          <div class="alert shake">{{ message }}</div>
         {% endfor %}
       </div>
     {% endif %}
-
-    
-<script>
-  const downloadBtn = document.getElementById("downloadBtn");
-
-  downloadBtn.addEventListener("click", function (e) {
-    // wait 2 seconds after download starts, then redirect
-    setTimeout(function () {
-      window.location.href = "{{ home_url }}";
-    }, 2000);
-  });
-</script>
-
-
-  {% endif %}
   </div>
 </div>
 
-<!-- Timer Script -->
+
+
 <script>
-  let timeLeft = 300; // 5 minutes
+document.addEventListener('DOMContentLoaded', () => {
+  // === TIMER: 5 minutes (300 seconds) ===
+  let timeLeft = 300;
   const timerEl = document.getElementById('timer');
-  const verifyBtn = document.getElementById('verifyBtn');
+  const circle = document.querySelector('.progress-ring__circle');
+  const radius = 36;
+  const circumference = 2 * Math.PI * radius;
+  circle.style.strokeDasharray = `${circumference} ${circumference}`;
+  circle.style.strokeDashoffset = circumference;
 
   const countdown = setInterval(() => {
-    let minutes = Math.floor(timeLeft / 60);
-    let seconds = timeLeft % 60;
-    timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    timeLeft--;
+    const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+    const seconds = String(timeLeft % 60).padStart(2, '0');
+    timerEl.textContent = `${minutes}:${seconds}`;
+
+    const offset = circumference - (timeLeft / 300) * circumference;
+    circle.style.strokeDashoffset = offset;
 
     if (timeLeft <= 0) {
       clearInterval(countdown);
       timerEl.textContent = "Expired";
-      timerEl.classList.remove("bg-danger");
-      timerEl.classList.add("bg-secondary");
-      verifyBtn.disabled = true;
-      verifyBtn.classList.remove("btn-success");
-      verifyBtn.classList.add("btn-secondary");
+      timerEl.style.color = "#999";
+      document.getElementById('verifyBtn').disabled = true;
+      enableResend();
     }
-    timeLeft--;
   }, 1000);
+
+  // === OTP: 4 digits ===
+  const inputs = document.querySelectorAll('.otp-box');
+  const hiddenInput = document.getElementById('otpValue');
+
+  inputs.forEach((input, index) => {
+    input.addEventListener('input', (e) => {
+      const value = e.target.value;
+      if (/^\d$/.test(value)) {
+        input.classList.add('filled');
+        if (index < 3) inputs[index + 1].focus();
+      } else {
+        e.target.value = '';
+      }
+      updateHidden();
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !input.value && index > 0) {
+        inputs[index - 1].focus();
+      }
+    });
+
+    input.addEventListener('paste', (e) => {
+      const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4);
+      paste.split('').forEach((char, i) => {
+        if (inputs[i]) {
+          inputs[i].value = char;
+          inputs[i].classList.add('filled');
+        }
+      });
+      inputs[Math.min(paste.length, 3)].focus();
+      updateHidden();
+      e.preventDefault();
+    });
+  });
+
+  function updateHidden() {
+    const otp = Array.from(inputs).map(i => i.value).join('');
+    hiddenInput.value = otp;
+    if (otp.length === 4) {
+      setTimeout(() => document.getElementById('verifyBtn').click(), 300);
+    }
+  }
+
+  // === Ripple Effect ===
+  document.querySelectorAll('.btn-3d').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      const rect = this.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height) * 2;
+      const x = e.clientX - rect.left - size / 2;
+      const y = e.clientY - rect.top - size / 2;
+
+      const ripple = document.createElement('div');
+      ripple.className = 'ripple';
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = x + 'px';
+      ripple.style.top = y + 'px';
+      this.appendChild(ripple);
+
+      setTimeout(() => ripple.remove(), 600);
+    });
+  });
+
+  // === Resend Cooldown ===
+  function enableResend() {
+    const resendBtn = document.getElementById('resendBtn');
+    const cooldownEl = document.getElementById('cooldownSec');
+    let sec = 60;
+    resendBtn.disabled = true;
+    const cd = setInterval(() => {
+      sec--;
+      cooldownEl.textContent = sec;
+      if (sec <= 0) {
+        clearInterval(cd);
+        resendBtn.disabled = false;
+        document.getElementById('cooldown').style.display = 'none';
+      }
+    }, 1000);
+  }
+
+  // Auto-focus
+  inputs[0].focus();
+});
 </script>
+
+
+
 {% endblock %}

@@ -320,15 +320,90 @@
         <li><a class="dropdown-item" href="{% url 'service'%}#TERMS">Terms & Condition</a></li>
       </ul>
     </li>
+
+
+
+
+<label class="liquid-toggle" role="group" aria-label="Quote or Budget">
+  <a href="#" data-bs-toggle="modal" data-bs-target="#designConsultantModal"
+     class="seg left" tabindex="0">
+    <i class="bi bi-chat-square-quote"></i> Quote
+  </a>
+
+  <a href="{% url 'select_platform' %}" class="seg right" tabindex="0">
+    <i class="bi bi-calculator"></i> Budget
+  </a>
+
+  <div class="glass-bubble"></div>
+</label>
+
+
+
+    <!-- Elegant Right-Side Button with Modal Trigger -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle = document.querySelector('.liquid-toggle');
+  const left  = toggle.querySelector('.left');
+  const right = toggle.querySelector('.right');
+  const modalEl = document.querySelector('#designConsultantModal');
+  let modal = null;
+
+  // Initialize modal only once
+  if (modalEl) {
+    modal = new bootstrap.Modal(modalEl, { backdrop: true, keyboard: true });
+  }
+
+  // Default state
+  toggle.classList.add('active-left');
+
+  const setActive = (side) => {
+    toggle.classList.remove('active-left', 'active-right');
+    toggle.classList.add(`active-${side}`);
+  };
+
+  // LEFT: Open modal
+  left.addEventListener('click', (e) => {
+    e.preventDefault();
+    setActive('left');
+    if (modal) modal.show();
+  });
+
+  // RIGHT: Navigate
+  right.addEventListener('click', () => {
+    setActive('right');
+  });
+
+  // Keyboard support
+  [left, right].forEach(btn => {
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        btn.click();
+      }
+    });
+  });
+
+  // CRITICAL: Remove backdrop when modal is fully hidden
+  if (modalEl) {
+    modalEl.addEventListener('hidden.bs.modal', () => {
+      // Force-remove any lingering backdrop
+      document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+        backdrop.remove();
+      });
+      // Reset body classes
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    });
+  }
+});
+</script>
+
   </ul>
 
-<!-- Elegant Right-Side Button with Modal Trigger -->
-<a href="#" 
-   data-bs-toggle="modal" 
-   data-bs-target="#designConsultantModal"
-   class="elegant-quote-btn">
-   Get Free Quote
-</a>
+
+
+
 
 
 </div>
