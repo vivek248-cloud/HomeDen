@@ -22,8 +22,8 @@ DEBUG = False
 
 
 # ✅ Force www redirect
-SECURE_SSL_REDIRECT = True
-PREPEND_WWW = True
+# SECURE_SSL_REDIRECT = True
+# PREPEND_WWW = True
 
 
 
