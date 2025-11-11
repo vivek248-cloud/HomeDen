@@ -381,7 +381,7 @@ def bedroom_projects(request):
     })
 
 def dining_projects(request):
-    projects = get_unique_projects_by_category('Dining Room')
+    projects = get_unique_projects_by_category('Dining')
     first_project = projects[0] if projects else None
     return render(request, 'elite_interior/dining_projects.html', {
         'projects': projects,
@@ -405,7 +405,7 @@ def bathroom_projects(request):
     })
 
 def kidsroom_projects(request):
-    projects = get_unique_projects_by_category('kidsroom')
+    projects = get_unique_projects_by_category("kid's room")
     first_project = projects[0] if projects else None
     return render(request, 'elite_interior/kids.html', {
         'projects': projects,
