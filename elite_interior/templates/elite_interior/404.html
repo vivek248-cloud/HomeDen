@@ -4,217 +4,426 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>404 - Home Den | Interior</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-  body {
-    margin: 0;
-    padding: 0;
-    background: #f7f7f7;
-    font-family: Arial, sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    height: 100vh;
-  }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  h1 {
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 20px;
-    text-align: center;
-    padding: 0 10px;
-  }
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      min-height: 100vh;
+      color: #fff;
+      overflow: hidden;
+    }
 
-  #game {
-    width: 90%;
-    background: linear-gradient(to bottom, #e0e0e0, #cfcfcfff);
-    max-width: 800px;
-    height: 200px;
-    border: 5px double #333;
-    overflow: hidden;
-    position: relative;
-  }
+    .container {
+      text-align: center;
+      z-index: 10;
+    }
 
-  #dino {
-    width: 44px;
-    height: 44px;
-    border-radius: 50% 50% 0 0;
-    background-color: #b9b2ff;
-    position: absolute;
-    bottom: 0;
-    left: 50px;
-  }
-
-  #cactus {
-    width: 34px;
-    height: 50px;
-    background: #dc3545;
-    position: absolute;
-    bottom: 0;
-    right: -50px;
-  }
-
-  #score {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    font-size: 20px;
-    font-weight: bold;
-    color: #333;
-  }
-
-  .home-link:hover {
-    text-decoration: underline;
-    cursor: pointer;
-  }
-
-  /* 📱 Responsive for mobiles */
-  @media (max-width: 600px) {
     h1 {
-      font-size: 1.2rem;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 2.2rem;
+      color: #ffcc00;
+      text-shadow: 3px 3px 0 #b8860b;
+      margin-bottom: 10px;
+      animation: pulse 2s infinite;
+    }
+
+    p.subtitle {
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+      color: #a0d8ff;
     }
 
     #game {
-      height: 150px; /* smaller height */
+      width: 90%;
+      max-width: 900px;
+      height: 220px;
+      background: linear-gradient(to bottom, #87CEEB 0%, #98D8C8 100%);
+      border: 8px solid #333;
+      border-radius: 15px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+      margin: 20px auto;
+      cursor: pointer;
+    }
+
+    #ground {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 15px;
+      background: repeating-linear-gradient(90deg, #5a8b3a, #5a8b3a 20px, #6b9b47 20px, #6b9b47 40px);
     }
 
     #dino {
-      width: 30px;
-      height: 30px;
-      left: 20px; /* keep dino inside */
+      width: 50px;
+      height: 50px;
+      position: absolute;
+      bottom: 15px;
+      left: 60px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30 60c-5 0-9-4-9-9 0-5 4-9 9-9s9 4 9 9-4 9-9 9zm40 0c-5 0-9-4-9-9 0-5 4-9 9-9s9 4 9 9-4 9-9 9z" fill="%23333"/><path d="M50 40c-15 0-25 10-25 20h50c0-10-10-20-25-20z" fill="%23b9b2ff"/><path d="M35 55h30v10H35z" fill="%23fff"/><path d="M40 50h20l-5-10h-10z" fill="%23b9b2ff"/></svg>') no-repeat center/contain;
+      z-index: 10;
+      transition: transform 0.1s ease;
     }
 
     #cactus {
-      width: 25px;
-      height: 40px;
+      width: 40px;
+      height: 60px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 120"><rect x="30" y="0" width="20" height="120" fill="%23dc3545"/><rect x="20" y="20" width="40" height="20" rx="5" fill="%23dc3545"/><rect x="10" y="50" width="20" height="50" rx="5" fill="%23dc3545"/><rect x="50" y="50" width="20" height="50" rx="5" fill="%23dc3545"/></svg>') no-repeat center/contain;
+      position: absolute;
+      bottom: 15px;
+      right: -60px;
+      z-index: 5;
     }
 
     #score {
-      font-size: 16px;
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1.1rem;
+      color: #333;
+      text-shadow: 2px 2px 0 #fff;
+      z-index: 20;
     }
-  }
-</style>
 
+    .btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 30px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1rem;
+      color: #fff;
+      background: #ff6b6b;
+      border: none;
+      border-radius: 10px;
+      text-decoration: none;
+      box-shadow: 0 5px 0 #c0392b;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      transform: translateY(2px);
+      box-shadow: 0 3px 0 #c0392b;
+    }
+
+    .btn:active {
+      transform: translateY(5px);
+      box-shadow: 0 0 0 #c0392b;
+    }
+
+    #game-over {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.85);
+      color: #ff6b6b;
+      padding: 25px 40px;
+      border-radius: 15px;
+      text-align: center;
+      font-family: 'Press Start 2P', cursive;
+      display: none;
+      z-index: 100;
+      border: 4px solid #ff6b6b;
+    }
+
+    #game-over h2 {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+      text-shadow: 2px 2px 0 #000;
+    }
+
+    #game-over p {
+      font-size: 1rem;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 3s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes dust {
+      0% { transform: translateX(-50%) scale(0); opacity: 1; }
+      100% { transform: translateX(-50%) scale(1.5); opacity: 0; }
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      h1 { font-size: 1.4rem; }
+      p.subtitle { font-size: 0.9rem; }
+      #game { height: 160px; }
+      #dino { width: 40px; height: 40px; left: 30px; }
+      #cactus { width: 30px; height: 50px; }
+      #score { font-size: 0.9rem; top: 10px; right: 15px; }
+      .btn { padding: 10px 20px; font-size: 0.8rem; }
+      #game-over h2 { font-size: 1.3rem; }
+    }
+  </style>
 </head>
 <body>
-  <h1>404 - Page Not Found! Play Dino 🦖</h1>
-  <div id="game">
-    <div id="dino">&nbsp;&nbsp;&nbsp;<span>o</span><span>o</span></div>
-    <div id="cactus"></div>
-    <div id="score">Score: 0</div>
-  </div>
-  <a href="{% url 'home' %}" class="home-link" style="margin-top: 20px; text-decoration: none; color: #000000ff; font-size: 32px;"> > Go to Home</a>
 
-  <script>
+  <div class="stars" id="stars"></div>
+
+  <div class="container">
+    <h1>404 - Page Not Found!</h1>
+    <p class="subtitle">But you can still play Dino Run</p>
+
+    <div id="game">
+      <div id="ground"></div>
+      <div id="dino"></div>
+      <div id="cactus"></div>
+      <div id="score">HI 000</div>
+    </div>
+
+    <a href="{% url 'home' %}" class="btn">Go to Home</a>
+  </div>
+
+  <!-- Game Over Screen -->
+  <div id="game-over">
+    <h2>Game Over!</h2>
+    <p id="final-score">Score: 0</p>
+    <button class="btn" onclick="restartGame()">Play Again</button>
+  </div>
+
+<script>
   const dino = document.getElementById("dino");
   const cactus = document.getElementById("cactus");
   const scoreDisplay = document.getElementById("score");
-  let isJumping = false;
+  const gameOverScreen = document.getElementById("game-over");
+  const finalScoreDisplay = document.getElementById("final-score");
+  const gameArea = document.getElementById("game");
+  const starsContainer = document.getElementById("stars");
+
   let score = 0;
   let gameOver = false;
+  let highScore = localStorage.getItem('dinoHighScore') || 0;
+  let cactusPosition = 900;
+  let speed = 6;
+  let multiplier = 1;
 
-  // 🖥️ Desktop controls (Space or ArrowUp)
-  document.addEventListener("keydown", function (event) {
-    if ((event.code === "Space" || event.code === "ArrowUp") && !isJumping) {
-      jump();
+  // Physics
+  let velocity = 0;
+  const GRAVITY = 0.9;
+  const JUMP_FORCE = 16;
+  let isGrounded = true;
+  let jumpAnimationFrame;          // reference to the requestAnimationFrame loop
+
+  // Update high score display
+  scoreDisplay.textContent = `HI ${String(highScore).padStart(3, '0')}  000`;
+
+  // Create twinkling stars
+  function createStars() {
+    for (let i = 0; i < 50; i++) {
+      const star = document.createElement('div');
+      star.classList.add('star');
+      const size = Math.random() * 3 + 1;
+      star.style.width = `${size}px`;
+      star.style.height = `${size}px`;
+      star.style.left = `${Math.random() * 100}%`;
+      star.style.top = `${Math.random() * 60}%`;
+      star.style.animationDelay = `${Math.random() * 3}s`;
+      starsContainer.appendChild(star);
     }
-  });
+  }
+  createStars();
 
-  // 📱 Mobile controls (tap or swipe up)
-  let touchStartY = 0;
-  document.addEventListener("touchstart", function (e) {
-    touchStartY = e.changedTouches[0].clientY;
-  });
-
-  document.addEventListener("touchend", function (e) {
-    let touchEndY = e.changedTouches[0].clientY;
-    let diffY = touchStartY - touchEndY;
-
-    if (diffY > 30 && !isJumping) {
-      // swipe up
-      jump();
-    } else if (Math.abs(diffY) < 10 && !isJumping) {
-      // simple tap
-      jump();
-    }
-  });
-
-  // 🦖 Jump logic
+  // === ENHANCED JUMP WITH PHYSICS + DUST ===
   function jump() {
-    isJumping = true;
-    let position = 0;
-    let jumpHeight = 120;
-    let jumpSpeed = 5;
+    if (!isGrounded || gameOver) return;
 
-    let upInterval = setInterval(() => {
-      if (position >= jumpHeight) {
-        clearInterval(upInterval);
-        // fall down
-        let downInterval = setInterval(() => {
-          if (position <= 0) {
-            clearInterval(downInterval);
-            isJumping = false;
-          }
-          position -= jumpSpeed;
-          dino.style.bottom = position + "px";
-          dino.style.transform = "rotate(-" + position * 4 + "deg)";
-        }, 20);
+    isGrounded = false;
+    velocity = JUMP_FORCE;
+
+    const animateJump = () => {
+      if (gameOver) {                     // stop if game ended mid-jump
+        cancelAnimationFrame(jumpAnimationFrame);
+        return;
       }
-      position += jumpSpeed;
-      dino.style.bottom = position + "px";
-      dino.style.transform = "rotate(-" + position * 4 + "deg)";
+
+      velocity -= GRAVITY;
+      const currentBottom = parseInt(dino.style.bottom) || 15;
+      let newBottom = currentBottom + velocity;
+
+      if (newBottom <= 15) {
+        newBottom = 15;
+        velocity = 0;
+        isGrounded = true;
+
+        // Dust effect on hard landing
+        if (velocity < -10) createDust();
+
+        dino.style.transform = 'rotate(0deg)';
+        cancelAnimationFrame(jumpAnimationFrame);
+        return;
+      }
+
+      dino.style.bottom = newBottom + 'px';
+      const rotation = velocity > 0
+        ? Math.min(velocity * 2.5, 45)
+        : Math.max(velocity * 2.5, -60);
+      dino.style.transform = `rotate(${rotation}deg)`;
+
+      jumpAnimationFrame = requestAnimationFrame(animateJump);
+    };
+
+    jumpAnimationFrame = requestAnimationFrame(animateJump);
+  }
+
+  // Dust effect
+  function createDust() {
+    const dust = document.createElement('div');
+    dust.textContent = 'dust';
+    dust.style.position = 'absolute';
+    dust.style.left = '50%';
+    dust.style.bottom = '20px';
+    dust.style.fontSize = '16px';
+    dust.style.color = '#ddd';
+    dust.style.pointerEvents = 'none';
+    dust.style.animation = 'dust 0.6s ease-out forwards';
+    dust.style.transform = 'translateX(-50%)';
+    dino.appendChild(dust);
+    setTimeout(() => dust.remove(), 600);
+  }
+
+  // === ENHANCED COLLISION ===
+  function checkCollision() {
+    const dinoRect = dino.getBoundingClientRect();
+    const cactusRect = cactus.getBoundingClientRect();
+    const tolerance = 5;
+
+    return (
+      dinoRect.right - tolerance > cactusRect.left &&
+      dinoRect.left + tolerance < cactusRect.right &&
+      dinoRect.bottom - tolerance > cactusRect.top &&
+      dinoRect.top < cactusRect.bottom
+    );
+  }
+
+  // === CONTROLS ===
+  document.addEventListener("keydown", e => {
+    if ((e.code === "Space" || e.code === "ArrowUp") && !gameOver) {
+      e.preventDefault();
+      jump();
+    }
+  });
+
+  let touchStartY = 0;
+  document.addEventListener("touchstart", e => touchStartY = e.changedTouches[0].clientY);
+  document.addEventListener("touchend", e => {
+    const diff = touchStartY - e.changedTouches[0].clientY;
+    if (diff > 30 && !gameOver) jump();
+  });
+
+  gameArea.addEventListener("click", () => !gameOver && jump());
+
+  // === CACTUS MOVEMENT ===
+  function moveCactus() {
+    const interval = setInterval(() => {
+      if (gameOver) {
+        clearInterval(interval);
+        return;
+      }
+
+      cactusPosition -= speed * multiplier;
+      cactus.style.right = (900 - cactusPosition) + 'px';
+
+      if (cactusPosition <= -60) {
+        cactusPosition = 900;
+        score++;
+        updateScore();
+
+        if (score % 10 === 0) {
+          speed += 0.5;
+          multiplier += 0.05;
+        }
+      }
+
+      if (checkCollision()) {
+        // ---- NEW: stop any ongoing jump immediately ----
+        cancelAnimationFrame(jumpAnimationFrame);
+        velocity = 0;
+        isGrounded = false;          // keep grounded flag false until restart
+        // ------------------------------------------------
+        endGame();
+      }
     }, 20);
   }
 
-  // 🌵 Cactus movement + collision detection
-function moveCactus() {
-  let cactusPosition = 800;
-  let speed = 5;
-  let levelUp = 5;
-  let multiplier = 1;
+  function updateScore() {
+    const currentDisplay = `HI ${String(highScore).padStart(3, '0')}  ${String(score).padStart(3, '0')}`;
+    scoreDisplay.textContent = currentDisplay;
+  }
 
-  let interval = setInterval(() => {
-    if (gameOver) {
-      clearInterval(interval);
-      return;
+  function endGame() {
+    gameOver = true;
+    if (score > highScore) {
+      highScore = score;
+      localStorage.setItem('dinoHighScore', highScore);
     }
+    finalScoreDisplay.textContent = `Score: ${score} | HI: ${highScore}`;
+    gameOverScreen.style.display = 'block';
+  }
 
-    cactusPosition -= speed * multiplier;
+  function restartGame() {
+    gameOver = false;
+    score = 0;
+    speed = 6;
+    multiplier = 1;
+    cactusPosition = 900;
+    cactus.style.right = '-60px';
+    dino.style.bottom = '15px';
+    dino.style.transform = 'rotate(0deg)';
 
-    if (cactusPosition < -50) {
-      cactusPosition = 800;
-      score++;
+    // reset jump state
+    velocity = 0;
+    isGrounded = true;
+    cancelAnimationFrame(jumpAnimationFrame);
 
-      if (score % levelUp === 0) {
-        speed += 1;
-        multiplier += 0.1;
-      }
+    gameOverScreen.style.display = 'none';
+    updateScore();
+    moveCactus();
+  }
 
-      scoreDisplay.textContent = "Score: " + score;
-    }
-
-    cactus.style.left = cactusPosition + "px";
-
-    // ✅ Better collision detection (works on mobile + desktop)
-    let dinoRect = dino.getBoundingClientRect();
-    let cactusRect = cactus.getBoundingClientRect();
-
-    if (
-      dinoRect.left < cactusRect.right &&
-      dinoRect.right > cactusRect.left &&
-      dinoRect.top < cactusRect.bottom &&
-      dinoRect.bottom > cactusRect.top
-    ) {
-      gameOver = true;
-      window.alert("💀 Game Over! Your Score: " + score);
-      window.location.reload();
-    }
-  }, 20);
-}
-
-moveCactus();
-
+  // Start game
+  moveCactus();
 </script>
-
 </body>
 </html>
