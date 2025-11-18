@@ -378,17 +378,21 @@
 
 
 
-<label class="liquid-toggle" role="group" aria-label="Quote or Budget">
+<!-- Premium 3D Liquid Toggle – Quote / Budget -->
+<label class="liquid-toggle" role="radiogroup" aria-label="Choose Quote or Budget">
   <a href="#" data-bs-toggle="modal" data-bs-target="#designConsultantModal"
-     class="seg left" tabindex="0">
-    <i class="bi bi-chat-square-quote"></i> Quote
+     class="seg left" tabindex="0" role="radio" aria-checked="true">
+    <i class="bi bi-chat-square-quote"></i>
+    <span>Quote</span>
   </a>
 
-  <a href="{% url 'select_platform' %}" class="seg right" tabindex="0">
-    <i class="bi bi-calculator"></i> Budget
+  <a href="{% url 'select_platform' %}" class="seg right" tabindex="0" role="radio">
+    <i class="bi bi-calculator"></i>
+    <span>Budget</span>
   </a>
 
-  <div class="glass-bubble"></div>
+  <!-- 3D Liquid Bubble -->
+  <div class="liquid-bubble"></div>
 </label>
 
 
