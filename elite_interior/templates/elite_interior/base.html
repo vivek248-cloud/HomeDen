@@ -281,28 +281,72 @@
           </div>
 
       
-          
-
-
           <!-- Desktop Nav -->
-        <div class="collapse navbar-collapse d-none d-lg-block" style="font-size:1.2rem;">
-          <ul class="navbar-nav ms-auto" style="text-transform:uppercase;">
-            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About Us</a></li>
+          {% comment %} <div class="collapse navbar-collapse d-none d-lg-block" style="font-size:1.2rem;">
 
-            <li class="nav-item dropdown">
-              <a class="nav-link " href="#" data-bs-toggle="dropdown">
-                Products<span class="dropdown-icon">&#9662;</span>
-              </a>                               
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{% url 'kitchen_projects' %}">KITCHEN</a></li>
-                <li><a class="dropdown-item" href="{% url 'bedroom_projects' %}">BEDROOM</a></li>
-                <li><a class="dropdown-item" href="{% url 'dining_projects' %}">DINNING</a></li>
-                <li><a class="dropdown-item" href="{% url 'living_projects' %}">LIVING ROOM</a></li>
-                <li><a class="dropdown-item" href="{% url 'bathroom_projects' %}">BATH ROOM</a></li>
-                <li><a class="dropdown-item" href="{% url 'kidsroom_projects' %}">KID'S ROOM</a></li>
-              </ul>
-            </li>
+            <ul class="navbar-nav ms-auto" style="text-transform:uppercase;">
+              <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About Us</a></li>
+              <li class="nav-item dropdown">
+                <a class="nav-link " href="#" data-bs-toggle="dropdown">
+                  Products<span class="dropdown-icon">&#9662;</span>
+                </a>                               
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{% url 'kitchen_projects' %}">KITCHEN</a></li>
+                  <li><a class="dropdown-item" href="{% url 'bedroom_projects' %}">BEDROOM</a></li>
+                  <li><a class="dropdown-item" href="{% url 'dining_projects' %}">DINNING</a></li>
+                  <li><a class="dropdown-item" href="{% url 'living_projects' %}">LIVING ROOM</a></li>
+                  <li><a class="dropdown-item" href="{% url 'bathroom_projects' %}">BATH ROOM</a></li>
+                  <li><a class="dropdown-item" href="{% url 'kidsroom_projects' %}">KID'S ROOM</a></li>
+                </ul>
+              </li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'projects' %}">Projects</a></li>
+               <li class="nav-item dropdown">
+                <a class="nav-link " href="#" data-bs-toggle="dropdown">
+                  Offers<span class="dropdown-icon">&#9662;</span>
+                </a> 
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{% url 'silver' %}">Silver</a></li>
+                  <li><a class="dropdown-item" href="{% url 'gold' %}">Gold</a></li>
+                  <li><a class="dropdown-item" href="{% url 'platinum' %}">Platinum</a></li>
+                </ul>
+              </li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'contact'%}">Contact</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'service'%}">Service</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'blog_list'%}">Blog</a></li>
+              <li class="nav-item dropdown">
+                <a class="nav-link " href="#" data-bs-toggle="dropdown">
+                  <i class="bi bi-list"></i>
+                  
+                </a> 
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{% url 'service'%}#FAQ">FAQ</a></li>
+                  <li><a class="dropdown-item" href="{% url 'service'%}#TERMS">Terms & Condition</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div> {% endcomment %}
+
+
+        <div class="collapse navbar-collapse d-none d-lg-block" style="font-size:1.2rem;">
+  <ul class="navbar-nav ms-auto" style="text-transform:uppercase;">
+    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About Us</a></li>
+
+    <li class="nav-item dropdown">
+      <a class="nav-link " href="#" data-bs-toggle="dropdown">
+        Products<span class="dropdown-icon">&#9662;</span>
+      </a>                               
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="{% url 'kitchen_projects' %}">KITCHEN</a></li>
+        <li><a class="dropdown-item" href="{% url 'bedroom_projects' %}">BEDROOM</a></li>
+        <li><a class="dropdown-item" href="{% url 'dining_projects' %}">DINNING</a></li>
+        <li><a class="dropdown-item" href="{% url 'living_projects' %}">LIVING ROOM</a></li>
+        <li><a class="dropdown-item" href="{% url 'bathroom_projects' %}">BATH ROOM</a></li>
+        <li><a class="dropdown-item" href="{% url 'kidsroom_projects' %}">KID'S ROOM</a></li>
+      </ul>
+    </li>
 
     <li class="nav-item"><a class="nav-link" href="{% url 'projects' %}">Projects</a></li>
 
@@ -334,34 +378,36 @@
 
 
 
-<!-- Premium 3D Liquid Toggle – Quote / Budget -->
-<label class="liquid-toggle" role="radiogroup" aria-label="Choose Quote or Budget">
+<label class="liquid-toggle" role="group" aria-label="Quote or Budget">
   <a href="#" data-bs-toggle="modal" data-bs-target="#designConsultantModal"
-     class="seg left" tabindex="0" role="radio" aria-checked="true">
-    <i class="bi bi-chat-square-quote"></i>
-    <span>Quote</span>
+     class="seg left" tabindex="0">
+    <i class="bi bi-chat-square-quote"></i> Quote
   </a>
 
-  <a href="{% url 'select_platform' %}" class="seg right" tabindex="0" role="radio">
-    <i class="bi bi-calculator"></i>
-    <span>Budget</span>
+  <a href="{% url 'select_platform' %}" class="seg right" tabindex="0">
+    <i class="bi bi-calculator"></i> Budget
   </a>
 
-  <!-- 3D Liquid Bubble -->
-  <div class="liquid-bubble"></div>
+  <div class="glass-bubble"></div>
 </label>
 
 
 
-   <script>
+    <!-- Elegant Right-Side Button with Modal Trigger -->
+<script>
 document.addEventListener('DOMContentLoaded', () => {
   const toggle = document.querySelector('.liquid-toggle');
-  const left = toggle.querySelector('.left');
+  const left  = toggle.querySelector('.left');
   const right = toggle.querySelector('.right');
-  const modal = document.getElementById('designConsultantModal');
-  const bsModal = modal ? new bootstrap.Modal(modal) : null;
+  const modalEl = document.querySelector('#designConsultantModal');
+  let modal = null;
 
-  // Default: Quote active
+  // Initialize modal only once
+  if (modalEl) {
+    modal = new bootstrap.Modal(modalEl, { backdrop: true, keyboard: true });
+  }
+
+  // Default state
   toggle.classList.add('active-left');
 
   const setActive = (side) => {
@@ -369,27 +415,44 @@ document.addEventListener('DOMContentLoaded', () => {
     toggle.classList.add(`active-${side}`);
   };
 
+  // LEFT: Open modal
   left.addEventListener('click', (e) => {
     e.preventDefault();
     setActive('left');
-    bsModal?.show();
+    if (modal) modal.show();
   });
 
+  // RIGHT: Navigate
   right.addEventListener('click', () => {
     setActive('right');
   });
 
   // Keyboard support
-  [left, right].forEach(el => {
-    el.addEventListener('keydown', e => {
+  [left, right].forEach(btn => {
+    btn.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        el.click();
+        btn.click();
       }
     });
   });
+
+  // CRITICAL: Remove backdrop when modal is fully hidden
+  if (modalEl) {
+    modalEl.addEventListener('hidden.bs.modal', () => {
+      // Force-remove any lingering backdrop
+      document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+        backdrop.remove();
+      });
+      // Reset body classes
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    });
+  }
 });
 </script>
+
   </ul>
 
 
