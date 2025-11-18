@@ -391,7 +391,8 @@ def delete_team_member_photo(sender, instance, **kwargs):
 from django.db import models
 
 class Ad(models.Model):
-    title = models.CharField(max_length=200)
+    
+    title = models.CharField(max_length=200 , null=True)
     description = models.TextField(blank=True, null=True)
     offer_price = models.CharField(max_length=50, blank=True, null=True)
     image = models.ImageField(upload_to='ads/')

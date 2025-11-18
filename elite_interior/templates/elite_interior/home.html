@@ -76,12 +76,12 @@
 
         <!-- Overlay Content -->
         <div class="ad-overlay">
-          <h2>{{ ad.title }}</h2>
+          {% comment %} <h2>{{ ad.title }}</h2>
           <p>{{ ad.description }}</p>
 
           {% if ad.offer_price %}
           <h3>{{ ad.offer_price }}₹</h3>
-          {% endif %}
+          {% endif %} {% endcomment %}
 
           <!-- Trigger Button -->
           <a href="#" class="btn" data-bs-toggle="modal" data-bs-target="#designConsultantModal">
