@@ -86,7 +86,7 @@
         </div>
       </div>
 
-      <!-- Step 2: Select Kitchen Shape -->
+      {% comment %} <!-- Step 2: Select Kitchen Shape -->
 <div class="step2 d-none" id="step2">
   <h5 class="fw-semibold text-success mb-3">Step 2/4: Select the shape of your kitchen</h5>
   <div class="row g-4 align-items-center">
@@ -197,7 +197,294 @@
       });
     });
   });
+</script> {% endcomment %}
+
+<!-- Step 2: Select Kitchen Shape + Accessories -->
+<!-- Step 2: Select Kitchen Shape -->
+<div class="step2 d-none" id="step2">
+  <h5 class="fw-semibold text-success mb-3">Step 2/4: Select the shape of your kitchen</h5>
+
+  <div class="row g-4 align-items-center">
+    <!-- Left: Kitchen Shape Options -->
+    <div class="col-md-6">
+      <div class="row g-3">
+        <div class="col-sm-6">
+          <label class="form-check border shadow-sm rounded-3 p-3 bg-light d-flex align-items-center cursor-pointer" for="shape_island">
+            <input class="form-check-input me-2" type="radio" name="shape" value="IsLand" id="shape_island" required>
+            <span class="fw-semibold">IsLand Platform</span>
+          </label>
+        </div>
+        <div class="col-sm-6">
+          <label class="form-check border shadow-sm rounded-3 p-3 bg-light d-flex align-items-center cursor-pointer" for="shape_lshape">
+            <input class="form-check-input me-2" type="radio" name="shape" value="l-shape" id="shape_lshape" required>
+            <span class="fw-semibold">L - Shaped Platform</span>
+          </label>
+        </div>
+        <div class="col-sm-6">
+          <label class="form-check border shadow-sm rounded-3 p-3 bg-light d-flex align-items-center cursor-pointer" for="shape_ushape">
+            <input class="form-check-input me-2" type="radio" name="shape" value="u-shape" id="shape_ushape">
+            <span class="fw-semibold">U - Shaped Platform</span>
+          </label>
+        </div>
+        <div class="col-sm-6">
+          <label class="form-check border shadow-sm rounded-3 p-3 bg-light d-flex align-items-center cursor-pointer" for="shape_parallel">
+            <input class="form-check-input me-2" type="radio" name="shape" value="parallel" id="shape_parallel">
+            <span class="fw-semibold">Parallel Shaped Platform</span>
+          </label>
+        </div>
+        <div class="col-sm-6">
+          <label class="form-check border shadow-sm rounded-3 p-3 bg-light d-flex align-items-center cursor-pointer" for="shape_singleline">
+            <input class="form-check-input me-2" type="radio" name="shape" value="singleline" id="shape_singleline">
+            <span class="fw-semibold">Single Wall Platform</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Dynamic Image -->
+    <div class="col-md-6 text-center">
+      <img id="kitchen-shape-img" 
+           src="{% static 'images/kitchen-island2.webp' %}" 
+           alt="Kitchen Shape" 
+           class="img-fluid" 
+           style="height: 250px; object-fit: cover;">
+    </div>
+  </div>
+
+<!-- Accessories Slider -->
+<div class="mt-5">
+  <h6 class="fw-semibold text-success mb-4">
+    <i class="bi bi-tools me-2"></i> Step 2.1: Accessories
+  </h6>
+
+  <!-- Accessories Carousel -->
+  <div id="accessoriesCarousel" class="carousel slide" data-bs-ride="false">
+    
+    <!-- Indicators (Pagination Dots) -->
+    <div class="carousel-indicators">
+      {% for accessory in accessories %}
+        <button type="button" 
+                data-bs-target="#accessoriesCarousel" 
+                data-bs-slide-to="{{ forloop.counter0 }}" 
+                {% if forloop.first %}class="active" aria-current="true"{% endif %}
+                aria-label="Accessory {{ forloop.counter }}"></button>
+      {% endfor %}
+    </div>
+
+    <!-- Carousel Items -->
+    <div class="carousel-inner">
+      {% for accessory in accessories %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+          <div class="d-flex justify-content-center align-items-center" style="min-height: 480px; padding: 1rem;">
+            <div class="card border-0 shadow-sm text-center p-4 p-md-5 w-100" style="max-width: 520px; border-radius: 1.2rem;">
+              
+              <!-- Image -->
+              <div class="mb-4 overflow-hidden rounded-3">
+                <img src="{{ accessory.image.url }}" 
+                    alt="{{ accessory.name }}" 
+                    class="img-fluid w-100 accessory-img"
+                    style="height: 300px; object-fit: cover; transition: transform 0.4s ease;">
+              </div>
+
+              <!-- Name -->
+              <h5 class="fw-bold text-dark mb-3">{{ accessory.name }}</h5>
+
+              <!-- Quantity Controls -->
+              <div class="d-flex justify-content-center align-items-center gap-3">
+                <button type="button" 
+                        class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold d-flex align-items-center justify-content-center"
+                        style="width: 38px; height: 38px;"
+                        onclick="updateQty('{{ forloop.counter }}', -1)">
+                  <i class="bi bi-dash"></i>
+                </button>
+
+                <input type="number" 
+                      id="qty_{{ forloop.counter }}" 
+                      name="accessory_qty_{{ accessory.id }}" 
+                      value="0" min="0"
+                      class="form-control form-control-sm text-center fw-bold"
+                      style="width: 70px; height: 38px; font-size: 1rem;"
+                      readonly>
+
+                <button type="button" 
+                        class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold d-flex align-items-center justify-content-center"
+                        style="width: 38px; height: 38px;"
+                        onclick="updateQty('{{ forloop.counter }}', 1)">
+                  <i class="bi bi-plus"></i>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <!-- Controls -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#accessoriesCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon bg-dark rounded-circle p-3 shadow" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#accessoriesCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon bg-dark rounded-circle p-3 shadow" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+</div>
+
+<!-- Navigation Buttons -->
+  <div class="d-flex justify-content-between mt-4">
+    <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(1)">Back</button>
+    <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(3)">Next</button>
+  </div>
+</div>
+
+<!-- Enhanced Styles -->
+<style>
+  /* Card & Image Hover */
+  .accessory-img {
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+  .card:hover .accessory-img {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+  }
+
+  /* Indicator Dots */
+  #accessoriesCarousel .carousel-indicators {
+    bottom: -50px;
+  }
+  #accessoriesCarousel .carousel-indicators [data-bs-target] {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ddd;
+    border: none;
+    margin: 0 4px;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+  }
+  #accessoriesCarousel .carousel-indicators .active {
+    background-color: #198754;
+    opacity: 1;
+    transform: scale(1.2);
+  }
+
+  /* Controls (Arrows) */
+  #accessoriesCarousel .carousel-control-prev,
+  #accessoriesCarousel .carousel-control-next {
+    width: 50px;
+    height: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+  }
+  #accessoriesCarousel .carousel-control-prev { left: 10px; }
+  #accessoriesCarousel .carousel-control-next { right: 10px; }
+  #accessoriesCarousel .carousel-control-prev:hover,
+  #accessoriesCarousel .carousel-control-next:hover {
+    opacity: 1;
+  }
+
+  /* Mobile Optimizations */
+  @media (max-width: 767.98px) {
+    #accessoriesCarousel .card {
+      padding: 1.5rem !important;
+      max-width: 92%;
+      margin: 0 auto;
+    }
+    #accessoriesCarousel .carousel-item {
+      min-height: 420px !important;
+    }
+    .accessory-img {
+      height: 240px !important;
+    }
+    .carousel-indicators {
+      bottom: -40px !important;
+    }
+    .carousel-control-prev,
+    .carousel-control-next {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  /* Input readonly but clickable */
+  input[readonly] {
+    background-color: #f8f9fa;
+    cursor: default;
+  }
+</style>
+
+<!-- JavaScript -->
+<script>
+  function updateQty(id, delta) {
+    const input = document.getElementById(`qty_${id}`);
+    if (!input) return;
+    
+    let value = parseInt(input.value) || 0;
+    value = Math.max(0, value + delta);
+    input.value = value;
+  }
+
+  // Optional: Enable swipe on mobile
+  document.addEventListener('DOMContentLoaded', () => {
+    const carouselEl = document.getElementById('accessoriesCarousel');
+    let startX;
+
+    carouselEl.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+    });
+
+    carouselEl.addEventListener('touchend', e => {
+      if (!startX) return;
+      const endX = e.changedTouches[0].clientX;
+      const diff = startX - endX;
+
+      if (Math.abs(diff) > 50) {  // swipe threshold
+        if (diff > 0) {
+          bootstrap.Carousel.getInstance(carouselEl)?.next();
+        } else {
+          bootstrap.Carousel.getInstance(carouselEl)?.prev();
+        }
+      }
+      startX = null;
+    });
+  });
 </script>
+
+
+
+<script>
+  // ✅ Dynamic Kitchen Shape Image
+  document.addEventListener("DOMContentLoaded", function () {
+    const radios = document.querySelectorAll('input[name="shape"]');
+    const img = document.getElementById("kitchen-shape-img");
+
+    const images = {
+      "IsLand": "{% static 'images/kitchen-island2.webp' %}",
+      "l-shape": "{% static 'images/kitchen-lshape.webp' %}",
+      "u-shape": "{% static 'images/kitchen-u-shape2.webp' %}",
+      "parallel": "{% static 'images/kitchen-parallel2.webp' %}",
+      "singleline": "{% static 'images/kitchen-singleline2.webp' %}"
+    };
+
+    radios.forEach(radio => {
+      radio.addEventListener("change", function () {
+        img.src = images[this.value] || "{% static 'images/kitchen-placeholder.webp' %}";
+      });
+    });
+  });
+
+
+</script>
+
+
+
+
+
 
 
       <!-- Step 3: Select Package -->
@@ -205,18 +492,19 @@
         <h5 class="fw-semibold text-success mb-3">Step 3/4: Choose Your Package</h5>
         <div class="row g-3 mb-4">
           {% for pkg in packages %}
-          <div class="col-sm-6">
-            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="pkg_{{ forloop.counter }}">
-              <input class="form-check-input me-2" type="radio" name="package" value="{{ pkg }}" id="pkg_{{ forloop.counter }}" required>
-              <span class="form-check-label" for="pkg_{{ forloop.counter }}">{{ pkg }}</span>
-            </label>
-          </div>
+              <div class="col-sm-6">
+                <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="pkg_{{ forloop.counter }}">
+                  <input class="form-check-input me-2" type="radio" name="package" value="{{ pkg }}" id="pkg_{{ forloop.counter }}" required>
+                  <span class="form-check-label" for="pkg_{{ forloop.counter }}">{{ pkg }}</span>
+                </label>
+              </div>
           {% endfor %}
         </div>
-        <div class="d-flex justify-content-between">
-          <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(2)">Back</button>
-          <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(4)">Next</button>
-        </div>
+
+          <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" onclick="prevStep(2)">Back</button>
+            <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(4)">Next</button>
+          </div>
       </div>
 
       <!-- Step 4: Final Form -->

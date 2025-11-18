@@ -120,7 +120,8 @@ JAZZMIN_SETTINGS["icons"] = {
         "elite_interior.Brand": "fas fa-copyright",
         "elite_interior.Unit": "fas fa-ruler-combined",
         "elite_interior.TeamMember": "fas fa-users",
-        "elite_interior.Ad": "fas fa-ad"
+        "elite_interior.Ad": "fas fa-ad",
+        "elite_interior.Accessory": "fas fa-cogs",
 }
 
 

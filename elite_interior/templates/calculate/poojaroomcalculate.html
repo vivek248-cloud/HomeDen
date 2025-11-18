@@ -14,222 +14,185 @@
   <div class="card shadow border-0 rounded-4 px-3 px-md-5 py-4 bg-white">
     <h2 class="text-center fw-bold mb-4 text-dark">
       <i class="bi bi-calculator-fill text-success me-2"></i>
-      <span class="text-muted">- Dining Estimation</span>
+      <span class="text-muted">- Pooja Room Estimation</span>
     </h2>
 
     <form method="post" id="wizardForm" action="{% url 'submit_estimation_form' %}">
       {% csrf_token %}
 
       <!-- Step 1: Select Dimension -->
-<div class="step2" id="step1">
-  <h5 class="fw-semibold text-success mb-3">
-    Step 1/4: Select the nearest Dining dimension
-  </h5>
+    <div class="step2" id="step1">
+      <h5 class="fw-semibold text-success mb-3">
+        Step 1/4: Select the nearest Bedroom dimension
+      </h5>
 
-  <div class="row g-3 mb-4">
-    {% for size in dining_sizes %}
-    <div class="col-sm-6">
-      <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dine_size_{{ forloop.counter }}">
-        <input class="form-check-input me-2" 
-               type="radio" 
-               name="size" 
-               value="{{ size }}" 
-               id="dine_size_{{ forloop.counter }}" 
-               required
-               onclick="toggleDiningSize('{{ size }}')">
-
-        <span class="fw-semibold">{{ size }}</span>
-      </label>
-    </div>
-    {% endfor %}
-  </div>
-
-  <!-- ✅ Custom Size fields -->
-  <div id="customSizeInputsDining" class="row g-3 mb-4 d-none">
-    <div class="col-6">
-      <input type="number" min="1" name="custom_length" id="custom_length" class="form-control"
-             placeholder="Length (ft)" />
-    </div>
-
-    <div class="col-6">
-      <input type="number" min="1" name="custom_width" id="custom_width" class="form-control"
-             placeholder="Width (ft)" />
-    </div>
-  </div>
-
-  <div class="text-end">
-    <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(2)">
-      Next
-    </button>
-  </div>
-</div>
-
-<script>
-function toggleDiningSize(selected) {
-  const div = document.getElementById("customSizeInputsDining");
-
-  if (selected === "Custom") {
-    div.classList.remove("d-none");
-    document.getElementById("custom_length").setAttribute("required", true);
-    document.getElementById("custom_width").setAttribute("required", true);
-  } else {
-    div.classList.add("d-none");
-    document.getElementById("custom_length").removeAttribute("required");
-    document.getElementById("custom_width").removeAttribute("required");
-  }
-}
-</script>
-
-
-<!-- Step 2: Select Dining Style -->
-<div class="step2 d-none" id="step2">
-  <h5 class="fw-semibold text-success mb-3">Step 2/4: Select the style of your Dining</h5>
-  <div class="row g-4 align-items-center">
-    <div class="col-md-6">
-      <div class="row g-3">
-
-        <!-- Transitional -->
+      <div class="row g-3 mb-4">
+        {% for size in poojaroom_sizes %}
         <div class="col-sm-6">
-          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_transitional">
+          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="bed_size_{{ forloop.counter }}">
             <input class="form-check-input me-2"
-                   type="radio"
-                   name="shape"
-                   value="Transitional Dining"
-                   id="dining_transitional"
-                   required>
-            <span class="form-check-label fw-semibold" for="dining_transitional">
-              Transitional Dining
-            </span>
+                  type="radio"
+                  name="size"
+                  value="{{ size }}"
+                  id="bed_size_{{ forloop.counter }}"
+                  required
+                  onclick="toggleBedroomSize('{{ size }}')">
+
+            <span class="fw-semibold">{{ size }}</span>
           </label>
         </div>
+        {% endfor %}
+      </div>
 
-        <!-- Modern -->
-        <div class="col-sm-6">
-          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_modern">
-            <input class="form-check-input me-2"
-                   type="radio"
-                   name="shape"
-                   value="Modern Dining"
-                   id="dining_modern">
-            <span class="form-check-label fw-semibold" for="dining_modern">
-              Modern Dining
-            </span>
-          </label>
+      <!-- ✅ Custom Size fields (same IDs as requested) -->
+      <div id="customSizeInputsBedroom" class="row g-3 mb-4 d-none">
+        <div class="col-6">
+          <input type="number" min="1" name="custom_length" id="custom_length" class="form-control"
+                placeholder="Length (ft)" />
         </div>
-
-        <!-- Contemporary -->
-        <div class="col-sm-6">
-          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_contemporary">
-            <input class="form-check-input me-2"
-                   type="radio"
-                   name="shape"
-                   value="Contemporary Dining"
-                   id="dining_contemporary">
-            <span class="form-check-label fw-semibold" for="dining_contemporary">
-              Contemporary Dining
-            </span>
-          </label>
+        <div class="col-6">
+          <input type="number" min="1" name="custom_width" id="custom_width" class="form-control"
+                placeholder="Width (ft)" />
         </div>
+      </div>
 
-        <!-- Traditional -->
-        <div class="col-sm-6">
-          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_indian">
-            <input class="form-check-input me-2"
-                   type="radio"
-                   name="shape"
-                   value="Indian Dining"
-                   id="dining_indian">
-            <span class="form-check-label fw-semibold" for="dining_indian">
-              Indian Dining
-            </span>
-          </label>
-        </div>
-
-        <!-- Farmhouse -->
-        <div class="col-sm-6">
-          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_american">
-            <input class="form-check-input me-2"
-                   type="radio"
-                   name="shape"
-                   value="American Dining"
-                   id="dining_american">
-            <span class="form-check-label fw-semibold" for="dining_american">
-              American Dining
-            </span>
-          </label>
-        </div>
-
-        <!-- Rustic -->
-        <div class="col-sm-6">
-          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_eclectic">
-            <input class="form-check-input me-2"
-                   type="radio"
-                   name="shape"
-                   value="Eclectic Dining"
-                   id="dining_eclectic">
-            <span class="form-check-label fw-semibold" for="dining_eclectic">
-              Eclectic Dining
-            </span>
-          </label>
-        </div>
-
-        <!-- Industrial -->
-        <div class="col-sm-6">
-          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_industrial">
-            <input class="form-check-input me-2"
-                   type="radio"
-                   name="shape"
-                   value="Industrial Dining"
-                   id="dining_industrial">
-            <span class="form-check-label fw-semibold" for="dining_industrial">
-              Industrial Dining
-            </span>
-          </label>
-        </div>
-
-        <!-- Mediterranean -->
-        <div class="col-sm-6">
-          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_mediterranean">
-            <input class="form-check-input me-2"
-                   type="radio"
-                   name="shape"
-                   value="Mediterranean Dining"
-                   id="dining_mediterranean">
-            <span class="form-check-label fw-semibold" for="dining_mediterranean">
-              Mediterranean Dining
-            </span>
-          </label>
-        </div>
-
-        <!-- Craftsman -->
-        <div class="col-sm-6">
-          <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="dining_tropical">
-            <input class="form-check-input me-2"
-                   type="radio"
-                   name="shape"
-                   value="Tropical Dining"
-                   id="dining_tropical">
-            <span class="form-check-label fw-semibold" for="dining_tropical">
-              Tropical Dining
-            </span>
-          </label>
-        </div>
-
+      <div class="text-end">
+        <button type="button" class="btn btn-success px-4 rounded-pill" onclick="nextStep(2)">
+          Next
+        </button>
       </div>
     </div>
 
+
+    <script>
+  function toggleBedroomSize(selected) {
+    const div = document.getElementById("customSizeInputsBedroom");
+
+    if (selected === "Custom") {
+      div.classList.remove("d-none");
+      document.getElementById("custom_length").setAttribute("required", true);
+      document.getElementById("custom_width").setAttribute("required", true);
+    } else {
+      div.classList.add("d-none");
+      document.getElementById("custom_length").removeAttribute("required");
+      document.getElementById("custom_width").removeAttribute("required");
+    }
+  }
+  </script>
+
+
+
+      <!-- Step 2: Select Bedroom Shape -->
+<div class="step2 d-none" id="step2">
+  <h5 class="fw-semibold text-success mb-3">Step 2/4: Select the style of your Pooja Room</h5>
+  <div class="row g-4 align-items-center">
+      <div class="col-md-6">
+        <div class="row g-3">
+          
+          <!-- Contemporary Bedroom -->
+          <div class="col-sm-6">
+            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="style1">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="shape" 
+                     value="Handcrafted" 
+                     id="style1" 
+                     required>
+              <span class="form-check-label fw-semibold" for="style1">
+                Handcrafted
+              </span>
+            </label>
+          </div>
+
+        <div class="col-sm-6">
+            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="style2">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="shape" 
+                     value="Vibrant Indian Family Haveli Lounge" 
+                     id="style2" 
+                     required>
+              <span class="form-check-label fw-semibold" for="style2">
+                Vibrant Indian Family Haveli Lounge
+              </span>
+            </label>
+          </div>
+
+        <div class="col-sm-6">
+            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="style3">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="shape" 
+                     value="Opulent Indian Foyer with Jali Elegance" 
+                     id="style3" 
+                     required>
+              <span class="form-check-label fw-semibold" for="style3">
+                Opulent Indian Foyer with Jali Elegance
+              </span>
+            </label>
+          </div>
+
+        <div class="col-sm-6">
+            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="style4">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="shape" 
+                     value="Sleek Modern Indian Family Retreat" 
+                     id="style4" 
+                     required>
+              <span class="form-check-label fw-semibold" for="style4">
+                Sleek Modern Indian Family Retreat
+              </span>
+            </label>
+          </div>
+
+
+        <div class="col-sm-6">
+            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="style5">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="shape" 
+                     value="Opulent Rajasthani Haveli Living Room" 
+                     id="style5" 
+                     required>
+              <span class="form-check-label fw-semibold" for="style5">
+                Opulent Rajasthani Haveli Living Room
+              </span>
+            </label>
+          </div>
+
+
+        <div class="col-sm-6">
+            <label class="form-check border shadow-sm rounded-3 p-3 h-100 bg-light d-flex align-items-center cursor-pointer" for="style6">
+              <input class="form-check-input me-2" 
+                     type="radio" 
+                     name="shape" 
+                     value="Serene Radha-Krishna Mandir Alcove" 
+                     id="style6" 
+                     required>
+              <span class="form-check-label fw-semibold" for="style6">
+                Serene Radha-Krishna Mandir Alcove
+              </span>
+            </label>
+          </div>
+
+        </div>
+      </div>
+
+
     <!-- Dynamic Image -->
     <div class="col-md-6 text-center">
-      <a id="dining-link" href="#" target="_blank">
-        <img id="dining-type-img"
-             src="https://st.hzcdn.com/simgs/a601cb6a07acc2d0_3-0745/transitional-dining-room.jpg"
-             alt="Dining Type"
-             class="img-fluid rounded-3 shadow-sm"
-             style="height: 250px; object-fit: cover;">
-      </a>
+    <a id="poojaroom-link" href="#" target="_blank">
+        <img id="poojaroom-type-img" 
+            src="https://st.hzcdn.com/simgs/fce182b40a4f556f_3-4516/living-rooms-skewed-house-studio-lagom.jpg" 
+            alt="Pooja Room Type" 
+            class="img-fluid rounded-3 shadow-sm"
+            style="height: 250px; object-fit: cover;">
+    </a>
     </div>
 
-    <!-- Accessories Slider -->
+
+<!-- Accessories Slider -->
 <div class="mt-5">
   <h6 class="fw-semibold text-success mb-4">
     <i class="bi bi-tools me-2"></i> Step 2.1: Accessories
@@ -349,6 +312,8 @@ function toggleDiningSize(selected) {
 </script>
 
 
+
+
   </div>
 
   <div class="d-flex justify-content-between mt-4">
@@ -360,47 +325,36 @@ function toggleDiningSize(selected) {
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const radios = document.querySelectorAll('input[name="shape"]');
-    const img = document.getElementById("dining-type-img");
-    const link = document.getElementById("dining-link");
+    const img = document.getElementById("poojaroom-type-img");
+    const link = document.getElementById("poojaroom-link");
 
-    // Map styles to images + links
+    // Map radio values to Houzz images + links
     const images = {
-      "Transitional Dining": {
-        src: "https://st.hzcdn.com/simgs/a601cb6a07acc2d0_3-0745/transitional-dining-room.jpg",
+      "Handcrafted": {
+        src: "https://st.hzcdn.com/simgs/fce182b40a4f556f_3-4516/living-rooms-skewed-house-studio-lagom.jpg",
         link: "#"
       },
-      "Modern Dining": {
-        src: "https://st.hzcdn.com/simgs/pictures/dining-rooms/home-19-sala-architects-homes-by-architects-tour-img~3331b41201f98756_3-1670-1-a1d2954.jpg",
+
+      "Vibrant Indian Family Haveli Lounge": {
+        src: "https://st.hzcdn.com/simgs/2e113c290fd7557e_3-3845/indian-family-room.jpg",
         link: "#"
       },
-      "Contemporary Dining": {
-        src: "https://st.hzcdn.com/simgs/6b7176b1082f065c_3-0616/contemporary-dining-room.jpg",
+      "Opulent Indian Foyer with Jali Elegance": {
+        src: "https://st.hzcdn.com/simgs/dec1baac0ce52538_3-2788/entryways-apartment-interiors-yash-arian-ahmedabad-the-design-umbrella.jpg",
         link: "#"
       },
-      "Indian Dining": {
-        src: "https://st.hzcdn.com/simgs/96f1cf07050ac603_3-7270/indian-dining-room.jpg",
+      "Sleek Modern Indian Family Retreat": {
+        src: "https://st.hzcdn.com/simgs/52d1924c0a0c76e1_3-1019/modern-family-room.jpg",
         link: "#"
       },
-      "American Dining": {
-        src: "https://st.hzcdn.com/simgs/2031988c0028b8c0_3-6231/midcentury-dining-room.jpg",
-        link: "#"
-      },
-      "Eclectic Dining": {
-        src: "https://st.hzcdn.com/simgs/pictures/sale-da-pranzo/cucine-rovegnodesign-img~8bf1b95e0748665a_3-5142-1-2a9e2f6.jpg",
-        link: "#"
-      },
-      "Industrial Dining": {
-        src: "https://st.hzcdn.com/simgs/pictures/dining-rooms/modern-industrial-studio-unit-m-s-studio-co-img~0001017f0908244f_3-2951-1-39ed0f3.jpg",
-        link: "#"
-      },
-      "Mediterranean Dining": {
-        src: "https://st.hzcdn.com/simgs/pictures/dining-rooms/dallas-edlen-residence-l-lumpkins-architect-inc-img~a921f3470a68b894_3-1100-1-113616b.jpg",
-        link: "#"
-      },
-      "Tropical Dining": {
-        src: "https://st.hzcdn.com/simgs/pictures/dining-rooms/luxury-bohemian-house-chris-laughter-photo-img~be6119e70ab48a50_3-0458-1-d0e28bc.jpg",
-        link: "#"
-      }
+        "Opulent Rajasthani Haveli Living Room": {
+            src: "https://st.hzcdn.com/simgs/0bc17f1802988983_3-3164/indian-living-room.jpg",
+            link: "#"
+        },
+        "Serene Radha-Krishna Mandir Alcove": {
+            src: "https://st.hzcdn.com/simgs/1641d41108fd929b_3-6896/living-rooms-the-residence-nandita-manwani.jpg",
+            link: "#"
+        },
     };
 
     // Change image & link when radio is selected
@@ -417,7 +371,6 @@ function toggleDiningSize(selected) {
     });
   });
 </script>
-
 
 
 

@@ -103,3 +103,8 @@ class TeamMemberAdmin(admin.ModelAdmin):
 class AdAdmin(admin.ModelAdmin):
     list_display = ("title", "offer_price", "is_active", "created_at")
     list_filter = ("is_active",)
+
+@admin.register(Accessory)
+class AccessoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "price", "category")
+    list_filter = ("price", "category")

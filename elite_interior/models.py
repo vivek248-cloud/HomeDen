@@ -342,6 +342,21 @@ def delete_product_image(sender, instance, **kwargs):
         instance.image.delete(save=False)
 
 
+class Accessory(models.Model):
+    name = models.CharField(max_length=255)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="accessories")
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    image = models.ImageField(upload_to="accessories/")
+
+    def __str__(self):
+        return self.name
+    
+# ✅ Auto delete image file when Accessory is deleted
+@receiver(post_delete, sender=Accessory)
+def delete_accessory_image(sender, instance, **kwargs):
+    if instance.image and os.path.isfile(instance.image.path):
+        instance.image.delete(save=False)
+
 
 from django.db import models
 from django.utils import timezone
@@ -385,6 +400,10 @@ class Ad(models.Model):
 
     def __str__(self):
         return self.title
+
+
+
+
 
 
 

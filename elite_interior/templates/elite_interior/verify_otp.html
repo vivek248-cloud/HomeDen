@@ -19,7 +19,7 @@
           <circle class="progress-ring__circle-bg" stroke="#e0e0e0" stroke-width="6" fill="transparent" r="36" cx="40" cy="40"/>
           <circle class="progress-ring__circle" stroke="#e64b03" stroke-width="6" fill="transparent" r="36" cx="40" cy="40"/>
         </svg>
-        <div class="timer-text" id="timer">05:00</div>
+        <div class="timer-text" id="timer">02:00</div>
       </div>
 
       <!-- OTP Inputs (4 boxes) -->
@@ -43,14 +43,29 @@
         <div class="ripple"></div>
       </button>
 
-      <!-- Resend -->
-      <div class="resend">
-        <button type="submit" formaction="{% url 'resend_otp' %}" form="resendForm" id="resendBtn" class="btn-link" disabled>
-          <i class="bi bi-arrow-repeat"></i> Resend Code
-        </button>
-        <span class="cooldown" id="cooldown"> in <span id="cooldownSec">60</span>s</span>
-      </div>
-      <form method="post" action="{% url 'resend_otp' %}" id="resendForm">{% csrf_token %}</form>
+ <div class="resend">
+  <button id="resendBtn"
+          class="btn-link"
+          form="resendForm"
+          type="submit"
+          style="text-decoration: none;"
+          disabled>
+      <i class="bi bi-arrow-repeat"></i> Resend Code
+  </button>
+
+  <span class="cooldown" id="cooldown"> in <span id="cooldownSec">5</span>s</span>
+</div>
+
+<form method="post" action="{% url 'resend_otp' %}" id="resendForm">
+  {% csrf_token %}
+  <input type="hidden" name="email" value="{{ email }}">
+
+</form>
+
+
+
+
+
 
    {% else %}
     <!-- Success + 10-second Countdown -->
@@ -67,7 +82,7 @@
         </a>
 
         <div class="countdown-badge" id="countdownBadge">
-          Redirecting in <span id="countdownTimer">10</span>s
+          Redirecting in <span id="countdownTimer">20</span>s
         </div>
       </div>
 
@@ -76,7 +91,7 @@
         document.addEventListener('DOMContentLoaded', () => {
           const timerEl = document.getElementById('countdownTimer');
           const downloadBtn = document.getElementById('downloadBtn');
-          let seconds = 10;
+          let seconds = 20;
 
           // Disable button initially (optional)
           downloadBtn.style.pointerEvents = 'auto';
@@ -97,11 +112,11 @@
           }, 1000);
 
           // Optional: Allow manual download during countdown
-          downloadBtn.addEventListener('click', (e) => {
-            clearInterval(countdown);
-            timerEl.parentElement.textContent = 'Downloading...';
-            timerEl.parentElement.style.background = '#28a745';
-          });
+          //downloadBtn.addEventListener('click', (e) => {
+           // clearInterval(countdown);
+            //timerEl.parentElement.textContent = 'Downloading...';
+            //timerEl.parentElement.style.background = '#28a745';
+          //});
         });
       </script>
     </div>
@@ -122,8 +137,8 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // === TIMER: 5 minutes (300 seconds) ===
-  let timeLeft = 300;
+  // === TIMER: 2 minutes (120 seconds) ===
+  let timeLeft = 120;
   const timerEl = document.getElementById('timer');
   const circle = document.querySelector('.progress-ring__circle');
   const radius = 36;
@@ -137,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const seconds = String(timeLeft % 60).padStart(2, '0');
     timerEl.textContent = `${minutes}:${seconds}`;
 
-    const offset = circumference - (timeLeft / 300) * circumference;
+    const offset = circumference - (timeLeft / 120) * circumference;
     circle.style.strokeDashoffset = offset;
 
     if (timeLeft <= 0) {
@@ -213,21 +228,28 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // === Resend Cooldown ===
-  function enableResend() {
+function enableResend() {
     const resendBtn = document.getElementById('resendBtn');
-    const cooldownEl = document.getElementById('cooldownSec');
-    let sec = 60;
+    const cooldown = document.getElementById('cooldown');
+    const cooldownSec = document.getElementById('cooldownSec');
+
     resendBtn.disabled = true;
+    cooldown.style.display = "inline-block"; 
+    let sec = 5;
+
     const cd = setInterval(() => {
-      sec--;
-      cooldownEl.textContent = sec;
-      if (sec <= 0) {
-        clearInterval(cd);
-        resendBtn.disabled = false;
-        document.getElementById('cooldown').style.display = 'none';
-      }
+        cooldownSec.textContent = sec;
+        sec--;
+
+        if (sec < 0) {
+            clearInterval(cd);
+            resendBtn.disabled = false;
+            cooldown.textContent = "You can resend now";
+            cooldown.style.color = "#28a745";
+        }
     }, 1000);
-  }
+}
+
 
   // Auto-focus
   inputs[0].focus();

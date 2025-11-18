@@ -442,7 +442,6 @@ from .forms import BudgetCalculationForm
 
 
 def kitchen_calculate_budget(request):
-   
 
     kitchen_sizes = [
         "7 ft. × 10 ft.",
@@ -453,15 +452,50 @@ def kitchen_calculate_budget(request):
         "Custom"
     ]
 
+    # ✅ Fetch category named "Kitchen"
+    try:
+        kitchen_category = Category.objects.get(name__iexact="kitchen")
+        accessories = Accessory.objects.filter(category=kitchen_category)
+    except Category.DoesNotExist:
+        accessories = []   # No category => no accessories
+
     packages = ['silver', 'gold', 'platinum']
 
     form = BudgetCalculationForm()
+
     context = {
         'form': form,
         'kitchen_sizes': kitchen_sizes,
         'packages': packages,
+        'accessories': accessories,
     }
     return render(request, 'calculate/kitchencalculate.html', context)
+
+
+
+# def bedroom_calculate_budget(request):
+
+#     bedroom_sizes = [
+#         "7 ft. × 10 ft.",
+#         "8 ft. × 9 ft.",
+#         "9 ft. × 10 ft.",
+#         "10 ft. × 10 ft.",
+#         "11.5 ft. × 10 ft.",
+#         "Custom"
+#     ]
+
+#     packages = ['silver', 'gold', 'platinum']
+
+#     form = BudgetCalculationForm()
+#     context = {
+#         'form': form,
+#         'bedroom_sizes': bedroom_sizes,
+#         'packages': packages,
+#     }
+#     return render(request, 'calculate/bedroomcalculate.html', context)
+
+
+
 
 def bedroom_calculate_budget(request):
 
@@ -476,14 +510,129 @@ def bedroom_calculate_budget(request):
 
     packages = ['silver', 'gold', 'platinum']
 
+    # 🔥 Load accessories using category "Bedroom"
+    bedroom_accessories = Accessory.objects.filter(category__name="bedroom")
+
     form = BudgetCalculationForm()
     context = {
         'form': form,
         'bedroom_sizes': bedroom_sizes,
         'packages': packages,
+        'accessories': bedroom_accessories,   # 👈 IMPORTANT
     }
     return render(request, 'calculate/bedroomcalculate.html', context)
 
+
+
+# def bathroom_calculate_budget(request):
+
+#     bathroom_sizes = [
+#         "7 ft. × 10 ft.",
+#         "8 ft. × 9 ft.",
+#         "9 ft. × 10 ft.",
+#         "10 ft. × 10 ft.",
+#         "11.5 ft. × 10 ft.",
+#         "Custom"
+#     ]
+
+#     packages = ['silver', 'gold', 'platinum']
+
+#     form = BudgetCalculationForm()
+#     context = {
+#         'form': form,
+#         'bathroom_sizes': bathroom_sizes,
+#         'packages': packages,
+#     }
+#     return render(request, 'calculate/bathroomcalculation.html', context)
+
+# def kidsroom_calculate_budget(request):
+
+#     kidsroom_sizes = [
+#         "7 ft. × 10 ft.",
+#         "8 ft. × 9 ft.",
+#         "9 ft. × 10 ft.",
+#         "10 ft. × 10 ft.",
+#         "11.5 ft. × 10 ft.",
+#         "Custom"
+#     ]
+
+#     packages = ['silver', 'gold', 'platinum']
+
+#     form = BudgetCalculationForm()
+#     context = {
+#         'form': form,
+#         'kids_room_sizes': kidsroom_sizes,
+#         'packages': packages,
+#     }
+#     return render(request, 'calculate/Kidsroomcalculate.html', context)
+
+
+# def livingroom_calculate_budget(request):
+
+#     livingroom_sizes = [
+#         "7 ft. × 10 ft.",
+#         "8 ft. × 9 ft.",
+#         "9 ft. × 10 ft.",
+#         "10 ft. × 10 ft.",
+#         "11.5 ft. × 10 ft.",
+#         "Custom"
+#     ]
+
+#     packages = ['silver', 'gold', 'platinum']
+
+#     form = BudgetCalculationForm()
+#     context = {
+#         'form': form,
+#         'living_room_sizes': livingroom_sizes,
+#         'packages': packages,
+#     }
+#     return render(request, 'calculate/livingroomcalculate.html', context)
+
+
+# def wardrobe_calculate_budget(request):
+
+#     wardrobe_sizes = [
+#         "7 ft. × 10 ft.",
+#         "8 ft. × 9 ft.",
+#         "9 ft. × 10 ft.",
+#         "10 ft. × 10 ft.",
+#         "11.5 ft. × 10 ft.",
+#         "Custom"
+#     ]
+
+#     packages = ['silver', 'gold', 'platinum']
+
+#     form = BudgetCalculationForm()
+#     context = {
+#         'form': form,
+#         'wardrobe_sizes': wardrobe_sizes,
+#         'packages': packages,
+#     }
+#     return render(request, 'calculate/wardrobescalculate.html', context)
+
+# def dining_calculate_budget(request):
+
+#     dining_sizes = [
+#         "7 ft. × 10 ft.",
+#         "8 ft. × 9 ft.",
+#         "9 ft. × 10 ft.",
+#         "10 ft. × 10 ft.",
+#         "11.5 ft. × 10 ft.",
+#         "Custom"
+#     ]
+
+#     packages = ['silver', 'gold', 'platinum']
+
+#     form = BudgetCalculationForm()
+#     context = {
+#         'form': form,
+#         'dining_sizes': dining_sizes,
+#         'packages': packages,
+#     }
+#     return render(request, 'calculate/diningcalculate.html', context)
+
+
+# BATHROOM
 def bathroom_calculate_budget(request):
 
     bathroom_sizes = [
@@ -497,14 +646,21 @@ def bathroom_calculate_budget(request):
 
     packages = ['silver', 'gold', 'platinum']
 
+    # Load Bathroom accessories
+    accessories = Accessory.objects.filter(category__name="Bathroom")
+
     form = BudgetCalculationForm()
     context = {
         'form': form,
         'bathroom_sizes': bathroom_sizes,
         'packages': packages,
+        'accessories': accessories,
     }
     return render(request, 'calculate/bathroomcalculation.html', context)
 
+
+
+# KIDS ROOM
 def kidsroom_calculate_budget(request):
 
     kidsroom_sizes = [
@@ -518,15 +674,21 @@ def kidsroom_calculate_budget(request):
 
     packages = ['silver', 'gold', 'platinum']
 
+    # Load Kids Room accessories
+    accessories = Accessory.objects.filter(category__name="kid's room")
+
     form = BudgetCalculationForm()
     context = {
         'form': form,
         'kids_room_sizes': kidsroom_sizes,
         'packages': packages,
+        'accessories': accessories,
     }
     return render(request, 'calculate/Kidsroomcalculate.html', context)
 
 
+
+# LIVING ROOM
 def livingroom_calculate_budget(request):
 
     livingroom_sizes = [
@@ -540,15 +702,21 @@ def livingroom_calculate_budget(request):
 
     packages = ['silver', 'gold', 'platinum']
 
+    # Load Living Room accessories
+    accessories = Accessory.objects.filter(category__name="living room")
+
     form = BudgetCalculationForm()
     context = {
         'form': form,
         'living_room_sizes': livingroom_sizes,
         'packages': packages,
+        'accessories': accessories,
     }
     return render(request, 'calculate/livingroomcalculate.html', context)
 
 
+
+# WARDROBE
 def wardrobe_calculate_budget(request):
 
     wardrobe_sizes = [
@@ -562,14 +730,45 @@ def wardrobe_calculate_budget(request):
 
     packages = ['silver', 'gold', 'platinum']
 
+    # Load Wardrobe accessories
+    accessories = Accessory.objects.filter(category__name="wardrobes")
+
     form = BudgetCalculationForm()
     context = {
         'form': form,
         'wardrobe_sizes': wardrobe_sizes,
         'packages': packages,
+        'accessories': accessories,
     }
     return render(request, 'calculate/wardrobescalculate.html', context)
 
+#pooja room
+def poojaroom_calculate_budget(request):
+
+    poojaroom_sizes = [
+        "7 ft. × 10 ft.",
+        "8 ft. × 9 ft.",
+        "9 ft. × 10 ft.",
+        "10 ft. × 10 ft.",
+        "11.5 ft. × 10 ft.",
+        "Custom"
+    ]
+
+    packages = ['silver', 'gold', 'platinum']
+
+    # Load Wardrobe accessories
+    accessories = Accessory.objects.filter(category__name="pooja room")
+
+    form = BudgetCalculationForm()
+    context = {
+        'form': form,
+        'poojaroom_sizes': poojaroom_sizes,
+        'packages': packages,
+        'accessories': accessories,
+    }
+    return render(request, 'calculate/poojaroomcalculate.html', context)
+
+# DINING
 def dining_calculate_budget(request):
 
     dining_sizes = [
@@ -583,13 +782,19 @@ def dining_calculate_budget(request):
 
     packages = ['silver', 'gold', 'platinum']
 
+    # Load Dining accessories
+    accessories = Accessory.objects.filter(category__name="Dining")
+
     form = BudgetCalculationForm()
     context = {
         'form': form,
         'dining_sizes': dining_sizes,
         'packages': packages,
+        'accessories': accessories,
     }
     return render(request, 'calculate/diningcalculate.html', context)
+
+
 
 def service(request):
     grid = WhatWeDo_Grid.objects.all()
@@ -707,6 +912,7 @@ from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.conf import settings
+from decimal import Decimal
 
 from .models import OtpVerification
 
@@ -717,10 +923,9 @@ def kitchen_submit_estimation_form(request):
         custom_length = request.POST.get("custom_length")
         custom_width = request.POST.get("custom_width")
 
-        # If custom, convert to numeric size
+        # If custom size
         if size == "Custom" and custom_length and custom_width:
             size = f"{custom_length} ft × {custom_width} ft"
-
 
         shape = request.POST.get("shape")
         package = request.POST.get("package")
@@ -729,39 +934,79 @@ def kitchen_submit_estimation_form(request):
         email = request.POST.get("email")
         location = request.POST.get("location")
 
-        # Generate OTP
+        # OTP
         otp = str(random.randint(1000, 9999))
         expiry_time = timezone.now() + timedelta(minutes=5)
 
         # Pricing logic
         if size == '7 ft. × 10 ft.':
-            price = 50000
+            price = Decimal('50000')
         elif size == '8 ft. × 9 ft.':
-            price = 60000
+            price = Decimal('60000')
         elif size == '9 ft. × 10 ft.':
-            price = 70000
+            price = Decimal('70000')
         elif size == '10 ft. × 10 ft.':
-            price = 80000
+            price = Decimal('80000')
         elif size == '11.5 ft. × 10 ft.':
-            price = 90000
-
-        elif "ft ×" in size:  # custom size logic
-            l = float(custom_length)
-            w = float(custom_width)
+            price = Decimal('90000')
+        elif "ft ×" in size:  
+            l = Decimal(custom_length)
+            w = Decimal(custom_width)
             sqft = l * w
-            price = sqft * 500  # price per sq ft — adjust your price logic
-
+            price = sqft * Decimal('500')
         else:
-            price = 0
+            price = Decimal('0')
 
+
+        # 🔥 Collect accessories using ID
+        accessories = []
+        total_accessory_cost = Decimal("0")
+
+        for key, value in request.POST.items():
+            if key.startswith("accessory_qty_"):
+                accessory_id = key.replace("accessory_qty_", "")
+
+                try:
+                    accessory_obj = Accessory.objects.get(id=accessory_id)
+                except Accessory.DoesNotExist:
+                    continue
+
+                qty = int(value)
+                if qty <= 0:
+                    continue
+
+                # SAFE PRICE
+                acc_price = accessory_obj.price or Decimal("0")
+                item_total = acc_price * qty
+
+                total_accessory_cost += item_total
+
+                accessories.append({
+                    "id": accessory_obj.id,
+                    "name": accessory_obj.name,
+                    "qty": qty,
+                    "price": float(acc_price),
+                    "total": float(item_total)
+                })
+
+
+
+
+        # Package adjustment
         if package == 'silver':
-            price *= 0.8  # Apply 20% discount
-        elif package == 'gold':
-            price *= 1.2  # Apply 20% premium
-        elif package == 'platinum':
-            price *= 1.5  # Apply 50% premium
+            price *= Decimal('0.8')
 
-        # ✅ Save or update OTP in DB (unique per email)
+        elif package == 'gold':
+            price *= Decimal('1.2')
+        elif package == 'platinum':
+            price *= Decimal('1.5')
+
+        # Add accessory cost to total price 
+        # Ensure all values are floats, not Decimal
+        price = float(price) + float(total_accessory_cost)
+
+
+        # Save / update OTP
         OtpVerification.objects.update_or_create(
             email=email,
             defaults={
@@ -770,7 +1015,7 @@ def kitchen_submit_estimation_form(request):
             }
         )
 
-        # Store form data in session (without OTP)
+        # Save all form data in session
         request.session["form_data"] = {
             "size": size,
             "shape": shape,
@@ -782,6 +1027,7 @@ def kitchen_submit_estimation_form(request):
             "location": location,
             "room_type": request.session.get("room_type"),
             "style": request.session.get("style"),
+            "accessories": accessories,
         }
 
         # Send OTP email
@@ -798,15 +1044,16 @@ def kitchen_submit_estimation_form(request):
 
 
 
-
+from decimal import Decimal
 
 def bedroom_submit_estimation_form(request):
     if request.method == "POST":
+
         size = request.POST.get("size")
         custom_length = request.POST.get("custom_length")
         custom_width = request.POST.get("custom_width")
 
-        # If custom, convert to numeric size
+        # Custom size formatting
         if size == "Custom" and custom_length and custom_width:
             size = f"{custom_length} ft × {custom_width} ft"
 
@@ -817,38 +1064,74 @@ def bedroom_submit_estimation_form(request):
         email = request.POST.get("email")
         location = request.POST.get("location")
 
-        # Generate OTP
-        otp = random.randint(1000, 9999)
+        # OTP
+        otp = str(random.randint(1000, 9999))
         expiry_time = timezone.now() + timedelta(minutes=5)
 
-        # Pricing logic
+        # Base pricing logic (converted to Decimal like kitchen)
         if size == '7 ft. × 10 ft.':
-            price = 50000
+            price = Decimal('50000')
         elif size == '8 ft. × 9 ft.':
-            price = 60000
+            price = Decimal('60000')
         elif size == '9 ft. × 10 ft.':
-            price = 70000
+            price = Decimal('70000')
         elif size == '10 ft. × 10 ft.':
-            price = 80000
+            price = Decimal('80000')
         elif size == '11.5 ft. × 10 ft.':
-            price = 90000
-        elif "ft ×" in size:  # custom size logic
-            l = float(custom_length)
-            w = float(custom_width)
+            price = Decimal('90000')
+        elif "ft ×" in size:
+            l = Decimal(custom_length)
+            w = Decimal(custom_width)
             sqft = l * w
-            price = sqft * 500  # price per sq ft — adjust your price logic
-
+            price = sqft * Decimal('500')
         else:
-            price = 0
+            price = Decimal('0')
 
+        # Package adjustment (same as kitchen)
         if package == 'silver':
-            price *= 0.8  # Apply 20% discount
+            price *= Decimal('0.8')
         elif package == 'gold':
-            price *= 1.2  # Apply 20% premium
+            price *= Decimal('1.2')
         elif package == 'platinum':
-            price *= 1.5  # Apply 50% premium
+            price *= Decimal('1.5')
 
-        # ✅ Save or update OTP in DB (unique per email)
+        # -----------------------------------------
+        # 🔥 Collect accessories (safe like kitchen)
+        # -----------------------------------------
+        accessories = []
+        total_accessory_cost = Decimal("0")
+
+        for key, value in request.POST.items():
+            if key.startswith("accessory_qty_"):
+                accessory_id = key.replace("accessory_qty_", "")
+
+                try:
+                    accessory_obj = Accessory.objects.get(id=accessory_id)
+                except Accessory.DoesNotExist:
+                    continue
+
+                qty = int(value)
+                if qty <= 0:
+                    continue
+
+                # SAFE PRICE
+                acc_price = accessory_obj.price or Decimal("0")
+                item_total = acc_price * qty
+
+                total_accessory_cost += item_total
+
+                accessories.append({
+                    "id": accessory_obj.id,
+                    "name": accessory_obj.name,
+                    "qty": qty,
+                    "price": float(acc_price),
+                    "total": float(item_total),
+                })
+
+        # FINAL PRICE = BASE PRICE + ACCESSORIES
+        final_price = float(price) + float(total_accessory_cost)
+
+        # Save OTP to DB
         OtpVerification.objects.update_or_create(
             email=email,
             defaults={
@@ -857,22 +1140,21 @@ def bedroom_submit_estimation_form(request):
             }
         )
 
-        # Store OTP + form data in session
-        request.session["otp"] = str(otp)
-        request.session["otp_expiry"] = expiry_time.isoformat()
+        # Save to session
         request.session["form_data"] = {
             "room_type": request.session.get("room_type"),
             "size": size,
             "shape": shape,
             "package": package,
-            "price": price,
+            "price": final_price,
             "name": name,
             "contact": contact,
             "email": email,
             "location": location,
+            "accessories": accessories,
         }
 
-        # Send OTP
+        # Send OTP email
         send_mail(
             subject="Your OTP for Budget Estimation Confirmation",
             message=f"Hi {name},\n\nYour OTP is: {otp}. It will expire in 5 minutes.\n\nThank you.",
@@ -885,13 +1167,20 @@ def bedroom_submit_estimation_form(request):
     return redirect("bedroom_calculate")
 
 
+
+
+
+
+from decimal import Decimal
+
 def living_submit_estimation_form(request):
     if request.method == "POST":
+
         size = request.POST.get("size")
         custom_length = request.POST.get("custom_length")
         custom_width = request.POST.get("custom_width")
 
-        # If custom, convert to numeric size
+        # Custom size formatting
         if size == "Custom" and custom_length and custom_width:
             size = f"{custom_length} ft × {custom_width} ft"
 
@@ -902,39 +1191,79 @@ def living_submit_estimation_form(request):
         email = request.POST.get("email")
         location = request.POST.get("location")
 
-        # Generate OTP
-        otp = random.randint(1000, 9999)
+        # OTP
+        otp = str(random.randint(1000, 9999))
         expiry_time = timezone.now() + timedelta(minutes=5)
 
-        # Pricing logic
+        # --------------------------
+        # 🔥 Base pricing (Decimal)
+        # --------------------------
         if size == '7 ft. × 10 ft.':
-            price = 50000
+            price = Decimal('50000')
         elif size == '8 ft. × 9 ft.':
-            price = 60000
-        elif size =='9 ft. × 10 ft.':
-            price =70000
+            price = Decimal('60000')
+        elif size == '9 ft. × 10 ft.':
+            price = Decimal('70000')
         elif size == '10 ft. × 10 ft.':
-            price = 80000
+            price = Decimal('80000')
         elif size == '11.5 ft. × 10 ft.':
-            price = 90000
-        elif "ft ×" in size:  # custom size logic
-            l = float(custom_length)
-            w = float(custom_width)
+            price = Decimal('90000')
+        elif "ft ×" in size:
+            l = Decimal(custom_length)
+            w = Decimal(custom_width)
             sqft = l * w
-            price = sqft * 500  # price per sq ft — adjust your price logic
-
+            price = sqft * Decimal('500')
         else:
-            price = 0
+            price = Decimal('0')
 
+        # --------------------------
+        # 🔥 Package adjustment
+        # --------------------------
         if package == 'silver':
-            price *= 0.8  # Apply 20% discount
+            price *= Decimal('0.8')
         elif package == 'gold':
-            price *= 1.2  # Apply 20% premium
+            price *= Decimal('1.2')
         elif package == 'platinum':
-            price *= 1.5  # Apply 50% premium
+            price *= Decimal('1.5')
 
+        # -----------------------------------------
+        # 🔥 Collect accessories (same as kitchen)
+        # -----------------------------------------
+        accessories = []
+        total_accessory_cost = Decimal("0")
 
-        # ✅ Save or update OTP in DB (unique per email)
+        for key, value in request.POST.items():
+            if key.startswith("accessory_qty_"):
+                accessory_id = key.replace("accessory_qty_", "")
+
+                try:
+                    accessory_obj = Accessory.objects.get(id=accessory_id)
+                except Accessory.DoesNotExist:
+                    continue
+
+                qty = int(value)
+                if qty <= 0:
+                    continue
+
+                acc_price = accessory_obj.price or Decimal("0")
+                item_total = acc_price * qty
+
+                total_accessory_cost += item_total
+
+                accessories.append({
+                    "id": accessory_obj.id,
+                    "name": accessory_obj.name,
+                    "qty": qty,
+                    "price": float(acc_price),
+                    "total": float(item_total)
+                })
+
+        # --------------------------
+        # 🔥 Final Price
+        # --------------------------
+        final_price = float(price) + float(total_accessory_cost)
+
+        # Save/update OTP
         OtpVerification.objects.update_or_create(
             email=email,
             defaults={
@@ -943,22 +1272,21 @@ def living_submit_estimation_form(request):
             }
         )
 
-        # Store OTP + form data in session
-        request.session["otp"] = str(otp)
-        request.session["otp_expiry"] = expiry_time.isoformat()
+        # Save session data
         request.session["form_data"] = {
-            "room_type": request.session.get("room_type"),  # ✅ Pull it from session
+            "room_type": request.session.get("room_type"),
             "size": size,
             "shape": shape,
             "package": package,
-            "price": price,
+            "price": final_price,
             "name": name,
             "contact": contact,
             "email": email,
             "location": location,
+            "accessories": accessories,
         }
 
-        # Send OTP
+        # Send OTP email
         send_mail(
             subject="Your OTP for Budget Estimation Confirmation",
             message=f"Hi {name},\n\nYour OTP is: {otp}. It will expire in 5 minutes.\n\nThank you.",
@@ -970,13 +1298,102 @@ def living_submit_estimation_form(request):
 
     return redirect("living_room_calculate")
 
+
+# def bathroom_submit_estimation_form(request):
+#     if request.method == "POST":
+#         size = request.POST.get("size")
+#         custom_length = request.POST.get("custom_length")
+#         custom_width = request.POST.get("custom_width")
+
+#         # If custom, convert to numeric size
+#         if size == "Custom" and custom_length and custom_width:
+#             size = f"{custom_length} ft × {custom_width} ft"
+
+#         shape = request.POST.get("shape")
+#         package = request.POST.get("package")
+#         name = request.POST.get("name")
+#         contact = request.POST.get("contact")
+#         email = request.POST.get("email")
+#         location = request.POST.get("location")
+
+#         # Generate OTP
+#         otp = random.randint(1000, 9999)
+#         expiry_time = timezone.now() + timedelta(minutes=5)
+
+#         # Pricing logic
+#         if size == '7 ft. × 10 ft.':
+#             price = 50000
+#         elif size == '8 ft. × 9 ft.':
+#             price = 60000
+#         elif size == '9 ft. × 10 ft.':
+#             price = 70000
+#         elif size == '10 ft. × 10 ft.':
+#             price = 80000
+#         elif size == '11.5 ft. × 10 ft.':
+#             price = 90000
+#         elif "ft ×" in size:  # custom size logic
+#             l = float(custom_length)
+#             w = float(custom_width)
+#             sqft = l * w
+#             price = sqft * 500  # price per sq ft — adjust your price logic
+#         else:
+#             price = 0
+
+
+#         if package == 'silver':
+#             price *= 0.8  # Apply 20% discount
+#         elif package == 'gold':
+#             price *= 1.2  # Apply 20% premium
+#         elif package == 'platinum':
+#             price *= 1.5  # Apply 50% premium
+
+
+#         # ✅ Save or update OTP in DB (unique per email)
+#         OtpVerification.objects.update_or_create(
+#             email=email,
+#             defaults={
+#                 "otp": otp,
+#                 "expires_at": expiry_time
+#             }
+#         )
+
+#         # Store OTP + form data in session
+#         request.session["otp"] = str(otp)
+#         request.session["otp_expiry"] = expiry_time.isoformat()
+#         request.session["form_data"] = {
+#             "room_type": request.session.get("room_type", "N/A"),
+#             "size": size,
+#             "shape": shape,
+#             "package": package,
+#             "price": price,
+#             "name": name,
+#             "contact": contact,
+#             "email": email,
+#             "location": location,
+#         }
+
+#         # Send OTP
+#         send_mail(
+#             subject="Your OTP for Budget Estimation Confirmation",
+#             message=f"Hi {name},\n\nYour OTP is: {otp}. It will expire in 5 minutes.\n\nThank you.",
+#             from_email=settings.DEFAULT_FROM_EMAIL,
+#             recipient_list=[email],
+#         )
+
+#         return render(request, "elite_interior/verify_otp.html", {"email": email, "name": name})
+
+#     return redirect("bath_room_calculate")
+
+from decimal import Decimal
+
 def bathroom_submit_estimation_form(request):
     if request.method == "POST":
+
         size = request.POST.get("size")
         custom_length = request.POST.get("custom_length")
         custom_width = request.POST.get("custom_width")
 
-        # If custom, convert to numeric size
+        # Custom size formatting
         if size == "Custom" and custom_length and custom_width:
             size = f"{custom_length} ft × {custom_width} ft"
 
@@ -987,66 +1404,90 @@ def bathroom_submit_estimation_form(request):
         email = request.POST.get("email")
         location = request.POST.get("location")
 
-        # Generate OTP
-        otp = random.randint(1000, 9999)
+        otp = str(random.randint(1000, 9999))
         expiry_time = timezone.now() + timedelta(minutes=5)
 
-        # Pricing logic
+        # Pricing (Base)
         if size == '7 ft. × 10 ft.':
-            price = 50000
+            price = Decimal('50000')
         elif size == '8 ft. × 9 ft.':
-            price = 60000
+            price = Decimal('60000')
         elif size == '9 ft. × 10 ft.':
-            price = 70000
+            price = Decimal('70000')
         elif size == '10 ft. × 10 ft.':
-            price = 80000
+            price = Decimal('80000')
         elif size == '11.5 ft. × 10 ft.':
-            price = 90000
-        elif "ft ×" in size:  # custom size logic
-            l = float(custom_length)
-            w = float(custom_width)
+            price = Decimal('90000')
+
+        elif "ft ×" in size:
+            l = Decimal(custom_length)
+            w = Decimal(custom_width)
             sqft = l * w
-            price = sqft * 500  # price per sq ft — adjust your price logic
+            price = sqft * Decimal('500')
+
         else:
-            price = 0
+            price = Decimal('0')
 
-
+        # Package adjustment
         if package == 'silver':
-            price *= 0.8  # Apply 20% discount
+            price *= Decimal('0.8')
         elif package == 'gold':
-            price *= 1.2  # Apply 20% premium
+            price *= Decimal('1.2')
         elif package == 'platinum':
-            price *= 1.5  # Apply 50% premium
+            price *= Decimal('1.5')
 
+        # Accessory collection
+        accessories = []
+        total_accessory_cost = Decimal("0")
 
-        # ✅ Save or update OTP in DB (unique per email)
+        for key, value in request.POST.items():
+            if key.startswith("accessory_qty_"):
+                acc_id = key.replace("accessory_qty_", "")
+
+                try:
+                    acc_obj = Accessory.objects.get(id=acc_id)
+                except Accessory.DoesNotExist:
+                    continue
+
+                qty = int(value)
+                if qty <= 0:
+                    continue
+
+                acc_price = acc_obj.price or Decimal("0")
+                item_total = acc_price * qty
+                total_accessory_cost += item_total
+
+                accessories.append({
+                    "id": acc_obj.id,
+                    "name": acc_obj.name,
+                    "qty": qty,
+                    "price": float(acc_price),
+                    "total": float(item_total)
+                })
+
+        final_price = float(price + total_accessory_cost)
+
         OtpVerification.objects.update_or_create(
             email=email,
-            defaults={
-                "otp": otp,
-                "expires_at": expiry_time
-            }
+            defaults={"otp": otp, "expires_at": expiry_time}
         )
 
-        # Store OTP + form data in session
-        request.session["otp"] = str(otp)
-        request.session["otp_expiry"] = expiry_time.isoformat()
         request.session["form_data"] = {
-            "room_type": request.session.get("room_type", "N/A"),
+            "room_type": "bathroom",
             "size": size,
             "shape": shape,
             "package": package,
-            "price": price,
+            "price": final_price,
             "name": name,
             "contact": contact,
             "email": email,
             "location": location,
+            "accessories": accessories,
         }
 
-        # Send OTP
         send_mail(
             subject="Your OTP for Budget Estimation Confirmation",
-            message=f"Hi {name},\n\nYour OTP is: {otp}. It will expire in 5 minutes.\n\nThank you.",
+            message=f"Hi {name}, your OTP is {otp}. It expires in 5 minutes.",
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[email],
         )
@@ -1056,16 +1497,20 @@ def bathroom_submit_estimation_form(request):
     return redirect("bath_room_calculate")
 
 
+
+
+
+
+
 def dining_submit_estimation_form(request):
     if request.method == "POST":
+
         size = request.POST.get("size")
         custom_length = request.POST.get("custom_length")
         custom_width = request.POST.get("custom_width")
 
-        # If custom, convert to numeric size
         if size == "Custom" and custom_length and custom_width:
             size = f"{custom_length} ft × {custom_width} ft"
-
 
         shape = request.POST.get("shape")
         package = request.POST.get("package")
@@ -1074,66 +1519,84 @@ def dining_submit_estimation_form(request):
         email = request.POST.get("email")
         location = request.POST.get("location")
 
-        # Generate OTP
-        otp = random.randint(1000, 9999)
+        otp = str(random.randint(1000, 9999))
         expiry_time = timezone.now() + timedelta(minutes=5)
 
-        # Pricing logic
+        # Pricing
         if size == '7 ft. × 10 ft.':
-            price = 50000
+            price = Decimal('50000')
         elif size == '8 ft. × 9 ft.':
-            price = 60000
+            price = Decimal('60000')
         elif size == '9 ft. × 10 ft.':
-            price = 70000
+            price = Decimal('70000')
         elif size == '10 ft. × 10 ft.':
-            price = 80000
+            price = Decimal('80000')
         elif size == '11.5 ft. × 10 ft.':
-            price = 90000
-        elif "ft ×" in size:  # custom size logic
-            l = float(custom_length)
-            w = float(custom_width)
-            sqft = l * w
-            price = sqft * 500  # price per sq ft — adjust your price logic
+            price = Decimal('90000')
+        elif "ft ×" in size:
+            price = Decimal(custom_length) * Decimal(custom_width) * Decimal('500')
         else:
-            price = 0
-
+            price = Decimal('0')
 
         if package == 'silver':
-            price *= 0.8  # Apply 20% discount
+            price *= Decimal('0.8')
         elif package == 'gold':
-            price *= 1.2  # Apply 20% premium
+            price *= Decimal('1.2')
         elif package == 'platinum':
-            price *= 1.5  # Apply 50% premium
+            price *= Decimal('1.5')
 
+        accessories = []
+        total_accessory_cost = Decimal("0")
 
-        # ✅ Save or update OTP in DB (unique per email)
+        for key, value in request.POST.items():
+            if key.startswith("accessory_qty_"):
+                acc_id = key.replace("accessory_qty_", "")
+
+                try:
+                    acc_obj = Accessory.objects.get(id=acc_id)
+                except Accessory.DoesNotExist:
+                    continue
+
+                qty = int(value)
+                if qty <= 0:
+                    continue
+
+                acc_price = acc_obj.price or Decimal("0")
+                item_total = acc_price * qty
+
+                total_accessory_cost += item_total
+
+                accessories.append({
+                    "id": acc_obj.id,
+                    "name": acc_obj.name,
+                    "qty": qty,
+                    "price": float(acc_price),
+                    "total": float(item_total)
+                })
+
+        final_price = float(price + total_accessory_cost)
+
         OtpVerification.objects.update_or_create(
             email=email,
-            defaults={
-                "otp": otp,
-                "expires_at": expiry_time
-            }
+            defaults={"otp": otp, "expires_at": expiry_time}
         )
 
-        # Store OTP + form data in session
-        request.session["otp"] = str(otp)
-        request.session["otp_expiry"] = expiry_time.isoformat()
         request.session["form_data"] = {
-            "room_type": request.session.get("room_type", "N/A"),
+            "room_type": "dining",
             "size": size,
             "shape": shape,
             "package": package,
-            "price": price,
+            "price": final_price,
             "name": name,
             "contact": contact,
             "email": email,
             "location": location,
+            "accessories": accessories,
         }
 
-        # Send OTP
         send_mail(
             subject="Your OTP for Budget Estimation Confirmation",
-            message=f"Hi {name},\n\nYour OTP is: {otp}. It will expire in 5 minutes.\n\nThank you.",
+            message=f"Hi {name}, your OTP is {otp}.",
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[email],
         )
@@ -1142,13 +1605,102 @@ def dining_submit_estimation_form(request):
 
     return redirect("dining_calculate")
 
+
+# def kids_submit_estimation_form(request):
+#     if request.method == "POST":
+#         size = request.POST.get("size")
+#         custom_length = request.POST.get("custom_length")
+#         custom_width = request.POST.get("custom_width")
+
+#         # If custom, convert to numeric size
+#         if size == "Custom" and custom_length and custom_width:
+#             size = f"{custom_length} ft × {custom_width} ft"
+
+#         shape = request.POST.get("shape")
+#         package = request.POST.get("package")
+#         name = request.POST.get("name")
+#         contact = request.POST.get("contact")
+#         email = request.POST.get("email")
+#         location = request.POST.get("location")
+
+#         # Generate OTP
+#         otp = random.randint(1000, 9999)
+#         expiry_time = timezone.now() + timedelta(minutes=5)
+
+#         # Pricing logic
+#         if size == '7 ft. × 10 ft.':
+#             price = 50000
+#         elif size == '8 ft. × 9 ft.':
+#             price = 60000
+#         elif size == '9 ft. × 10 ft.':
+#             price = 70000
+#         elif size == '10 ft. × 10 ft.':
+#             price = 80000
+#         elif size == '11.5 ft. × 10 ft.':
+#             price = 90000
+#         elif "ft ×" in size:  # custom size logic
+#             l = float(custom_length)
+#             w = float(custom_width)
+#             sqft = l * w
+#             price = sqft * 500  # price per sq ft — adjust your price logic
+#         else:
+#             price = 0
+
+#         if package == 'silver':
+#             price *= 0.8  # Apply 20% discount
+#         elif package == 'gold':
+#             price *= 1.2  # Apply 20% premium
+#         elif package == 'platinum':
+#             price *= 1.5  # Apply 50% premium
+
+
+#         # ✅ Save or update OTP in DB (unique per email)
+#         OtpVerification.objects.update_or_create(
+#             email=email,
+#             defaults={
+#                 "otp": otp,
+#                 "expires_at": expiry_time
+#             }
+#         )
+
+#         # Store OTP + form data in session
+#         request.session["otp"] = str(otp)
+#         request.session["otp_expiry"] = expiry_time.isoformat()
+#         request.session["form_data"] = {
+#             "room_type": request.session.get("room_type", "N/A"),
+#             "size": size,
+#             "shape": shape,
+#             "package": package,
+#             "price": price,
+#             "name": name,
+#             "contact": contact,
+#             "email": email,
+#             "location": location,
+#         }
+
+#         # Send OTP
+#         send_mail(
+#             subject="Your OTP for Budget Estimation Confirmation",
+#             message=f"Hi {name},\n\nYour OTP is: {otp}. It will expire in 5 minutes.\n\nThank you.",
+#             from_email=settings.DEFAULT_FROM_EMAIL,
+#             recipient_list=[email],
+#         )
+
+#         return render(request, "elite_interior/verify_otp.html", {"email": email, "name": name})
+
+#     return redirect("kids_room_calculate")
+
+
+
+from decimal import Decimal
+
 def kids_submit_estimation_form(request):
     if request.method == "POST":
+
         size = request.POST.get("size")
         custom_length = request.POST.get("custom_length")
         custom_width = request.POST.get("custom_width")
 
-        # If custom, convert to numeric size
         if size == "Custom" and custom_length and custom_width:
             size = f"{custom_length} ft × {custom_width} ft"
 
@@ -1159,65 +1711,84 @@ def kids_submit_estimation_form(request):
         email = request.POST.get("email")
         location = request.POST.get("location")
 
-        # Generate OTP
-        otp = random.randint(1000, 9999)
+        otp = str(random.randint(1000, 9999))
         expiry_time = timezone.now() + timedelta(minutes=5)
 
-        # Pricing logic
+        # Pricing
         if size == '7 ft. × 10 ft.':
-            price = 50000
+            price = Decimal('50000')
         elif size == '8 ft. × 9 ft.':
-            price = 60000
+            price = Decimal('60000')
         elif size == '9 ft. × 10 ft.':
-            price = 70000
+            price = Decimal('70000')
         elif size == '10 ft. × 10 ft.':
-            price = 80000
+            price = Decimal('80000')
         elif size == '11.5 ft. × 10 ft.':
-            price = 90000
-        elif "ft ×" in size:  # custom size logic
-            l = float(custom_length)
-            w = float(custom_width)
-            sqft = l * w
-            price = sqft * 500  # price per sq ft — adjust your price logic
+            price = Decimal('90000')
+        elif "ft ×" in size:
+            price = Decimal(custom_length) * Decimal(custom_width) * Decimal('500')
         else:
-            price = 0
+            price = Decimal('0')
 
         if package == 'silver':
-            price *= 0.8  # Apply 20% discount
+            price *= Decimal('0.8')
         elif package == 'gold':
-            price *= 1.2  # Apply 20% premium
+            price *= Decimal('1.2')
         elif package == 'platinum':
-            price *= 1.5  # Apply 50% premium
+            price *= Decimal('1.5')
 
+        # Accessories
+        accessories = []
+        total_accessory_cost = Decimal("0")
 
-        # ✅ Save or update OTP in DB (unique per email)
+        for key, value in request.POST.items():
+            if key.startswith("accessory_qty_"):
+                acc_id = key.replace("accessory_qty_", "")
+
+                try:
+                    acc_obj = Accessory.objects.get(id=acc_id)
+                except Accessory.DoesNotExist:
+                    continue
+
+                qty = int(value)
+                if qty <= 0:
+                    continue
+
+                acc_price = acc_obj.price or Decimal("0")
+                item_total = acc_price * qty
+                total_accessory_cost += item_total
+
+                accessories.append({
+                    "id": acc_obj.id,
+                    "name": acc_obj.name,
+                    "qty": qty,
+                    "price": float(acc_price),
+                    "total": float(item_total)
+                })
+
+        final_price = float(price + total_accessory_cost)
+
         OtpVerification.objects.update_or_create(
             email=email,
-            defaults={
-                "otp": otp,
-                "expires_at": expiry_time
-            }
+            defaults={"otp": otp, "expires_at": expiry_time}
         )
 
-        # Store OTP + form data in session
-        request.session["otp"] = str(otp)
-        request.session["otp_expiry"] = expiry_time.isoformat()
         request.session["form_data"] = {
-            "room_type": request.session.get("room_type", "N/A"),
+            "room_type": "kids room",
             "size": size,
             "shape": shape,
             "package": package,
-            "price": price,
+            "price": final_price,
             "name": name,
             "contact": contact,
             "email": email,
             "location": location,
+            "accessories": accessories,
         }
 
-        # Send OTP
         send_mail(
             subject="Your OTP for Budget Estimation Confirmation",
-            message=f"Hi {name},\n\nYour OTP is: {otp}. It will expire in 5 minutes.\n\nThank you.",
+            message=f"Hi {name}, your OTP is {otp}.",
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[email],
         )
@@ -1227,13 +1798,103 @@ def kids_submit_estimation_form(request):
     return redirect("kids_room_calculate")
 
 
+# def wardrobes_submit_estimation_form(request):
+#     if request.method == "POST":
+#         size = request.POST.get("size")
+#         custom_length = request.POST.get("custom_length")
+#         custom_width = request.POST.get("custom_width")
+
+#         # If custom, convert to numeric size
+#         if size == "Custom" and custom_length and custom_width:
+#             size = f"{custom_length} ft × {custom_width} ft"
+
+#         shape = request.POST.get("shape")
+#         package = request.POST.get("package")
+#         name = request.POST.get("name")
+#         contact = request.POST.get("contact")
+#         email = request.POST.get("email")
+#         location = request.POST.get("location")
+
+#         # Generate OTP
+#         otp = random.randint(1000, 9999)
+#         expiry_time = timezone.now() + timedelta(minutes=5)
+
+#         # Pricing logic
+#         if size == '7 ft. × 10 ft.':
+#             price = 50000
+#         elif size == '8 ft. × 9 ft.':
+#             price = 60000
+#         elif size == '9 ft. × 10 ft.':
+#             price = 70000
+#         elif size == '10 ft. × 10 ft.':
+#             price = 80000
+#         elif size == '11.5 ft. × 10 ft.':
+#             price = 90000
+#         elif "ft ×" in size:  # custom size logic
+#             l = float(custom_length)
+#             w = float(custom_width)
+#             sqft = l * w
+#             price = sqft * 500  # price per sq ft — adjust your price logic
+#         else:
+#             price = 0
+
+
+#         if package == 'silver':
+#             price *= 0.8  # Apply 20% discount
+#         elif package == 'gold':
+#             price *= 1.2  # Apply 20% premium
+#         elif package == 'platinum':
+#             price *= 1.5  # Apply 50% premium
+
+
+
+#         # ✅ Save or update OTP in DB (unique per email)
+#         OtpVerification.objects.update_or_create(
+#             email=email,
+#             defaults={
+#                 "otp": otp,
+#                 "expires_at": expiry_time
+#             }
+#         )
+
+#         # Store OTP + form data in session
+#         request.session["otp"] = str(otp)
+#         request.session["otp_expiry"] = expiry_time.isoformat()
+#         request.session["form_data"] = {
+#             "room_type": request.session.get("room_type", "N/A"),
+#             "size": size,
+#             "shape": shape,
+#             "package": package,
+#             "price": price,
+#             "name": name,
+#             "contact": contact,
+#             "email": email,
+#             "location": location,
+#         }
+
+#         # Send OTP
+#         send_mail(
+#             subject="Your OTP for Budget Estimation Confirmation",
+#             message=f"Hi {name},\n\nYour OTP is: {otp}. It will expire in 5 minutes.\n\nThank you.",
+#             from_email=settings.DEFAULT_FROM_EMAIL,
+#             recipient_list=[email],
+#         )
+
+#         return render(request, "elite_interior/verify_otp.html", {"email": email, "name": name})
+
+#     return redirect("wardrobes_calculate")
+
+
+
+from decimal import Decimal
+
 def wardrobes_submit_estimation_form(request):
     if request.method == "POST":
+
         size = request.POST.get("size")
         custom_length = request.POST.get("custom_length")
         custom_width = request.POST.get("custom_width")
 
-        # If custom, convert to numeric size
         if size == "Custom" and custom_length and custom_width:
             size = f"{custom_length} ft × {custom_width} ft"
 
@@ -1244,40 +1905,182 @@ def wardrobes_submit_estimation_form(request):
         email = request.POST.get("email")
         location = request.POST.get("location")
 
-        # Generate OTP
-        otp = random.randint(1000, 9999)
+        otp = str(random.randint(1000, 9999))
         expiry_time = timezone.now() + timedelta(minutes=5)
 
-        # Pricing logic
+        # Pricing
         if size == '7 ft. × 10 ft.':
-            price = 50000
+            price = Decimal('50000')
         elif size == '8 ft. × 9 ft.':
-            price = 60000
+            price = Decimal('60000')
         elif size == '9 ft. × 10 ft.':
-            price = 70000
+            price = Decimal('70000')
         elif size == '10 ft. × 10 ft.':
-            price = 80000
+            price = Decimal('80000')
         elif size == '11.5 ft. × 10 ft.':
-            price = 90000
-        elif "ft ×" in size:  # custom size logic
-            l = float(custom_length)
-            w = float(custom_width)
-            sqft = l * w
-            price = sqft * 500  # price per sq ft — adjust your price logic
+            price = Decimal('90000')
+        elif "ft ×" in size:
+            price = Decimal(custom_length) * Decimal(custom_width) * Decimal('500')
         else:
-            price = 0
-
+            price = Decimal('0')
 
         if package == 'silver':
-            price *= 0.8  # Apply 20% discount
+            price *= Decimal('0.8')
         elif package == 'gold':
-            price *= 1.2  # Apply 20% premium
+            price *= Decimal('1.2')
         elif package == 'platinum':
-            price *= 1.5  # Apply 50% premium
+            price *= Decimal('1.5')
+
+        # Accessories
+        accessories = []
+        total_accessory_cost = Decimal("0")
+
+        for key, value in request.POST.items():
+            if key.startswith("accessory_qty_"):
+                acc_id = key.replace("accessory_qty_", "")
+
+                try:
+                    acc_obj = Accessory.objects.get(id=acc_id)
+                except Accessory.DoesNotExist:
+                    continue
+
+                qty = int(value)
+                if qty <= 0:
+                    continue
+
+                acc_price = acc_obj.price or Decimal("0")
+                item_total = acc_price * qty
+
+                total_accessory_cost += item_total
+
+                accessories.append({
+                    "id": acc_obj.id,
+                    "name": acc_obj.name,
+                    "qty": qty,
+                    "price": float(acc_price),
+                    "total": float(item_total)
+                })
+
+        final_price = float(price + total_accessory_cost)
+
+        OtpVerification.objects.update_or_create(
+            email=email,
+            defaults={"otp": otp, "expires_at": expiry_time}
+        )
+
+        request.session["form_data"] = {
+            "room_type": "wardrobes",
+            "size": size,
+            "shape": shape,
+            "package": package,
+            "price": final_price,
+            "name": name,
+            "contact": contact,
+            "email": email,
+            "location": location,
+            "accessories": accessories,
+        }
+
+        send_mail(
+            subject="Your OTP for Budget Estimation Confirmation",
+            message=f"Hi {name}, your OTP is {otp}.",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+        )
+
+        return render(request, "elite_interior/verify_otp.html", {"email": email, "name": name})
+
+    return redirect("wardrobes_calculate")
 
 
+from decimal import Decimal
 
-        # ✅ Save or update OTP in DB (unique per email)
+def poojaroom_submit_estimation_form(request):
+    if request.method == "POST":
+
+        size = request.POST.get("size")
+        custom_length = request.POST.get("custom_length")
+        custom_width = request.POST.get("custom_width")
+
+        # Custom size formatting
+        if size == "Custom" and custom_length and custom_width:
+            size = f"{custom_length} ft × {custom_width} ft"
+
+        shape = request.POST.get("shape")
+        package = request.POST.get("package")
+        name = request.POST.get("name")
+        contact = request.POST.get("contact")
+        email = request.POST.get("email")
+        location = request.POST.get("location")
+
+        # OTP
+        otp = str(random.randint(1000, 9999))
+        expiry_time = timezone.now() + timedelta(minutes=5)
+
+        # Base pricing logic (converted to Decimal like kitchen)
+        if size == '7 ft. × 10 ft.':
+            price = Decimal('50000')
+        elif size == '8 ft. × 9 ft.':
+            price = Decimal('60000')
+        elif size == '9 ft. × 10 ft.':
+            price = Decimal('70000')
+        elif size == '10 ft. × 10 ft.':
+            price = Decimal('80000')
+        elif size == '11.5 ft. × 10 ft.':
+            price = Decimal('90000')
+        elif "ft ×" in size:
+            l = Decimal(custom_length)
+            w = Decimal(custom_width)
+            sqft = l * w
+            price = sqft * Decimal('500')
+        else:
+            price = Decimal('0')
+
+        # Package adjustment (same as kitchen)
+        if package == 'silver':
+            price *= Decimal('0.8')
+        elif package == 'gold':
+            price *= Decimal('1.2')
+        elif package == 'platinum':
+            price *= Decimal('1.5')
+
+        # -----------------------------------------
+        # 🔥 Collect accessories (safe like kitchen)
+        # -----------------------------------------
+        accessories = []
+        total_accessory_cost = Decimal("0")
+
+        for key, value in request.POST.items():
+            if key.startswith("accessory_qty_"):
+                accessory_id = key.replace("accessory_qty_", "")
+
+                try:
+                    accessory_obj = Accessory.objects.get(id=accessory_id)
+                except Accessory.DoesNotExist:
+                    continue
+
+                qty = int(value)
+                if qty <= 0:
+                    continue
+
+                # SAFE PRICE
+                acc_price = accessory_obj.price or Decimal("0")
+                item_total = acc_price * qty
+
+                total_accessory_cost += item_total
+
+                accessories.append({
+                    "id": accessory_obj.id,
+                    "name": accessory_obj.name,
+                    "qty": qty,
+                    "price": float(acc_price),
+                    "total": float(item_total),
+                })
+
+        # FINAL PRICE = BASE PRICE + ACCESSORIES
+        final_price = float(price) + float(total_accessory_cost)
+
+        # Save OTP to DB
         OtpVerification.objects.update_or_create(
             email=email,
             defaults={
@@ -1286,22 +2089,21 @@ def wardrobes_submit_estimation_form(request):
             }
         )
 
-        # Store OTP + form data in session
-        request.session["otp"] = str(otp)
-        request.session["otp_expiry"] = expiry_time.isoformat()
+        # Save to session
         request.session["form_data"] = {
-            "room_type": request.session.get("room_type", "N/A"),
+            "room_type": request.session.get("room_type"),
             "size": size,
             "shape": shape,
             "package": package,
-            "price": price,
+            "price": final_price,
             "name": name,
             "contact": contact,
             "email": email,
             "location": location,
+            "accessories": accessories,
         }
 
-        # Send OTP
+        # Send OTP email
         send_mail(
             subject="Your OTP for Budget Estimation Confirmation",
             message=f"Hi {name},\n\nYour OTP is: {otp}. It will expire in 5 minutes.\n\nThank you.",
@@ -1311,7 +2113,7 @@ def wardrobes_submit_estimation_form(request):
 
         return render(request, "elite_interior/verify_otp.html", {"email": email, "name": name})
 
-    return redirect("wardrobes_calculate")
+    return redirect("bedroom_calculate")
 
 ######################################################################################################
 
@@ -1356,35 +2158,49 @@ from .models import OtpVerification
 from django.conf import settings
 
 
+
+
 def verify_otp(request):
+    # ---------- GET: show OTP page ----------
+    if request.method == "GET":
+        form_data = request.session.get("form_data")
+        if not form_data:
+            messages.error(request, "Session expired. Please start again.")
+            return redirect("select_platform")
+
+        return render(request, "elite_interior/verify_otp.html", {"email": form_data["email"]})
+
+    # ---------- POST: validate OTP and generate/send PDF ----------
     if request.method == "POST":
         user_otp = request.POST.get("otp")
-        email = request.POST.get("email")  # should be passed as hidden field in form
+        email = request.POST.get("email")  # hidden field in form
 
-        # ✅ Fetch OTP entry from DB
+        # Fetch OTP entry from DB
         try:
             otp_entry = OtpVerification.objects.get(email=email)
         except OtpVerification.DoesNotExist:
             messages.error(request, "No OTP found for this email. Please try again.")
             return redirect("select_platform")
 
-        # ✅ Check expiry
+        # Check expiry
         if otp_entry.is_expired():
             otp_entry.delete()
             messages.error(request, "OTP has expired. Please request a new one.")
             return redirect("select_platform")
 
-        # ✅ Validate OTP
+        # Validate OTP
         if otp_entry.otp != user_otp:
             messages.error(request, "Invalid OTP. Please try again.")
+            # show OTP page again with the email filled
             return render(request, "elite_interior/verify_otp.html", {"email": email})
 
-        # ✅ OTP valid → use form_data from session
+        # OTP valid -> get form_data
         form_data = request.session.get("form_data")
         if not form_data:
             messages.error(request, "Session expired. Please fill the form again.")
             return redirect("select_platform")
 
+        # prepare values from form_data
         name = form_data.get("name")
         contact = form_data.get("contact")
         location = form_data.get("location")
@@ -1408,10 +2224,18 @@ def verify_otp(request):
             fontName="Helvetica-Bold"
         )
 
-        # Title
         elements.append(HRFlowable(width="100%", thickness=1, color="#3a5169"))
         elements.append(Paragraph("BUDGET ESTIMATION REPORT", centered_heading))
         elements.append(Spacer(1, 20))
+
+        # Format accessories safely if present
+        accessories_list = form_data.get("accessories", [])
+        if isinstance(accessories_list, list) and accessories_list:
+            accessories_text = ", ".join(
+                [f"{acc.get('name','')} (x{acc.get('qty',0)})" for acc in accessories_list]
+            )
+        else:
+            accessories_text = "N/A"
 
         client_info = [
             ["Name :", name],
@@ -1420,6 +2244,7 @@ def verify_otp(request):
             ["Location :", location],
             ["Room Type :", room_type.replace("_", " ").title()],
             ["Style :", shape.replace("_", " ").title()],
+            ["Accessories :", accessories_text],
             ["Package :", package_name],
             ["Dimension :", dimension],
             ["Estimated Price :", f"Rs: {price}"],
@@ -1447,7 +2272,6 @@ def verify_otp(request):
         # --- Merge with existing.pdf ---
         pdf_writer = PdfWriter()
         existing_pdf_path = os.path.join(settings.STATIC_ROOT, "pdf/existing.pdf")
-
         if not os.path.exists(existing_pdf_path):
             return HttpResponse("Error: existing.pdf not found", status=500)
 
@@ -1459,12 +2283,12 @@ def verify_otp(request):
         for page in new_reader.pages:
             pdf_writer.add_page(page)
 
-        # ✅ Write merged PDF into memory
+        # Write merged PDF into memory
         final_buffer = BytesIO()
         pdf_writer.write(final_buffer)
         final_buffer.seek(0)
 
-        # ✅ Send email with in-memory PDF
+        # Send email with in-memory PDF to admin
         subject = f"New Estimation Request - {name}"
         body = (
             f"A new estimation request has been submitted.\n\n"
@@ -1487,24 +2311,27 @@ def verify_otp(request):
         email_message.attach(f"estimation_{name}.pdf", final_buffer.read(), "application/pdf")
         email_message.send(fail_silently=False)
 
-        # ✅ Cleanup: remove OTP + session data
-        otp_entry.delete()
-        request.session.pop("form_data", None)
-
-        # ✅ Save PDF bytes in session for download
+        # Save PDF bytes in session for download BEFORE clearing form_data
         request.session["last_verified_data"] = form_data
         request.session["last_pdf"] = base64.b64encode(final_buffer.getvalue()).decode("utf-8")
 
+        # Cleanup: remove OTP DB entry and form_data from session
+        otp_entry.delete()
+        request.session.pop("form_data", None)
+
+        # Finally render success state (page shows download + countdown)
         return render(
             request,
             "elite_interior/verify_otp.html",
             {
+                "email": email,
                 "price": price,
                 "download_pdf": reverse("download_estimation"),
                 "home_url": reverse("home"),
             }
         )
 
+    # any other HTTP method
     return redirect("select_platform")
 
 
@@ -1535,23 +2362,41 @@ def download_estimation(request):
 
 def resend_otp(request):
     form_data = request.session.get("form_data")
-    if form_data:
-        otp = random.randint(1000, 9999)
-        request.session["otp"] = str(otp)
 
-        send_mail(
-            subject="Your OTP for Budget Estimation Confirmation (Resent)",
-            message=f"Hi {form_data['name']},\n\nYour new OTP is: {otp}. Please enter this to confirm your estimation request.",
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[form_data["email"]],
-        )
-
-        messages.success(request, "A new OTP has been sent to your email.")
-    else:
+    if not form_data:
         messages.error(request, "Session expired. Please start again.")
         return redirect("kitchen_calculate")
 
+    # GET email from SESSION (recommended)
+    email = form_data.get("email")
+
+    if not email:
+        messages.error(request, "Email missing. Please start again.")
+        return redirect("kitchen_calculate")
+
+    # Generate new OTP
+    otp = str(random.randint(1000, 9999))
+
+    # Update DB
+    otp_entry, _ = OtpVerification.objects.get_or_create(email=email)
+    otp_entry.otp = otp
+    otp_entry.created_at = timezone.now()
+    otp_entry.save()
+
+    # Optional: store in session
+    request.session["otp"] = otp
+
+    # Send mail
+    send_mail(
+        subject="Your OTP for Budget Estimation (Resent)",
+        message=f"Hi {form_data['name']},\n\nYour new OTP is: {otp}.",
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[email],
+    )
+
+    messages.success(request, "A new OTP has been sent to your email.")
     return redirect("verify_otp")
+
 
 
 
@@ -1900,6 +2745,8 @@ def select_platform(request):
             return redirect("kidsroom_calculate")
         elif selected == "wardrobes":
             return redirect("wardrobe_calculate")
+        elif selected == "poojaroom":
+            return redirect("poojaroom_calculate")
 
     return render(request, "select_platform.html")
 

@@ -32,6 +32,7 @@ urlpatterns = [
     path('kidsroom-calculate/', kidsroom_calculate_budget, name='kidsroom_calculate'),  # for GET request (show form)
     path('livingroom-calculate/', livingroom_calculate_budget, name='livingroom_calculate'),  # for GET request (show form)
     path('bathroom-calculate/', bathroom_calculate_budget, name='bathroom_calculate'),  # for GET request (show form)
+    path('poojaroom-calculate/', poojaroom_calculate_budget, name='poojaroom_calculate'),  # for GET request (show form)
 
     path('submit-estimation/', kitchen_submit_estimation_form, name='submit_estimation_form'),  # for POST submission
     path('submit-bedroom-estimation/', bedroom_submit_estimation_form, name='submit_bedroom_estimation_form'),  # for POST submission

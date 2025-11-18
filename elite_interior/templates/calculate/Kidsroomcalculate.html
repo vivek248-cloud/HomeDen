@@ -232,6 +232,128 @@ function toggleKidsSize(selected) {
              style="height: 250px; object-fit: cover;">
       </a>
     </div>
+
+    <!-- Accessories Slider -->
+<div class="mt-5">
+  <h6 class="fw-semibold text-success mb-4">
+    <i class="bi bi-tools me-2"></i> Step 2.1: Accessories
+  </h6>
+
+  <!-- Accessories Carousel -->
+  <div id="bedroomAccessoriesCarousel" class="carousel slide" data-bs-ride="false">
+    
+    <!-- Indicators -->
+    <div class="carousel-indicators">
+      {% for accessory in accessories %}
+        <button type="button" 
+                data-bs-target="#bedroomAccessoriesCarousel" 
+                data-bs-slide-to="{{ forloop.counter0 }}" 
+                {% if forloop.first %}class="active" aria-current="true"{% endif %}
+                aria-label="Accessory {{ forloop.counter }}"></button>
+      {% endfor %}
+    </div>
+
+    <!-- Carousel Items -->
+    <div class="carousel-inner">
+      {% for accessory in accessories %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+          <div class="d-flex justify-content-center align-items-center" style="min-height: 480px; padding: 1rem;">
+            <div class="card border-0 shadow-sm text-center p-4 p-md-5 w-100" style="max-width: 520px; border-radius: 1.2rem;">
+              
+              <!-- Image -->
+              <div class="mb-4 overflow-hidden rounded-3">
+                <img src="{{ accessory.image.url }}" 
+                    alt="{{ accessory.name }}" 
+                    class="img-fluid w-100 accessory-img"
+                    style="height: 300px; object-fit: cover; transition: transform 0.4s ease;">
+              </div>
+
+              <!-- Name -->
+              <h5 class="fw-bold text-dark mb-3">{{ accessory.name }}</h5>
+
+              <!-- Quantity Controls -->
+              <div class="d-flex justify-content-center align-items-center gap-3">
+                <button type="button" 
+                        class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold d-flex align-items-center justify-content-center"
+                        style="width: 38px; height: 38px;"
+                        onclick="updateQty('{{ forloop.counter }}', -1)">
+                  <i class="bi bi-dash"></i>
+                </button>
+
+                <input type="number" 
+                      id="qty_{{ forloop.counter }}" 
+                      name="accessory_qty_{{ accessory.id }}" 
+                      value="0" min="0"
+                      class="form-control form-control-sm text-center fw-bold"
+                      style="width: 70px; height: 38px; font-size: 1rem;"
+                      readonly>
+
+                <button type="button" 
+                        class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold d-flex align-items-center justify-content-center"
+                        style="width: 38px; height: 38px;"
+                        onclick="updateQty('{{ forloop.counter }}', 1)">
+                  <i class="bi bi-plus"></i>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Controls -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#bedroomAccessoriesCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon bg-dark rounded-circle p-3 shadow" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#bedroomAccessoriesCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon bg-dark rounded-circle p-3 shadow" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+  function updateQty(id, delta) {
+    const input = document.getElementById(`qty_${id}`);
+    if (!input) return;
+    
+    let value = parseInt(input.value) || 0;
+    value = Math.max(0, value + delta);
+    input.value = value;
+  }
+
+  // Optional: Enable swipe on mobile
+  document.addEventListener('DOMContentLoaded', () => {
+    const carouselEl = document.getElementById('accessoriesCarousel');
+    let startX;
+
+    carouselEl.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+    });
+
+    carouselEl.addEventListener('touchend', e => {
+      if (!startX) return;
+      const endX = e.changedTouches[0].clientX;
+      const diff = startX - endX;
+
+      if (Math.abs(diff) > 50) {  // swipe threshold
+        if (diff > 0) {
+          bootstrap.Carousel.getInstance(carouselEl)?.next();
+        } else {
+          bootstrap.Carousel.getInstance(carouselEl)?.prev();
+        }
+      }
+      startX = null;
+    });
+  });
+</script>
+
+
+
   </div>
 
   <div class="d-flex justify-content-between mt-4">
