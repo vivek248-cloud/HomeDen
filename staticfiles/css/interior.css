@@ -6004,3 +6004,151 @@ input[name="otp"] {
   25% { transform: translateX(-6px); }
   75% { transform: translateX(6px); }
 }
+
+
+
+
+.footer-dropdown {
+    margin-top: 15px;
+    width: 100%;
+}
+
+.footer-dropdown .dropdown-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.footer-dropdown .arrow {
+    transition: transform 0.3s ease;
+}
+
+.footer-dropdown.open .arrow {
+    transform: rotate(180deg);
+}
+
+.footer-dropdown .dropdown-content {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.footer-dropdown.open .dropdown-content {
+    display: flex;
+}
+
+.footer-dropdown .dropdown-content a {
+    color: #ccc;
+    font-size: 14px;
+    text-transform: capitalize;
+}
+
+.footer-dropdown .dropdown-content a:hover {
+    color: #fff;
+}
+
+
+    /* CTA */
+.cta {
+    position: relative;
+    text-align: center;
+    padding: 130px 40px;
+    margin: 80px auto;
+    max-width: 1100px;
+
+        animation: autosShowLeft 0.6s ease-out both;
+    animation-timeline: view(80% 10%); /* triggers when element enters viewport */
+    /* This is the magic line — identical to your orange blob */
+    border-radius: 10%;
+    
+    overflow: hidden;
+}
+
+
+.cta:hover {
+    border-radius: 1% 40% 1% 40% / 10% 33% 10% 37%;
+    transition: border-radius 2s ease;
+}
+
+    .cta h2 {
+        font-size: 2.4rem;
+        margin-bottom: 24px;
+        color: var(--text);
+    }
+
+    .cta p {
+        font-size: 1.2rem;
+        color: var(--text-light);
+        max-width: 700px;
+        margin: 0 auto 32px;
+    }
+
+    .btn-whatsapp {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background:#25D366;
+        color: white;
+        padding: 18px 40px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border-radius: 50px;
+        text-decoration: none;
+        box-shadow: 0 8px 25px rgba(37, 211, 102, 0.35);
+        transition: all 0.35s ease;
+    }
+
+    .btn-whatsapp:hover {
+        background: #1ebe5d;
+        transform: translateY(-4px);
+        box-shadow: 0 14px 35px rgba(37, 211, 102, 0.45);
+    }
+
+    .btn-whatsapp svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .whatsapp-icon {
+    font-size: 4em;   /* default for desktop */
+}
+
+
+
+/* Keyframes */
+@keyframes autosShowLeft {
+    from {
+        opacity: 0;
+        transform: scaleX(0.0);
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+
+
+/* Mobile (max width 768px) */
+@media (max-width: 768px) {
+    .whatsapp-icon {
+        font-size: 3em !important;
+    }
+}
+    /* Responsive Adjustments */
+    @media (max-width: 640px) {
+        .page-container { padding: 60px 15px 80px; }
+        .hero { padding: 50px 15px; margin-bottom: 60px; }
+        .gallery-grid { gap: 20px; }
+        .gallery-card:hover { transform: translateY(-6px); }
+        .cta h2 { font-size: 2rem; }
+        .btn-whatsapp { padding: 16px 32px; font-size: 1.1rem; }
+    }
