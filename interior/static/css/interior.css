@@ -6024,11 +6024,15 @@ input[name="otp"] {
     text-transform: uppercase;
     display: flex;
     align-items: center;
+    display: inline;
     gap: 5px;
 }
 
 .footer-dropdown .arrow {
     transition: transform 0.3s ease;
+    display: inline-block;
+    color: white!important;
+    font-size: 16px; /* adjust size as needed */
 }
 
 .footer-dropdown.open .arrow {
