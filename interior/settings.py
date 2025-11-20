@@ -41,6 +41,8 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     
+    "admin_interface",
+    "colorfield",
 
     'django.contrib.sitemaps',
     'django.contrib.admin',
