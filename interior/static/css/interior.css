@@ -6004,3 +6004,54 @@ input[name="otp"] {
   25% { transform: translateX(-6px); }
   75% { transform: translateX(6px); }
 }
+
+
+
+
+.footer-dropdown {
+    margin-top: 15px;
+    width: 100%;
+}
+
+.footer-dropdown .dropdown-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.footer-dropdown .arrow {
+    transition: transform 0.3s ease;
+}
+
+.footer-dropdown.open .arrow {
+    transform: rotate(180deg);
+}
+
+.footer-dropdown .dropdown-content {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+}
+
+.footer-dropdown.open .dropdown-content {
+    display: flex;
+}
+
+.footer-dropdown .dropdown-content a {
+    color: #ccc;
+    font-size: 14px;
+    text-transform: capitalize;
+}
+
+.footer-dropdown .dropdown-content a:hover {
+    color: #fff;
+}

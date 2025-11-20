@@ -804,8 +804,37 @@ wBtn.addEventListener("mouseleave", function () {
         <li><a href="{% url 'projects' %}" >Projects</a></li>
         <li><a href="{% url 'contact' %}" >Contact</a></li>
         <li><a href="{% url 'select_platform' %}" >Calculate your Budget</a></li>
+
+
+
+        <!--seo links-->
+        {% load seo_tags %}
+
+
+      <div class="footer-dropdown">
+          <button class="dropdown-btn">Usefull Links ▼</button>
+          <div class="dropdown-content">
+              {% get_seo_pages as seo_pages %}
+              {% for p in seo_pages %}
+              <li>
+                  <a href="/{{ p.slug }}/">{{ p.title }}</a>
+              </li>
+              {% endfor %}
+          </div>
+      </div>
+
+        <script>
+        document.querySelectorAll('.footer-dropdown').forEach(drop => {
+            drop.querySelector('.dropdown-btn').addEventListener('click', () => {
+                drop.classList.toggle('open');
+            });
+        });
+        </script>
+
       </ul>
     </div>
+
+
       <div class="footer-section links" style="text-transform: uppercase;"> 
         <h4>Get a Quote</h4>
         <p >Want to build your dream project?</p>

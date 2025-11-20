@@ -108,3 +108,39 @@ class AdAdmin(admin.ModelAdmin):
 class AccessoryAdmin(admin.ModelAdmin):
     list_display = ("name", "price", "category")
     list_filter = ("price", "category")
+
+
+from django.contrib import admin
+from django.utils.html import format_html
+from .models import SEOServicePage, SEOServiceImage
+
+
+class SEOServiceImageInline(admin.TabularInline):
+    model = SEOServiceImage
+    extra = 1
+    fields = ("image", "caption", "preview")
+    readonly_fields = ("preview",)
+
+    def preview(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="width: 100px; height:auto; border-radius:6px;" />',
+                obj.image.url
+            )
+        return "No Image Available"
+
+
+@admin.register(SEOServicePage)
+class SEOServicePageAdmin(admin.ModelAdmin):
+    list_display = ("title", "slug", "created_at")
+    search_fields = ("title", "slug")
+    prepopulated_fields = {"slug": ("title",)}
+
+    fields = (
+        "title",
+        "slug",
+        "short_description",
+        "long_content",
+    )
+
+    inlines = [SEOServiceImageInline]

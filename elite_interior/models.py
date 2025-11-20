@@ -403,13 +403,36 @@ class Ad(models.Model):
         return self.title
 
 
-
-
-
-
-
 # ✅ Auto delete image file when Ad is deleted
 @receiver(post_delete, sender=Ad)
+def delete_ad_image(sender, instance, **kwargs):
+    if instance.image and os.path.isfile(instance.image.path):
+        instance.image.delete(save=False)
+
+
+
+
+class SEOServicePage(models.Model):
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True)
+    short_description = models.TextField()
+    long_content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+
+class SEOServiceImage(models.Model):
+    page = models.ForeignKey(SEOServicePage, on_delete=models.CASCADE, related_name="images")
+    image = models.ImageField(upload_to="seo_pages/")
+    caption = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.page.title} - Image"
+    
+# ✅ Auto delete image file when Ad is deleted
+@receiver(post_delete, sender=SEOServiceImage)
 def delete_ad_image(sender, instance, **kwargs):
     if instance.image and os.path.isfile(instance.image.path):
         instance.image.delete(save=False)

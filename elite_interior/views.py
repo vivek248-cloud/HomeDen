@@ -2786,8 +2786,23 @@ def save_chat_query(request):
 
 
 
+
+
+from django.shortcuts import render, get_object_or_404
+from .models import SEOServicePage
+
+def seo_service_detail(request, slug):
+    grid = WhatWeDo_Grid.objects.all()
+    page = get_object_or_404(SEOServicePage, slug=slug)
+    return render(request, "seo_page.html", {"page": page, "grid":grid})
+
+
+
+
 def mesurement_cal(request):
     return render(request, "elite_interior/measurement_cal.html")
+
+
 
 
 from django.shortcuts import render

@@ -64,6 +64,10 @@ urlpatterns = [
     path("download-estimation/", download_estimation, name="download_estimation"),
 
     path('measurement-calculator/', mesurement_cal, name='measurement_calculator'),
+
+
+    path("<slug:slug>/", seo_service_detail, name="seo_service_detail"),
+
 ]
 
 from django.conf.urls import handler404
