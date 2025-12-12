@@ -859,6 +859,7 @@ def submit_contact_form(request):
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
         contact = request.POST.get('contact', '').strip()
+        contact2 = request.POST.get('contact2', '').strip()
         email = request.POST.get('email', '').strip()
         bhk_raw = request.POST.get('bhk', '')
         location = request.POST.get('location', '').strip()
@@ -875,6 +876,7 @@ def submit_contact_form(request):
         message_admin = (
             f"Name: {name}\n"
             f"Contact: {contact}\n"
+            f"Contact 2: {contact2}\n"
             f"Email: {email}\n"
             f"Location: {location}\n\n"
             f"Selected Rooms:\n{bhk_formatted}"
@@ -886,6 +888,8 @@ def submit_contact_form(request):
             f"Thank you for contacting us! We will be in touch soon.\n\n"
             f"Your Details:\n"
             f"Contact: {contact}\n"
+            f"Contact 2: {contact2}\n"
+            f"Email: {email}\n"
             f"Location: {location}\n"
             f"Rooms:\n{bhk_formatted}\n\n"
             f"Best regards,\nHome Den Team"
