@@ -94,6 +94,12 @@ class ProjectGallery(models.Model):
     def __str__(self):
         return self.title
 
+
+from django.dispatch import receiver
+import os
+import re
+
+
 class PackageOffers(models.Model):
     title = models.CharField(max_length=225)
     subtitle = models.CharField(max_length=225,null=True, blank=True)
@@ -102,8 +108,59 @@ class PackageOffers(models.Model):
     discription = models.CharField(max_length=225)
     image = models.ImageField(upload_to='offer_images/')
 
+    # ✅ YouTube link field
+    youtube_link = models.URLField(
+        max_length=500,
+        null=True,
+        blank=True,
+        help_text="Paste full YouTube URL"
+    )
+
+   # ✅ ADD THIS METHOD INSIDE THE MODEL
+    def youtube_embed_url(self):
+        if not self.youtube_link:
+            return ""
+
+        url = self.youtube_link.strip()
+
+        # If already embed URL
+        if "/embed/" in url:
+            return url.split("?")[0]
+
+        video_id = ""
+        start_time = ""
+
+        # watch?v=VIDEO_ID&t=1s
+        if "watch?v=" in url:
+            video_id = url.split("watch?v=")[1].split("&")[0]
+            match = re.search(r"[?&]t=(\d+)s?", url)
+            if match:
+                start_time = match.group(1)
+
+        # youtu.be/VIDEO_ID?t=10
+        elif "youtu.be/" in url:
+            video_id = url.split("youtu.be/")[1].split("?")[0]
+            match = re.search(r"[?&]t=(\d+)", url)
+            if match:
+                start_time = match.group(1)
+
+        if not video_id:
+            return ""
+
+        embed_url = f"https://www.youtube.com/embed/{video_id}"
+        if start_time:
+            embed_url += f"?start={start_time}"
+
+        return embed_url
+
+
+
     def __str__(self):
         return self.title
+
+
+
+
 
 # ✅ Auto delete image file when PackageOffers is deleted
 @receiver(post_delete, sender=PackageOffers)
