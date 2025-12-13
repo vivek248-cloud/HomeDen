@@ -633,16 +633,13 @@
 
 
 <section class="youtube-fullscreen">
-{% for video in videos %}
+
   <div class="video-fullscreen-wrapper">
 <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"  
-        frameborder="0" 
-        allowfullscreen 
+        frameborder="0"
         id="ytplayer-fullscreen"></iframe>
   </div>
-{% empty %}
-  <div class="no-videos-message">No videos available</div>
-{% endfor %}
+
 
 </section>
 
