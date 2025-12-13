@@ -40,22 +40,46 @@ class BlogAdmin(admin.ModelAdmin):
     ordering = ('-created_at','-date',)
 
 
+# @admin.register(YouTubeVideo)
+# class YouTubeVideoAdmin(admin.ModelAdmin):
+#     list_display = ('title', 'youtube_link', 'is_active', 'display_order', 'thumbnail_preview', 'uploaded_at')
+#     list_editable = ('is_active', 'display_order')
+#     list_filter = ('is_active', 'uploaded_at')
+#     search_fields = ('title', 'description')
+#     readonly_fields = ('thumbnail_preview', 'embed_code')
+#     fieldsets = (
+#         (None, {
+#             'fields': ('title', 'youtube_link', 'description', 'is_active', 'display_order')
+#         }),
+#         ('Preview', {
+#             'fields': ('thumbnail_preview', 'embed_code'),
+#             'classes': ('collapse',)
+#         }),
+#     )
+
+
+from django.contrib import admin
+from django.utils.safestring import mark_safe
+from .models import YouTubeVideo
+
 @admin.register(YouTubeVideo)
 class YouTubeVideoAdmin(admin.ModelAdmin):
-    list_display = ('title', 'youtube_link', 'is_active', 'display_order', 'thumbnail_preview', 'uploaded_at')
-    list_editable = ('is_active', 'display_order')
+    list_display = ('title', 'youtube_link', 'uploaded_at', 'is_active', 'thumbnail_preview_admin')
+    readonly_fields = ('thumbnail_preview_admin', 'embed_code_admin')
+    search_fields = ('title', 'youtube_link')
     list_filter = ('is_active', 'uploaded_at')
-    search_fields = ('title', 'description')
-    readonly_fields = ('thumbnail_preview', 'embed_code')
-    fieldsets = (
-        (None, {
-            'fields': ('title', 'youtube_link', 'description', 'is_active', 'display_order')
-        }),
-        ('Preview', {
-            'fields': ('thumbnail_preview', 'embed_code'),
-            'classes': ('collapse',)
-        }),
-    )
+    ordering = ('-display_order', '-uploaded_at')
+
+    def thumbnail_preview_admin(self, obj):
+        return obj.thumbnail_preview()
+    thumbnail_preview_admin.short_description = 'Thumbnail'
+    thumbnail_preview_admin.allow_tags = True
+
+    def embed_code_admin(self, obj):
+        return obj.embed_code()
+    embed_code_admin.short_description = 'Embed preview'
+    embed_code_admin.allow_tags = True
+
 
 from django.contrib import admin
 from django.contrib.admin import AdminSite

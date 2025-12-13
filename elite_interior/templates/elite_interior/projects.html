@@ -48,15 +48,22 @@
     {% for video in videos %}
       <div class="col-12 col-md-6 col-lg-4 mb-3">
         <div class="youtube-card position-relative overflow-hidden rounded shadow-sm">
-          <div class="ratio ratio-16x9" style="min-height: 200px;">
-            <iframe
-              loading="lazy"
-              src="https://www.youtube.com/embed/{{ video.youtube_link }}"
-              title="{{ video.title }}"
-              frameborder="0"
-              allowfullscreen
-              class="w-100 h-100 rounded">
-            </iframe>
+          <div class="ratio ratio-16x9 video-wrapper" style="min-height: 200px;">
+            <a href="https://www.youtube.com/watch?v={{ video.youtube_link }}" 
+              target="_blank" 
+              class="video-thumb">
+
+                <img 
+                  src="https://img.youtube.com/vi/{{ video.youtube_link }}/hqdefault.jpg"
+                  alt="{{ video.title }}"
+                >
+
+                <!-- Play icon overlay -->
+                <div class="yt-play-icon">
+                  <i class="bi bi-play-fill"></i>
+                </div>
+
+            </a>
           </div>
           <div class="youtube-overlay position-absolute bottom-0 start-0 w-100 p-2 text-white">
             <h6 class="m-0">{{ video.title }}</h6>

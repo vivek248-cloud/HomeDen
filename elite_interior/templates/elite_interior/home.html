@@ -600,8 +600,8 @@
     </section>
 
 
-
-<section class="youtube-fullscreen">
+{% comment %} 1 {% endcomment %}
+{% comment %} <section class="youtube-fullscreen">
   {% for video in videos %}
   <div class="video-fullscreen-wrapper">
     <iframe src="https://www.youtube.com/embed/{{ video.youtube_link }}?autoplay=1&mute=1&enablejsapi=1" 
@@ -614,7 +614,40 @@
   {% empty %}
   <div class="no-videos-message">No videos available</div>
   {% endfor %}
+</section> {% endcomment %}
+
+{% comment %} <section class="youtube-fullscreen">
+  {% for video in videos %}
+  <div class="video-fullscreen-wrapper">
+    <iframe src="https://www.youtube.com/embed/{{ video.youtube_link }}?autoplay=1&mute=1&enablejsapi=1" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen
+            loading="eager"
+            id="ytplayer-fullscreen"></iframe>
+  </div>
+  {% empty %}
+  <div class="no-videos-message">No videos available</div>
+  {% endfor %}
+</section>  {% endcomment %}
+
+
+<section class="youtube-fullscreen">
+{% for video in videos %}
+  <div class="video-fullscreen-wrapper">
+<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"  
+        frameborder="0" 
+        allowfullscreen 
+        id="ytplayer-fullscreen"></iframe>
+  </div>
+{% empty %}
+  <div class="no-videos-message">No videos available</div>
+{% endfor %}
+
 </section>
+
+
+
 
 
 <section id="latest-blogs" class="py-5 bg-white">

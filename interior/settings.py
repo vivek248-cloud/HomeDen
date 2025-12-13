@@ -203,7 +203,8 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 ROOT_URLCONF = 'interior.urls'
 
 
-
+# 👇 ADD THIS LINE TO ALLOW IFRAMES ON THE SAME DOMAIN (which is necessary for YouTube embeds)
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
