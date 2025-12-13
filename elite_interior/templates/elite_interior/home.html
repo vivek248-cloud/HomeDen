@@ -616,32 +616,30 @@
   {% endfor %}
 </section> {% endcomment %}
 
-{% comment %} <section class="youtube-fullscreen">
-  {% for video in videos %}
-  <div class="video-fullscreen-wrapper">
-    <iframe src="https://www.youtube.com/embed/{{ video.youtube_link }}?autoplay=1&mute=1&enablejsapi=1" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen
-            loading="eager"
-            id="ytplayer-fullscreen"></iframe>
-  </div>
-  {% empty %}
-  <div class="no-videos-message">No videos available</div>
-  {% endfor %}
-</section>  {% endcomment %}
 
 
 <section class="youtube-fullscreen">
+    {% for video in videos %}
+    <div class="video-fullscreen-wrapper video-thumbnail-container">
+        <a href="https://www.youtube.com/watch?v={{ video.youtube_link }}" target="_blank" title="Watch {{ video.title }} on YouTube">
+            <img src="{{ video.thumbnail_url }}" 
+                 alt="{{ video.title }} thumbnail" 
+                 class="youtube-thumbnail" 
+                 loading="lazy">
+                 
+            <div class="play-button-overlay"></div> 
+        </a>
 
-  <div class="video-fullscreen-wrapper">
-<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"  
-        frameborder="0"
-        id="ytplayer-fullscreen"></iframe>
-  </div>
+        {% if video.title %}
+            <p>{{ video.title }}</p>
+        {% endif %}
 
-
+    </div>
+    {% empty %}
+    <div class="no-videos-message">No videos available</div>
+    {% endfor %}
 </section>
+
 
 
 
