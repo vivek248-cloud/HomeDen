@@ -301,15 +301,47 @@ def delete_blog_image(sender, instance, **kwargs):
     if instance.image and os.path.isfile(instance.image.path):
         instance.image.delete(save=False)
 
+import re
+from django.db import models
+
+YOUTUBE_ID_RE = re.compile(r"(?:v=|youtu\.be/|embed/)?([A-Za-z0-9_-]{11})")
+
+
 class AboutVideo(models.Model):
     title = models.CharField(max_length=225)
-    youtube_id = models.CharField(
-        max_length=100,
-        help_text="Paste only the YouTube video ID (e.g. FT9g4LLrR5c)"
+    youtube_link = models.URLField(
+        max_length=500,
+        null=True,
+        blank=True,
+        help_text="Paste YouTube URL or video ID"
     )
 
     def __str__(self):
         return self.title
+
+    # ✅ Normalize input → store only video ID
+    def clean(self):
+        if not self.youtube_link:
+            return
+
+        url = self.youtube_link.strip()
+        match = YOUTUBE_ID_RE.search(url)
+
+        if not match:
+            raise ValueError("Invalid YouTube URL or Video ID")
+
+        # store only the 11-char ID
+        self.youtube_link = match.group(1)
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
+    # ✅ Same API as PackageOffers / YouTubeVideo
+    def youtube_embed_url(self):
+        if not self.youtube_link:
+            return ""
+        return f"https://www.youtube.com/embed/{self.youtube_link}"
 
 
 class BudgetItem(models.Model):

@@ -104,19 +104,21 @@
     </div>
 
   <div class="video-landscape-wrapper">
-{% for video in videos %}
-  <div class="ratio ratio-16x9">
-    <iframe
-      src="https://www.youtube.com/embed/{{ video.youtube_id }}?rel=0&autoplay=1&mute=1"
-      title="{{ video.title }}"
-      frameborder="0"
-      allowfullscreen
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-    </iframe>
+  {% for video in videos %}
+    {% if video.youtube_embed_url %}
+      <div class="ratio ratio-16x9">
+        <iframe
+          src="{{ video.youtube_embed_url }}?autoplay=1&mute=1&rel=0"
+          title="{{ video.title }}"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen>
+        </iframe>
+      </div>
+    {% endif %}
+  {% endfor %}
   </div>
-{% endfor %}
-
-</div>
 
 
 
