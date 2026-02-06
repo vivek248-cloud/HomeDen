@@ -39,7 +39,11 @@ def indian_currency(value):
         return value
 
 
-@register.filter
+from django import template
+
+register = template.Library()
+
+@register.filter(name="humanize_views")
 def humanize_views(value):
     try:
         value = int(value)
@@ -51,6 +55,4 @@ def humanize_views(value):
     except:
         return value
 
-from django import template
 
-register = template.Library()
