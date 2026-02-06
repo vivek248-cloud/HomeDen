@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+.stat-card{
+    background:#fff;
+    padding:30px;
+    border-radius:16px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    text-align:center;
+}
+.stat-number{
+    font-size:36px;
+    font-weight:700;
+    color:#3751ff;
+}
+.stat-label{
+    color:#666;
+}
+</style>
+
+<div class="container py-5">
+
+<h2 class="mb-4 fw-bold">Dashboard</h2>
+
+<div class="row g-4">
+
+<div class="col-md-4">
+<div class="stat-card">
+    <div class="stat-number">{{ total_clients }}</div>
+    <div class="stat-label">Total Clients</div>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="stat-card">
+    <div class="stat-number">{{ total_quotations }}</div>
+    <div class="stat-label">Quotation Items</div>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="stat-card">
+    <div class="stat-number">{{ quotation_groups }}</div>
+    <div class="stat-label">Client Quotations</div>
+</div>
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

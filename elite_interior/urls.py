@@ -1,5 +1,6 @@
-from django.urls import path
+from django.urls import include, path
 from .views import*
+
 
 urlpatterns = [
     path('', home, name='home'),
@@ -65,9 +66,45 @@ urlpatterns = [
 
     path('measurement-calculator/', mesurement_cal, name='measurement_calculator'),
 
+    
+
+
+    
+
+    path("quotation/", quotation_entry, name="quotation_entry"),
+    path("quotation/index/", quotation_index, name="quotation_index"),
+    path("quotation/create/", quotation_create, name="quotation_create"),
+    path("quotation/client/<int:id>/edit/", quotation_update, name="quotation_update"),
+    path("quotation/<int:id>/delete/", quotation_delete, name="quotation_delete"),
+    path("quotation/<int:client_id>/pdf/", quotation_pdf, name="quotation_pdf"),
+
+    path("quotation/<int:client_id>/save-totals/", save_quotation_totals, name="save_quotation_totals"),
+
+    path("quotation/<int:client_id>/view/", quotation_detail, name="quotation_detail"),
+
+
+    path("clients/", client_index, name="client_index"),
+    path("clients/create/", client_create, name="client_create"),
+    path("clients/<int:id>/edit/", client_update, name="client_update"),
+    path("clients/<int:id>/delete/", client_delete, name="client_delete"),
+
+
+    path("fullsemi/", fullsemi_index, name="fullsemi_index"),
+    path("fullsemi/create/", fullsemi_create, name="fullsemi_create"),
+    path("fullsemi/<int:id>/edit/", fullsemi_update, name="fullsemi_update"),
+    path("fullsemi/<int:id>/delete/", fullsemi_delete, name="fullsemi_delete"),
+
+    # image
+    path("image/", image_index, name="image_index"),
+    path("image/create/", image_create, name="image_create"),
+    path("image/<int:id>/edit/", image_update, name="image_update"),
+    path("image/<int:id>/delete/", image_delete, name="image_delete"),
+
+    path("dashboard/", dashboard, name="dashboard"),
+
+
 
     path("<slug:slug>/", seo_service_detail, name="seo_service_detail"),
-
 ]
 
 from django.conf.urls import handler404
@@ -81,4 +118,3 @@ def custom_500(request, exception):
 
 handler404 = custom_404
 handler500 = custom_500
-

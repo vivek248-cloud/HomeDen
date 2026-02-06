@@ -501,6 +501,8 @@ def delete_ad_image(sender, instance, **kwargs):
 
 
 
+    # seo
+    
 class SEOServicePage(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
@@ -525,3 +527,97 @@ class SEOServiceImage(models.Model):
 def delete_ad_image(sender, instance, **kwargs):
     if instance.image and os.path.isfile(instance.image.path):
         instance.image.delete(save=False)
+
+
+
+
+
+#quotation models.py
+
+
+
+
+# quotation/models.py
+
+from django.db import models
+
+
+class Client(models.Model):
+    name = models.CharField(max_length=200)
+    phone1 = models.CharField(max_length=20)
+    phone2 = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    location = models.CharField(max_length=200)
+    GST = models.CharField(max_length=50, blank=True, null=True)
+    discount = models.FloatField(default=0)
+    notes = models.TextField(blank=True, null=True)
+
+    # ✅ NEW FIELDS
+    estimate_start_date = models.DateField(blank=True, null=True)
+    estimate_end_date = models.DateField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    
+    def __str__(self):
+        return self.name
+
+
+class FullSemi(models.Model):
+    name = models.CharField(max_length=100)
+    rate = models.FloatField()
+
+    def __str__(self):
+        return self.name
+
+
+class Image(models.Model):
+    name = models.CharField(max_length=100)
+    image = models.ImageField(upload_to="quotation_images/")
+
+    def __str__(self):
+        return self.name
+
+
+class Quotation(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    floor = models.CharField(max_length=50)
+    location = models.CharField(max_length=200)
+    element = models.CharField(max_length=100)
+
+    image = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True, blank=True)
+    full_semi = models.ForeignKey(FullSemi, on_delete=models.SET_NULL, null=True, blank=True)
+
+    core_material = models.CharField(max_length=100)
+    finish_material = models.CharField(max_length=100)
+    brand = models.CharField(max_length=100)
+    specification = models.TextField()
+
+    unit = models.CharField(max_length=50)
+
+    length = models.FloatField()
+    width = models.FloatField()
+
+    area = models.FloatField(editable=False)
+    price = models.FloatField()
+    qty = models.IntegerField()
+
+    total = models.FloatField(editable=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        # auto area
+        self.area = self.length * self.width
+
+        # auto price from FullSemi if selected
+        if self.full_semi:
+            self.price = self.full_semi.rate
+
+        # auto total
+        self.total = self.area * self.price * self.qty
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.client.name} - {self.element}"
+

@@ -83,3 +83,50 @@ class MaterialForm(forms.Form):
         required=False
     )
 
+
+
+from django import forms
+from .models import Quotation
+
+
+class QuotationForm(forms.ModelForm):
+    class Meta:
+        model = Quotation
+
+        # Fields users are allowed to enter
+        fields = [
+            "client",
+            "floor",
+            "location",
+            "element",
+            "image",
+            "full_semi",
+            "core_material",
+            "finish_material",
+            "brand",
+            "specification",
+            "unit",
+            "length",
+            "width",
+            "qty",
+        ]
+
+        widgets = {
+            "client": forms.Select(attrs={"class": "form-control"}),
+            "floor": forms.TextInput(attrs={"class": "form-control"}),
+            "location": forms.TextInput(attrs={"class": "form-control"}),
+            "element": forms.TextInput(attrs={"class": "form-control"}),
+
+            "image": forms.Select(attrs={"class": "form-control"}),
+            "full_semi": forms.Select(attrs={"class": "form-control"}),
+
+            "core_material": forms.TextInput(attrs={"class": "form-control"}),
+            "finish_material": forms.TextInput(attrs={"class": "form-control"}),
+            "brand": forms.TextInput(attrs={"class": "form-control"}),
+            "specification": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+
+            "unit": forms.TextInput(attrs={"class": "form-control"}),
+            "length": forms.NumberInput(attrs={"class": "form-control"}),
+            "width": forms.NumberInput(attrs={"class": "form-control"}),
+            "qty": forms.NumberInput(attrs={"class": "form-control"}),
+        }

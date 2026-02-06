@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-xl-5 col-lg-7">
+            
+            <div class="text-center mb-4">
+                <div class="bg-danger-subtle d-inline-block rounded-circle p-4 mb-3 animate__animated animate__shakeX">
+                    <i class="bi bi-exclamation-triangle-fill text-danger fs-1"></i>
+                </div>
+                <h2 class="fw-bold text-dark">Confirm Deletion</h2>
+                <p class="text-muted">This action is permanent and cannot be undone.</p>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                <div class="card-body p-4 p-md-5 text-center">
+                    <p class="mb-4 fs-5 text-secondary">
+                        Are you sure you want to remove the series: <br>
+                        <span class="fw-bold text-dark fs-3">"{{ item.name }}"</span>?
+                    </p>
+                    
+                    <div class="alert alert-warning border-0 rounded-3 small mb-0">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        Deleting this configuration will remove the associated square foot rate from your master list.
+                    </div>
+                </div>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-grid gap-3">
+                    <button type="submit" class="btn btn-danger py-3 rounded-4 fw-bold shadow-danger-grow">
+                        Permanently Delete <i class="bi bi-trash3-fill ms-2"></i>
+                    </button>
+                    <a href="{% url 'fullsemi_index' %}" class="btn btn-light py-3 rounded-4 fw-bold text-muted border">
+                        No, Keep This Series
+                    </a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Danger glow effect */
+    .shadow-danger-grow {
+        box-shadow: 0 10px 20px -5px rgba(220, 53, 69, 0.4);
+        transition: all 0.3s ease;
+    }
+    
+    .shadow-danger-grow:hover {
+        box-shadow: 0 12px 25px -5px rgba(220, 53, 69, 0.5);
+        transform: translateY(-2px);
+    }
+
+    .bg-danger-subtle {
+        background-color: #f8d7da !important;
+    }
+
+    /* Simple entrance animation if you use Animate.css, otherwise safe to keep */
+    .animate__shakeX {
+        animation: shakeX 0.8s;
+    }
+
+    @keyframes shakeX {
+        from, to { transform: translate3d(0, 0, 0); }
+        10%, 30%, 50%, 70%, 90% { transform: translate3d(-5px, 0, 0); }
+        20%, 40%, 60%, 80% { transform: translate3d(5px, 0, 0); }
+    }
+
+    .alert-warning {
+        background-color: #fff3cd;
+        color: #664d03;
+    }
+</style>
+
+{% endblock %}

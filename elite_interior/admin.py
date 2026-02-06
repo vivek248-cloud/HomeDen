@@ -168,3 +168,126 @@ class SEOServicePageAdmin(admin.ModelAdmin):
     )
 
     inlines = [SEOServiceImageInline]
+
+
+
+# ==========================
+# Customer Admin
+# ==========================
+# @admin.register(Customer)
+# class CustomerAdmin(admin.ModelAdmin):
+#     list_display = (
+#         'name',
+#         'phone1',
+#         'phone2',
+#         'email',
+#         'estimate_date',
+#         'estimate_valid_date',
+#         'created_at',
+#     )
+#     search_fields = ('name', 'phone1', 'phone2', 'email')
+#     list_filter = ('estimate_date', 'estimate_valid_date')
+#     ordering = ('-created_at',)
+
+
+# ==========================
+# AccImage Admin
+# ==========================
+# @admin.register(AccImage)
+# class AccImageAdmin(admin.ModelAdmin):
+#     list_display = ('name', 'image', 'created_at')
+#     search_fields = ('name',)
+#     readonly_fields = ('created_at', 'updated_at')
+
+
+# # ==========================
+# # FullSemi Admin
+# # ==========================
+# @admin.register(FullSemi)
+# class FullSemiAdmin(admin.ModelAdmin):
+#     list_display = ('name', 'rate', 'created_at')
+#     search_fields = ('name',)
+#     ordering = ('name',)
+
+# @admin.register(QuotationImage)
+# class QuotationImageAdmin(admin.ModelAdmin):
+#     list_display = ('name', 'image', 'created_at')
+#     search_fields = ('name',)
+#     readonly_fields = ('created_at',)
+
+
+# # ==========================
+# # Quotation Admin
+# # ==========================
+# @admin.register(Quotation)
+# class QuotationAdmin(admin.ModelAdmin):
+#     list_display = (
+#         'product_name',
+#         'customer',
+#         'location',
+#         'unit',
+#         'price',
+#         'qty',
+#         'created_at',
+#     )
+
+#     search_fields = (
+#         'product_name',
+#         'customer__name',
+#         'customer__phone1',
+#         'brand',
+#         'core_material',
+#         'finish_material',
+#     )
+
+#     list_filter = (
+#         'unit',
+#         'brand',
+#         'created_at',
+#     )
+
+#     # ✅ UPDATED FIELD NAME
+#     autocomplete_fields = ('customer', 'product_img')
+
+#     fieldsets = (
+#         ('Customer Info', {
+#             'fields': ('customer', 'location')
+#         }),
+#         ('Product Details', {
+#             'fields': (
+#                 'product_name',
+#                 'entity',
+#                 'specification',
+#                 'product_img',   # ✅ FIXED
+#                 'full_semi',     # ✅ NEW FK FIELD
+#             )
+#         }),
+#         ('Material Details', {
+#             'fields': (
+#                 'core_material',
+#                 'finish_material',
+#                 'brand',
+#             )
+#         }),
+#         ('Measurement', {
+#             'fields': (
+#                 'length',
+#                 'width',
+#                 'unit',
+#                 'area',
+#             )
+#         }),
+#         ('Pricing', {
+#             'fields': (
+#                 'price',
+#                 'qty',
+#                 'notes',
+#             )
+#         }),
+#         ('Meta', {
+#             'fields': ('created_at', 'updated_at'),
+#         }),
+#     )
+
+#     readonly_fields = ('created_at', 'updated_at')
+#     ordering = ('-created_at',)

@@ -13,3 +13,10 @@ def humanize_views(value):
         return str(value)
     except:
         return value
+
+from django import template
+
+register = template.Library()
+
+
+

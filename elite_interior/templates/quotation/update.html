@@ -1,0 +1,387 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container-fluid py-4">
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-header bg-white py-3">
+            <h2 class="h4 mb-0 fw-bold text-dark">Edit Quotation</h2>
+        </div>
+        
+        <div class="card-body">
+            <form method="post" id="quotationForm">
+                {% csrf_token %}
+
+            <div class="row mb-4">
+
+                <!-- Client -->
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Client Name</label>
+                    <select name="client" class="form-select shadow-none" required>
+                        {% for c in clients %}
+                        <option value="{{ c.id }}" 
+                            {% if c.id == quotation_rows.0.client.id %}selected{% endif %}>
+                            {{ c.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Estimate Start Date -->
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Estimate Start Date</label>
+                    <input 
+                        type="date" 
+                        name="estimate_start_date"
+                        class="form-control shadow-none"
+                        value="{{ quotation_rows.0.client.estimate_start_date|date:'Y-m-d' }}"
+                        required>
+                </div>
+
+                <!-- Estimate End Date -->
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Estimate End Date</label>
+                    <input 
+                        type="date" 
+                        name="estimate_end_date"
+                        class="form-control shadow-none"
+                        value="{{ quotation_rows.0.client.estimate_end_date|date:'Y-m-d' }}"
+                        required>
+                </div>
+
+            </div>
+
+
+                <div class="table-responsive rounded-3 border" style="max-height: 600px;">
+                    <table class="table table-sm table-hover align-middle mb-0" id="quoteTable">
+                        <thead class="table-primary sticky-top">
+                            <tr class="small text-uppercase fw-bold text-secondary bg-light">
+                                <th style="min-width: 100px;">Floor</th>
+                                <th style="min-width: 120px;">Location</th>
+                                <th style="min-width: 120px;">Element</th>
+                                <th style="min-width: 120px;">Image</th>
+                                <th style="min-width: 120px;">Series</th>
+                                <th style="min-width: 120px;">Core</th>
+                                <th style="min-width: 120px;">Finish</th>
+                                <th style="min-width: 120px;">Brand</th>
+                                <th style="min-width: 150px;">Spec</th>
+                                <th style="min-width: 80px;">Unit</th>
+                                <th style="min-width: 80px;">L</th>
+                                <th style="min-width: 80px;">W</th>
+                                <th style="min-width: 80px;">Area</th>
+                                <th style="min-width: 80px;">Price</th>
+                                <th style="min-width: 80px;">Qty</th>
+                                <th style="min-width: 100px;">Total</th>
+                                <th class="sticky-end  shadow-sm-left text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="border-top-0">
+                            {% for q in quotation_rows %}
+                            <tr>
+                                <td><input name="floor[]" value="{{ q.floor }}" class="form-control form-control-sm border-0 bg-light"></td>
+                                <td><input name="location[]" value="{{ q.location }}" class="form-control form-control-sm border-0 bg-light"></td>
+                                <td><input name="element[]" value="{{ q.element }}" class="form-control form-control-sm border-0 bg-light"></td>
+                                <td>
+
+                                <input type="hidden" name="image[]" 
+                                    class="selected-image-id"
+                                    value="{% if q.image %}{{ q.image.id }}{% endif %}">
+
+                                <button type="button"
+                                    class="btn btn-sm btn-outline-secondary choose-image-btn"
+                                    onclick="openImageModal(this)">
+                                    Choose Image
+                                </button>
+
+                                <span class="selected-image-name text-muted small ms-2">
+                                    {% if q.image %}
+                                        {{ q.image.name }}
+                                    {% else %}
+                                        No image
+                                    {% endif %}
+                                </span>
+
+                                {% if q.image %}
+                                <img src="{{ q.image.image.url }}" 
+                                    class="d-block mt-1 rounded border"
+                                    style="width:60px;height:60px;object-fit:cover;">
+                                {% endif %}
+
+                                </td>
+                                <td>
+                                    <select class="form-select form-select-sm border-0 bg-light fullsemi" name="full_semi[]">
+                                        <option value="">---</option>
+                                        {% for f in fullsemis %}
+                                        <option value="{{ f.id }}" data-rate="{{ f.rate }}" {% if q.full_semi and f.id == q.full_semi.id %}selected{% endif %}>{{ f.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td><input name="core_material[]" value="{{ q.core_material }}" class="form-control form-control-sm border-0 bg-light"></td>
+                                <td><input name="finish_material[]" value="{{ q.finish_material }}" class="form-control form-control-sm border-0 bg-light"></td>
+                                <td><input name="brand[]" value="{{ q.brand }}" class="form-control form-control-sm border-0 bg-light"></td>
+                                <td>
+                                    <div class="spec-box d-flex gap-1">
+
+                                        <textarea 
+                                            name="specification[]" 
+                                            class="form-control form-control-sm spec-text"
+                                            rows="1"
+                                            placeholder="Enter specification...">{{ q.specification }}</textarea>
+
+                                        <button type="button"
+                                            class="btn btn-sm btn-outline-primary"
+                                            onclick="openSpecModal(this)">
+                                            View
+                                        </button>
+
+                                    </div>
+                                </td>
+                                <td><input name="unit[]" value="{{ q.unit }}" class="form-control form-control-sm border-0 bg-light text-center"></td>
+                                <td><input name="length[]" value="{{ q.length }}" class="form-control form-control-sm border-0 bg-light length text-center"></td>
+                                <td><input name="width[]" value="{{ q.width }}" class="form-control form-control-sm border-0 bg-light width text-center"></td>
+                                
+                                <td class="small fw-bold text-muted px-2 area">{{ q.area }}</td>
+                                <td class="small fw-bold text-muted px-2 price">{{ q.price }}</td>
+                                
+                                <td><input name="qty[]" value="{{ q.qty }}" class="form-control form-control-sm border-0 bg-light qty text-center"></td>
+                                
+                                <td class="small fw-bold text-primary px-2 total">{{ q.total }}</td>
+                                
+                                <td class="text-center sticky-end bg-light shadow-sm-left px-2">
+                                    <button type="button" class="btn btn-sm btn-danger border-0 rounded-circle" onclick="removeRow(this)">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4">
+                    <button type="button" class="btn btn-outline-primary rounded-pill px-4 mb-3 mb-md-0" onclick="addRow()">
+                        <i class="bi bi-plus-circle me-1"></i> Add Item Row
+                    </button>
+                    
+                    <div class="text-end">
+                        <div class="h5 mb-3">Grand Total: <span class="text-primary fw-bold" id="grandTotal">₹ 0.00</span></div>
+                        <button class="btn btn-success px-5 py-2 shadow-sm rounded-pill">
+                            <i class="bi bi-check-circle me-1"></i> Update Quotation
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="modal fade" id="imageModal" tabindex="-1">
+<div class="modal-dialog modal-lg modal-dialog-centered">
+<div class="modal-content p-3">
+
+<h5 class="mb-3">Select Image</h5>
+
+<div class="row g-3" id="imageGrid">
+{% for i in images %}
+<div class="col-3">
+    <img src="{{ i.image.url }}" 
+         class="img-thumbnail image-pick"
+         data-id="{{ i.id }}"
+         data-name="{{ i.name }}"
+         onclick="selectImage(this)">
+</div>
+{% endfor %}
+</div>
+
+<hr>
+
+<form method="post" enctype="multipart/form-data" action="{% url 'image_create' %}">
+{% csrf_token %}
+<input type="text" name="name" class="form-control mb-2" placeholder="Image name" required>
+<input type="file" name="image" class="form-control mb-2" required>
+<button class="btn btn-primary btn-sm">Upload New Image</button>
+</form>
+
+</div>
+</div>
+</div>
+
+<script>
+let activeRowBtn = null;
+
+function openImageModal(btn){
+    activeRowBtn = btn;
+    new bootstrap.Modal(document.getElementById("imageModal")).show();
+}
+
+function selectImage(img){
+
+    const id = img.dataset.id;
+    const name = img.dataset.name;
+    const src = img.src;
+
+    const cell = activeRowBtn.closest("td");
+
+    cell.querySelector(".selected-image-id").value = id;
+    cell.querySelector(".selected-image-name").innerText = name;
+
+    // preview
+    let preview = cell.querySelector("img");
+
+    if(!preview){
+        preview = document.createElement("img");
+        preview.className = "d-block mt-1 rounded border";
+        preview.style.width = "60px";
+        preview.style.height = "60px";
+        preview.style.objectFit = "cover";
+        cell.appendChild(preview);
+    }
+
+    preview.src = src;
+
+    bootstrap.Modal.getInstance(
+        document.getElementById("imageModal")
+    ).hide();
+}
+</script>
+
+
+
+
+
+<div class="modal fade" id="specModal" tabindex="-1">
+<div class="modal-dialog modal-lg modal-dialog-centered">
+<div class="modal-content p-4">
+
+<h5 class="mb-3">Specification Preview</h5>
+
+<textarea id="specModalText"
+          class="form-control mb-3"
+          rows="8"></textarea>
+
+<div class="text-end">
+<button class="btn btn-outline-secondary" onclick="copySpecModal()">Copy</button>
+<button class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+</div>
+
+</div>
+</div>
+</div>
+
+
+
+<script>
+let activeSpecBox = null;
+
+function openSpecModal(btn){
+    activeSpecBox = btn.closest("td").querySelector("textarea");
+    document.getElementById("specModalText").value = activeSpecBox.value;
+    new bootstrap.Modal(document.getElementById("specModal")).show();
+}
+
+function copySpecModal(){
+    const txt = document.getElementById("specModalText");
+    txt.select();
+    navigator.clipboard.writeText(txt.value);
+}
+</script>
+
+
+
+<script>
+// Logic remains same but updated to work with cleaner class names
+function addRow() {
+    const table = document.querySelector("#quoteTable tbody");
+    const row = table.rows[0].cloneNode(true);
+    row.querySelectorAll("input, textarea").forEach(el => el.value = "");
+    row.querySelectorAll(".area,.price,.total").forEach(t => t.innerText = "0");
+    table.appendChild(row);
+}
+
+function removeRow(btn) {
+    const rows = document.querySelectorAll("#quoteTable tbody tr");
+    if (rows.length > 1) btn.closest("tr").remove();
+    calcAll();
+}
+
+function calcAll() {
+    let grand = 0;
+    document.querySelectorAll("#quoteTable tbody tr").forEach(row => {
+        const length = parseFloat(row.querySelector(".length").value) || 0;
+        const width = parseFloat(row.querySelector(".width").value) || 0;
+        const qty = parseFloat(row.querySelector(".qty").value) || 0;
+
+        const area = length * width;
+        row.querySelector(".area").innerText = area.toFixed(2);
+
+        const select = row.querySelector(".fullsemi");
+        const rate = select.options[select.selectedIndex]?.dataset.rate || 0;
+        row.querySelector(".price").innerText = rate;
+
+        const total = area * rate * qty;
+        row.querySelector(".total").innerText = total.toFixed(2);
+
+        grand += total;
+    });
+    document.getElementById("grandTotal").innerText = "₹ " + grand.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+}
+
+document.addEventListener("input", calcAll);
+document.addEventListener("change", calcAll);
+window.onload = calcAll;
+</script>
+
+
+<script>
+const startInput = document.querySelector('[name="estimate_start_date"]');
+const endInput = document.querySelector('[name="estimate_end_date"]');
+
+startInput.addEventListener("change", () => {
+    if (!startInput.value) return;
+
+    const startDate = new Date(startInput.value);
+
+    // Add one month properly
+    const endDate = new Date(startDate);
+    endDate.setMonth(endDate.getMonth() + 1);
+
+    // Fix overflow (for months with fewer days)
+    if (endDate.getDate() !== startDate.getDate()) {
+        endDate.setDate(0); // last day of previous month
+    }
+
+    // Format YYYY-MM-DD for input[type=date]
+    const yyyy = endDate.getFullYear();
+    const mm = String(endDate.getMonth() + 1).padStart(2, "0");
+    const dd = String(endDate.getDate()).padStart(2, "0");
+
+    endInput.value = `${yyyy}-${mm}-${dd}`;
+});
+</script>
+
+
+
+
+
+
+<style>
+/* Clean up input look within tables */
+.form-control:focus, .form-select:focus {
+    background-color: #fff !important;
+    border: 1px solid #0d6efd !important;
+    box-shadow: none !important;
+}
+.table td { border-bottom: 1px solid #f1f1f1 !important; }
+
+.sticky-end {
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    border-left: 2px solid #dee2e6 !important;
+}
+</style>
+
+{% endblock %}

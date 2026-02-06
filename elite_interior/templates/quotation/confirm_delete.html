@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h2>Delete Quotation</h2>
+
+<p>
+Are you sure you want to delete quotation for
+<strong>{{ quotation.client.name }}</strong>?
+</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button class="btn-danger">Yes, Delete</button>
+    <a href="{% url 'quotation_index' %}">Cancel</a>
+</form>
+
+{% endblock %}

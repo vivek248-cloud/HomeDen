@@ -1,0 +1,320 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container py-4">
+
+<h3 class="fw-bold mb-3">Quotation Details</h3>
+
+<div class="card shadow-sm border-0 rounded-4 mb-4 p-3">
+
+<div class="row">
+
+<div class="col-md-4">
+<strong>Client:</strong><br>
+{{ client.name }}
+</div>
+
+    <div class="col-md-4">
+    <strong>Phone:</strong><br>
+    {{ client.phone1 }}
+    </div>
+
+    <div class="col-md-4">
+    <strong>Email:</strong><br>
+    {{ client.email }}
+    </div>
+
+</div>
+
+<hr>
+
+<div class="row">
+<div class="col-md-6">
+<strong>Estimate Start:</strong> {{ client.estimate_start_date }}
+</div>
+<div class="col-md-6">
+<strong>Estimate End:</strong> {{ client.estimate_end_date }}
+</div>
+</div>
+
+</div>
+
+<div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+
+<table class="table table-bordered align-middle mb-0">
+
+<thead class="bg-dark text-center">
+<tr>
+<th>Floor</th>
+<th>Location</th>
+<th>Element</th>
+<th>Image</th>
+<th>Series</th>
+<th>Core</th>
+<th>Finish</th>
+<th>Brand</th>
+<th>Specification</th>
+<th>Unit</th>
+<th>Length</th>
+<th>Width</th>
+<th>Area</th>
+<th>Price</th>
+<th>Qty</th>
+<th>Total</th>
+<th>Move</th>
+
+</tr>
+</thead>
+
+<tbody>
+{% for r in rows %}
+<tr class="text-center">
+
+<td>{{ r.floor }}</td>
+<td>{{ r.location }}</td>
+<td>{{ r.element }}</td>
+
+<td>
+{% if r.image %}
+<img src="{{ r.image.image.url }}" 
+     style="width:60px;height:60px;object-fit:cover" 
+     class="rounded border">
+{% else %}
+—
+{% endif %}
+</td>
+
+<td>{{ r.full_semi.name }}</td>
+<td>{{ r.core_material }}</td>
+<td>{{ r.finish_material }}</td>
+<td>{{ r.brand }}</td>
+
+<td class="text-start" style="max-width:260px;">
+{{ r.specification|linebreaksbr }}
+</td>
+
+<td>{{ r.unit }}</td>
+<td>{{ r.length }}</td>
+<td>{{ r.width }}</td>
+<td>{{ r.area }}</td>
+<td>₹ {{ r.price }}</td>
+<td>{{ r.qty }}</td>
+
+<td class="fw-bold text-success">
+₹ {{ r.total }}
+</td>
+
+<td>
+    <div class="d-flex flex-column gap-1">
+        <button type="button" 
+                class="btn btn-sm btn-light border shadow-sm"
+                onclick="moveUp(this)">
+            <i class="bi bi-chevron-up"></i>
+        </button>
+        <button type="button" 
+                class="btn btn-sm btn-light border shadow-sm"
+                onclick="moveDown(this)">
+            <i class="bi bi-chevron-down"></i>
+        </button>
+    </div>
+</td>
+
+</tr>
+{% endfor %}
+</tbody>
+
+</table>
+
+</div>
+
+<a href="{% url 'quotation_pdf' client.id %}" target="_blank"
+   class="btn btn-sm btn-dark mt-3">
+   Download PDF
+</a>
+
+
+
+<div class="row justify-content-end mt-4">
+
+<div class="col-md-4">
+
+<div class="card p-3 shadow-sm border-0 rounded-4">
+
+<div class="mb-2 d-flex justify-content-between">
+<span>Subtotal</span>
+<strong id="subtotal">₹ {{ subtotal }}</strong>
+</div>
+
+<div class="mb-2 d-flex align-items-center gap-2">
+<span>GST</span>
+<input type="number" id="gst"
+       value="{{ gst_rate }}"
+       class="form-control form-control-sm w-50">
+<span>%</span>
+</div>
+
+<div class="mb-2">
+    <div class="d-flex align-items-center gap-2 mb-1">
+        <span>Discount</span>
+
+        <div class="form-check ms-2">
+            <input class="form-check-input"
+                   type="radio"
+                   name="discountType"
+                   value="percent"
+                   checked>
+            <label class="form-check-label">%</label>
+        </div>
+
+        <div class="form-check">
+            <input class="form-check-input"
+                   type="radio"
+                   name="discountType"
+                   value="amount">
+            <label class="form-check-label">₹</label>
+        </div>
+    </div>
+
+    <div class="input-group input-group-sm">
+        <span class="input-group-text" id="discountSymbol">%</span>
+        <input type="number"
+            id="discount"
+            value="{{ discount_amount }}"
+            class="form-control">
+
+    </div>
+</div>
+<div class="mt-1 text-muted small">
+    Discount Applied: 
+    <strong id="discountAmount">₹ 0.00</strong>
+</div>
+
+
+
+<hr>
+
+<div class="d-flex justify-content-between fs-5 fw-bold">
+    <span>Grand Total</span>
+    <span id="grandTotal">₹ {{ grand_total }}</span>
+</div>
+
+
+
+
+</div>
+
+</div>
+</div>
+
+
+<form method="post" action="{% url 'save_quotation_totals' client.id %}">
+{% csrf_token %}
+
+<input type="hidden" name="gst_percent" id="gst_hidden">
+<input type="hidden" name="discount_value" id="discount_hidden">
+<input type="hidden" name="discount_type" id="discount_type_hidden">
+<input type="hidden" name="grand_total" id="grand_total_hidden">
+
+
+
+<button class="btn btn-primary mt-3">
+Save Totals
+</button>
+</form>
+
+
+</div>
+
+
+<script>
+function moveUp(btn){
+    const row = btn.closest("tr");
+    const prev = row.previousElementSibling;
+    if(prev){
+        row.parentNode.insertBefore(row, prev);
+    }
+}
+
+function moveDown(btn){
+    const row = btn.closest("tr");
+    const next = row.nextElementSibling;
+    if(next){
+        row.parentNode.insertBefore(next, row);
+    }
+}
+</script>
+
+<script>
+function calculateTotals(){
+
+    let subtotal = 0;
+
+    document.querySelectorAll("tbody tr").forEach(row=>{
+        const totalCell = row.querySelector("td.fw-bold");
+        if(totalCell){
+            subtotal += parseFloat(
+                totalCell.innerText.replace(/[₹, ]/g,"") || 0
+            );
+        }
+    });
+
+    const gstPercent = parseFloat(document.getElementById("gst").value || 0);
+    const gstAmount = subtotal * gstPercent / 100;
+
+    const discountValue = parseFloat(document.getElementById("discount").value || 0);
+    const type = document.querySelector("input[name='discountType']:checked").value;
+
+    let discountAmount = 0;
+
+    if(type === "percent"){
+        discountAmount = subtotal * discountValue / 100;
+    }else{
+        discountAmount = discountValue;
+    }
+
+    const grandTotal = Math.max(
+        (subtotal + gstAmount) - discountAmount,
+        0
+    );
+
+    // ✅ Main totals
+    document.getElementById("subtotal").innerText = "₹ " + subtotal.toFixed(2);
+    document.getElementById("grandTotal").innerText = "₹ " + grandTotal.toFixed(2);
+
+    // ✅ Show actual discount
+    document.getElementById("discountAmount").innerText =
+        "₹ " + discountAmount.toFixed(2);
+
+    // hidden values for saving
+    document.getElementById("gst_hidden").value = gstPercent;
+    document.getElementById("discount_hidden").value = discountValue;
+    document.getElementById("discount_type_hidden").value = type;
+    document.getElementById("grand_total_hidden").value = grandTotal.toFixed(2);
+}
+
+
+// toggle symbol
+document.querySelectorAll("input[name='discountType']").forEach(radio=>{
+    radio.addEventListener("change", () => {
+        document.getElementById("discountSymbol").innerText =
+            radio.value === "percent" ? "%" : "₹";
+        calculateTotals();
+    });
+});
+
+["gst","discount"].forEach(id=>{
+    document.getElementById(id).addEventListener("input", calculateTotals);
+});
+
+calculateTotals();
+</script>
+
+
+
+
+
+
+
+
+
+{% endblock %}

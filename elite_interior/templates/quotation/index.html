@@ -1,0 +1,116 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+.table-card{
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+.client-badge{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:#e8edff;
+    color:#3751ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:600;
+}
+.row-hover:hover{
+    background:#f9fbff;
+}
+.action-btn{
+    border-radius:8px;
+    padding:6px 12px;
+}
+</style>
+
+<div class="container py-5">
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+        <h2 class="fw-bold text-dark mb-1">Quotations</h2>
+        <p class="text-muted small mb-0">Track and manage client estimates</p>
+    </div>
+    <a href="{% url 'quotation_create' %}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+        + Create Quotation
+    </a>
+</div>
+
+<div class="table-card overflow-hidden">
+
+<table class="table align-middle mb-0">
+<thead class="bg-light">
+<tr>
+    <th class="ps-4 py-3 text-uppercase small text-secondary">Client</th>
+    <th class="py-3 text-uppercase small text-secondary">Contact</th>
+    <th class="py-3 text-uppercase small text-secondary text-center">Total Qty</th>
+    <th class="pe-4 py-3 text-uppercase small text-secondary text-end">Actions</th>
+</tr>
+</thead>
+
+<tbody>
+{% for q in quotations %}
+<tr class="row-hover">
+
+<td class="ps-4">
+<div class="d-flex align-items-center gap-3">
+    <div class="client-badge">
+        {{ q.client__name|slice:":1" }}
+    </div>
+    <div>
+        <div class="fw-semibold">{{ q.client__name }}</div>
+        <small class="text-muted">Client</small>
+    </div>
+</div>
+</td>
+
+<td>
+<small class="d-block">
+📞 {{ q.client__phone1 }}
+</small>
+<small class="text-muted">
+✉ {{ q.client__email }}
+</small>
+</td>
+
+<td class="text-center">
+<span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill">
+{{ q.total_qty }}
+</span>
+</td>
+
+<td class="pe-4 text-end">
+    <a href="{% url 'quotation_detail' q.client__id %}" 
+   class="btn btn-outline-secondary action-btn me-1">
+   View
+</a>
+
+<a href="{% url 'quotation_update' q.client__id %}" class="btn btn-outline-primary action-btn me-1">
+Edit
+</a>
+<a href="{% url 'quotation_delete' q.client__id %}" 
+   class="btn btn-outline-danger action-btn"
+   onclick="return confirm('Delete this quotation?')">
+Delete
+</a>
+</td>
+
+</tr>
+{% empty %}
+<tr>
+<td colspan="4" class="py-5 text-center text-muted">
+No quotations yet — create your first one 🚀
+</td>
+</tr>
+{% endfor %}
+</tbody>
+
+</table>
+</div>
+
+</div>
+
+{% endblock %}
