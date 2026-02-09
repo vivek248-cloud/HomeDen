@@ -26,16 +26,15 @@ DEBUG = True
 
 
 
-# ALLOWED_HOSTS = ['homedeninterior.com', 'www.homedeninterior.com', 'srv888437.hstgr.cloud', '127.0.0.1', 'localhost']
-ALLOWED_HOSTS = [
-'*',
-]
+
+# ALLOWED_HOSTS = [
+# '*',
+# ]
 
 ALLOWED_HOSTS = [
     "homedeninterior.com",
     "www.homedeninterior.com",
     "srv888437.hstgr.cloud",
-
 ]
 
 
