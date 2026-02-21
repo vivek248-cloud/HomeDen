@@ -2,17 +2,14 @@ from django import template
 
 register = template.Library()
 
-@register.filter(name='length_is')
+
+@register.filter(name="length_is")
 def length_is(value, expected_length):
     try:
         return len(value) == int(expected_length)
     except:
         return False
 
-
-from django import template
-
-register = template.Library()
 
 @register.filter(name="indian_currency")
 def indian_currency(value):
@@ -39,10 +36,6 @@ def indian_currency(value):
         return value
 
 
-from django import template
-
-register = template.Library()
-
 @register.filter(name="humanize_views")
 def humanize_views(value):
     try:
@@ -54,5 +47,3 @@ def humanize_views(value):
         return str(value)
     except:
         return value
-
-

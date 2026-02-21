@@ -40,22 +40,6 @@ class BlogAdmin(admin.ModelAdmin):
     ordering = ('-created_at','-date',)
 
 
-# @admin.register(YouTubeVideo)
-# class YouTubeVideoAdmin(admin.ModelAdmin):
-#     list_display = ('title', 'youtube_link', 'is_active', 'display_order', 'thumbnail_preview', 'uploaded_at')
-#     list_editable = ('is_active', 'display_order')
-#     list_filter = ('is_active', 'uploaded_at')
-#     search_fields = ('title', 'description')
-#     readonly_fields = ('thumbnail_preview', 'embed_code')
-#     fieldsets = (
-#         (None, {
-#             'fields': ('title', 'youtube_link', 'description', 'is_active', 'display_order')
-#         }),
-#         ('Preview', {
-#             'fields': ('thumbnail_preview', 'embed_code'),
-#             'classes': ('collapse',)
-#         }),
-#     )
 
 
 from django.contrib import admin
