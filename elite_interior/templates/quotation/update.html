@@ -82,29 +82,42 @@
                                 <td><input name="element[]" value="{{ q.element }}" class="form-control form-control-sm border-0 bg-light"></td>
                                 <td>
 
-                                <input type="hidden" name="image[]" 
-                                    class="selected-image-id"
-                                    value="{% if q.image %}{{ q.image.id }}{% endif %}">
+                                    <input type="hidden" name="image[]" 
+                                        class="selected-image-id"
+                                        value="{% if q.image %}{{ q.image.id }}{% endif %}">
 
-                                <button type="button"
-                                    class="btn btn-sm btn-outline-secondary choose-image-btn"
-                                    onclick="openImageModal(this)">
-                                    Choose Image
-                                </button>
+                                    <div class="d-flex align-items-start gap-2 flex-wrap">
 
-                                <span class="selected-image-name text-muted small ms-2">
-                                    {% if q.image %}
-                                        {{ q.image.name }}
-                                    {% else %}
-                                        No image
-                                    {% endif %}
-                                </span>
+                                        <div>
+                                            <div class="d-flex gap-1">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-outline-secondary choose-image-btn"
+                                                    onclick="openImageModal(this)">
+                                                    Choose
+                                                </button>
 
-                                {% if q.image %}
-                                <img src="{{ q.image.image.url }}" 
-                                    class="d-block mt-1 rounded border"
-                                    style="width:60px;height:60px;object-fit:cover;">
-                                {% endif %}
+                                                <button type="button"
+                                                    class="btn btn-sm btn-outline-danger clear-image-btn"
+                                                    onclick="clearSelectedImage(this)"
+                                                    {% if not q.image %}style="display:none;"{% endif %}>
+                                                    Clear
+                                                </button>
+                                            </div>
+
+                                            <span class="selected-image-name text-muted small ms-1">
+                                                {% if q.image %}
+                                                    {{ q.image.name }}
+                                                {% else %}
+                                                    No image
+                                                {% endif %}
+                                            </span>
+                                        </div>
+
+                                        <img src="{% if q.image %}{{ q.image.image.url }}{% endif %}"
+                                            class="selected-image-preview rounded border {% if not q.image %}d-none{% endif %}"
+                                            style="width:60px;height:60px;object-fit:cover;">
+
+                                    </div>
 
                                 </td>
                                 <td>
@@ -142,7 +155,7 @@
                                 <td class="small fw-bold text-muted px-2 area">{{ q.area }}</td>
                                 <td class="small fw-bold text-muted px-2 price">{{ q.price }}</td>
                                 
-                                <td><input name="qty[]" value="{{ q.qty }}" class="form-control form-control-sm border-0 bg-light qty text-center"></td>
+                                <td><input name="qty[]" value="{{ q.qty }}" class="form-control form-control-sm border-0 bg-light qty text-center" required></td>
                                 
                                 <td class="small fw-bold text-primary px-2 total">{{ q.total }}</td>
                                 
@@ -225,23 +238,21 @@ function selectImage(img){
 
     const cell = activeRowBtn.closest("td");
 
+    // 1️⃣ Set hidden input
     cell.querySelector(".selected-image-id").value = id;
+
+    // 2️⃣ Set image name
     cell.querySelector(".selected-image-name").innerText = name;
 
-    // preview
-    let preview = cell.querySelector("img");
-
-    if(!preview){
-        preview = document.createElement("img");
-        preview.className = "d-block mt-1 rounded border";
-        preview.style.width = "60px";
-        preview.style.height = "60px";
-        preview.style.objectFit = "cover";
-        cell.appendChild(preview);
-    }
-
+    // 3️⃣ Update preview properly
+    const preview = cell.querySelector(".selected-image-preview");
     preview.src = src;
+    preview.classList.remove("d-none");
 
+    // 4️⃣ Show clear button
+    cell.querySelector(".clear-image-btn").style.display = "inline-block";
+
+    // Close modal
     bootstrap.Modal.getInstance(
         document.getElementById("imageModal")
     ).hide();
@@ -249,7 +260,26 @@ function selectImage(img){
 </script>
 
 
+<script>
+function clearSelectedImage(button) {
 
+    const td = button.closest("td");
+
+    // 1️⃣ Clear hidden input
+    td.querySelector(".selected-image-id").value = "";
+
+    // 2️⃣ Hide preview properly
+    const preview = td.querySelector(".selected-image-preview");
+    preview.src = "";
+    preview.classList.add("d-none");
+
+    // 3️⃣ Reset name
+    td.querySelector(".selected-image-name").innerText = "No image";
+
+    // 4️⃣ Hide clear button
+    button.style.display = "none";
+}
+</script>
 
 
 <div class="modal fade" id="specModal" tabindex="-1">
