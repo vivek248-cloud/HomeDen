@@ -2,175 +2,192 @@
 {% block content %}
 
 <style>
-    /* Content Header Styling */
-    .page-title {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        color: #2b3674;
+    :root {
+        --text-dark: #1B2559;
+        --text-muted: #A3AED0;
+        --primary-brand: #4318FF;
+        --soft-bg: #F4F7FE;
     }
 
-    /* Table Customizations */
-    .table-container {
+    .page-title { color: var(--text-dark); font-weight: 800; }
+
+    /* Modern Table Container */
+    .table-card {
         background: #fff;
-        border-radius: 20px;
-        padding: 1.5rem;
+        border-radius: 24px;
+        border: 1px solid rgba(224, 229, 242, 0.5);
         box-shadow: 14px 17px 40px 4px rgba(112, 144, 176, 0.08);
+        overflow: hidden;
     }
 
-    .table thead th {
-        border-top: none;
-        color: #a3aed0;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.7rem;
-        letter-spacing: 0.05em;
-        padding: 1rem;
+    .table-header-tool {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--soft-bg);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
     }
 
-    .table tbody tr {
-        transition: all 0.2s ease;
-    }
-
-    .table tbody tr:hover {
-        background-color: #f7f9ff;
-        transform: translateY(-1px);
-    }
-
-    /* Client Avatar */
-    .client-avatar {
-        width: 45px;
-        height: 45px;
+    /* Enhanced Search UX */
+    .search-wrapper {
+        position: relative;
+        background: var(--soft-bg);
         border-radius: 14px;
-        background: linear-gradient(135deg, #3751ff 0%, #2b3674 100%);
-        color: #fff;
+        padding: 8px 16px;
         display: flex;
         align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 1.1rem;
-        box-shadow: 0 4px 12px rgba(55, 81, 255, 0.2);
+        width: 100%;
+        max-width: 320px;
+        transition: all 0.2s;
+        border: 1px solid transparent;
     }
-
-    /* Badge Overrides */
-    .qty-badge {
-        background: #f4f7fe;
-        color: #3751ff;
-        font-weight: 700;
-        border: 1px solid #e0e5f2;
-        padding: 0.5rem 1rem;
-    }
-
-    /* Action Buttons */
-    .btn-action {
-        width: 36px;
-        height: 36px;
-        padding: 0;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 10px;
-        transition: 0.2s;
-        border: 1px solid #e0e5f2;
+    .search-wrapper:focus-within {
+        border-color: var(--primary-brand);
         background: #fff;
-        color: #707eae;
+        box-shadow: 0 4px 20px rgba(67, 24, 255, 0.05);
+    }
+    .search-wrapper input {
+        border: none;
+        background: transparent;
+        outline: none;
+        color: var(--text-dark);
+        font-weight: 500;
+        margin-left: 10px;
+        width: 100%;
     }
 
-    .btn-action:hover {
-        background: #3751ff;
-        color: #fff;
-        border-color: #3751ff;
-        box-shadow: 0 4px 12px rgba(55, 81, 255, 0.2);
+    /* Table Typography */
+    .custom-table thead { background: var(--soft-bg); }
+    .custom-table th {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        letter-spacing: 0.5px;
+        padding: 1.25rem 1rem;
+        border: none;
+    }
+    .custom-table td {
+        padding: 1.25rem 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--soft-bg);
+        transition: background 0.2s;
+    }
+    .custom-table tr:hover td { background: #fafbff; }
+
+    /* Client Visuals */
+    .client-profile { display: flex; align-items: center; gap: 15px; }
+    .avatar-circle {
+        width: 42px; height: 42px;
+        background: linear-gradient(135deg, #4318FF 0%, #868CFF 100%);
+        color: white; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; box-shadow: 0 4px 12px rgba(67, 24, 255, 0.2);
     }
 
-    .btn-action-delete:hover {
-        background: #ee5d50;
-        border-color: #ee5d50;
-        box-shadow: 0 4px 12px rgba(238, 93, 80, 0.2);
+    /* Status & Tags */
+    .item-count-tag {
+        background: #e6faf5; color: #05cd99;
+        font-weight: 700; font-size: 0.75rem;
+        padding: 6px 14px; border-radius: 10px;
     }
 
-    .search-input-group {
-        background: #f4f7fe;
-        border-radius: 15px;
-        padding: 2px 15px;
-        border: 1px solid #e0e5f2;
-        max-width: 300px;
+    /* Clean Action Buttons */
+    .action-btn-group { display: flex; gap: 8px; justify-content: flex-end; }
+    .btn-circle {
+        width: 38px; height: 38px;
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        border: 1px solid #E0E5F2;
+        background: white; color: #707EAE;
+        transition: all 0.2s;
     }
+    .btn-circle:hover { 
+        background: var(--primary-brand); color: white; 
+        border-color: var(--primary-brand); transform: translateY(-2px);
+    }
+    .btn-circle.delete:hover { background: #EE5D50; border-color: #EE5D50; }
 </style>
 
 <div class="row mb-4 align-items-center">
-    <div class="col-12 col-md-6">
-        <h3 class="page-title fw-bold mb-1">Quotation Overview</h3>
-        <p class="text-muted small">Manage your sales pipeline and client estimates</p>
+    <div class="col-sm-6">
+        <h3 class="page-title mb-1">Quotation Archive</h3>
+        <p class="text-muted small mb-0">You have <b>{{ quotations|length }}</b> client project groups.</p>
     </div>
-    <div class="col-12 col-md-6 text-md-end">
-        <a href="{% url 'quotation_create' %}" class="btn btn-primary shadow-sm">
-            <i class="bi bi-plus-lg me-2"></i> New Quotation
+    <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
+        <a href="{% url 'quotation_create' %}" class="btn btn-primary px-4 py-2 rounded-4 fw-bold shadow-sm">
+            <i class="bi bi-plus-lg me-2"></i> New Estimate
         </a>
     </div>
 </div>
 
-<div class="table-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="search-input-group d-flex align-items-center">
-            <i class="bi bi-search text-muted me-2"></i>
-            <input type="text" class="form-control border-0 bg-transparent shadow-none px-0" placeholder="Quick search...">
+<div class="table-card">
+    <div class="table-header-tool">
+        <div class="search-wrapper">
+            <i class="bi bi-search text-muted"></i>
+            <input type="text" placeholder="Search by client name...">
         </div>
-        <div class="dropdown">
-            <button class="btn btn-light btn-sm rounded-3 px-3 border" data-bs-toggle="dropdown">
-                <i class="bi bi-filter me-1"></i> Filter
+        <div class="d-flex gap-2">
+            <button class="btn btn-light btn-sm rounded-3 border px-3 fw-bold text-muted">
+                <i class="bi bi-cloud-arrow-down me-1"></i> Export
+            </button>
+            <button class="btn btn-light btn-sm rounded-3 border px-3 fw-bold text-muted">
+                <i class="bi bi-funnel"></i>
             </button>
         </div>
     </div>
 
     <div class="table-responsive">
-        <table class="table align-middle">
+        <table class="table custom-table align-middle mb-0">
             <thead>
                 <tr>
-                    <th>Client Information</th>
-                    <th>Contact Details</th>
-                    <th class="text-center">Volume</th>
-                    <th class="text-end">Actions</th>
+                    <th>Client Summary</th>
+                    <th>Communication</th>
+                    <th class="text-center">Line Items</th>
+                    <th class="text-end">Management</th>
                 </tr>
             </thead>
             <tbody>
                 {% for q in quotations %}
                 <tr>
                     <td>
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="client-avatar">
+                        <div class="client-profile">
+                            <div class="avatar-circle">
                                 {{ q.client__name|slice:":1"|upper }}
                             </div>
                             <div>
-                                <div class="fw-bold text-dark" style="font-size: 0.95rem;">{{ q.client__name }}</div>
-                                <span class="text-muted" style="font-size: 0.8rem;">ID: #{{ q.client__id|slice:":5" }}</span>
+                                <div class="fw-bold text-dark">{{ q.client__name }}</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">ID: #{{ q.client__id|slice:":6" }}</div>
                             </div>
                         </div>
                     </td>
                     <td>
                         <div class="d-flex flex-column">
-                            <span class="text-dark small fw-medium"><i class="bi bi-telephone-outbound me-2 text-muted"></i>{{ q.client__phone1 }}</span>
-                            <span class="text-muted small"><i class="bi bi-envelope me-2"></i>{{ q.client__email }}</span>
+                            <span class="text-dark small fw-semibold">
+                                <i class="bi bi-phone-fill me-2 text-muted"></i>{{ q.client__phone1 }}
+                            </span>
+                            <span class="text-muted small">
+                                <i class="bi bi-envelope-fill me-2 opacity-50"></i>{{ q.client__email|default:"No email" }}
+                            </span>
                         </div>
                     </td>
                     <td class="text-center">
-                        <span class="badge qty-badge rounded-pill">
-                            {{ q.total_qty }} Items
+                        <span class="item-count-tag">
+                            <i class="bi bi-box-seam me-1"></i> {{ q.total_qty }} Items
                         </span>
                     </td>
-                    <td class="text-end">
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="{% url 'quotation_detail' q.client__id %}" 
-                               class="btn-action" title="View Details">
-                                <i class="bi bi-eye"></i>
+                    <td>
+                        <div class="action-btn-group">
+                            <a href="{% url 'quotation_detail' q.client__id %}" class="btn-circle" title="View Details">
+                                <i class="bi bi-eye-fill"></i>
                             </a>
-                            <a href="{% url 'quotation_update' q.client__id %}" 
-                               class="btn-action" title="Edit Quotation">
+                            <a href="{% url 'quotation_update' q.client__id %}" class="btn-circle" title="Edit">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <a href="{% url 'quotation_delete' q.client__id %}" 
-                               class="btn-action btn-action-delete" 
-                               onclick="return confirm('Delete this quotation?')"
-                               title="Remove">
-                                <i class="bi bi-trash3"></i>
+                            <a href="{% url 'quotation_delete' q.client__id %}" class="btn-circle delete" 
+                               onclick="return confirm('Archive this quotation?')" title="Delete">
+                                <i class="bi bi-trash3-fill"></i>
                             </a>
                         </div>
                     </td>
@@ -178,12 +195,11 @@
                 {% empty %}
                 <tr>
                     <td colspan="4" class="text-center py-5">
-                        <img src="https://illustrations.popsy.co/gray/data-analysis.svg" alt="Empty State" style="width: 150px;" class="mb-3">
-                        <h5 class="text-dark fw-bold">No Records Found</h5>
-                        <p class="text-muted">Start by creating a new quotation for your clients.</p>
-                        <a href="{% url 'quotation_create' %}" class="btn btn-outline-primary btn-sm rounded-pill mt-2">
-                            Create First Quotation
-                        </a>
+                        <div class="py-4">
+                            <i class="bi bi-folder2-open display-4 text-muted opacity-25"></i>
+                            <h5 class="mt-3 text-dark fw-bold">No Quotations Found</h5>
+                            <p class="text-muted small">Try adjusting your filters or create a new entry.</p>
+                        </div>
                     </td>
                 </tr>
                 {% endfor %}

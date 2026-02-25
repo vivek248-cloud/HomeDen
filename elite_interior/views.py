@@ -2944,30 +2944,32 @@ def quotation_entry(request):
 from django.db.models import Sum
 
 
-from django.db.models import Count
+from django.shortcuts import render
+from django.db.models import Count, Sum
 from .models import Client, Quotation
 from django.contrib.auth.decorators import login_required
 
-
 @login_required
 def dashboard(request):
-
+    # Total counts
     total_clients = Client.objects.count()
+    total_quotations = Quotation.objects.count() # Total line items
+    
+    # Financials (Sum of all Quotation totals)
+    total_revenue = Quotation.objects.aggregate(Sum('total'))['total__sum'] or 0
 
-    # total quotation rows (all items)
-    total_quotations = Quotation.objects.count()
+    # Unique Client Quotes (Groups)
+    quotation_groups = Quotation.objects.values("client").distinct().count()
 
-    # OPTIONAL: unique quotations per client
-    quotations_by_client = (
-        Quotation.objects.values("client")
-        .distinct()
-        .count()
-    )
+    # Get the 5 most recent quotations for the "Recent Activity" table
+    recent_activity = Quotation.objects.select_related('client').order_by('-created_at')[:5]
 
     return render(request, "quotation/dashboard.html", {
         "total_clients": total_clients,
         "total_quotations": total_quotations,
-        "quotation_groups": quotations_by_client,
+        "quotation_groups": quotation_groups,
+        "total_revenue": total_revenue,
+        "recent_activity": recent_activity,
     })
 
 

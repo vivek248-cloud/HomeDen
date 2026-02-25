@@ -2,193 +2,220 @@
 {% block content %}
 
 <style>
-    .page-title {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        color: #2b3674;
+    :root {
+        --brand-blue: #4318FF;
+        --navy-dark: #1B2559;
+        --muted-grey: #A3AED0;
+        --soft-bg: #F4F7FE;
+        --success-teal: #05CD99;
     }
 
-    /* Client Table Styling */
-    .client-card {
+    .page-title { color: var(--navy-dark); font-weight: 800; letter-spacing: -0.5px; }
+
+    /* Directory Container */
+    .directory-wrapper {
         background: #fff;
-        border-radius: 20px;
-        border: none;
+        border-radius: 30px;
+        border: 1px solid rgba(224, 229, 242, 0.7);
         box-shadow: 14px 17px 40px 4px rgba(112, 144, 176, 0.08);
         overflow: hidden;
     }
 
-    .table thead th {
-        background-color: #fcfdfe;
-        color: #a3aed0;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.7rem;
-        letter-spacing: 0.05em;
-        padding: 1.25rem 1rem;
-        border-bottom: 1px solid #e0e5f2;
+    /* Glass Header & Search */
+    .action-header {
+        background: rgba(250, 251, 255, 0.8);
+        backdrop-filter: blur(10px);
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--soft-bg);
     }
 
-    .table tbody tr {
-        transition: all 0.2s ease;
-    }
-
-    .table tbody tr:hover {
-        background-color: #f7f9ff !important;
-    }
-
-    /* Modern Avatar */
-    .client-initials {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
-        background: #f4f7fe;
-        color: #4318ff;
+    .search-pill {
+        background: #fff;
+        border: 1px solid #E0E5F2;
+        border-radius: 20px;
+        padding: 10px 20px;
         display: flex;
         align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 1rem;
-        border: 1px solid #e0e5f2;
+        width: 100%;
+        max-width: 400px;
+        transition: 0.3s;
     }
 
-    /* Contact Links */
-    .contact-link {
-        text-decoration: none;
-        color: #2b3674;
+    .search-pill:focus-within {
+        border-color: var(--brand-blue);
+        box-shadow: 0 10px 20px rgba(67, 24, 255, 0.05);
+    }
+
+    .search-pill input {
+        border: none;
+        outline: none;
+        margin-left: 12px;
         font-weight: 500;
-        transition: color 0.2s;
-    }
-    
-    .contact-link:hover {
-        color: #4318ff;
+        width: 100%;
+        color: var(--navy-dark);
     }
 
-    /* Quick Action Buttons */
-    .btn-action-sm {
-        width: 32px;
-        height: 32px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 8px;
-        background: #fff;
-        border: 1px solid #e0e5f2;
-        color: #707eae;
+    /* Modern Table UI */
+    .custom-table thead th {
+        background: var(--soft-bg);
+        color: var(--muted-grey);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 1px;
+        padding: 1.5rem 1rem;
+        border: none;
+    }
+
+    .custom-table tbody tr {
+        transition: all 0.3s ease;
+        cursor: default;
+    }
+
+    .custom-table tbody tr:hover {
+        background: #fff !important;
+        transform: translateY(-3px) scale(1.002);
+        box-shadow: 0 10px 30px -10px rgba(112, 144, 176, 0.2);
+        z-index: 2;
+    }
+
+    /* Profile Visuals */
+    .avatar-wrapper { position: relative; }
+    
+    .avatar-main {
+        width: 52px; height: 52px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #707EAE 0%, #1B2559 100%);
+        color: #fff;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 800; font-size: 1.3rem;
+        box-shadow: 0 8px 20px rgba(27, 37, 89, 0.15);
+    }
+
+    .status-dot {
+        position: absolute;
+        bottom: -2px;
+        right: -2px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        background: var(--success-teal);
+    }
+
+    /* Communication Badges */
+    .phone-link {
+        color: var(--brand-blue);
+        font-weight: 700;
+        text-decoration: none;
+        background: rgba(67, 24, 255, 0.05);
+        padding: 5px 12px;
+        border-radius: 10px;
         transition: 0.2s;
     }
+    .phone-link:hover { background: var(--brand-blue); color: #fff; }
 
-    .btn-action-sm:hover {
-        background: #4318ff;
-        color: #fff;
-        border-color: #4318ff;
+    /* Action Circle Buttons */
+    .action-circle {
+        width: 40px; height: 40px;
+        border-radius: 50%;
+        display: inline-flex; align-items: center; justify-content: center;
+        background: #F4F7FE; color: #707EAE;
+        border: none; transition: 0.3s;
+        margin-left: 5px;
     }
-
-    .btn-action-delete:hover {
-        background: #ee5d50;
-        border-color: #ee5d50;
+    .action-circle:hover { 
+        transform: rotate(15deg); 
+        color: #fff; 
     }
-
-    .search-container {
-        position: relative;
-        max-width: 350px;
-    }
-
-    .search-container i {
-        position: absolute;
-        left: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #a3aed0;
-    }
-
-    .search-container .form-control {
-        padding-left: 45px;
-        background-color: #f4f7fe;
-        border: none;
-        height: 45px;
-    }
+    .action-circle.edit:hover { background: var(--brand-blue); }
+    .action-circle.delete:hover { background: #EE5D50; }
 </style>
 
-<div class="row mb-4 align-items-end">
+<div class="row mb-5 align-items-center">
     <div class="col-md-6">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-1">
-                <li class="breadcrumb-item small"><a href="{% url 'dashboard' %}" class="text-muted text-decoration-none">Home</a></li>
-                <li class="breadcrumb-item small active fw-bold" aria-current="page">Clients</li>
-            </ol>
-        </nav>
-        <h3 class="page-title fw-bold mb-0">Client Directory</h3>
+        <h3 class="page-title mb-1">Directory</h3>
+        <p class="text-muted small mb-0">You have <span class="text-primary fw-bold">{{ clients|length }}</span> accounts registered.</p>
     </div>
     <div class="col-md-6 text-md-end mt-3 mt-md-0">
-        <a href="{% url 'client_create' %}" class="btn btn-primary px-4 py-2">
-            <i class="bi bi-person-plus-fill me-2"></i> Add New Client
+        <a href="{% url 'client_create' %}" class="btn btn-primary px-4 py-2 rounded-pill fw-bold shadow-sm">
+            <i class="bi bi-plus-lg me-2"></i> New Client
         </a>
     </div>
 </div>
 
-<div class="client-card">
-    <div class="p-4 border-bottom d-flex flex-column flex-md-row justify-content-between gap-3">
-        <div class="search-container w-100">
-            <i class="bi bi-search"></i>
-            <input type="text" class="form-control rounded-pill" placeholder="Search by name, phone or location...">
+<div class="directory-wrapper">
+    <div class="action-header d-flex flex-column flex-lg-row justify-content-between align-items-center gap-4">
+        <div class="search-pill">
+            <i class="bi bi-search text-muted"></i>
+            <input type="text" id="clientSearch" placeholder="Find by name, phone, or ID...">
         </div>
         <div class="d-flex gap-2">
-            <button class="btn btn-light border px-3 rounded-pill text-muted small">
-                <i class="bi bi-download me-2"></i>Export
+            <button class="btn btn-white border bg-white rounded-pill px-4 text-muted fw-bold small shadow-sm">
+                <i class="bi bi-sliders2 me-2"></i>Filter
             </button>
-            <button class="btn btn-light border px-3 rounded-pill text-muted small">
-                <i class="bi bi-funnel me-2"></i>Filter
+            <button class="btn btn-white border bg-white rounded-pill px-4 text-muted fw-bold small shadow-sm">
+                <i class="bi bi-arrow-up-right-circle me-2"></i>Export
             </button>
         </div>
     </div>
 
     <div class="table-responsive">
-        <table class="table align-middle mb-0" id="clientTable">
+        <table class="table custom-table align-middle mb-0">
             <thead>
                 <tr>
-                    <th class="ps-4">Client Detail</th>
-                    <th>Primary Contact</th>
-                    <th>Primary Location</th>
-                    <th class="pe-4 text-end">Actions</th>
+                    <th class="ps-5">Client Identity</th>
+                    <th>Contact Access</th>
+                    <th>Region</th>
+                    <th class="text-end pe-5">Management</th>
                 </tr>
             </thead>
             <tbody>
                 {% for c in clients %}
                 <tr>
-                    <td class="ps-4">
-                        <div class="d-flex align-items-center">
-                            <div class="client-initials me-3">
-                                {{ c.name|slice:":1"|upper }}
+                    <td class="ps-5">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar-wrapper">
+                                <div class="avatar-main">
+                                    {{ c.name|slice:":1"|upper }}
+                                </div>
+                                {% if c.email %}
+                                <div class="status-dot" title="Verified Email"></div>
+                                {% endif %}
                             </div>
                             <div>
-                                <div class="fw-bold text-dark mb-0">{{ c.name }}</div>
-                                <span class="text-muted" style="font-size: 0.75rem;">Account #CL-{{ c.id }}</span>
+                                <div class="fw-bold text-dark fs-6">{{ c.name }}</div>
+                                <div class="text-muted" style="font-size: 0.7rem;">ID: #CL{{ c.id|stringformat:"03d" }}</div>
                             </div>
                         </div>
                     </td>
                     <td>
-                        <div class="d-flex flex-column">
-                            <a href="tel:{{ c.phone1 }}" class="contact-link small">
-                                <i class="bi bi-phone me-2 text-muted"></i>{{ c.phone1 }}
+                        <div class="d-flex flex-column gap-2">
+                            <a href="tel:{{ c.phone1 }}" class="phone-link small w-fit">
+                                <i class="bi bi-telephone-fill me-2"></i>{{ c.phone1 }}
                             </a>
-                            <span class="text-muted extra-small" style="font-size: 0.7rem;">Verified Contact</span>
+                            {% if c.email %}
+                            <span class="text-muted small ps-1" style="font-size: 0.75rem;">
+                                <i class="bi bi-envelope me-1"></i> {{ c.email }}
+                            </span>
+                            {% endif %}
                         </div>
                     </td>
                     <td>
-                        <div class="d-flex align-items-center text-muted small fw-medium">
-                            <i class="bi bi-geo-alt-fill text-danger opacity-75 me-2"></i>
-                            {{ c.location }}
+                        <div class="badge rounded-pill bg-light text-dark fw-bold px-3 py-2 border">
+                            <i class="bi bi-geo-alt-fill text-danger me-1"></i> {{ c.location }}
                         </div>
                     </td>
-                    <td class="pe-4 text-end">
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="{% url 'client_update' c.id %}" class="btn-action-sm" title="Edit Profile">
-                                <i class="bi bi-pencil"></i>
+                    <td class="pe-5 text-end">
+                        <div class="d-flex justify-content-end">
+                            <a href="{% url 'client_update' c.id %}" class="action-circle edit" title="Edit Profile">
+                                <i class="bi bi-pencil-fill"></i>
                             </a>
                             <a href="{% url 'client_delete' c.id %}" 
-                               class="btn-action-sm btn-action-delete" 
-                               title="Delete Client"
-                               onclick="return confirm('Archive this client permanently?')">
-                                <i class="bi bi-trash3"></i>
+                               class="action-circle delete" 
+                               title="Archive Client"
+                               onclick="return confirm('Archive this client profile?')">
+                                <i class="bi bi-trash3-fill"></i>
                             </a>
                         </div>
                     </td>
@@ -196,12 +223,12 @@
                 {% empty %}
                 <tr>
                     <td colspan="4" class="text-center py-5">
-                        <div class="py-4">
-                            <i class="bi bi-people text-light display-1 mb-3"></i>
-                            <h5 class="text-dark fw-bold">No Clients Registered</h5>
-                            <p class="text-muted mx-auto" style="max-width: 300px;">Your directory is empty. Start adding clients to generate quotations.</p>
-                            <a href="{% url 'client_create' %}" class="btn btn-outline-primary rounded-pill mt-2">
-                                <i class="bi bi-plus-lg me-2"></i>Create First Client
+                        <div class="py-5 opacity-75">
+                            <i class="bi bi-person-x display-1 text-muted"></i>
+                            <h4 class="fw-bold text-dark mt-3">No Clients Found</h4>
+                            <p class="text-muted small">Your directory is currently empty. Ready to add your first partner?</p>
+                            <a href="{% url 'client_create' %}" class="btn btn-primary rounded-pill mt-3 px-5">
+                                Let's Start
                             </a>
                         </div>
                     </td>
@@ -211,5 +238,18 @@
         </table>
     </div>
 </div>
+
+<script>
+    // Simple frontend search logic
+    document.getElementById('clientSearch').addEventListener('keyup', function() {
+        let value = this.value.toLowerCase();
+        let rows = document.querySelectorAll('.custom-table tbody tr');
+        
+        rows.forEach(row => {
+            let text = row.innerText.toLowerCase();
+            row.style.display = text.includes(value) ? '' : 'none';
+        });
+    });
+</script>
 
 {% endblock %}
