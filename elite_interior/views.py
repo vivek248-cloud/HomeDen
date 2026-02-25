@@ -2241,31 +2241,43 @@ def verify_otp(request):
         else:
             accessories_text = "N/A"
 
+        normal_style = styles["Normal"]
+
+        label_style = ParagraphStyle(
+            name="LabelStyle",
+            parent=styles["Normal"],
+            textColor=colors.HexColor("#3a5169"),
+            fontName="Helvetica-Bold",
+        )
+
+        value_style = ParagraphStyle(
+            name="ValueStyle",
+            parent=styles["Normal"],
+            fontName="Helvetica",
+        )
+
         client_info = [
-            ["Name :", name],
-            ["Contact :", contact],
-            ["Email :", email],
-            ["Location :", location],
-            ["Room Type :", room_type.replace("_", " ").title()],
-            ["Style :", shape.replace("_", " ").title()],
-            ["Accessories :", accessories_text],
-            ["Package :", package_name],
-            ["Dimension :", dimension],
-            ["Estimated Price :", f"Rs: {price}"],
+            [Paragraph("Name :", label_style), Paragraph(name, value_style)],
+            [Paragraph("Contact :", label_style), Paragraph(contact, value_style)],
+            [Paragraph("Email :", label_style), Paragraph(email, value_style)],
+            [Paragraph("Location :", label_style), Paragraph(location, value_style)],
+            [Paragraph("Room Type :", label_style), Paragraph(room_type.replace("_", " ").title(), value_style)],
+            [Paragraph("Style :", label_style), Paragraph(shape.replace("_", " ").title(), value_style)],
+            [Paragraph("Accessories :", label_style), Paragraph(accessories_text, value_style)],
+            [Paragraph("Package :", label_style), Paragraph(package_name, value_style)],
+            [Paragraph("Dimension :", label_style), Paragraph(dimension, value_style)],
+            [Paragraph("Estimated Price :", label_style), Paragraph(f"Rs: {price}", value_style)],
         ]
 
-        table = Table(client_info, colWidths=[150, 350], hAlign="CENTER")
+        table = Table(client_info, colWidths=[140, 360], hAlign="CENTER")
         table.setStyle(TableStyle([
-            ("FONTNAME", (0, 0), (-1, -1), "Helvetica"),
-            ("FONTSIZE", (0, 0), (-1, -1), 12),
-            ("ALIGN", (0, 0), (0, -1), "LEFT"),
-            ("TEXTCOLOR", (0, 0), (0, -1), colors.HexColor("#3a5169")),
-            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-            ("ROWHEIGHT", (0, 0), (-1, -1), 22),
+            ("VALIGN", (0, 0), (-1, -1), "TOP"),
             ("BOX", (0, 0), (-1, -1), 1, colors.black),
             ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.grey),
-            ("BACKGROUND", (0, 0), (-1, -1), colors.whitesmoke),
-            ("BACKGROUND", (0, 1), (-1, -1), colors.white),
+            ("LEFTPADDING", (0, 0), (-1, -1), 8),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+            ("TOPPADDING", (0, 0), (-1, -1), 6),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
         ]))
         elements.append(table)
         elements.append(Spacer(1, 20))
