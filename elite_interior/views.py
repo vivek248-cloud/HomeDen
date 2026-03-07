@@ -2855,10 +2855,28 @@ ClientForm = modelform_factory(Client, fields="__all__")
 
 # 📋 (optional but useful) Client list
 
+from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+
 @login_required
 def client_index(request):
+
+    search = request.GET.get("search", "")
+
     clients = Client.objects.all()
-    return render(request, "client/index.html", {"clients": clients})
+
+    if search:
+        clients = clients.filter(
+            Q(name__icontains=search) |
+            Q(phone1__icontains=search) |
+            Q(phone2__icontains=search) |
+            Q(id__icontains=search)
+        )
+
+    return render(request, "client/index.html", {
+        "clients": clients,
+        "search": search
+    })
 
 
 
@@ -2975,8 +2993,12 @@ def dashboard(request):
 
 
 
+from django.db.models import Sum, Q
+
 @login_required
 def quotation_index(request):
+
+    search = request.GET.get("search", "")
 
     quotations = (
         Quotation.objects
@@ -2984,31 +3006,37 @@ def quotation_index(request):
             "client__id",
             "client__name",
             "client__phone1",
-            "client__email",
         )
         .annotate(
             total_qty=Sum("qty"),
             grand_total=Sum("total"),
         )
-        .order_by("-client__id")
     )
 
+    if search:
+        quotations = quotations.filter(
+            Q(client__name__icontains=search) |
+            Q(client__phone1__icontains=search)
+        )
+
+    quotations = quotations.order_by("-client__id")
+
     return render(request, "quotation/index.html", {
-        "quotations": quotations
+        "quotations": quotations,
+        "search": search
     })
 
 
 @login_required
 def quotation_create(request):
+
     if request.method == "POST":
 
-        client_id = request.POST["client"]
+        client_id = request.POST.get("client")
 
-        # 📅 NEW DATE VALUES
         start_date = request.POST.get("estimate_start_date")
         end_date = request.POST.get("estimate_end_date")
 
-        # Save into Client table
         Client.objects.filter(id=client_id).update(
             estimate_start_date=start_date,
             estimate_end_date=end_date,
@@ -3031,24 +3059,60 @@ def quotation_create(request):
         widths = request.POST.getlist("width[]")
         qtys = request.POST.getlist("qty[]")
 
+        quotation_rows = []
+
         for i in range(len(elements)):
 
-            Quotation.objects.create(
-                client_id=client_id,
-                floor=floors[i],
-                location=locations[i],
-                element=elements[i],
-                image_id=images[i] or None,
-                full_semi_id=fullsemis[i] or None,
-                core_material=core_materials[i],
-                finish_material=finish_materials[i],
-                brand=brands[i],
-                specification=specifications[i],
-                unit=units[i],
-                length=float(lengths[i] or 0),
-                width=float(widths[i] or 0),
-                qty=int(qtys[i] or 0),
+            if not elements[i]:
+                continue
+
+            length = float(lengths[i] or 0)
+            width = float(widths[i] or 0)
+            qty = int(qtys[i] or 1)
+
+            area = length * width
+
+            # get price from FullSemi
+            price = 0
+            fullsemi_id = fullsemis[i] if i < len(fullsemis) else None
+
+            if fullsemi_id:
+                try:
+                    price = FullSemi.objects.get(id=fullsemi_id).rate
+                except FullSemi.DoesNotExist:
+                    price = 0
+
+            total = area * price * qty
+
+            quotation_rows.append(
+                Quotation(
+                    client_id=client_id,
+                    floor=floors[i] if i < len(floors) else "",
+                    location=locations[i] if i < len(locations) else "",
+                    element=elements[i],
+
+                    image_id=images[i] if i < len(images) and images[i] else None,
+                    full_semi_id=fullsemi_id,
+
+                    core_material=core_materials[i] if i < len(core_materials) else "",
+                    finish_material=finish_materials[i] if i < len(finish_materials) else "",
+                    brand=brands[i] if i < len(brands) else "",
+                    specification=specifications[i] if i < len(specifications) else "",
+
+                    unit=units[i] if i < len(units) else "",
+
+                    length=length,
+                    width=width,
+                    area=area,
+
+                    price=price,
+                    qty=qty,
+                    total=total,
+                )
             )
+
+        if quotation_rows:
+            Quotation.objects.bulk_create(quotation_rows)
 
         return redirect("quotation_index")
 
@@ -3056,15 +3120,21 @@ def quotation_create(request):
         "clients": Client.objects.all(),
         "images": Image.objects.all(),
         "fullsemis": FullSemi.objects.all(),
+        "previous_specs": list(
+        Quotation.objects.exclude(specification="")
+            .values_list("specification", flat=True)
+            .distinct()[:200]
+        )
+
     })
 
 
 
+from django.db import transaction
 
 @login_required
 def quotation_update(request, id):
 
-    # id is CLIENT ID
     rows = Quotation.objects.filter(client_id=id)
 
     if not rows.exists():
@@ -3074,14 +3144,13 @@ def quotation_update(request, id):
 
     if request.method == "POST":
 
-        # 📅 UPDATE ESTIMATE DATES ON CLIENT
-        Client.objects.filter(id=client_id).update(
-            estimate_start_date=request.POST.get("estimate_start_date"),
-            estimate_end_date=request.POST.get("estimate_end_date"),
-        )
+        start_date = request.POST.get("estimate_start_date")
+        end_date = request.POST.get("estimate_end_date")
 
-        # 🧹 Remove old quotation rows
-        rows.delete()
+        Client.objects.filter(id=client_id).update(
+            estimate_start_date=start_date,
+            estimate_end_date=end_date,
+        )
 
         floors = request.POST.getlist("floor[]")
         locations = request.POST.getlist("location[]")
@@ -3100,24 +3169,67 @@ def quotation_update(request, id):
         widths = request.POST.getlist("width[]")
         qtys = request.POST.getlist("qty[]")
 
+        quotation_rows = []
+
+        # preload fullsemi rates
+        fullsemi_rates = {f.id: f.rate for f in FullSemi.objects.all()}
+
         for i in range(len(elements)):
 
-            Quotation.objects.create(
-                client_id=client_id,
-                floor=floors[i],
-                location=locations[i],
-                element=elements[i],
-                image_id=images[i] or None,
-                full_semi_id=fullsemis[i] or None,
-                core_material=core_materials[i],
-                finish_material=finish_materials[i],
-                brand=brands[i],
-                specification=specifications[i],
-                unit=units[i],
-                length=float(lengths[i] or 0),
-                width=float(widths[i] or 0),
-                qty=int(qtys[i] or 0),
+            if not elements[i]:
+                continue
+
+            try:
+                length = float(lengths[i])
+            except:
+                length = 0
+
+            try:
+                width = float(widths[i])
+            except:
+                width = 0
+
+            qty = int(qtys[i] or 1)
+
+            area = length * width
+
+            fullsemi_id = fullsemis[i] if i < len(fullsemis) else None
+            price = fullsemi_rates.get(int(fullsemi_id), 0) if fullsemi_id else 0
+
+            total = area * price * qty
+
+            quotation_rows.append(
+                Quotation(
+                    client_id=client_id,
+
+                    floor=floors[i].strip() if i < len(floors) else "",
+                    location=locations[i].strip() if i < len(locations) else "",
+                    element=elements[i].strip(),
+
+                    image_id=int(images[i]) if i < len(images) and images[i] else None,
+                    full_semi_id=fullsemi_id,
+
+                    core_material=core_materials[i] if i < len(core_materials) else "",
+                    finish_material=finish_materials[i] if i < len(finish_materials) else "",
+                    brand=brands[i] if i < len(brands) else "",
+                    specification=specifications[i] if i < len(specifications) else "",
+
+                    unit=units[i] if i < len(units) else "",
+
+                    length=length,
+                    width=width,
+                    area=area,
+
+                    price=price,
+                    qty=qty,
+                    total=total,
+                )
             )
+
+        with transaction.atomic():
+            rows.delete()
+            if quotation_rows:
+                Quotation.objects.bulk_create(quotation_rows)
 
         return redirect("quotation_index")
 
@@ -3126,6 +3238,11 @@ def quotation_update(request, id):
         "clients": Client.objects.all(),
         "images": Image.objects.all(),
         "fullsemis": FullSemi.objects.all(),
+        "previous_specs": list(
+            Quotation.objects.exclude(specification="")
+            .values_list("specification", flat=True)
+            .distinct()[:200]
+        )
     })
 
 
@@ -3147,31 +3264,60 @@ def quotation_detail(request, client_id):
 
     client = rows.first().client
 
-    # ✅ Subtotal from quotation rows
+    # Subtotal
     subtotal = sum(r.total for r in rows)
 
-    # ✅ Load saved GST + Discount from Client table
+    # GST
     gst_rate = float(client.GST or 0)
-    discount_amount = float(client.discount or 0)
-
-    # ✅ Calculate GST
     gst_amount = round(subtotal * gst_rate / 100, 2)
 
-    # ✅ Final total
+    # Total after GST
+    total_with_gst = subtotal + gst_amount
+
+
+    # ---------------------------
+    # Discount Handling
+    # ---------------------------
+
+    discount_amount = 0
+    discount_percent = 0
+    discount_mode = "amount"
+
+    if client.discount_mode == "percent":
+
+        discount_percent = float(client.discount_percent or 0)
+        discount_amount = round(subtotal * discount_percent / 100, 2)
+        discount_mode = "percent"
+
+    else:
+
+        discount_amount = float(client.discount_amount or 0)
+
+        if subtotal > 0:
+            discount_percent = round((discount_amount / subtotal) * 100, 2)
+
+        discount_mode = "amount"
+
+
+    # Final total
     grand_total = max(
-        round((subtotal + gst_amount) - discount_amount, 2),
+        round(total_with_gst - discount_amount, 2),
         0
     )
+
 
     return render(request, "quotation/detail.html", {
         "client": client,
         "rows": rows,
 
-        # totals
         "subtotal": subtotal,
         "gst_rate": gst_rate,
         "gst_amount": gst_amount,
+
         "discount_amount": discount_amount,
+        "discount_percent": discount_percent,
+        "discount_mode": discount_mode,
+
         "grand_total": grand_total,
     })
 
@@ -3184,6 +3330,7 @@ from django.conf import settings
 from PyPDF2 import PdfMerger
 from xhtml2pdf import pisa
 import os
+from django.db.models.functions import Lower
 
 
 @login_required
@@ -3191,44 +3338,76 @@ def quotation_pdf(request, client_id):
 
     client = Client.objects.get(id=client_id)
 
-    # ✅ ORDER IMPORTANT for grouping in template
+    # Order rows for grouping
     rows = Quotation.objects.filter(
         client_id=client_id
-    ).order_by("floor", "location", "id")
+    ).annotate(
+        floor_lower=Lower("floor"),
+        location_lower=Lower("location")
+    ).order_by("floor_lower", "location_lower", "id")
 
-    # 🔢 Subtotal
-    total_amount = sum(r.total for r in rows)
 
-    # 💾 Pull saved values
+    # Subtotal
+    subtotal = sum(r.total for r in rows)
+
+
+    # GST
     gst_rate = float(client.GST or 0)
-    discount = float(client.discount or 0)
+    gst_amount = round(subtotal * gst_rate / 100, 2)
 
-    gst_amount = round(total_amount * gst_rate / 100, 2)
+    # NEW → subtotal + GST
 
+    total_with_gst = subtotal + gst_amount
+
+    # -------------------------
+    # Discount Handling
+    # -------------------------
+
+    discount_amount = 0
+
+    if client.discount_mode == "percent":
+
+        percent = float(client.discount_percent or 0)
+        discount_amount = round(subtotal * percent / 100, 2)
+
+    else:
+
+        discount_amount = float(client.discount_amount or 0)
+
+
+    # Final total
     grand_total = max(
-        round((total_amount + gst_amount) - discount, 2),
+        round((subtotal + gst_amount) - discount_amount, 2),
         0
     )
 
+
     quotation_number = f"QTN-{client.id}-{date.today().strftime('%m%y')}"
 
-    # 🧩 Render HTML
+
+    # Render HTML
     template = get_template("quotation/pdf.html")
 
     html = template.render({
         "client": client,
         "rows": rows,
-        "total_amount": total_amount,
+
+        "total_amount": subtotal,
         "gst_rate": gst_rate,
         "gst_amount": gst_amount,
-        "discount": discount,
+
+        "discount": discount_amount,
         "grand_total": grand_total,
+
         "quotation_number": quotation_number,
+        "total_with_gst": total_with_gst,
         "today": date.today(),
     })
 
-    # 📄 Generate quotation PDF in memory
+
+    # Generate quotation PDF
     quotation_buffer = BytesIO()
+
     pisa_status = pisa.CreatePDF(
         html,
         dest=quotation_buffer,
@@ -3240,41 +3419,38 @@ def quotation_pdf(request, client_id):
 
     quotation_buffer.seek(0)
 
-    # 📚 Static PDFs (front & back)
+
+    # Static PDFs
     front_pdf = os.path.join(settings.MEDIA_ROOT, "pdfs", "front.pdf")
     back_pdf = os.path.join(settings.MEDIA_ROOT, "pdfs", "back.pdf")
 
     merger = PdfMerger()
 
-    # ➕ Front page
     if os.path.exists(front_pdf):
         merger.append(front_pdf)
 
-    # ➕ Main quotation
     merger.append(quotation_buffer)
 
-    # ➕ Back page
     if os.path.exists(back_pdf):
         merger.append(back_pdf)
 
-    # 📦 Final merged file
+
     final_buffer = BytesIO()
+
     merger.write(final_buffer)
     merger.close()
 
     final_buffer.seek(0)
 
-    # 📤 Return to browser
+
     response = HttpResponse(
         final_buffer.read(),
         content_type="application/pdf"
     )
+
     response["Content-Disposition"] = (
         f'inline; filename="QTN_{client.name}_{date.today().strftime("%Y%m%d")}.pdf"'
     )
-
-
-
 
     return response
 
@@ -3284,6 +3460,7 @@ def quotation_pdf(request, client_id):
 
 @login_required
 def save_quotation_totals(request, client_id):
+
     client = get_object_or_404(Client, id=client_id)
 
     if request.method == "POST":
@@ -3298,17 +3475,27 @@ def save_quotation_totals(request, client_id):
         discount_value = safe_float(request.POST.get("discount_value"))
         discount_type = request.POST.get("discount_type") or "amount"
 
-        # ✅ Save GST %
+        # Save GST
         client.GST = gst_percent
 
-        # ✅ Save real discount amount
+        subtotal = sum(
+            r.total for r in Quotation.objects.filter(client_id=client_id)
+        )
+
+        # Save discount correctly
         if discount_type == "percent":
-            subtotal = sum(
-                r.total for r in Quotation.objects.filter(client_id=client_id)
-            )
-            client.discount = round(subtotal * discount_value / 100, 2)
+
+            client.discount_percent = discount_value
+            client.discount_amount = round(subtotal * discount_value / 100, 2)
+
+            client.discount_mode = "percent"
+
         else:
-            client.discount = discount_value
+
+            client.discount_amount = discount_value
+            client.discount_percent = 0
+
+            client.discount_mode = "amount"
 
         client.save()
 

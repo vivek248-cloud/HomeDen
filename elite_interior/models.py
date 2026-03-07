@@ -548,11 +548,20 @@ class Client(models.Model):
     phone2 = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     location = models.CharField(max_length=200)
+
     GST = models.CharField(max_length=50, blank=True, null=True)
-    discount = models.FloatField(default=0)
+
+    discount_percent = models.FloatField(default=0)
+    discount_amount = models.FloatField(default=0)
+
+    discount_mode = models.CharField(
+        max_length=10,
+        choices=[("percent","Percent"),("amount","Amount")],
+        default="percent"
+    )
+
     notes = models.TextField(blank=True, null=True)
 
-    # ✅ NEW FIELDS
     estimate_start_date = models.DateField(blank=True, null=True)
     estimate_end_date = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -560,7 +569,6 @@ class Client(models.Model):
     
     def __str__(self):
         return self.name
-
 
 class FullSemi(models.Model):
     name = models.CharField(max_length=100)

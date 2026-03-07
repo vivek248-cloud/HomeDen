@@ -18,22 +18,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # ✅ Force www redirect
-# SECURE_SSL_REDIRECT = True
-# PREPEND_WWW = True
+SECURE_SSL_REDIRECT = True
+PREPEND_WWW = True
 
 
 
-# ALLOWED_HOSTS = ['homedeninterior.com', 'www.homedeninterior.com', 'srv888437.hstgr.cloud', '127.0.0.1', 'localhost']
-ALLOWED_HOSTS = [
-    "homedeninterior.com",
-    "www.homedeninterior.com",
-    "srv888437.hstgr.cloud",
-    "127.0.0.1",
-    "localhost",
-]
+ALLOWED_HOSTS = ['homedeninterior.com', 'www.homedeninterior.com', 'srv888437.hstgr.cloud', '127.0.0.1', 'localhost']
+# ALLOWED_HOSTS = [
+#     "homedeninterior.com",
+#     "www.homedeninterior.com",
+#     "srv888437.hstgr.cloud",
+#     "127.0.0.1",
+#     "localhost",
+# ]
 
 
 

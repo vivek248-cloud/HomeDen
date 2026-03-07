@@ -145,20 +145,34 @@
 </div>
 
 <div class="directory-wrapper">
+    <form method="get">
+
     <div class="action-header d-flex flex-column flex-lg-row justify-content-between align-items-center gap-4">
+
         <div class="search-pill">
             <i class="bi bi-search text-muted"></i>
-            <input type="text" id="clientSearch" placeholder="Find by name, phone, or ID...">
+
+            <input
+                type="text"
+                id="clientSearch"
+                name="search"
+                value="{{ search }}"
+                placeholder="Find by name, phone, or ID...">
         </div>
+
         <div class="d-flex gap-2">
-            <button class="btn btn-white border bg-white rounded-pill px-4 text-muted fw-bold small shadow-sm">
-                <i class="bi bi-sliders2 me-2"></i>Filter
+            <button type="submit" class="btn btn-primary btn-sm rounded-3 border px-3 fw-bold text-white rounded-pill">
+                <i class="bi bi-funnel"></i> Filter
             </button>
-            <button class="btn btn-white border bg-white rounded-pill px-4 text-muted fw-bold small shadow-sm">
+
+            <button type="button" class="btn btn-white border bg-white rounded-pill px-4 text-muted fw-bold small shadow-sm">
                 <i class="bi bi-arrow-up-right-circle me-2"></i>Export
             </button>
         </div>
+
     </div>
+
+    </form>
 
     <div class="table-responsive">
         <table class="table custom-table align-middle mb-0">
@@ -166,7 +180,7 @@
                 <tr>
                     <th class="ps-5">Client Identity</th>
                     <th>Contact Access</th>
-                    <th>Region</th>
+                    <th>Location</th>
                     <th class="text-end pe-5">Management</th>
                 </tr>
             </thead>

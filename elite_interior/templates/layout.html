@@ -223,7 +223,9 @@
         <a class="nav-link {% if 'fullsemi' in request.path %}active{% endif %}" href="{% url 'fullsemi_index' %}">
             <i class="bi bi-collection-fill"></i> Full Semi
         </a>
-
+        <a class="nav-link {% if 'image' in request.path %}active{% endif %}" href="{% url 'image_index' %}">
+            <i class="bi bi-collection-fill"></i> Images
+        </a>
     </div>
 
     <div class="logout-card">

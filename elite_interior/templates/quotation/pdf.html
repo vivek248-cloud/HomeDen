@@ -109,18 +109,7 @@ h1,h2,h3{
     text-align:center;
 }
 
-.total-box{
-    width:40%;
-    float:right;
-    margin-top:12px;
-}
 
-
-
-.total-box td{
-    padding:6px;
-    border:1px solid #ddd;
-}
 
 .grand{
     font-weight:bold;
@@ -137,6 +126,30 @@ table {
 td, th {
     word-wrap: break-word;
     overflow-wrap: break-word;
+}
+
+.total-wrapper{
+    width:100%;
+    margin-top:60px;
+}
+
+.total-box{
+    width:40%;
+    margin-left:auto;
+}
+
+.total-box table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.total-box td{
+    padding:6px;
+    border:1px solid #ddd;
+}
+
+.total-box tr{
+    page-break-inside: avoid;
 }
 
 </style>
@@ -203,25 +216,25 @@ td, th {
 
 <tbody>
 
-{% regroup rows by floor as floor_list %}
+{% regroup rows by floor_lower as floor_list %}
 
 {% for floor in floor_list %}
 
 <!-- FLOOR ROW -->
 <tr class="floor-row">
     <td colspan="7">
-        {{ floor.grouper|upper }}
+       {{ floor.list.0.floor|upper }}
     </td>
 </tr>
 
-{% regroup floor.list by location as location_list %}
+{% regroup floor.list by location_lower as location_list %}
 
 {% for location in location_list %}
 
 <!-- LOCATION ROW -->
 <tr class="location-row">
     <td colspan="7">
-        {{ location.grouper|upper }}
+        {{ location.list.0.location|upper }}
     </td>
 </tr>
 
@@ -271,31 +284,44 @@ td, th {
 
 </table>
 
+<div class="total-wrapper">
+
 <div class="total-box">
+
 <table>
 <tr>
-<td>Subtotal</td>
-<td class="text-right">Rs. {{ total_amount|indian_currency }}</td>
+<td>Total</td>
+<td class="text-right"><b>Rs. {{ total_amount|indian_currency }}</b></td>
 </tr>
+
 <tr>
 <td>GST ({{ gst_rate }}%)</td>
-<td class="text-right">Rs. {{ gst_amount|indian_currency }}</td>
+<td class="text-right"><b>Rs. {{ gst_amount|indian_currency }}</b></td>
 </tr>
+
+<tr>
+<td><b>Total (Incl. GST)</b></td>
+<td class="text-right"><b>Rs. {{ total_with_gst|indian_currency }}</b></td>
+</tr>
+
 <tr>
 <td>Discount</td>
-<td class="text-right">Rs. {{ discount|indian_currency }}</td>
+<td class="text-right"><b>Rs. {{ discount|indian_currency }}</b></td>
 </tr>
+
 <tr class="grand">
 <td>Grand Total</td>
-<td class="text-right">Rs. {{ grand_total|indian_currency }}</td>
+<td class="text-right"><b>Rs. {{ grand_total|indian_currency }}</b></td>
 </tr>
 </table>
 
-
 <div>
-    <b>Notes:</b><br>
-    {{ client.notes|linebreaksbr }}
-    </div>
+<b>Notes:</b><br>
+{{ client.notes|linebreaksbr }}
+</div>
+
+</div>
+
 </div>
 
 </body>
