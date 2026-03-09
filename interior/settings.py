@@ -17,7 +17,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+
 # SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = False
 
 # ✅ Force www redirect
@@ -26,14 +28,8 @@ DEBUG = False
 
 
 
-ALLOWED_HOSTS = ['homedeninterior.com', 'www.homedeninterior.com', 'srv888437.hstgr.cloud', '127.0.0.1', 'localhost']
-# ALLOWED_HOSTS = [
-#     "homedeninterior.com",
-#     "www.homedeninterior.com",
-#     "srv888437.hstgr.cloud",
-#     "127.0.0.1",
-#     "localhost",
-# ]
+# ALLOWED_HOSTS = ['homedeninterior.com', 'www.homedeninterior.com', 'srv888437.hstgr.cloud', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ["homedeninterior.com","www.homedeninterior.com","srv888437.hstgr.cloud","127.0.0.1","localhost",]
 
 
 
@@ -91,6 +87,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'elite_interior.context_processors.site_settings',
             ],
         },
     },

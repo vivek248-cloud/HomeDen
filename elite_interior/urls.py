@@ -21,6 +21,7 @@ urlpatterns = [
     path('living/', living_projects, name='living_projects'),
     path('bathroom/', bathroom_projects, name='bathroom_projects'),
     path('kidsroom/', kidsroom_projects, name='kidsroom_projects'),
+    path('poojaroom/', poojaroom_projects, name='poojaroom_projects'),
     
     path('submit-form/', submit_contact_form, name='submit_form'),
 

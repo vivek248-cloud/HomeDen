@@ -1,0 +1,420 @@
+{% extends "elite_interior/base.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+
+    :root {
+        --primary: #6366f1;
+        --primary-dark: #4f46e5;
+        --bg-main: #f1f5f9;
+        --glass-bg: rgba(255, 255, 255, 0.8);
+        --user-msg-bg: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    }
+
+    .ai-container {
+        max-width: 500px;
+        margin: 40px auto;
+        background: var(--glass-bg);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 28px;
+        display: flex;
+        flex-direction: column;
+        height: 650px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        overflow: hidden;
+    }
+
+    .ai-header {
+        padding: 24px;
+        background: white;
+        border-bottom: 1px solid #eef2f6;
+        text-align: center;
+    }
+
+    .ai-header h2 {
+        font-size: 1.25rem;
+        font-weight: 800;
+        margin: 0;
+        background: linear-gradient(90deg, #6366f1, #a855f7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .ai-chat-box {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        scroll-behavior: smooth;
+    }
+
+    /* Message Bubbles */
+    .msg {
+        max-width: 85%;
+        padding: 14px 18px;
+        font-size: 15px;
+        line-height: 1.5;
+        position: relative;
+        animation: messageSlide 0.3s ease-out;
+    }
+
+    @keyframes messageSlide {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .ai-msg {
+        background: white;
+        color: #1e293b;
+        border-radius: 4px 18px 18px 18px;
+        align-self: flex-start;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        border: 1px solid #f1f5f9;
+    }
+
+    .user-msg {
+        background: var(--user-msg-bg);
+        color: white;
+        border-radius: 18px 18px 4px 18px;
+        align-self: flex-end;
+        box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+    }
+
+    /* Input Area */
+    .ai-input-area {
+        padding: 20px;
+        background: white;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    #chatInput {
+        flex: 1;
+        padding: 14px 20px;
+        border-radius: 100px;
+        border: 2px solid #f1f5f9;
+        outline: none;
+        font-size: 15px;
+        transition: all 0.2s;
+    }
+
+    #chatInput:focus {
+        border-color: var(--primary);
+        background: white;
+    }
+
+    .send-btn {
+        background: var(--primary);
+        color: white;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.3s;
+    }
+
+    .send-btn:hover {
+        transform: scale(1.05);
+        background: var(--primary-dark);
+    }
+
+    /* Result Card Styling within Chat */
+    .result-card {
+        background: #1e293b;
+        color: white;
+        padding: 20px;
+        border-radius: 20px;
+        margin-top: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .price-badge {
+        font-size: 24px;
+        font-weight: 800;
+        color: #818cf8;
+        display: block;
+        margin-top: 8px;
+    }
+
+    /* Custom Scrollbar */
+    .ai-chat-box::-webkit-scrollbar { width: 4px; }
+    .ai-chat-box::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+</style>
+
+<div class="ai-container">
+    <div class="ai-header">
+        <h2>Interior AI Assistant</h2>
+        <span style="font-size: 12px; color: #94a3b8;">Online | Ready to Estimate</span>
+    </div>
+
+    <div id="aiChat" class="ai-chat-box">
+        <!-- Initial Message -->
+        <div class="msg ai-msg">
+            Hello! I'm your interior cost expert. What are we planning today? 
+            <br><i>(Kitchen, Wardrobe, or TV Unit?)</i>
+        </div>
+    </div>
+
+    <div class="ai-input-area">
+        <input type="text" id="chatInput" placeholder="Type your message..." autocomplete="off">
+        <button class="send-btn" onclick="handleChat()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+    </div>
+</div>
+
+
+<script>
+
+/* =========================
+   GLOBAL STATE
+========================= */
+
+let aiState = {
+location:null,
+product:null,
+area:null,
+finish:null,
+package:null
+};
+
+
+/* =========================
+   SEND CHAT MESSAGE
+========================= */
+
+async function handleChat(){
+
+let input = document.getElementById("chatInput");
+let msg = input.value.trim();
+
+if(!msg) return;
+
+addUser(msg);
+input.value="";
+
+addAI("Thinking...");
+
+try{
+
+const csrftoken = getCookie("csrftoken");
+
+let res = await fetch("/ai-estimator/",{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"X-CSRFToken": csrftoken
+},
+body:JSON.stringify({
+message: msg,
+state: aiState
+})
+});
+
+console.log("Response status:",res.status);
+
+let data = await res.json();
+
+console.log("AI data:",data);
+
+removeThinking();
+
+/* show AI reply */
+addAI(data.reply);
+
+/* update state */
+
+if(data.location !== null && data.location !== undefined)
+aiState.location = data.location;
+
+if(data.product !== null && data.product !== undefined)
+aiState.product = data.product;
+
+if(data.area !== null && data.area !== 0)
+aiState.area = data.area;
+
+if(data.finish !== null && data.finish !== undefined)
+aiState.finish = data.finish;
+
+if(data.package !== null && data.package !== undefined)
+aiState.package = data.package;
+/* calculate cost */
+
+if(
+aiState.product &&
+aiState.area &&
+aiState.finish &&
+aiState.package
+){
+calculateCost(aiState);
+}
+
+}catch(error){
+
+console.error(error);
+removeThinking();
+addAI("Server error. Please try again.");
+
+}
+
+}
+
+
+/* =========================
+   CALCULATE COST
+========================= */
+
+async function calculateCost(aiData){
+
+try{
+
+let res = await fetch("/get-price/"+encodeURIComponent(aiData.product)+"/");
+
+let price = await res.json();
+
+let rate = price.base;
+
+if(aiData.finish==="laminate") rate+=price.laminate;
+if(aiData.finish==="acrylic") rate+=price.acrylic;
+if(aiData.finish==="veneer") rate+=price.veneer;
+
+if(aiData.package==="silver") rate+=price.silver;
+if(aiData.package==="gold") rate+=price.gold;
+if(aiData.package==="platinum") rate+=price.platinum;
+
+let total = aiData.area * rate;
+
+addAI(`
+<b>Estimated Cost</b><br>
+₹ ${total.toLocaleString()}
+`);
+
+}catch(err){
+
+addAI("Failed to calculate estimate.");
+
+}
+
+}
+
+
+/* =========================
+   CHAT UI
+========================= */
+
+function addUser(text){
+
+let chat=document.getElementById("aiChat");
+
+chat.innerHTML+=`
+<div class="msg user-msg">${text}</div>
+`;
+
+scrollChat();
+
+}
+
+
+function addAI(text){
+
+let chat=document.getElementById("aiChat");
+
+chat.innerHTML+=`
+<div class="msg ai-msg">${text}</div>
+`;
+
+scrollChat();
+
+}
+
+
+function removeThinking(){
+
+let msgs=document.querySelectorAll(".ai-msg");
+
+let last=msgs[msgs.length-1];
+
+if(last && last.innerText.includes("Thinking")){
+last.remove();
+}
+
+}
+
+
+function scrollChat(){
+
+let chat=document.getElementById("aiChat");
+
+setTimeout(()=>{
+chat.scrollTop=chat.scrollHeight;
+},100);
+
+}
+
+
+/* =========================
+   ENTER KEY SUPPORT
+========================= */
+
+document.addEventListener("DOMContentLoaded",function(){
+
+let input=document.getElementById("chatInput");
+
+if(input){
+input.addEventListener("keypress",function(e){
+
+if(e.key==="Enter"){
+handleChat();
+}
+
+});
+}
+
+});
+
+
+/* =========================
+   CSRF TOKEN
+========================= */
+
+function getCookie(name){
+
+let cookieValue=null;
+
+if(document.cookie && document.cookie!==""){
+
+let cookies=document.cookie.split(";");
+
+for(let i=0;i<cookies.length;i++){
+
+let cookie=cookies[i].trim();
+
+if(cookie.substring(0,name.length+1)===(name+"=")){
+cookieValue=decodeURIComponent(cookie.substring(name.length+1));
+break;
+}
+
+}
+
+}
+
+return cookieValue;
+
+}
+
+</script>
+
+
+{% endblock content %}

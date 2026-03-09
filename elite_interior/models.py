@@ -629,3 +629,45 @@ class Quotation(models.Model):
     def __str__(self):
         return f"{self.client.name} - {self.element}"
 
+
+
+
+
+class SiteSettings(models.Model):
+    site_name = models.CharField(max_length=200, default="Home Den")
+
+    google_site_verification = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Google Search Console verification code"
+    )
+
+    google_analytics_id = models.CharField(
+        max_length=50,
+        blank=True,
+        help_text="GA4 Measurement ID (G-XXXXXXX)"
+    )
+
+    def __str__(self):
+        return "Website Settings"
+
+
+
+# models.py
+
+class InteriorPrice(models.Model):
+
+    product = models.CharField(max_length=100)
+
+    base_rate = models.FloatField()
+
+    laminate_price = models.FloatField(default=0)
+    acrylic_price = models.FloatField(default=0)
+    veneer_price = models.FloatField(default=0)
+
+    silver_package = models.FloatField(default=0)
+    gold_package = models.FloatField(default=0)
+    platinum_package = models.FloatField(default=0)
+
+    def __str__(self):
+        return self.product

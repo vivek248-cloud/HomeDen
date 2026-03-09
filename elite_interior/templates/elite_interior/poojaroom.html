@@ -5,12 +5,10 @@
 <!-- hero_header.html or inside project_detail.html -->
 {% if first_project and first_project.image %}
 
-
-
 <div class="hero-header position-relative text-white text-center d-flex align-items-center justify-content-center"
      style="min-height: 75vh; padding: 4rem 1rem;">
 
-    <img src="{% static 'images/kitchen.jpg' %}" 
+    <img src="{% static 'images/poojaroom.webp' %}" 
          alt="Hero Background"
          style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-1;">
 
@@ -37,13 +35,12 @@
             Your Dream Home Deserves the Best
         </p>
     </div>
-    
 </div>
 {% else %}
 <div class="hero-header position-relative text-white text-center d-flex align-items-center justify-content-center"
      style="min-height: 75vh; padding: 4rem 1rem;">
 
-    <img src="{% static 'images/kitchen.jpg' %}" 
+    <img src="{% static 'images/poojaroom.webp' %}" 
          alt="Hero Background"
          style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-1;">
 
@@ -119,7 +116,7 @@
 
         <!-- Right: Images -->
         <div class="col-lg-6 col-12">
-            <div class="d-flex flex-wrap gap-3  px-4 lg-px-5 right-image">
+            <div class="d-flex flex-wrap gap-3  px-4 right-image">
                 <img src="{{ project.image.url }}" alt="{{ project.name }}" class="img-fluid shadow rounded" style="width: 100%; max-width: 400px; height: auto; object-fit: cover;">
                 {% if project.extra_image %}
                 <img src="{{ project.extra_image.url }}" alt="Extra for {{ project.name }}" class="img-fluid shadow rounded" style="width: 100%; max-width: 300px; height: auto; object-fit: cover;">

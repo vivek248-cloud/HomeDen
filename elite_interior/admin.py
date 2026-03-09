@@ -153,8 +153,22 @@ class SEOServicePageAdmin(admin.ModelAdmin):
 
     inlines = [SEOServiceImageInline]
 
+# admin.py
+
+@admin.register(SiteSettings)
+class SiteSettingsAdmin(admin.ModelAdmin):
+    list_display = ("site_name", "google_analytics_id")
 
 
+# admin.py
+
+@admin.register(InteriorPrice)
+class InteriorPriceAdmin(admin.ModelAdmin):
+
+    list_display = ("product","base_rate")
+
+
+    
 # ==========================
 # Customer Admin
 # ==========================

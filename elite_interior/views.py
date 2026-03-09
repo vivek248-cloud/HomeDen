@@ -412,6 +412,17 @@ def kidsroom_projects(request):
         'first_project': first_project
     })
 
+
+
+def poojaroom_projects(request):
+    projects = get_unique_projects_by_category("pooja room")
+    first_project = projects[0] if projects else None
+    return render(request, 'elite_interior/poojaroom.html', {
+        'projects': projects,
+        'first_project': first_project
+    })
+
+
 def essential(request):
     package_offers = PackageOffers.objects.all()
     context={
