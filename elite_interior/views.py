@@ -3381,7 +3381,7 @@ def quotation_pdf(request, client_id):
             default=Value(0),
             output_field=IntegerField(),
         )
-    ).order_by("end_priority", "floor_lower", "location_lower", "id")
+    ).order_by("end_priority", "id")
 
     # Subtotal
     subtotal = sum(r.total for r in rows)
