@@ -67,10 +67,15 @@ urlpatterns = [
 
     path('measurement-calculator/', mesurement_cal, name='measurement_calculator'),
 
+    path("ai-calculator/", ai_calculator, name="ai_calculator"),
     
+        path(
+        "get-products/<str:location>/",
+        get_products,
+        name="get_products"
+    ),
 
 
-    
 
     path("quotation/", quotation_entry, name="quotation_entry"),
     path("quotation/index/", quotation_index, name="quotation_index"),

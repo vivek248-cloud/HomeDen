@@ -657,6 +657,7 @@ class SiteSettings(models.Model):
 
 class InteriorPrice(models.Model):
 
+    location = models.CharField(max_length=100, null=True, blank=True)
     product = models.CharField(max_length=100)
 
     base_rate = models.FloatField()
@@ -670,4 +671,4 @@ class InteriorPrice(models.Model):
     platinum_package = models.FloatField(default=0)
 
     def __str__(self):
-        return self.product
+        return f"{self.location} - {self.product}"

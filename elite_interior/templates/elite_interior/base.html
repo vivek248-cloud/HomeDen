@@ -722,6 +722,17 @@ wBtn.addEventListener("mouseleave", function () {
 
 
 
+
+
+<div class="floating-ai-btn">
+  <a href="{% url 'ai_calculator' %}">
+    <i class="bi bi-robot"></i>
+  </a>
+  <span class="ai-label">AI Estimate</span>
+</div>
+
+
+
    <div  class="floating-btn">
   <a href="tel:+917780038004" style="text-decoration:none;color:white;"><i class="bi bi-telephone-fill"></i></a>
 </div>
@@ -749,6 +760,7 @@ wBtn.addEventListener("mouseleave", function () {
         <button onclick="handleOption('Connect via Email Query')">Connect via Email <i class="bi bi-envelope-fill"></i></button>
         <button><a href="https://wa.me/917780038004?text=Hi%20HOME%20DEN%2C%20I%20would%20like%20to%20discuss%20about%20a%20home%20interior%20project%20of%20mine%2C%20and%20know%20more%20about%20your%20interior%20design%20options%20and%20services%20available.
 "  style="text-decoration:none;color:black;" target="_blank">Talk to Designer</a></button>
+        <button><a href="{% url 'ai_calculator' %} "  style="text-decoration:none;color:black;">AI Calculator</a></button>
       </div>
     </div>
   </div>

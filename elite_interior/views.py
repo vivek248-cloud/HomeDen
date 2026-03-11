@@ -2892,6 +2892,7 @@ def client_index(request):
 
 
 # ➕ Create client
+# ➕ Create client
 @login_required
 def client_create(request):
     if request.method == "POST":
@@ -2902,14 +2903,20 @@ def client_create(request):
             email=request.POST.get("email"),
             location=request.POST["location"],
             GST=request.POST.get("GST"),
-            discount=request.POST.get("discount") or 0,
+
+            discount_percent=request.POST.get("discount_percent") or 0,
+            discount_amount=request.POST.get("discount_amount") or 0,
+            discount_mode=request.POST.get("discount_mode") or "percent",
+
             notes=request.POST.get("notes"),
         )
+
         return redirect("quotation_index")
 
     return render(request, "client/create.html")
 
 
+# ✏️ Edit client
 # ✏️ Edit client
 @login_required
 def client_update(request, id):
@@ -2922,8 +2929,13 @@ def client_update(request, id):
         client.email = request.POST.get("email")
         client.location = request.POST["location"]
         client.GST = request.POST.get("GST")
-        client.discount = request.POST.get("discount") or 0
+
+        client.discount_percent = request.POST.get("discount_percent") or 0
+        client.discount_amount = request.POST.get("discount_amount") or 0
+        client.discount_mode = request.POST.get("discount_mode") or "percent"
+
         client.notes = request.POST.get("notes")
+
         client.save()
 
         return redirect("quotation_index")
@@ -2931,7 +2943,6 @@ def client_update(request, id):
     return render(request, "client/update.html", {
         "client": client
     })
-
 
 # 🗑 Delete client (with confirmation)
 @login_required
@@ -3666,9 +3677,40 @@ def image_delete(request, id):
 
 
 
+from django.shortcuts import render
+
+def ai_calculator(request):
+    return render(request, "ai/calculator.html")
 
 
 
+# views.py
+
+from django.http import JsonResponse
+from .models import InteriorPrice
+
+
+def get_products(request, location):
+
+    products = InteriorPrice.objects.filter(location__iexact=location)
+
+    data = []
+
+    for p in products:
+        data.append({
+            "product": p.product,
+            "base": p.base_rate,
+            "laminate": p.laminate_price,
+            "acrylic": p.acrylic_price,
+            "veneer": p.veneer_price,
+            "silver": p.silver_package,
+            "gold": p.gold_package,
+            "platinum": p.platinum_package
+        })
+
+    return JsonResponse(data, safe=False)
+
+    
 from django.shortcuts import render
 
 def custom_404(request, exception):

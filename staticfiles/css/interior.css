@@ -6396,3 +6396,100 @@ input[name="otp"] {
         padding: 40px;
         color: #7f8c8d;
     }
+
+
+  /* AI Floating Button */
+
+
+  .ai-btn{
+padding:8px 14px;
+margin:5px;
+border:none;
+border-radius:6px;
+background:#2ba58b;
+color:white;
+cursor:pointer;
+font-size:14px;
+}
+
+.ai-btn:hover{
+background:#238d77;
+}
+
+.all-btn{
+background:#444;
+}
+
+
+
+
+.floating-ai-btn{
+    position: fixed;
+    bottom: 200px; /* adjust if you have other buttons */
+    right: 20px;
+    z-index: 9999;
+}
+
+.floating-ai-btn a{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:55px;
+    height:55px;
+    background: linear-gradient(135deg,#2ba58b,#0ea5e9);
+    color:#fff;
+    border-radius:50%;
+    font-size:26px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.25);
+    transition:all 0.3s ease;
+    text-decoration:none;
+}
+
+.floating-ai-btn a:hover{
+    transform:scale(1.1);
+    box-shadow:0 10px 25px rgba(0,0,0,0.35);
+}
+
+/* Pulse animation */
+
+.floating-ai-btn a::after{
+    content:'';
+    position:absolute;
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    background:rgba(43,165,139,0.5);
+    animation:pulseAI 2s infinite;
+    z-index:-1;
+}
+
+.ai-label{
+    position:absolute;
+    right:70px;
+    top:50%;
+    transform:translateY(-50%);
+    background:#111;
+    color:#fff;
+    padding:6px 10px;
+    border-radius:5px;
+    font-size:12px;
+    opacity:0;
+    transition:0.3s;
+}
+
+.floating-ai-btn:hover .ai-label{
+    opacity:1;
+}
+@keyframes pulseAI{
+    0%{
+        transform:scale(1);
+        opacity:0.7;
+    }
+    70%{
+        transform:scale(1.8);
+        opacity:0;
+    }
+    100%{
+        opacity:0;
+    }
+}
