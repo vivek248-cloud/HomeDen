@@ -3353,6 +3353,8 @@ from PyPDF2 import PdfMerger
 from xhtml2pdf import pisa
 import os
 from django.db.models.functions import Lower
+from django.db.models import Case, When, Value, IntegerField
+
 
 
 @login_required
@@ -3361,13 +3363,25 @@ def quotation_pdf(request, client_id):
     client = Client.objects.get(id=client_id)
 
     # Order rows for grouping
+    # rows = Quotation.objects.filter(
+    #     client_id=client_id
+    # ).annotate(
+    #     floor_lower=Lower("floor"),
+    #     location_lower=Lower("location")
+    # ).order_by("floor_lower", "location_lower", "id")
+
     rows = Quotation.objects.filter(
         client_id=client_id
     ).annotate(
         floor_lower=Lower("floor"),
-        location_lower=Lower("location")
-    ).order_by("floor_lower", "location_lower", "id")
-
+        location_lower=Lower("location"),
+        end_priority=Case(
+            When(element__iexact="FLASE CEILING - PLAIN", then=Value(1)),
+            When(element__iexact="ELECTRICAL LABOUR", then=Value(1)),
+            default=Value(0),
+            output_field=IntegerField(),
+        )
+    ).order_by("end_priority", "floor_lower", "location_lower", "id")
 
     # Subtotal
     subtotal = sum(r.total for r in rows)
