@@ -1,3 +1,4 @@
+from django import views
 from django.urls import include, path
 from .views import*
 
@@ -68,13 +69,8 @@ urlpatterns = [
     path('measurement-calculator/', mesurement_cal, name='measurement_calculator'),
 
     path("ai-calculator/", ai_calculator, name="ai_calculator"),
-    
-        path(
-        "get-products/<str:location>/",
-        get_products,
-        name="get_products"
-    ),
-
+    path("get-ai-data/<str:location>/", get_ai_data, name="get_ai_data"),
+    path('get-locations/', get_locations, name='get_locations'),
 
 
     path("quotation/", quotation_entry, name="quotation_entry"),

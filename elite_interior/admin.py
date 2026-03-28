@@ -160,132 +160,44 @@ class SiteSettingsAdmin(admin.ModelAdmin):
     list_display = ("site_name", "google_analytics_id")
 
 
-# admin.py
-
-@admin.register(InteriorPrice)
-class InteriorPriceAdmin(admin.ModelAdmin):
-
-    list_display = ("product","base_rate")
+from .models import (
+    AiLocation, AiProduct, AiFinish,
+    AiPackage, AiPlywood, AiInteriorPrice
+)
 
 
-    
-# ==========================
-# Customer Admin
-# ==========================
-# @admin.register(Customer)
-# class CustomerAdmin(admin.ModelAdmin):
-#     list_display = (
-#         'name',
-#         'phone1',
-#         'phone2',
-#         'email',
-#         'estimate_date',
-#         'estimate_valid_date',
-#         'created_at',
-#     )
-#     search_fields = ('name', 'phone1', 'phone2', 'email')
-#     list_filter = ('estimate_date', 'estimate_valid_date')
-#     ordering = ('-created_at',)
+@admin.register(AiLocation)
+class AiLocationAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
 
 
-# ==========================
-# AccImage Admin
-# ==========================
-# @admin.register(AccImage)
-# class AccImageAdmin(admin.ModelAdmin):
-#     list_display = ('name', 'image', 'created_at')
-#     search_fields = ('name',)
-#     readonly_fields = ('created_at', 'updated_at')
+@admin.register(AiProduct)
+class AiProductAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
 
 
-# # ==========================
-# # FullSemi Admin
-# # ==========================
-# @admin.register(FullSemi)
-# class FullSemiAdmin(admin.ModelAdmin):
-#     list_display = ('name', 'rate', 'created_at')
-#     search_fields = ('name',)
-#     ordering = ('name',)
-
-# @admin.register(QuotationImage)
-# class QuotationImageAdmin(admin.ModelAdmin):
-#     list_display = ('name', 'image', 'created_at')
-#     search_fields = ('name',)
-#     readonly_fields = ('created_at',)
+@admin.register(AiFinish)
+class AiFinishAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
 
 
-# # ==========================
-# # Quotation Admin
-# # ==========================
-# @admin.register(Quotation)
-# class QuotationAdmin(admin.ModelAdmin):
-#     list_display = (
-#         'product_name',
-#         'customer',
-#         'location',
-#         'unit',
-#         'price',
-#         'qty',
-#         'created_at',
-#     )
+@admin.register(AiPackage)
+class AiPackageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
 
-#     search_fields = (
-#         'product_name',
-#         'customer__name',
-#         'customer__phone1',
-#         'brand',
-#         'core_material',
-#         'finish_material',
-#     )
 
-#     list_filter = (
-#         'unit',
-#         'brand',
-#         'created_at',
-#     )
+@admin.register(AiPlywood)
+class AiPlywoodAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'price_multiplier')
 
-#     # ✅ UPDATED FIELD NAME
-#     autocomplete_fields = ('customer', 'product_img')
 
-#     fieldsets = (
-#         ('Customer Info', {
-#             'fields': ('customer', 'location')
-#         }),
-#         ('Product Details', {
-#             'fields': (
-#                 'product_name',
-#                 'entity',
-#                 'specification',
-#                 'product_img',   # ✅ FIXED
-#                 'full_semi',     # ✅ NEW FK FIELD
-#             )
-#         }),
-#         ('Material Details', {
-#             'fields': (
-#                 'core_material',
-#                 'finish_material',
-#                 'brand',
-#             )
-#         }),
-#         ('Measurement', {
-#             'fields': (
-#                 'length',
-#                 'width',
-#                 'unit',
-#                 'area',
-#             )
-#         }),
-#         ('Pricing', {
-#             'fields': (
-#                 'price',
-#                 'qty',
-#                 'notes',
-#             )
-#         }),
-#         ('Meta', {
-#             'fields': ('created_at', 'updated_at'),
-#         }),
-#     )
-
-#     readonly_fields = ('created_at', 'updated_at')
-#     ordering = ('-created_at',)
+@admin.register(AiInteriorPrice)
+class AiInteriorPriceAdmin(admin.ModelAdmin):
+    list_display = (
+        'location',
+        'ai_product',
+        'finish',
+        'ai_package',
+        'plywood',
+        'base_rate'
+    )

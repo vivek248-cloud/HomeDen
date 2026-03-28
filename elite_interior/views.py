@@ -3690,39 +3690,92 @@ def image_delete(request, id):
 
 
 
-
+from django.http import JsonResponse
 from django.shortcuts import render
+from .models import AiInteriorPrice
+
 
 def ai_calculator(request):
     return render(request, "ai/calculator.html")
 
 
 
-# views.py
-
 from django.http import JsonResponse
-from .models import InteriorPrice
+from .models import AiLocation
+
+def get_locations(request):
+    locations = AiLocation.objects.all()
+
+    data = [l.name.lower() for l in locations]
+
+    return JsonResponse({
+        "status": "success",
+        "locations": data
+    })
 
 
-def get_products(request, location):
 
-    products = InteriorPrice.objects.filter(location__iexact=location)
+def get_ai_data(request, location):
 
-    data = []
+    try:
+        # 🔥 Normalize location (important)
+        location = location.strip().lower()
 
-    for p in products:
-        data.append({
-            "product": p.product,
-            "base": p.base_rate,
-            "laminate": p.laminate_price,
-            "acrylic": p.acrylic_price,
-            "veneer": p.veneer_price,
-            "silver": p.silver_package,
-            "gold": p.gold_package,
-            "platinum": p.platinum_package
+        prices = AiInteriorPrice.objects.select_related(
+            "location",
+            "ai_product",
+            "finish",
+            "ai_package",
+            "plywood"
+        ).filter(location__name__iexact=location)
+
+        # 🔥 Debug (optional)
+        # print("LOCATION:", location, "COUNT:", prices.count())
+
+        data = {}
+
+        for p in prices:
+
+            product = p.ai_product.name
+            finish = p.finish.name
+            package = p.ai_package.name
+            plywood = p.plywood.name
+
+            # 🔥 Build nested structure safely
+            if product not in data:
+                data[product] = {}
+
+            if finish not in data[product]:
+                data[product][finish] = {}
+
+            if package not in data[product][finish]:
+                data[product][finish][package] = {}
+
+            data[product][finish][package][plywood] = {
+                "rate": float(p.base_rate),
+                "multiplier": float(p.plywood.price_multiplier)
+            }
+
+        # 🔥 If no data found (VERY IMPORTANT FIX)
+        if not data:
+            return JsonResponse({
+                "status": "empty",
+                "data": {},
+                "message": f"No pricing data found for '{location}'"
+            })
+
+        return JsonResponse({
+            "status": "success",
+            "data": data
         })
 
-    return JsonResponse(data, safe=False)
+    except Exception as e:
+        return JsonResponse({
+            "status": "error",
+            "message": str(e)
+        })
+    
+
 
     
 from django.shortcuts import render

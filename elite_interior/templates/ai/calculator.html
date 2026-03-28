@@ -241,6 +241,17 @@
     /* Custom Scrollbar */
     .ai-chat::-webkit-scrollbar { width: 6px; }
     .ai-chat::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
+    .estimate-table td, .estimate-table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.estimate-table th {
+    text-align: left;
+}
+
+
 </style>
 
 <div class="ai-wrapper">
@@ -313,313 +324,719 @@ onkeypress="if(event.key==='Enter') sendMessage()">
 
 </div>
 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 <script>
 
-/* ========================
-AI STATE
-======================== */
+/* ======================== */
+/* AI STATE */
+/* ======================== */
 
-let ai={
-location:null,
-product:null,
-area:null,
-finish:null,
-package:null,
-stage:"start"
+let ai = {
+    locations: [],      // completed location estimates
+    current: null,      // current location being configured
+    stage: "start"
+    // stages: start | select_products | enter_area | configure_product | done
 };
 
-let availableProducts=[];
+let aiDataCache = {};
+let AVAILABLE_LOCATIONS = [];
+let isLoading = false;
+let isButtonClick = false;
+
+// Tracks which product index is being configured right now
+let currentProductIndex = 0;
 
 
-/* ========================
-CHAT UI
-======================== */
+/* ======================== */
+/* LOAD LOCATIONS */
+/* ======================== */
 
-function addUser(text){
-let chat=document.getElementById("chat");
-chat.innerHTML+=`<div class="msg user-msg">${text}</div>`;
-scroll();
+async function loadLocations() {
+    try {
+        let res = await fetch("/get-locations/");
+        let result = await res.json();
+        if (result.status === "success") {
+            AVAILABLE_LOCATIONS = result.locations.map(l => l.toLowerCase().trim());
+        } else {
+            addAI("⚠️ Failed to load locations");
+        }
+    } catch {
+        addAI("❌ Error loading locations");
+    }
 }
 
-function addAI(html){
-let chat=document.getElementById("chat");
-chat.innerHTML+=`<div class="msg ai-msg">${html}</div>`;
-scroll();
+
+/* ======================== */
+/* CHAT UI */
+/* ======================== */
+
+function addUser(text) {
+    document.getElementById("chat").innerHTML +=
+        `<div class="msg user-msg">${text}</div>`;
+    scroll();
 }
 
-function scroll(){
-let chat=document.getElementById("chat");
-setTimeout(()=>{chat.scrollTop=chat.scrollHeight},100);
+function addAI(html) {
+    document.getElementById("chat").innerHTML +=
+        `<div class="msg ai-msg">${html}</div>`;
+    scroll();
+}
+
+function scroll() {
+    let chat = document.getElementById("chat");
+    setTimeout(() => { chat.scrollTop = chat.scrollHeight; }, 100);
 }
 
 
-/* ========================
-RESET
-======================== */
+/* ======================== */
+/* SIDEBAR */
+/* ======================== */
 
-function resetAI(){
-ai={
-location:null,
-product:null,
-area:null,
-finish:null,
-package:null,
-stage:"start"
+function updateSidebar() {
+    let locList = ai.locations.map(l =>
+        `${capitalize(l.location)} (₹${l.total.toLocaleString("en-IN")})`
+    ).join("<br>");
+    document.getElementById("stat-location").innerHTML = locList || "Not Set";
+
+    if (ai.current) {
+        let c = ai.current;
+        let areas = c.products.filter(p => p.area).map(p =>
+            `${capitalize(p.name)}: ${p.area} sq.ft`
+        ).join(", ");
+        document.getElementById("stat-area").innerText = areas || "0 sq.ft";
+
+        // Show current product being configured
+        let configuring = c.products[currentProductIndex];
+        document.getElementById("stat-finish").innerText =
+            configuring?.finish ? capitalize(configuring.finish) : "Standard";
+        document.getElementById("stat-package").innerText =
+            configuring?.package ? capitalize(configuring.package) : "None";
+    } else {
+        document.getElementById("stat-area").innerText = "0 sq.ft";
+        document.getElementById("stat-finish").innerText = "Standard";
+        document.getElementById("stat-package").innerText = "None";
+    }
+}
+
+
+/* ======================== */
+/* RESET */
+/* ======================== */
+
+function resetAI() {
+    ai = { locations: [], current: null, stage: "start" };
+    aiDataCache = {};
+    isLoading = false;
+    currentProductIndex = 0;
+    updateSidebar();
+}
+
+
+/* ======================== */
+/* LOAD DATA */
+/* ======================== */
+
+async function loadAIData(location) {
+    if (aiDataCache[location]) return;
+    if (isLoading) return;
+    isLoading = true;
+
+    try {
+        let res = await fetch(`/get-ai-data/${location}/`);
+        let result = await res.json();
+
+        if (result.status === "success") {
+            let raw = result.data;
+            let normalized = {};
+
+            Object.keys(raw).forEach(product => {
+                let pKey = product.toLowerCase().trim();
+                normalized[pKey] = {};
+
+                Object.keys(raw[product]).forEach(finish => {
+                    let fKey = finish.toLowerCase().trim();
+                    normalized[pKey][fKey] = {};
+
+                    Object.keys(raw[product][finish]).forEach(pkg => {
+                        let pkgKey = pkg.toLowerCase().trim();
+                        normalized[pKey][fKey][pkgKey] = {};
+
+                        Object.keys(raw[product][finish][pkg]).forEach(ply => {
+                            let plyKey = ply.toLowerCase().trim();
+                            normalized[pKey][fKey][pkgKey][plyKey] =
+                                raw[product][finish][pkg][ply];
+                        });
+                    });
+                });
+            });
+
+            aiDataCache[location] = normalized;
+
+        } else {
+            aiDataCache[location] = {};
+            addAI(`⚠️ No pricing data found for ${capitalize(location)}`);
+        }
+
+    } catch (e) {
+        console.error("loadAIData error:", e);
+        addAI(`❌ Server error loading data for ${capitalize(location)}`);
+    }
+
+    isLoading = false;
+}
+
+
+/* ======================== */
+/* STEP 1 — SHOW LOCATIONS */
+/* ======================== */
+
+function showLocations() {
+    let alreadyAdded = ai.locations.map(l => l.location);
+    let remaining = AVAILABLE_LOCATIONS.filter(l => !alreadyAdded.includes(l));
+
+    if (remaining.length === 0) {
+        addAI(`✅ All locations added!<br><br>
+            <button class='ai-btn confirm-btn' onclick='showFinalEstimate()'>
+                📊 View Final Estimate
+            </button>`);
+        return;
+    }
+
+    let html = "🏠 Select a location:<br><br>";
+    remaining.forEach(loc => {
+        html += `<button class="ai-btn" onclick="selectLocation('${loc}')">
+            ${capitalize(loc)}
+        </button> `;
+    });
+
+    addAI(html);
+    ai.stage = "start";
+}
+
+
+/* ======================== */
+/* STEP 2 — SELECT LOCATION */
+/* ======================== */
+
+async function selectLocation(loc) {
+    isButtonClick = true;
+    loc = loc.toLowerCase().trim();
+    addUser(capitalize(loc));
+
+    ai.current = {
+        location: loc,
+        products: [],           // [{ name, area, finish, package, plywood }]
+        selectedProducts: [],
+        total: 0
+    };
+    currentProductIndex = 0;
+
+    addAI(`🏠 Setting up <b>${capitalize(loc)}</b>...`);
+    await loadAIData(loc);
+
+    let data = aiDataCache[loc];
+    if (!data || !Object.keys(data).length) {
+        addAI(`⚠️ No products found for ${capitalize(loc)}.`);
+        return;
+    }
+
+    ai.stage = "select_products";
+    showProductSelection(loc);
+}
+
+
+/* ======================== */
+/* STEP 3 — PRODUCT SELECTION */
+/* ======================== */
+
+function showProductSelection(loc) {
+    let data = aiDataCache[loc];
+    let products = Object.keys(data);
+
+    let html = `🪑 Select products for <b>${capitalize(loc)}</b>:<br>
+        <small style="opacity:0.7">Choose one or more, then confirm</small><br><br>`;
+
+    products.forEach(p => {
+        let safeId = `pt-${p.replace(/\s+/g, "-")}`;
+        html += `<button class="ai-btn product-toggle" id="${safeId}"
+            onclick="toggleProduct('${p}')">${capitalize(p)}</button> `;
+    });
+
+    html += `<br><br>
+        <button class="ai-btn all-btn" onclick="selectAllProducts('${loc}')">✅ All Products</button>
+        <button class="ai-btn confirm-btn" onclick="confirmProducts()">➡️ Confirm</button>`;
+
+    addAI(html);
+}
+
+function toggleProduct(p) {
+    isButtonClick = true;
+    let safeId = `pt-${p.replace(/\s+/g, "-")}`;
+    let btn = document.getElementById(safeId);
+    let idx = ai.current.selectedProducts.indexOf(p);
+
+    if (idx === -1) {
+        ai.current.selectedProducts.push(p);
+        if (btn) btn.classList.add("selected");
+    } else {
+        ai.current.selectedProducts.splice(idx, 1);
+        if (btn) btn.classList.remove("selected");
+    }
+}
+
+function selectAllProducts(loc) {
+    isButtonClick = true;
+    let data = aiDataCache[loc];
+    ai.current.selectedProducts = Object.keys(data);
+    Object.keys(data).forEach(p => {
+        let btn = document.getElementById(`pt-${p.replace(/\s+/g, "-")}`);
+        if (btn) btn.classList.add("selected");
+    });
+}
+
+function confirmProducts() {
+    isButtonClick = true;
+
+    if (!ai.current.selectedProducts.length) {
+        addAI("⚠️ Please select at least one product.");
+        return;
+    }
+
+    // 🔥 Each product has its OWN finish/package/plywood
+    ai.current.products = ai.current.selectedProducts.map(p => ({
+        name: p,
+        area: null,
+        finish: null,
+        package: null,
+        plywood: null
+    }));
+
+    addUser("Selected: " + ai.current.selectedProducts.map(capitalize).join(", "));
+
+    currentProductIndex = 0;
+    ai.stage = "enter_area";
+    askNextArea();
+}
+
+
+/* ======================== */
+/* STEP 4 — AREA PER PRODUCT */
+/* ======================== */
+
+function askNextArea() {
+    // Find first product with no area
+    let pending = ai.current.products.find(p => p.area === null);
+
+    if (!pending) {
+        // All areas done — start configuring finish/package/plywood per product
+        currentProductIndex = 0;
+        ai.stage = "configure_product";
+        configureNextProduct();
+        return;
+    }
+
+    addAI(`📐 Enter size for <b>${capitalize(pending.name)}</b>:<br>
+        <small style="opacity:0.7">e.g. 10x12 or just type 120 for sq.ft</small>`);
+}
+
+
+/* ======================== */
+/* STEP 5/6/7 — PER PRODUCT CONFIG */
+/* ======================== */
+
+function configureNextProduct() {
+    // Find next product that still needs finish configured
+    let prod = ai.current.products.find((p, i) =>
+        i >= currentProductIndex && p.finish === null
+    );
+
+    if (!prod) {
+        // All products configured — calculate estimate
+        estimateLocation();
+        return;
+    }
+
+    currentProductIndex = ai.current.products.indexOf(prod);
+    updateSidebar();
+
+    // Show a header for this product's config
+    addAI(`<b>⚙️ Configuring: ${capitalize(prod.name)}</b>`);
+
+    showProductFinishes(prod);
+}
+
+function showProductFinishes(prod) {
+    let data = aiDataCache[ai.current.location];
+    let finishes = Object.keys(data[prod.name] || {});
+
+    if (!finishes.length) {
+        addAI(`⚠️ No finishes found for ${capitalize(prod.name)}`);
+        return;
+    }
+
+    let html = `🎨 Choose finish for <b>${capitalize(prod.name)}</b>:<br><br>`;
+    finishes.forEach(f => {
+        html += `<button class="ai-btn"
+            onclick="selectProductFinish('${prod.name}', '${f}')">
+            ${capitalize(f)}
+        </button> `;
+    });
+
+    addAI(html);
+}
+
+function selectProductFinish(prodName, finish) {
+    isButtonClick = true;
+    let prod = ai.current.products.find(p => p.name === prodName);
+    prod.finish = finish;
+    addUser(capitalize(finish));
+    updateSidebar();
+    showProductPackages(prod);
+}
+
+function showProductPackages(prod) {
+    let data = aiDataCache[ai.current.location];
+    let packages = Object.keys(data[prod.name]?.[prod.finish] || {});
+
+    if (!packages.length) {
+        addAI(`⚠️ No packages found for ${capitalize(prod.name)} → ${capitalize(prod.finish)}`);
+        return;
+    }
+
+    let html = `💎 Choose package for <b>${capitalize(prod.name)}</b>:<br><br>`;
+    packages.forEach(p => {
+        html += `<button class="ai-btn"
+            onclick="selectProductPackage('${prod.name}', '${p}')">
+            ${capitalize(p)}
+        </button> `;
+    });
+
+    addAI(html);
+}
+
+function selectProductPackage(prodName, pkg) {
+    isButtonClick = true;
+    let prod = ai.current.products.find(p => p.name === prodName);
+    prod.package = pkg;
+    addUser(capitalize(pkg));
+    updateSidebar();
+    showProductPlywood(prod);
+}
+
+function showProductPlywood(prod) {
+    let data = aiDataCache[ai.current.location];
+    let plywoods = Object.keys(
+        data[prod.name]?.[prod.finish]?.[prod.package] || {}
+    );
+
+    if (!plywoods.length) {
+        addAI(`⚠️ No plywood options for ${capitalize(prod.name)}`);
+        return;
+    }
+
+    let html = `🪵 Choose plywood for <b>${capitalize(prod.name)}</b>:<br><br>`;
+    plywoods.forEach(p => {
+        html += `<button class="ai-btn"
+            onclick="selectProductPlywood('${prod.name}', '${p}')">
+            ${capitalize(p)}
+        </button> `;
+    });
+
+    addAI(html);
+}
+
+function selectProductPlywood(prodName, ply) {
+    isButtonClick = true;
+    let prod = ai.current.products.find(p => p.name === prodName);
+    prod.plywood = ply;
+    addUser(capitalize(ply));
+    updateSidebar();
+
+    // Move to next product
+    currentProductIndex++;
+    configureNextProduct();
+}
+
+
+/* ======================== */
+/* CALCULATE RATE */
+/* ======================== */
+
+function calcRate(item) {
+    let rate = parseFloat(item.rate) || 0;
+    let multiplier = parseFloat(item.multiplier);
+    if (!isNaN(multiplier) && multiplier > 0 && multiplier <= 10) {
+        return rate * multiplier;
+    }
+    return rate;
+}
+
+
+/* ======================== */
+/* ESTIMATE ONE LOCATION */
+/* ======================== */
+
+function estimateLocation() {
+    let data = aiDataCache[ai.current.location];
+    let c = ai.current;
+    let rows = "";
+    let total = 0;
+
+    c.products.forEach(prod => {
+        let item = data?.[prod.name]?.[prod.finish]?.[prod.package]?.[prod.plywood];
+
+        if (!item) {
+            console.warn(`[WARN] No data: ${prod.name} → ${prod.finish} → ${prod.package} → ${prod.plywood}`);
+            return;
+        }
+        if (!prod.area) return;
+
+        let rate = calcRate(item);
+        let cost = prod.area * rate;
+        total += cost;
+
+        rows += `
+        <tr>
+            <td>${capitalize(prod.name)}</td>
+            <td>${capitalize(prod.finish)} / ${capitalize(prod.package)} / ${capitalize(prod.plywood)}</td>
+            <td>${prod.area} sq.ft</td>
+            <td>₹${rate.toLocaleString("en-IN")}</td>
+            <td>₹${cost.toLocaleString("en-IN")}</td>
+        </tr>`;
+    });
+
+    if (!rows) {
+        addAI("⚠️ No matching data found. Please try again.");
+        return;
+    }
+
+    c.total = total;
+
+    ai.locations.push({
+        location: c.location,
+        products: c.products.map(p => ({ ...p })),
+        total: c.total
+    });
+
+    updateSidebar();
+
+    let html = `
+    <div class="estimate-box">
+        <h3>🧾 ${capitalize(c.location)} Estimate</h3>
+        <table style="width:100%; border-collapse:collapse;">
+            <tr>
+                <th>Product</th>
+                <th>Finish / Package / Plywood</th>
+                <th>Area</th>
+                <th>Rate/sqft</th>
+                <th>Total</th>
+            </tr>
+            ${rows}
+            <tr style="font-weight:bold; background:#f9f9f9;">
+                <td colspan="4">${capitalize(c.location)} Subtotal</td>
+                <td>₹${total.toLocaleString("en-IN")}</td>
+            </tr>
+        </table>
+    </div>
+    <br>
+    <button class="ai-btn" onclick="addAnotherLocation()">➕ Add Another Location</button>
+    <button class="ai-btn confirm-btn" onclick="showFinalEstimate()">📊 Final Estimate</button>`;
+
+    addAI(html);
+    ai.current = null;
+    ai.stage = "done";
+}
+
+
+/* ======================== */
+/* ADD ANOTHER LOCATION */
+/* ======================== */
+
+function addAnotherLocation() {
+    isButtonClick = true;
+    currentProductIndex = 0;
+    ai.stage = "start";
+    showLocations();
+}
+
+
+/* ======================== */
+/* FINAL ESTIMATE */
+/* ======================== */
+
+function showFinalEstimate() {
+    isButtonClick = true;
+
+    if (!ai.locations.length) {
+        addAI("⚠️ No locations added yet.");
+        return;
+    }
+
+    let grandTotal = 0;
+    let locationBlocks = "";
+
+    ai.locations.forEach(loc => {
+        grandTotal += loc.total;
+
+        let rows = loc.products.map(p => {
+            let data = aiDataCache[loc.location];
+            let item = data?.[p.name]?.[p.finish]?.[p.package]?.[p.plywood];
+            if (!item || !p.area) return "";
+
+            let rate = calcRate(item);
+            let cost = p.area * rate;
+
+            return `
+            <tr>
+                <td>${capitalize(p.name)}</td>
+                <td>${capitalize(p.finish)} / ${capitalize(p.package)} / ${capitalize(p.plywood)}</td>
+                <td>${p.area} sq.ft</td>
+                <td>₹${rate.toLocaleString("en-IN")}</td>
+                <td>₹${cost.toLocaleString("en-IN")}</td>
+            </tr>`;
+        }).join("");
+
+        locationBlocks += `
+        <tr style="background:#f0f4ff;">
+            <td colspan="5" style="font-weight:bold; padding:6px;">
+                🏠 ${capitalize(loc.location)}
+            </td>
+        </tr>
+        ${rows}
+        <tr style="font-weight:bold; border-bottom:2px solid #ddd;">
+            <td colspan="4">${capitalize(loc.location)} Subtotal</td>
+            <td>₹${loc.total.toLocaleString("en-IN")}</td>
+        </tr>`;
+    });
+
+    let html = `
+    <div class="estimate-box" id="estimateBox">
+        <h3>🧾 Full Interior Estimate</h3>
+        <table style="width:100%; border-collapse:collapse;">
+            <tr>
+                <th>Product</th>
+                <th>Finish / Package / Plywood</th>
+                <th>Area</th>
+                <th>Rate/sqft</th>
+                <th>Total</th>
+            </tr>
+            ${locationBlocks}
+            <tr style="font-weight:bold; font-size:1.1em; background:#e8f5e9;">
+                <td colspan="4">💰 Grand Total</td>
+                <td>₹${grandTotal.toLocaleString("en-IN")}</td>
+            </tr>
+        </table>
+        <br>
+        <button onclick="downloadPDF()" class="ai-btn">📄 Download PDF</button>
+        <button onclick="addAnotherLocation()" class="ai-btn">➕ Add Location</button>
+    </div>`;
+
+    addAI(html);
+}
+
+
+/* ======================== */
+/* MAIN FLOW — TEXT INPUT */
+/* ======================== */
+
+async function sendMessage() {
+    if (isButtonClick) {
+        isButtonClick = false;
+        return;
+    }
+
+    let input = document.getElementById("chatInput");
+    let msg = input.value.trim();
+    if (!msg) return;
+
+    addUser(msg);
+    input.value = "";
+
+    if (ai.stage === "start") {
+        let loc = detectLocation(msg);
+        if (loc) {
+            await selectLocation(loc);
+        } else {
+            showLocations();
+        }
+        return;
+    }
+
+    if (ai.stage === "enter_area") {
+        let area = parseArea(msg);
+        if (area && area > 0) {
+            let pending = ai.current.products.find(p => p.area === null);
+            if (pending) {
+                pending.area = area;
+                updateSidebar();
+                askNextArea();
+            }
+        } else {
+            addAI("⚠️ Please enter size like <b>10x12</b> or a number like <b>120</b>");
+        }
+        return;
+    }
+}
+
+
+/* ======================== */
+/* HELPERS */
+/* ======================== */
+
+function parseArea(msg) {
+    let mulMatch = msg.match(/(\d+)\s*[x×]\s*(\d+)/i);
+    if (mulMatch) return parseInt(mulMatch[1]) * parseInt(mulMatch[2]);
+    let numMatch = msg.match(/(\d+)/);
+    if (numMatch) return parseInt(numMatch[1]);
+    return null;
+}
+
+function detectLocation(msg) {
+    msg = msg.toLowerCase();
+    for (let loc of AVAILABLE_LOCATIONS) {
+        if (msg.includes(loc)) return loc;
+    }
+    return null;
+}
+
+function capitalize(str) {
+    if (!str) return "";
+    return str.replace(/\b\w/g, c => c.toUpperCase());
+}
+
+function calcRate(item) {
+    let rate = parseFloat(item.rate) || 0;
+    let multiplier = parseFloat(item.multiplier);
+    if (!isNaN(multiplier) && multiplier > 0 && multiplier <= 10) {
+        return rate * multiplier;
+    }
+    return rate;
+}
+
+
+/* ======================== */
+/* PDF */
+/* ======================== */
+
+function downloadPDF() {
+    let element = document.getElementById("estimateBox");
+    if (!element) { addAI("⚠️ Generate final estimate first."); return; }
+    html2pdf().from(element).save("Interior_Estimate.pdf");
+}
+
+
+/* ======================== */
+/* INIT */
+/* ======================== */
+
+window.onload = async function () {
+    updateSidebar();
+    await loadLocations();
+    showLocations();
 };
-availableProducts=[];
-}
-
-
-/* ========================
-PARSE LOCATION
-======================== */
-
-function detectLocation(msg){
-
-msg=msg.toLowerCase();
-
-if(msg.includes("kitchen")) return "kitchen";
-if(msg.includes("bedroom")||msg.includes("wardrobe")) return "bedroom";
-if(msg.includes("living")||msg.includes("tv")) return "living room";
-if(msg.includes("pooja")||msg.includes("mandir")) return "pooja";
-
-return null;
-
-}
-
-
-/* ========================
-LOAD PRODUCTS
-======================== */
-
-async function loadProducts(location){
-
-let res=await fetch(`/get-products/${location}/`);
-let products=await res.json();
-
-availableProducts=products;
-
-let html=`<b>${location.toUpperCase()} modules:</b><br><br>`;
-
-/* BUTTONS */
-
-products.forEach(p=>{
-html+=`
-<button class="ai-btn" onclick="selectProduct('${p.product}')">
-${p.product}
-</button>
-`;
-});
-
-/* ALL BUTTON */
-
-html+=`
-<button class="ai-btn all-btn" onclick="selectProduct('all')">
-All Products
-</button>
-`;
-
-addAI(html);
-
-}
-
-
-/* ========================
-PRODUCT SELECT
-======================== */
-
-function selectProduct(product){
-
-ai.product=product;
-
-addUser(product);
-
-addAI("📐 What size is the space? Example 10x12");
-
-}
-
-
-/* ========================
-PARSE OTHER INPUTS
-======================== */
-
-function parse(msg){
-
-msg=msg.toLowerCase();
-
-/* AREA */
-
-let m=msg.match(/(\d+)\s*x\s*(\d+)/);
-
-if(m){
-ai.area=parseInt(m[1])*parseInt(m[2]);
-}
-
-/* FINISH */
-
-if(msg.includes("laminate")) ai.finish="laminate";
-if(msg.includes("acrylic")) ai.finish="acrylic";
-if(msg.includes("veneer")) ai.finish="veneer";
-
-/* PACKAGE */
-
-if(msg.includes("silver")) ai.package="silver";
-if(msg.includes("gold")) ai.package="gold";
-if(msg.includes("platinum")) ai.package="platinum";
-
-}
-
-
-/* ========================
-ESTIMATE
-======================== */
-
-async function estimate(){
-
-let rows="";
-let total=0;
-
-availableProducts.forEach(p=>{
-
-if(ai.product!=="all"){
-if(p.product.toLowerCase()!==ai.product.toLowerCase()) return;
-}
-
-let rate=Number(p.base)||0;
-
-if(ai.finish==="laminate") rate+=Number(p.laminate);
-if(ai.finish==="acrylic") rate+=Number(p.acrylic);
-if(ai.finish==="veneer") rate+=Number(p.veneer);
-
-if(ai.package==="silver") rate+=Number(p.silver);
-if(ai.package==="gold") rate+=Number(p.gold);
-if(ai.package==="platinum") rate+=Number(p.platinum);
-
-let cost=ai.area*rate;
-
-total+=cost;
-
-rows+=`
-<tr>
-<td>${p.product}</td>
-<td>${ai.finish}</td>
-<td>${ai.area}</td>
-<td>₹${rate}</td>
-<td>₹${cost.toLocaleString()}</td>
-</tr>
-`;
-
-});
-
-
-addAI(`
-<div class="estimate-box">
-
-<h4>Furniture Estimate</h4>
-
-<table class="estimate-table">
-
-<tr>
-<th>Product</th>
-<th>Finish</th>
-<th>Area</th>
-<th>Rate</th>
-<th>Total</th>
-</tr>
-
-${rows}
-
-<tr>
-<td colspan="4"><b>Total Estimate</b></td>
-<td><b>₹${total.toLocaleString()}</b></td>
-</tr>
-
-</table>
-
-</div>
-`);
-
-ai.stage="done";
-
-}
-
-
-/* ========================
-SEND MESSAGE
-======================== */
-
-async function sendMessage(){
-
-let input=document.getElementById("chatInput");
-let msg=input.value.trim();
-
-if(!msg) return;
-
-addUser(msg);
-input.value="";
-
-/* STEP 1 LOCATION */
-
-if(!ai.location){
-
-let loc=detectLocation(msg);
-
-if(loc){
-ai.location=loc;
-await loadProducts(loc);
-return;
-}
-
-addAI("🏠 Which room are you planning? Kitchen, Bedroom, Living Room or Pooja");
-return;
-
-}
-
-
-/* PARSE INPUT */
-
-parse(msg);
-
-
-/* AREA */
-
-if(ai.product && ai.area && !ai.finish){
-addAI("🎨 Which finish? Laminate, Acrylic or Veneer");
-return;
-}
-
-
-/* FINISH */
-
-if(ai.finish && !ai.package){
-addAI("💎 Which package? Silver, Gold or Platinum");
-return;
-}
-
-
-/* FINAL */
-
-if(ai.location && ai.product && ai.area && ai.finish && ai.package){
-estimate();
-return;
-}
-
-
-/* AFTER ESTIMATE */
-
-if(ai.stage==="done"){
-
-if(msg.includes("bye")||msg.includes("thanks")){
-addAI("👋 Thanks! Want another estimate?");
-resetAI();
-return;
-}
-
-}
-
-}
 
 </script>
-
 
 {% endblock %}

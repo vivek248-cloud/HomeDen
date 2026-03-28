@@ -655,20 +655,52 @@ class SiteSettings(models.Model):
 
 # models.py
 
-class InteriorPrice(models.Model):
+class AiLocation(models.Model):
+    name = models.CharField(max_length=100, unique=True)
 
-    location = models.CharField(max_length=100, null=True, blank=True)
-    product = models.CharField(max_length=100)
+    def __str__(self):
+        return self.name
+
+class AiProduct(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+    
+class AiPlywood(models.Model):
+    name = models.CharField(max_length=100)
+    price_multiplier = models.FloatField(default=1.0)
+
+    def __str__(self):
+        return f"{self.name} (x{self.price_multiplier})"
+    
+
+class AiFinish(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+    
+
+    
+class AiPackage(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+    
+
+class AiInteriorPrice(models.Model):
+
+    location = models.ForeignKey("AiLocation", on_delete=models.CASCADE)
+    ai_product = models.ForeignKey("AiProduct", on_delete=models.CASCADE)
+
+    finish = models.ForeignKey("AiFinish", on_delete=models.CASCADE)
+    ai_package = models.ForeignKey("AiPackage", on_delete=models.CASCADE)
+
+    plywood = models.ForeignKey("AiPlywood", on_delete=models.CASCADE)
 
     base_rate = models.FloatField()
 
-    laminate_price = models.FloatField(default=0)
-    acrylic_price = models.FloatField(default=0)
-    veneer_price = models.FloatField(default=0)
-
-    silver_package = models.FloatField(default=0)
-    gold_package = models.FloatField(default=0)
-    platinum_package = models.FloatField(default=0)
-
     def __str__(self):
-        return f"{self.location} - {self.product}"
+        return f"{self.location} | {self.ai_product} | {self.finish} | {self.ai_package} | {self.plywood}"
