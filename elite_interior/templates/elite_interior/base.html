@@ -443,243 +443,239 @@ document.addEventListener('DOMContentLoaded', () => {
       {% comment %} data-bs-toggle="dropdown"  dropdown-toggle{% endcomment %}
       
     </header>
-{% if messages %}
-  {% for message in messages %}
-    {% if forloop.first %}
-      <script>
-        document.addEventListener("DOMContentLoaded", function () {
-          Swal.fire({
-            icon: 'success',
-            title: 'Message Sent!',
-            text: '{{ message|escapejs }}',
-            confirmButtonColor: '#2ba58b',
-            timer: 3000,
-            timerProgressBar: true
-          });
-
-          const modal = document.getElementById('designConsultantModal');
-          const bsModal = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal);
-          bsModal.hide();
-        });
-      </script>
-    {% endif %}
-  {% endfor %}
-{% endif %}
-
-
-
 
     <div class="modal fade" id="designConsultantModal" tabindex="-1" aria-labelledby="designConsultantModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered responsive-modal"> <!-- Custom class here -->
-        <div class="modal-content elegant-modal">
-          <div class="modal-header border-0">
-            <h5 class="modal-title fw-bold text-dark" id="designConsultantModalLabel">Talk to Our Design Consultant</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-    
-          <div class="modal-body">
-            <form method="post" action="{% url 'submit_form' %}">
+  <div class="modal-dialog modal-dialog-centered responsive-modal">
+    <div class="modal-content elegant-modal">
+
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="designConsultantModalLabel">Talk to our design consultant</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <form method="post" action="{% url 'submit_form' %}">
           {% csrf_token %}
 
-          <!-- Name -->
           <div class="mb-3">
-              <label for="name" class="form-label">Name</label>
-              <input type="text" class="form-control text-left rounded-3"
-                    id="name" name="name" required>
+            <label class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Your full name" required>
           </div>
 
-          <!-- Contact -->
-          <div class="mb-3">
-              <label for="contact" class="form-label">Contact Number</label>
-              <input type="tel" class="form-control text-left rounded-3"
-                    id="contact" name="contact" required>
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="form-label">Contact number</label>
+              <input type="tel" class="form-control" id="contact" name="contact" placeholder="+91 00000 00000" required>
+            </div>
+            <div class="col-6">
+              <label class="form-label">Contact number 2</label>
+              <input type="tel" class="form-control" id="contact2" name="contact2" placeholder="Alternate">
+            </div>
           </div>
 
-          <!-- Contact 2 -->
           <div class="mb-3">
-              <label for="contact2" class="form-label">Contact Number 2</label>
-              <input type="tel" class="form-control text-left rounded-3"
-                    id="contact2" name="contact2" required>
+            <label class="form-label">Email address</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" required>
           </div>
 
-          <!-- Email -->
           <div class="mb-3">
-              <label for="email" class="form-label">Email Address</label>
-              <input type="email" class="form-control text-left rounded-3"
-                    id="email" name="email" required>
-          </div>
+            <label class="form-label d-block">Property type</label>
+            <div class="row g-2">
 
-          <!-- Property Type -->
-          <div class="mb-3">
-              <label class="form-label d-block">Property Type</label>
-              <div class="row g-2">
-
-                  <!-- Kitchen -->
-                  <div class="col-12 col-sm-6">
-                      <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
-                          data-value="Kitchen">
-                          <div>
-                              <input type="checkbox" class="form-check-input me-2 bhk-check">
-                              <span>Kitchen</span>
-                          </div>
-                          <div class="counter d-flex align-items-center d-none">
-                              <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
-                              <span class="mx-2 count">01</span>
-                              <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
-                          </div>
-                      </div>
+              <div class="col-6">
+                <div class="room-chip" data-value="Kitchen">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="check-box">
+                      <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <span style="font-size:13px">Kitchen</span>
                   </div>
-
-                  <!-- Master Bedroom -->
-                  <div class="col-12 col-sm-6">
-                      <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
-                          data-value="Master Bedroom">
-                          <div>
-                              <input type="checkbox" class="form-check-input me-2 bhk-check">
-                              <span>Master Bedroom</span>
-                          </div>
-                          <div class="counter d-flex align-items-center d-none">
-                              <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
-                              <span class="mx-2 count">01</span>
-                              <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
-                          </div>
-                      </div>
+                  <div class="room-counter">
+                    <button type="button" class="ctr-btn minus">−</button>
+                    <span class="ctr-num">1</span>
+                    <button type="button" class="ctr-btn plus">+</button>
                   </div>
-
-                  <!-- Kids Room -->
-                  <div class="col-12 col-sm-6">
-                      <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
-                          data-value="Kids Room">
-                          <div>
-                              <input type="checkbox" class="form-check-input me-2 bhk-check">
-                              <span>Kids Room</span>
-                          </div>
-                          <div class="counter d-flex align-items-center d-none">
-                              <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
-                              <span class="mx-2 count">01</span>
-                              <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
-                          </div>
-                      </div>
-                  </div>
-
-                  <!-- Living Room -->
-                  <div class="col-12 col-sm-6">
-                      <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
-                          data-value="Living Room">
-                          <div>
-                              <input type="checkbox" class="form-check-input me-2 bhk-check">
-                              <span>Living Room</span>
-                          </div>
-                          <div class="counter d-flex align-items-center d-none">
-                              <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
-                              <span class="mx-2 count">01</span>
-                              <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
-                          </div>
-                      </div>
-                  </div>
-
-                  <!-- Guest Room -->
-                  <div class="col-12 col-sm-6">
-                      <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
-                          data-value="Guest Room">
-                          <div>
-                              <input type="checkbox" class="form-check-input me-2 bhk-check">
-                              <span>Guest Room</span>
-                          </div>
-                          <div class="counter d-flex align-items-center d-none">
-                              <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
-                              <span class="mx-2 count">01</span>
-                              <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
-                          </div>
-                      </div>
-                  </div>
-
-                  <!-- Study Room -->
-                  <div class="col-12 col-sm-6">
-                      <div class="bhk-option d-flex justify-content-between align-items-center p-2 border rounded-3"
-                          data-value="Study Room">
-                          <div>
-                              <input type="checkbox" class="form-check-input me-2 bhk-check">
-                              <span>Study Room</span>
-                          </div>
-                          <div class="counter d-flex align-items-center d-none">
-                              <button type="button" class="btn btn-sm btn-light rounded-circle minus">−</button>
-                              <span class="mx-2 count">01</span>
-                              <button type="button" class="btn btn-sm btn-light rounded-circle plus">+</button>
-                          </div>
-                      </div>
-                  </div>
-
+                </div>
               </div>
 
-              <!-- Hidden input -->
-              <input type="hidden" id="bhk" name="bhk">
+              <div class="col-6">
+                <div class="room-chip" data-value="Master Bedroom">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="check-box">
+                      <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <span style="font-size:13px">Master bedroom</span>
+                  </div>
+                  <div class="room-counter">
+                    <button type="button" class="ctr-btn minus">−</button>
+                    <span class="ctr-num">1</span>
+                    <button type="button" class="ctr-btn plus">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-6">
+                <div class="room-chip" data-value="Kids Room">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="check-box">
+                      <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <span style="font-size:13px">Kids room</span>
+                  </div>
+                  <div class="room-counter">
+                    <button type="button" class="ctr-btn minus">−</button>
+                    <span class="ctr-num">1</span>
+                    <button type="button" class="ctr-btn plus">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-6">
+                <div class="room-chip" data-value="Living Room">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="check-box">
+                      <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <span style="font-size:13px">Living room</span>
+                  </div>
+                  <div class="room-counter">
+                    <button type="button" class="ctr-btn minus">−</button>
+                    <span class="ctr-num">1</span>
+                    <button type="button" class="ctr-btn plus">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-6">
+                <div class="room-chip" data-value="Guest Room">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="check-box">
+                      <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <span style="font-size:13px">Guest room</span>
+                  </div>
+                  <div class="room-counter">
+                    <button type="button" class="ctr-btn minus">−</button>
+                    <span class="ctr-num">1</span>
+                    <button type="button" class="ctr-btn plus">+</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-6">
+                <div class="room-chip" data-value="Study Room">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="check-box">
+                      <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5L3.5 6L8 1" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <span style="font-size:13px">Study room</span>
+                  </div>
+                  <div class="room-counter">
+                    <button type="button" class="ctr-btn minus">−</button>
+                    <span class="ctr-num">1</span>
+                    <button type="button" class="ctr-btn plus">+</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <input type="hidden" id="bhk" name="bhk">
           </div>
 
-          <!-- Project Location -->
           <div class="mb-3">
-              <label for="location" class="form-label">Project Location</label>
-              <input type="text" class="form-control text-left rounded-3"
-                    id="location" name="location" required>
+            <label class="form-label">Project location</label>
+            <input type="text" class="form-control" id="location" name="location" placeholder="City, area or pincode" required>
           </div>
 
-          <!-- Buttons -->
-          <div class="text-center mt-3">
-              <button type="submit" class="btn submit-btn py-0 px-4">Submit</button>
-              <a href="{% url 'select_platform' %}" class="btn btn-secondary calculate-btn bg-secondary py-0 px-4">Calculate Budget</a>
+          <div class="modal-footer-area">
+            <button type="submit" class="submit-btn">Submit</button>
+            <a href="{% url 'select_platform' %}" class="calculate-btn">Calculate budget</a>
           </div>
-      </form>
+        </form>
+      </div>
 
-<!-- JS Script -->
+    </div>
+  </div>
+</div>
+
+<!-- JS -->
 <script>
-    document.querySelectorAll(".bhk-check").forEach(check => {
-        check.addEventListener("change", function () {
-            const card = this.closest(".bhk-option");
-            const counter = card.querySelector(".counter");
+document.querySelectorAll(".room-chip").forEach(chip => {
+  chip.addEventListener("click", function(e) {
+    if (e.target.classList.contains("ctr-btn")) return;
+    this.classList.toggle("active");
+    updateHiddenInput();
+  });
+  chip.querySelector(".minus").addEventListener("click", e => {
+    e.stopPropagation();
+    const span = chip.querySelector(".ctr-num");
+    const v = parseInt(span.textContent);
+    if (v > 1) { span.textContent = v - 1; updateHiddenInput(); }
+  });
+  chip.querySelector(".plus").addEventListener("click", e => {
+    e.stopPropagation();
+    const span = chip.querySelector(".ctr-num");
+    span.textContent = parseInt(span.textContent) + 1;
+    updateHiddenInput();
+  });
+});
 
-            if (this.checked) {
-                counter.classList.remove("d-none");
-            } else {
-                counter.classList.add("d-none");
-                counter.querySelector(".count").textContent = "01"; // reset count
-            }
-            updateHiddenInput();
-        });
-    });
-
-    document.querySelectorAll(".plus").forEach(btn => {
-        btn.addEventListener("click", function () {
-            let countSpan = this.parentElement.querySelector(".count");
-            let value = parseInt(countSpan.textContent);
-            countSpan.textContent = (value + 1).toString().padStart(2, "0");
-            updateHiddenInput();
-        });
-    });
-
-    document.querySelectorAll(".minus").forEach(btn => {
-        btn.addEventListener("click", function () {
-            let countSpan = this.parentElement.querySelector(".count");
-            let value = parseInt(countSpan.textContent);
-            if (value > 1) {
-                countSpan.textContent = (value - 1).toString().padStart(2, "0");
-                updateHiddenInput();
-            }
-        });
-    });
-
-    function updateHiddenInput() {
-        let selections = [];
-        document.querySelectorAll(".bhk-option").forEach(option => {
-            let check = option.querySelector(".bhk-check");
-            if (check.checked) {
-                let room = option.dataset.value;
-                let count = option.querySelector(".count").textContent;
-                selections.push(`${room}:${count}`);
-            }
-        });
-        document.getElementById("bhk").value = selections.join(",");
-    }
+function updateHiddenInput() {
+  const selections = [];
+  document.querySelectorAll(".room-chip.active").forEach(chip => {
+    selections.push(`${chip.dataset.value}:${chip.querySelector(".ctr-num").textContent}`);
+  });
+  document.getElementById("bhk").value = selections.join(",");
+}
 </script>
+
+{% if messages %}{% for message in messages %}{% if forloop.first %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  Swal.fire({
+    icon: 'success', title: 'Message sent!',
+    text: '{{ message|escapejs }}',
+    confirmButtonColor: '#1d9e75',
+    timer: 3000, timerProgressBar: true
+  });
+  const modal = document.getElementById('designConsultantModal');
+  (bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal)).hide();
+});
+</script>
+{% endif %}{% endfor %}{% endif %}
+
+
+ {% comment %} form submiting loader {% endcomment %}
+
+<!-- Loader Overlay -->
+<div id="formLoader" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(255,255,255,0.85); backdrop-filter:blur(4px); flex-direction:column; align-items:center; justify-content:center; gap:16px;">
+  <div class="loader-ring"></div>
+  <p style="font-size:14px; font-weight:500; color:#1d9e75; letter-spacing:0.04em;">Submitting your request…</p>
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.querySelector("form[action]");
+
+    form.addEventListener("submit", function () {
+
+        const loader = document.getElementById("formLoader");
+
+        loader.style.display = "flex";
+
+        // Optional safety fallback
+        setTimeout(() => {
+            loader.style.display = "none";
+        }, 8000);
+
+    });
+
+});
+</script>
+
+
 
           </div>
         </div>
