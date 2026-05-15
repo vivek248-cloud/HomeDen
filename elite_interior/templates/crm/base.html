@@ -1227,11 +1227,11 @@
     <!-- User Footer -->
     <div class="sb-footer">
         <div class="sb-avatar">
-            {{ request.user.username|first|upper }}
+            A
         </div>
         <div>
             <div class="sb-user-name">
-                {{ request.user.get_full_name|default:request.user.username }}
+                Admin
             </div>
             <div class="sb-user-role">Administrator</div>
         </div>
@@ -1318,8 +1318,8 @@
             <button class="top-user-btn dropdown-toggle"
                     data-bs-toggle="dropdown"
                     aria-expanded="false">
-                <div class="top-avatar">
-                    {{ request.user.username|first|upper }}
+                <div class="top-avatar text-white">
+                    A
                 </div>
                 <div class="d-none d-md-block text-start">
                     <div class="top-user-name">
