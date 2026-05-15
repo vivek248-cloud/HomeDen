@@ -501,6 +501,215 @@ def delete_ad_image(sender, instance, **kwargs):
 
 
 
+
+# models.py
+
+class Lead(models.Model):
+
+    STATUS_CHOICES = [
+        ("new", "New"),
+        ("contacted", "Contacted"),
+        ("callback", "Callback"),
+        ("quotation_sent", "Quotation Sent"),
+        ("converted", "Converted"),
+        ("closed", "Closed"),
+    ]
+
+    PRIORITY_CHOICES = [
+        ("low", "Low"),
+        ("medium", "Medium"),
+        ("high", "High"),
+    ]
+
+    name = models.CharField(max_length=200)
+
+    phone = models.CharField(max_length=20)
+
+    alternate_phone = models.CharField(
+        max_length=20,
+        blank=True,
+        null=True
+    )
+
+    email = models.EmailField(blank=True, null=True)
+
+    location = models.CharField(max_length=255)
+
+    rooms = models.TextField(blank=True, null=True)
+
+    status = models.CharField(
+        max_length=50,
+        choices=STATUS_CHOICES,
+        default="new"
+    )
+
+    priority = models.CharField(
+        max_length=20,
+        choices=PRIORITY_CHOICES,
+        default="medium"
+    )
+
+    callback_date = models.DateTimeField(
+        blank=True,
+        null=True
+    )
+
+    notes = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
+
+# models.py
+
+class MessageTemplate(models.Model):
+
+    CATEGORY_CHOICES = [
+        ("festival", "Festival Greetings"),
+        ("offer", "Discount Offers"),
+        ("launch", "New Launch"),
+        ("followup", "Follow-up"),
+        ("custom", "Custom"),
+    ]
+
+    name = models.CharField(max_length=200)
+
+    category = models.CharField(
+        max_length=50,
+        choices=CATEGORY_CHOICES,
+        default="custom"
+    )
+
+    subject = models.CharField(
+        max_length=300,
+        blank=True,
+        null=True,
+        help_text="Email subject line"
+    )
+
+    message = models.TextField(
+        help_text="Use {name}, {phone}, {location} as placeholders"
+    )
+
+    image = models.ImageField(
+        upload_to="templates/",
+        blank=True,
+        null=True
+    )
+
+    is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ["-created_at"]
+
+
+class CampaignLog(models.Model):
+
+    PLATFORM_CHOICES = [
+        ("whatsapp", "WhatsApp"),
+        ("email", "Email"),
+        ("both", "Both"),
+    ]
+
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("sent", "Sent"),
+        ("failed", "Failed"),
+    ]
+
+    campaign_name = models.CharField(max_length=200)
+
+    template = models.ForeignKey(
+        MessageTemplate,
+        on_delete=models.SET_NULL,
+        null=True
+    )
+
+    platform = models.CharField(
+        max_length=20,
+        choices=PLATFORM_CHOICES
+    )
+
+    total_recipients = models.IntegerField(default=0)
+    sent_count = models.IntegerField(default=0)
+    failed_count = models.IntegerField(default=0)
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="pending"
+    )
+
+    sent_by = models.ForeignKey(
+        "auth.User",
+        on_delete=models.SET_NULL,
+        null=True
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.campaign_name
+
+    class Meta:
+        ordering = ["-created_at"]
+
+
+class CampaignRecipient(models.Model):
+
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("sent", "Sent"),
+        ("failed", "Failed"),
+    ]
+
+    campaign = models.ForeignKey(
+        CampaignLog,
+        on_delete=models.CASCADE,
+        related_name="recipients"
+    )
+
+    lead = models.ForeignKey(
+        Lead,
+        on_delete=models.CASCADE
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="pending"
+    )
+
+    sent_at = models.DateTimeField(
+        blank=True,
+        null=True
+    )
+
+    error_message = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    class Meta:
+        ordering = ["-sent_at"]
+
+
+        
+
     # seo
     
 class SEOServicePage(models.Model):
@@ -704,3 +913,39 @@ class AiInteriorPrice(models.Model):
 
     def __str__(self):
         return f"{self.location} | {self.ai_product} | {self.finish} | {self.ai_package} | {self.plywood}"
+    
+
+
+
+# admin.py
+
+from django.contrib import admin
+from django.utils.timezone import now
+from datetime import timedelta
+
+
+class CustomAdminSite(admin.AdminSite):
+    site_header = "HomeDen Admin"
+    site_title = "HomeDen Admin Portal"
+    index_title = "Administration"
+
+    def index(self, request, extra_context=None):
+        extra_context = extra_context or {}
+
+        # CRM Stats for admin index
+        extra_context["total_leads"] = Lead.objects.count()
+        extra_context["new_leads"] = Lead.objects.filter(
+            status="new"
+        ).count()
+        extra_context["converted_leads"] = Lead.objects.filter(
+            status="converted"
+        ).count()
+        extra_context["pending_callbacks"] = Lead.objects.filter(
+            callback_date__lte=now() + timedelta(days=1)
+        ).count()
+
+        return super().index(request, extra_context)
+
+
+# Replace default admin site
+admin_site = CustomAdminSite(name="admin")

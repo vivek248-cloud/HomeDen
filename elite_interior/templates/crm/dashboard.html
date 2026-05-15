@@ -1,0 +1,661 @@
+{% extends 'crm/base.html' %}
+
+{% block title %}Dashboard — HomeDen CRM{% endblock %}
+
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}Welcome back! Here's what's happening today.{% endblock %}
+
+{% block crm_content %}
+
+<!-- ══════════════════════════════════════
+     BREADCRUMB
+══════════════════════════════════════ -->
+<div class="crm-breadcrumb mb-4">
+    <i class="bi bi-house-fill"></i>
+    <span>Home</span>
+    <i class="bi bi-chevron-right" style="font-size:10px;"></i>
+    <span style="color:#2d3748; font-weight:600;">Dashboard</span>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     STAT CARDS ROW
+══════════════════════════════════════ -->
+<div class="row g-4 mb-4">
+
+    <!-- Total Leads -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-card-icon orange">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="stat-card-info">
+                <div class="stat-card-value">{{ total_leads }}</div>
+                <div class="stat-card-label">Total Leads</div>
+                <div class="stat-card-change up">
+                    <i class="bi bi-arrow-up-short"></i>
+                    All time enquiries
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Converted -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-card-icon green">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <div class="stat-card-info">
+                <div class="stat-card-value">{{ converted }}</div>
+                <div class="stat-card-label">Converted Leads</div>
+                <div class="stat-card-change up">
+                    <i class="bi bi-arrow-up-short"></i>
+                    Projects confirmed
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quotations Sent -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-card-icon blue">
+                <i class="bi bi-file-earmark-text-fill"></i>
+            </div>
+            <div class="stat-card-info">
+                <div class="stat-card-value">{{ quotation_sent }}</div>
+                <div class="stat-card-label">Quotations Sent</div>
+                <div class="stat-card-change up">
+                    <i class="bi bi-arrow-up-short"></i>
+                    Awaiting decisions
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Callbacks -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-card-icon red">
+                <i class="bi bi-telephone-fill"></i>
+            </div>
+            <div class="stat-card-info">
+                <div class="stat-card-value">{{ pending_callbacks }}</div>
+                <div class="stat-card-label">Pending Callbacks</div>
+                <div class="stat-card-change down">
+                    <i class="bi bi-clock-fill"></i>
+                    Due within 24 hours
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- END STAT CARDS -->
+
+
+<!-- ══════════════════════════════════════
+     CHART + QUICK STATS ROW
+══════════════════════════════════════ -->
+<div class="row g-4 mb-4">
+
+    <!-- Lead Analytics Chart -->
+    <div class="col-12 col-xl-8">
+        <div class="crm-card h-100">
+            <div class="crm-card-header">
+                <h5 class="crm-card-title">
+                    <i class="bi bi-bar-chart-fill me-2 text-crm-accent"></i>
+                    Lead Analytics Overview
+                </h5>
+                <span class="fs-12 text-muted">All time data</span>
+            </div>
+            <div class="crm-card-body">
+                <canvas 
+                    id="leadAnalyticsChart" 
+                    height="110">
+                </canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conversion Summary -->
+    <div class="col-12 col-xl-4">
+        <div class="crm-card h-100">
+            <div class="crm-card-header">
+                <h5 class="crm-card-title">
+                    <i class="bi bi-pie-chart-fill me-2 text-crm-accent"></i>
+                    Conversion Summary
+                </h5>
+            </div>
+            <div class="crm-card-body">
+
+                <!-- Doughnut Chart -->
+                <div style="max-width: 200px; margin: 0 auto 20px auto;">
+                    <canvas id="conversionDonutChart"></canvas>
+                </div>
+
+                <!-- Legend -->
+                <div class="d-flex flex-column gap-2">
+
+                    <div class="d-flex align-items-center 
+                                justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width:12px; height:12px; 
+                                        border-radius:3px; 
+                                        background:#e67e22;">
+                            </div>
+                            <span class="fs-13">Total Leads</span>
+                        </div>
+                        <span class="fw-600 fs-13">
+                            {{ total_leads }}
+                        </span>
+                    </div>
+
+                    <div class="d-flex align-items-center 
+                                justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width:12px; height:12px; 
+                                        border-radius:3px; 
+                                        background:#27ae60;">
+                            </div>
+                            <span class="fs-13">Converted</span>
+                        </div>
+                        <span class="fw-600 fs-13">
+                            {{ converted }}
+                        </span>
+                    </div>
+
+                    <div class="d-flex align-items-center 
+                                justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width:12px; height:12px; 
+                                        border-radius:3px; 
+                                        background:#2980b9;">
+                            </div>
+                            <span class="fs-13">Quotations Sent</span>
+                        </div>
+                        <span class="fw-600 fs-13">
+                            {{ quotation_sent }}
+                        </span>
+                    </div>
+
+                    <div class="d-flex align-items-center 
+                                justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <div style="width:12px; height:12px; 
+                                        border-radius:3px; 
+                                        background:#e74c3c;">
+                            </div>
+                            <span class="fs-13">Pending Callbacks</span>
+                        </div>
+                        <span class="fw-600 fs-13">
+                            {{ pending_callbacks }}
+                        </span>
+                    </div>
+
+                </div>
+                <!-- END Legend -->
+
+                <!-- Conversion Rate -->
+                {% if total_leads > 0 %}
+                <div class="mt-4 p-3 rounded-3" 
+                     style="background:#f7f8fa;">
+                    <div class="fs-12 text-muted mb-1">
+                        Conversion Rate
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="fw-700" 
+                             style="font-size:22px; color:#27ae60;">
+                            {% widthratio converted total_leads 100 %}%
+                        </div>
+                        <div class="fs-12 text-muted">
+                            of leads converted
+                        </div>
+                    </div>
+                    <div class="progress mt-2" style="height:6px;">
+                        <div class="progress-bar" 
+                             role="progressbar"
+                             style="width: {% widthratio converted total_leads 100 %}%;
+                                    background: #27ae60;"
+                             aria-valuenow="{% widthratio converted total_leads 100 %}"
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- END CHART ROW -->
+
+
+<!-- ══════════════════════════════════════
+     RECENT LEADS TABLE
+══════════════════════════════════════ -->
+<div class="row g-4">
+    <div class="col-12">
+        <div class="crm-card">
+
+            <!-- Card Header -->
+            <div class="crm-card-header">
+                <h5 class="crm-card-title">
+                    <i class="bi bi-clock-history me-2 text-crm-accent"></i>
+                    Recent Leads
+                    <span class="badge ms-2"
+                          style="background:#f0f2f5; 
+                                 color:#718096; 
+                                 font-size:11px; 
+                                 font-weight:600;
+                                 border-radius:20px;
+                                 padding: 4px 10px;">
+                        Last 10
+                    </span>
+                </h5>
+                <a href="{% url 'lead_list' %}" 
+                   class="btn-primary btn" 
+                   style="padding: 7px 16px; font-size:13px;">
+                    <i class="bi bi-arrow-right"></i>
+                    View All Leads
+                </a>
+            </div>
+
+            <!-- Table -->
+            <div class="table-responsive">
+                <table class="crm-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Customer</th>
+                            <th>Phone</th>
+                            <th>Location</th>
+                            <th>Rooms</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Created</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for lead in recent_leads %}
+                        <tr>
+
+                            <!-- Index -->
+                            <td class="fs-13 text-muted">
+                                {{ forloop.counter }}
+                            </td>
+
+                            <!-- Customer Name -->
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div style="
+                                        width: 34px; 
+                                        height: 34px; 
+                                        background: rgba(230,126,34,0.12);
+                                        color: #e67e22;
+                                        border-radius: 50%;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        font-size: 13px;
+                                        font-weight: 700;
+                                        flex-shrink: 0;">
+                                        {{ lead.name|first|upper }}
+                                    </div>
+                                    <div>
+                                        <div class="fw-600 fs-14">
+                                            {{ lead.name }}
+                                        </div>
+                                        <div class="fs-12 text-muted">
+                                            {{ lead.email|default:"No email" }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Phone -->
+                            <td>
+                                <a href="tel:{{ lead.phone }}" 
+                                   class="fs-13 fw-500 text-decoration-none"
+                                   style="color:#2d3748;">
+                                    <i class="bi bi-telephone me-1 text-muted"></i>
+                                    {{ lead.phone }}
+                                </a>
+                            </td>
+
+                            <!-- Location -->
+                            <td>
+                                <span class="fs-13">
+                                    <i class="bi bi-geo-alt me-1 text-muted"></i>
+                                    {{ lead.location|default:"—" }}
+                                </span>
+                            </td>
+
+                            <!-- Rooms -->
+                            <td>
+                                <span class="fs-12 text-muted">
+                                    {{ lead.rooms|default:"—" }}
+                                </span>
+                            </td>
+
+                            <!-- Status Badge -->
+                            <td>
+                                {% if lead.status == "new" %}
+                                    <span class="status-badge new">
+                                        <i class="bi bi-circle-fill" 
+                                           style="font-size:7px;">
+                                        </i>
+                                        New
+                                    </span>
+
+                                {% elif lead.status == "contacted" %}
+                                    <span class="status-badge contacted">
+                                        <i class="bi bi-circle-fill" 
+                                           style="font-size:7px;">
+                                        </i>
+                                        Contacted
+                                    </span>
+
+                                {% elif lead.status == "callback" %}
+                                    <span class="status-badge callback">
+                                        <i class="bi bi-circle-fill" 
+                                           style="font-size:7px;">
+                                        </i>
+                                        Callback
+                                    </span>
+
+                                {% elif lead.status == "quotation_sent" %}
+                                    <span class="status-badge quotation">
+                                        <i class="bi bi-circle-fill" 
+                                           style="font-size:7px;">
+                                        </i>
+                                        Quotation Sent
+                                    </span>
+
+                                {% elif lead.status == "converted" %}
+                                    <span class="status-badge converted">
+                                        <i class="bi bi-circle-fill" 
+                                           style="font-size:7px;">
+                                        </i>
+                                        Converted
+                                    </span>
+
+                                {% elif lead.status == "closed" %}
+                                    <span class="status-badge closed">
+                                        <i class="bi bi-circle-fill" 
+                                           style="font-size:7px;">
+                                        </i>
+                                        Closed
+                                    </span>
+
+                                {% else %}
+                                    <span class="status-badge new">
+                                        {{ lead.status|capfirst }}
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Priority Badge -->
+                            <td>
+                                {% if lead.priority == "High" %}
+                                    <span class="priority-badge high">
+                                        <i class="bi bi-arrow-up-circle-fill"></i>
+                                        High
+                                    </span>
+
+                                {% elif lead.priority == "Medium" %}
+                                    <span class="priority-badge medium">
+                                        <i class="bi bi-dash-circle-fill"></i>
+                                        Medium
+                                    </span>
+
+                                {% elif lead.priority == "Low" %}
+                                    <span class="priority-badge low">
+                                        <i class="bi bi-arrow-down-circle-fill"></i>
+                                        Low
+                                    </span>
+
+                                {% else %}
+                                    <span class="priority-badge medium">
+                                        {{ lead.priority|default:"Medium" }}
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Created Date -->
+                            <td class="fs-13 text-muted">
+                                <i class="bi bi-calendar3 me-1"></i>
+                                {{ lead.created_at|date:"d M Y" }}
+                            </td>
+
+                            <!-- Action -->
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'lead_detail' lead.id %}" 
+                                       class="topbar-icon-btn"
+                                       title="View Lead"
+                                       style="width:30px; height:30px; font-size:14px;">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                    <a href="{% url 'lead_update' lead.id %}" 
+                                       class="topbar-icon-btn"
+                                       title="Edit Lead"
+                                       style="width:30px; height:30px; font-size:14px;">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                </div>
+                            </td>
+
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9">
+                                <div class="text-center py-5">
+                                    <i class="bi bi-inbox" 
+                                       style="font-size:48px; color:#cbd5e0;">
+                                    </i>
+                                    <div class="mt-3 fw-600 text-muted">
+                                        No leads found
+                                    </div>
+                                    <div class="fs-13 text-muted mt-1">
+                                        Leads from your website will appear here
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+            <!-- END Table -->
+
+            <!-- Card Footer -->
+            {% if recent_leads %}
+            <div class="crm-card-header" 
+                 style="border-top: 1px solid #f0f2f5; 
+                        border-bottom: none;
+                        justify-content: center;">
+                <a href="{% url 'lead_list' %}" 
+                   class="btn-crm-primary">
+                    <i class="bi bi-people-fill"></i>
+                    View All {{ total_leads }} Leads
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+<!-- END RECENT LEADS -->
+
+
+{% endblock crm_content %}
+
+
+<!-- ══════════════════════════════════════
+     CHART JS
+══════════════════════════════════════ -->
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ── DATA FROM DJANGO VIEW ──
+    const totalLeads       = {{ total_leads }};
+    const converted        = {{ converted }};
+    const quotationSent    = {{ quotation_sent }};
+    const pendingCallbacks = {{ pending_callbacks }};
+
+    // ════════════════════════════
+    // BAR CHART - Lead Analytics
+    // ════════════════════════════
+    const barCtx = document
+        .getElementById('leadAnalyticsChart')
+        .getContext('2d');
+
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: [
+                'Total Leads',
+                'Converted',
+                'Quotations Sent',
+                'Pending Callbacks'
+            ],
+            datasets: [{
+                label: 'Lead Count',
+                data: [
+                    totalLeads,
+                    converted,
+                    quotationSent,
+                    pendingCallbacks
+                ],
+                backgroundColor: [
+                    'rgba(230, 126, 34, 0.85)',
+                    'rgba(39, 174, 96, 0.85)',
+                    'rgba(41, 128, 185, 0.85)',
+                    'rgba(231, 76, 60, 0.85)'
+                ],
+                borderColor: [
+                    '#e67e22',
+                    '#27ae60',
+                    '#2980b9',
+                    '#e74c3c'
+                ],
+                borderWidth: 2,
+                borderRadius: 8,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: '#1a1f2e',
+                    titleColor: '#ffffff',
+                    bodyColor: '#a0aec0',
+                    padding: 12,
+                    cornerRadius: 8,
+                    callbacks: {
+                        label: function(context) {
+                            return '  Count: ' + context.parsed.y;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 13,
+                            family: 'Inter'
+                        },
+                        color: '#718096'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0,0,0,0.05)',
+                        drawBorder: false
+                    },
+                    ticks: {
+                        stepSize: 1,
+                        font: {
+                            size: 12,
+                            family: 'Inter'
+                        },
+                        color: '#718096'
+                    }
+                }
+            }
+        }
+    });
+
+
+    // ════════════════════════════
+    // DOUGHNUT CHART - Conversion
+    // ════════════════════════════
+    const donutCtx = document
+        .getElementById('conversionDonutChart')
+        .getContext('2d');
+
+    new Chart(donutCtx, {
+        type: 'doughnut',
+        data: {
+            labels: [
+                'Total Leads',
+                'Converted',
+                'Quotations Sent',
+                'Pending Callbacks'
+            ],
+            datasets: [{
+                data: [
+                    totalLeads,
+                    converted,
+                    quotationSent,
+                    pendingCallbacks
+                ],
+                backgroundColor: [
+                    '#e67e22',
+                    '#27ae60',
+                    '#2980b9',
+                    '#e74c3c'
+                ],
+                borderWidth: 0,
+                hoverOffset: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            cutout: '72%',
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: '#1a1f2e',
+                    titleColor: '#ffffff',
+                    bodyColor: '#a0aec0',
+                    padding: 10,
+                    cornerRadius: 8
+                }
+            }
+        }
+    });
+
+});
+</script>
+{% endblock extra_js %}

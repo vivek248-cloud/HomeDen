@@ -1,0 +1,82 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    /* CRM Button in Admin */
+    .crm-admin-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 16px;
+        background: #e67e22;
+        color: white !important;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none !important;
+        margin-left: 15px;
+        transition: all 0.2s;
+    }
+
+    .crm-admin-btn:hover {
+        background: #d35400;
+        color: white !important;
+        transform: translateY(-1px);
+    }
+
+    .crm-admin-links {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: 15px;
+    }
+
+    .crm-admin-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 12px;
+        background: rgba(255,255,255,0.15);
+        color: white !important;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+        text-decoration: none !important;
+        transition: all 0.2s;
+    }
+
+    .crm-admin-link:hover {
+        background: rgba(255,255,255,0.25);
+    }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        {{ site_header|default:"Django administration" }}
+    </a>
+
+    <!-- CRM Dashboard Button -->
+    <a href="{% url 'lead_dashboard' %}"
+       class="crm-admin-btn"
+       target="_blank">
+        📊 CRM Dashboard
+    </a>
+
+    <!-- Quick Links -->
+    <span class="crm-admin-links">
+        <a href="{% url 'lead_list' %}"
+           class="crm-admin-link"
+           target="_blank">
+            👥 Leads
+        </a>
+        <a href="{% url 'bulk_campaign' %}"
+           class="crm-admin-link"
+           target="_blank">
+            📢 Campaigns
+        </a>
+    </span>
+</h1>
+{% endblock %}

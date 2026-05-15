@@ -1,0 +1,1480 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HomeDen CRM{% endblock title %}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'images/favicon.ico' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/favicon-32x32.png' %}">
+    <link rel="manifest" href="{% static 'site.webmanifest' %}">
+
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <!-- Google Fonts — Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <style>
+
+        /* ══════════════════════════════════════
+           CSS VARIABLES
+        ══════════════════════════════════════ */
+        :root {
+            /* Sidebar */
+            --sb-w:          270px;
+            --sb-bg:         #0b0f1a;
+            --sb-surface:    #111827;
+            --sb-hover:      #1a2235;
+            --sb-border:     rgba(255,255,255,0.05);
+            --sb-text:       #8892a4;
+            --sb-text-hover: #c8d0de;
+            --sb-text-active:#ffffff;
+
+            /* Brand */
+            --accent:        #f97316;
+            --accent-2:      #fb923c;
+            --accent-glow:   rgba(249,115,22,0.18);
+            --accent-dark:   #ea580c;
+
+            /* Topbar */
+            --top-h:         64px;
+            --top-bg:        rgba(255,255,255,0.97);
+
+            /* Content */
+            --body-bg:       #f1f5f9;
+            --card-bg:       #ffffff;
+            --card-radius:   16px;
+            --card-shadow:   0 1px 3px rgba(0,0,0,0.04),
+                             0 8px 24px rgba(0,0,0,0.06);
+            --card-border:   1px solid rgba(0,0,0,0.04);
+
+            /* Text */
+            --t1:            #0f172a;
+            --t2:            #475569;
+            --t3:            #94a3b8;
+
+            /* Status */
+            --green:         #22c55e;
+            --red:           #ef4444;
+            --blue:          #3b82f6;
+            --yellow:        #f59e0b;
+            --purple:        #8b5cf6;
+            --cyan:          #06b6d4;
+
+            /* Misc */
+            --border:        #e2e8f0;
+            --font:          'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --radius-sm:     8px;
+            --radius:        12px;
+            --radius-lg:     16px;
+            --radius-xl:     20px;
+        }
+
+        /* ══════════════════════════════════════
+           GLOBAL RESET
+        ══════════════════════════════════════ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font);
+            background: var(--body-bg);
+            color: var(--t1);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.5;
+        }
+
+        ::selection {
+            background: var(--accent);
+            color: white;
+        }
+
+        img { max-width: 100%; }
+
+        a { text-decoration: none; }
+
+        /* ══════════════════════════════════════
+           SIDEBAR
+        ══════════════════════════════════════ */
+        #crmSidebar {
+            width: var(--sb-w);
+            height: 100vh;
+            background: var(--sb-bg);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1050;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+            border-right: 1px solid var(--sb-border);
+        }
+
+        /* ── Brand ── */
+        .sb-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px;
+            height: var(--top-h);
+            border-bottom: 1px solid var(--sb-border);
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .sb-logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent) 0%, #fb923c 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(249,115,22,0.35);
+        }
+
+        .sb-brand-text {}
+
+        .sb-brand-name {
+            font-size: 15px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.3px;
+            line-height: 1.1;
+        }
+
+        .sb-brand-tag {
+            font-size: 9.5px;
+            color: var(--sb-text);
+            font-weight: 500;
+            letter-spacing: 0.4px;
+            margin-top: 1px;
+        }
+
+        /* ── Scroll Body ── */
+        .sb-body {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 8px 0 100px;
+        }
+
+        .sb-body::-webkit-scrollbar { width: 3px; }
+        .sb-body::-webkit-scrollbar-track { background: transparent; }
+        .sb-body::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.06);
+            border-radius: 3px;
+        }
+
+        /* ── Section Label ── */
+        .sb-section {
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            color: rgba(136,146,164,0.35);
+            padding: 20px 20px 6px;
+        }
+
+        /* ── Nav ── */
+        .sb-nav {
+            list-style: none;
+            padding: 2px 10px;
+            margin: 0;
+        }
+
+        .sb-nav li { margin-bottom: 1px; }
+
+        /* ── Nav Link ── */
+        .sb-link {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 9px 12px;
+            color: var(--sb-text);
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: all 0.18s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .sb-link:hover {
+            background: var(--sb-hover);
+            color: var(--sb-text-hover);
+        }
+
+        /* ── Active Link ── */
+        .sb-link.active {
+            background: linear-gradient(
+                135deg,
+                rgba(249,115,22,0.18) 0%,
+                rgba(251,146,60,0.10) 100%
+            );
+            color: var(--accent-2) !important;
+            font-weight: 600;
+            border: 1px solid rgba(249,115,22,0.15);
+        }
+
+        .sb-link.active::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 18px;
+            background: linear-gradient(180deg, var(--accent), var(--accent-2));
+            border-radius: 0 3px 3px 0;
+        }
+
+        /* ── Icon ── */
+        .sb-link i {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+
+        .sb-link:hover i { transform: scale(1.08); }
+        .sb-link.active i { color: var(--accent) !important; }
+
+        .sb-link span.sb-text { flex-grow: 1; }
+
+        /* ── Badge ── */
+        .sb-badge {
+            font-size: 9px;
+            padding: 2px 7px;
+            border-radius: 20px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .sb-badge-new {
+            background: rgba(59,130,246,0.15);
+            color: #60a5fa;
+        }
+
+        .sb-badge-hot {
+            background: rgba(239,68,68,0.15);
+            color: #f87171;
+        }
+
+        .sb-badge-info {
+            background: rgba(6,182,212,0.15);
+            color: #22d3ee;
+        }
+
+        /* Active state badges */
+        .sb-link.active .sb-badge-new {
+            background: rgba(255,255,255,0.15);
+            color: #ffffff;
+        }
+
+        .sb-link.active .sb-badge-hot {
+            background: rgba(255,255,255,0.15);
+            color: #ffffff;
+        }
+
+        .sb-link.active .sb-badge-info {
+            background: rgba(255,255,255,0.15);
+            color: #ffffff;
+        }
+
+        /* ── Divider ── */
+        .sb-div {
+            height: 1px;
+            background: var(--sb-border);
+            margin: 8px 18px;
+        }
+
+        /* ── Footer User ── */
+        .sb-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 14px 16px;
+            background: var(--sb-bg);
+            border-top: 1px solid var(--sb-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sb-avatar {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 800;
+            color: white;
+            flex-shrink: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .sb-user-name {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #e2e8f0;
+            line-height: 1.2;
+        }
+
+        .sb-user-role {
+            font-size: 10.5px;
+            color: var(--sb-text);
+            font-weight: 400;
+        }
+
+        .sb-user-action {
+            margin-left: auto;
+            color: var(--sb-text);
+            font-size: 15px;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 4px;
+            border-radius: 6px;
+        }
+
+        .sb-user-action:hover { color: white; }
+
+        /* ══════════════════════════════════════
+           TOPBAR
+        ══════════════════════════════════════ */
+        #crmTopbar {
+            position: fixed;
+            top: 0;
+            left: var(--sb-w);
+            right: 0;
+            height: var(--top-h);
+            background: var(--top-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226,232,240,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            z-index: 1040;
+            transition: left 0.32s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        .top-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        /* ── Hamburger ── */
+        #sidebarToggle {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--t2);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 10px;
+            transition: all 0.2s;
+            display: none;
+            line-height: 1;
+        }
+
+        #sidebarToggle:hover {
+            background: #f1f5f9;
+            color: var(--t1);
+        }
+
+        /* ── Page Title ── */
+        .top-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--t1);
+            letter-spacing: -0.3px;
+            line-height: 1.2;
+        }
+
+        .top-sub {
+            font-size: 11.5px;
+            color: var(--t3);
+            margin-top: 1px;
+            font-weight: 400;
+        }
+
+        /* ── Breadcrumb in topbar ── */
+        .top-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: var(--t3);
+        }
+
+        .top-breadcrumb a {
+            color: var(--accent);
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .top-breadcrumb a:hover { text-decoration: underline; }
+
+        /* ── Right Side ── */
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ── Icon Button ── */
+        .top-btn {
+            width: 38px;
+            height: 38px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--t2);
+            font-size: 17px;
+            transition: all 0.2s;
+            position: relative;
+            text-decoration: none;
+        }
+
+        .top-btn:hover {
+            background: #f1f5f9;
+            color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        /* ── Notification dot ── */
+        .top-dot {
+            width: 7px;
+            height: 7px;
+            background: var(--red);
+            border-radius: 50%;
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            border: 2px solid white;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ── Separator ── */
+        .top-sep {
+            width: 1px;
+            height: 26px;
+            background: var(--border);
+            margin: 0 6px;
+        }
+
+        /* ── User Button ── */
+        .top-user-btn {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 5px 10px 5px 5px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            color: inherit;
+            border: none;
+            background: transparent;
+        }
+
+        .top-user-btn:hover { background: #f1f5f9; }
+
+        .top-avatar {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 800;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .top-user-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--t1);
+            line-height: 1.2;
+        }
+
+        .top-user-email {
+            font-size: 11px;
+            color: var(--t3);
+            font-weight: 400;
+        }
+
+        /* ── Dropdown ── */
+        .dropdown-menu {
+            border: 1px solid var(--border) !important;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.12),
+                        0 4px 12px rgba(0,0,0,0.06) !important;
+            border-radius: 14px !important;
+            padding: 6px !important;
+            font-family: var(--font) !important;
+            min-width: 200px !important;
+            animation: dropIn 0.18s ease;
+        }
+
+        @keyframes dropIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-header {
+            font-size: 10px !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.8px !important;
+            text-transform: uppercase !important;
+            color: var(--t3) !important;
+            padding: 8px 12px 4px !important;
+        }
+
+        .dropdown-item {
+            border-radius: 8px !important;
+            padding: 8px 12px !important;
+            font-size: 13px !important;
+            font-weight: 500 !important;
+            color: var(--t1) !important;
+            transition: all 0.15s !important;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-item i {
+            font-size: 15px;
+            width: 18px;
+            text-align: center;
+            color: var(--t3);
+        }
+
+        .dropdown-item:hover {
+            background: #f8fafc !important;
+            color: var(--accent) !important;
+        }
+
+        .dropdown-item:hover i { color: var(--accent) !important; }
+
+        .dropdown-item.text-danger { color: var(--red) !important; }
+        .dropdown-item.text-danger i { color: var(--red) !important; }
+        .dropdown-item.text-danger:hover { background: #fef2f2 !important; }
+
+        .dropdown-divider {
+            border-color: var(--border) !important;
+            margin: 4px 0 !important;
+        }
+
+        /* ══════════════════════════════════════
+           MAIN CONTENT
+        ══════════════════════════════════════ */
+        #crmContent {
+            margin-left: var(--sb-w);
+            margin-top: var(--top-h);
+            min-height: calc(100vh - var(--top-h));
+            padding: 28px 32px;
+            transition: margin-left 0.32s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        /* ══════════════════════════════════════
+           CARDS
+        ══════════════════════════════════════ */
+        .crm-card {
+            background: var(--card-bg);
+            border-radius: var(--card-radius);
+            box-shadow: var(--card-shadow);
+            border: var(--card-border);
+            overflow: hidden;
+        }
+
+        .crm-card-header {
+            padding: 16px 22px;
+            border-bottom: 1px solid #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--card-bg);
+        }
+
+        .crm-card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--t1);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.2px;
+        }
+
+        .crm-card-body { padding: 20px 22px; }
+
+        /* ══════════════════════════════════════
+           STAT CARDS
+        ══════════════════════════════════════ */
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: var(--card-radius);
+            box-shadow: var(--card-shadow);
+            border: var(--card-border);
+            padding: 20px 22px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, transparent);
+            transition: background 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+        }
+
+        .stat-card:hover::before {
+            background: linear-gradient(
+                90deg,
+                var(--accent),
+                var(--accent-2)
+            );
+        }
+
+        .stat-card-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .stat-card-icon.orange { background: rgba(249,115,22,0.1); color: var(--accent); }
+        .stat-card-icon.green  { background: rgba(34,197,94,0.1);  color: var(--green); }
+        .stat-card-icon.blue   { background: rgba(59,130,246,0.1); color: var(--blue); }
+        .stat-card-icon.red    { background: rgba(239,68,68,0.1);  color: var(--red); }
+        .stat-card-icon.purple { background: rgba(139,92,246,0.1); color: var(--purple); }
+        .stat-card-icon.yellow { background: rgba(245,158,11,0.1); color: var(--yellow); }
+        .stat-card-icon.cyan   { background: rgba(6,182,212,0.1);  color: var(--cyan); }
+
+        .stat-card-info { flex-grow: 1; }
+
+        .stat-card-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--t1);
+            line-height: 1;
+            letter-spacing: -0.8px;
+        }
+
+        .stat-card-label {
+            font-size: 12.5px;
+            color: var(--t3);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .stat-card-change {
+            font-size: 11.5px;
+            font-weight: 600;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .stat-card-change.up   { color: var(--green); }
+        .stat-card-change.down { color: var(--red); }
+
+        /* ══════════════════════════════════════
+           STATUS + PRIORITY BADGES
+        ══════════════════════════════════════ */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 10.5px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .status-badge.new       { background: #eff6ff; color: #2563eb; }
+        .status-badge.contacted { background: #fef3c7; color: #b45309; }
+        .status-badge.callback  { background: #fff7ed; color: #c2410c; }
+        .status-badge.quotation { background: #f5f3ff; color: #7c3aed; }
+        .status-badge.converted { background: #f0fdf4; color: #15803d; }
+        .status-badge.closed    { background: #fef2f2; color: #dc2626; }
+
+        .priority-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 9px;
+            border-radius: 6px;
+            font-size: 10.5px;
+            font-weight: 600;
+        }
+
+        .priority-badge.high   { background: #fef2f2; color: #dc2626; }
+        .priority-badge.medium { background: #fef3c7; color: #b45309; }
+        .priority-badge.low    { background: #f0fdf4; color: #15803d; }
+
+        /* ══════════════════════════════════════
+           TABLES
+        ══════════════════════════════════════ */
+        .crm-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .crm-table thead th {
+            background: #f8fafc;
+            color: var(--t3);
+            font-size: 10.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 11px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            white-space: nowrap;
+        }
+
+        .crm-table tbody tr {
+            border-bottom: 1px solid #f8fafc;
+            transition: background 0.15s;
+        }
+
+        .crm-table tbody tr:hover { background: #fafbfd; }
+
+        .crm-table tbody td {
+            padding: 13px 16px;
+            font-size: 13.5px;
+            color: var(--t1);
+            vertical-align: middle;
+        }
+
+        .crm-table tbody tr:last-child { border-bottom: none; }
+
+        /* ══════════════════════════════════════
+           BUTTONS
+        ══════════════════════════════════════ */
+        .btn-crm-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, #fb923c 100%);
+            color: white;
+            border: none;
+            padding: 9px 20px;
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.22s;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            text-decoration: none;
+            font-family: var(--font);
+            box-shadow: 0 2px 10px rgba(249,115,22,0.28);
+            letter-spacing: -0.1px;
+        }
+
+        .btn-crm-primary:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(249,115,22,0.38);
+        }
+
+        .btn-crm-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(249,115,22,0.2);
+        }
+
+        .btn-crm-secondary {
+            background: white;
+            color: var(--t2);
+            border: 1px solid var(--border);
+            padding: 9px 20px;
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            text-decoration: none;
+            font-family: var(--font);
+        }
+
+        .btn-crm-secondary:hover {
+            background: #f8fafc;
+            color: var(--t1);
+            border-color: #cbd5e1;
+        }
+
+        /* ══════════════════════════════════════
+           PAGE HEADER
+        ══════════════════════════════════════ */
+        .crm-page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .crm-page-header-left h1 {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--t1);
+            margin: 0;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .crm-page-header-left p {
+            font-size: 13px;
+            color: var(--t3);
+            margin: 4px 0 0;
+            font-weight: 400;
+        }
+
+        /* ── Breadcrumb ── */
+        .crm-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: var(--t3);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .crm-breadcrumb i { font-size: 10px; opacity: 0.5; }
+
+        .crm-breadcrumb a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .crm-breadcrumb a:hover { text-decoration: underline; }
+
+        /* ══════════════════════════════════════
+           ALERTS
+        ══════════════════════════════════════ */
+        .crm-alert {
+            padding: 13px 18px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            font-weight: 500;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .crm-alert.success {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+        }
+
+        .crm-alert.error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        .crm-alert.warning {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            color: #92400e;
+        }
+
+        .crm-alert.info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+        }
+
+        .crm-alert-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            cursor: pointer;
+            opacity: 0.4;
+            font-size: 15px;
+            transition: opacity 0.2s;
+            line-height: 1;
+            padding: 0;
+            color: inherit;
+        }
+
+        .crm-alert-close:hover { opacity: 0.8; }
+
+        /* ══════════════════════════════════════
+           FOOTER
+        ══════════════════════════════════════ */
+        .crm-footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: var(--t3);
+            border-top: 1px solid #f1f5f9;
+            margin-top: 28px;
+            background: var(--card-bg);
+            border-radius: var(--card-radius);
+            font-weight: 400;
+        }
+
+        .crm-footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* ══════════════════════════════════════
+           OVERLAY
+        ══════════════════════════════════════ */
+        #sidebarOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1045;
+        }
+
+        /* ══════════════════════════════════════
+           RESPONSIVE
+        ══════════════════════════════════════ */
+        @media (max-width: 1024px) {
+            #crmSidebar { transform: translateX(-100%); }
+            #crmSidebar.open { transform: translateX(0); }
+            #crmTopbar { left: 0; }
+            #crmContent { margin-left: 0; padding: 20px 18px; }
+            #sidebarToggle { display: flex !important; }
+            #sidebarOverlay.show { display: block; }
+        }
+
+        @media (max-width: 640px) {
+            #crmContent { padding: 16px 14px; }
+            .crm-page-header { flex-direction: column; align-items: stretch; }
+            .stat-card { padding: 16px 18px; }
+            .stat-card-value { font-size: 24px; }
+        }
+
+        /* ══════════════════════════════════════
+           UTILITIES
+        ══════════════════════════════════════ */
+        .text-crm-accent { color: var(--accent) !important; }
+        .bg-crm-accent   { background: var(--accent) !important; }
+
+        .fw-400 { font-weight: 400; }
+        .fw-500 { font-weight: 500; }
+        .fw-600 { font-weight: 600; }
+        .fw-700 { font-weight: 700; }
+        .fw-800 { font-weight: 800; }
+
+        .fs-10  { font-size: 10px; }
+        .fs-11  { font-size: 11px; }
+        .fs-12  { font-size: 12px; }
+        .fs-13  { font-size: 13px; }
+        .fs-14  { font-size: 14px; }
+        .fs-15  { font-size: 15px; }
+
+        .text-t1 { color: var(--t1); }
+        .text-t2 { color: var(--t2); }
+        .text-t3 { color: var(--t3); }
+
+        .rounded-crm { border-radius: var(--card-radius); }
+
+        .gap-3px { gap: 3px; }
+        .gap-5px { gap: 5px; }
+
+    </style>
+
+    {% block extra_css %}{% endblock extra_css %}
+
+</head>
+
+<body>
+
+<!-- ════════════════════════════════════════
+     OVERLAY
+════════════════════════════════════════ -->
+<div id="sidebarOverlay"></div>
+
+
+<!-- ════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════ -->
+<nav id="crmSidebar">
+
+    <!-- Brand -->
+    <a href="{% url 'lead_dashboard' %}" class="sb-brand">
+        <div class="sb-logo">🏠</div>
+        <div class="sb-brand-text">
+            <div class="sb-brand-name">HomeDen</div>
+            <div class="sb-brand-tag">CRM & ERP Platform</div>
+        </div>
+    </a>
+
+    <!-- Scrollable Body -->
+    <div class="sb-body">
+
+        <!-- ── OVERVIEW ── -->
+        <div class="sb-section">Overview</div>
+        <ul class="sb-nav">
+            <li>
+                <a href="{% url 'lead_dashboard' %}"
+                   class="sb-link {% if request.resolver_match.url_name == 'lead_dashboard' %}active{% endif %}">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                    <span class="sb-text">Dashboard</span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- ── LEADS ── -->
+        <div class="sb-section">Lead Management</div>
+        <ul class="sb-nav">
+
+            <li>
+                <a href="{% url 'lead_list' %}"
+                   class="sb-link {% if request.resolver_match.url_name == 'lead_list' and not request.GET.status %}active{% endif %}">
+                    <i class="bi bi-people-fill"></i>
+                    <span class="sb-text">All Leads</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'lead_list' %}?status=new"
+                   class="sb-link {% if request.GET.status == 'new' %}active{% endif %}">
+                    <i class="bi bi-person-plus-fill"></i>
+                    <span class="sb-text">New Leads</span>
+                    <span class="sb-badge sb-badge-new">NEW</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'lead_list' %}?status=contacted"
+                   class="sb-link {% if request.GET.status == 'contacted' %}active{% endif %}">
+                    <i class="bi bi-chat-dots-fill"></i>
+                    <span class="sb-text">Contacted</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'lead_list' %}?status=callback"
+                   class="sb-link {% if request.GET.status == 'callback' %}active{% endif %}">
+                    <i class="bi bi-telephone-fill"></i>
+                    <span class="sb-text">Callbacks</span>
+                    <span class="sb-badge sb-badge-hot">DUE</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'lead_list' %}?status=quotation_sent"
+                   class="sb-link {% if request.GET.status == 'quotation_sent' %}active{% endif %}">
+                    <i class="bi bi-file-earmark-text-fill"></i>
+                    <span class="sb-text">Quotations</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'lead_list' %}?status=converted"
+                   class="sb-link {% if request.GET.status == 'converted' %}active{% endif %}">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span class="sb-text">Converted</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'lead_list' %}?status=closed"
+                   class="sb-link {% if request.GET.status == 'closed' %}active{% endif %}">
+                    <i class="bi bi-x-circle-fill"></i>
+                    <span class="sb-text">Closed</span>
+                </a>
+            </li>
+
+        </ul>
+
+        <div class="sb-div"></div>
+
+        <!-- ── MARKETING ── -->
+        <div class="sb-section">Marketing</div>
+        <ul class="sb-nav">
+            <li>
+                <a href="{% url 'bulk_campaign' %}"
+                   class="sb-link {% if request.resolver_match.url_name == 'bulk_campaign' %}active{% endif %}">
+                    <i class="bi bi-megaphone-fill"></i>
+                    <span class="sb-text">Bulk Campaigns</span>
+                    <span class="sb-badge sb-badge-hot">HOT</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sb-div"></div>
+
+        <!-- ── TOOLS ── -->
+        <div class="sb-section">Tools</div>
+        <ul class="sb-nav">
+            <li>
+                <a href="{% url 'export_leads_csv' %}"
+                   class="sb-link">
+                    <i class="bi bi-file-earmark-arrow-down-fill"></i>
+                    <span class="sb-text">Export CSV</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sb-div"></div>
+
+        <!-- ── SYSTEM ── -->
+        <div class="sb-section">System</div>
+        <ul class="sb-nav">
+
+            <li>
+                <a href="/admin/"
+                   class="sb-link" target="_blank">
+                    <i class="bi bi-shield-lock-fill"></i>
+                    <span class="sb-text">Admin Panel</span>
+                    <span class="sb-badge sb-badge-info">
+                        <i class="bi bi-box-arrow-up-right"
+                           style="font-size:8px;"></i>
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a href="/"
+                   class="sb-link" target="_blank">
+                    <i class="bi bi-globe2"></i>
+                    <span class="sb-text">View Website</span>
+                    <span class="sb-badge sb-badge-info">
+                        <i class="bi bi-box-arrow-up-right"
+                           style="font-size:8px;"></i>
+                    </span>
+                </a>
+            </li>
+
+        </ul>
+
+    </div>
+
+    <!-- User Footer -->
+    <div class="sb-footer">
+        <div class="sb-avatar">
+            {{ request.user.username|first|upper }}
+        </div>
+        <div>
+            <div class="sb-user-name">
+                {{ request.user.get_full_name|default:request.user.username }}
+            </div>
+            <div class="sb-user-role">Administrator</div>
+        </div>
+        <div class="dropdown">
+            <div class="sb-user-action"
+                 data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <h6 class="dropdown-header">Account</h6>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="/admin/">
+                        <i class="bi bi-shield-lock"></i>
+                        Admin Panel
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item text-danger"
+                       href="/accounts/logout/">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Sign Out
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</nav>
+<!-- END SIDEBAR -->
+
+
+<!-- ════════════════════════════════════════
+     TOPBAR
+════════════════════════════════════════ -->
+<header id="crmTopbar">
+
+    <!-- Left -->
+    <div class="top-left">
+
+        <button id="sidebarToggle" onclick="toggleSidebar()">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <div>
+            <div class="top-title">
+                {% block page_title %}Dashboard{% endblock page_title %}
+            </div>
+            <div class="top-sub">
+                {% block page_subtitle %}HomeDen Interior CRM{% endblock page_subtitle %}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Right -->
+    <div class="top-right">
+
+        <!-- Search Trigger -->
+        <button class="top-btn" title="Search">
+            <i class="bi bi-search"></i>
+        </button>
+
+        <!-- Notifications -->
+        <button class="top-btn" title="Notifications">
+            <i class="bi bi-bell-fill"></i>
+            <span class="top-dot"></span>
+        </button>
+
+        <!-- WhatsApp -->
+        <a href="{% url 'bulk_campaign' %}"
+           class="top-btn"
+           title="Bulk Campaign"
+           style="color: #25d366;">
+            <i class="bi bi-whatsapp"></i>
+        </a>
+
+        <div class="top-sep"></div>
+
+        <!-- User Dropdown -->
+        <div class="dropdown">
+            <button class="top-user-btn dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                <div class="top-avatar">
+                    {{ request.user.username|first|upper }}
+                </div>
+                <div class="d-none d-md-block text-start">
+                    <div class="top-user-name">
+                        {{ request.user.get_full_name|default:request.user.username }}
+                    </div>
+                    <div class="top-user-email">
+                        {{ request.user.email|default:"admin@homeden.com" }}
+                    </div>
+                </div>
+                <i class="bi bi-chevron-down d-none d-md-block"
+                   style="font-size:11px; color:var(--t3); margin-left:2px;">
+                </i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <h6 class="dropdown-header">My Account</h6>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'lead_dashboard' %}">
+                        <i class="bi bi-grid-1x2"></i>
+                        CRM Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="/admin/">
+                        <i class="bi bi-shield-lock"></i>
+                        Admin Panel
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item text-danger"
+                       href="/accounts/logout/">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Sign Out
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+</header>
+<!-- END TOPBAR -->
+
+
+<!-- ════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════ -->
+<main id="crmContent">
+
+    <!-- Django Messages -->
+    {% if messages %}
+        {% for message in messages %}
+        <div class="crm-alert
+            {% if message.tags == 'success' %}success
+            {% elif message.tags == 'error' %}error
+            {% elif message.tags == 'warning' %}warning
+            {% else %}info{% endif %}">
+
+            <i class="bi
+                {% if message.tags == 'success' %}bi-check-circle-fill
+                {% elif message.tags == 'error' %}bi-x-circle-fill
+                {% elif message.tags == 'warning' %}bi-exclamation-triangle-fill
+                {% else %}bi-info-circle-fill{% endif %}">
+            </i>
+
+            <span>{{ message }}</span>
+
+            <button class="crm-alert-close"
+                    onclick="this.parentElement.remove()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Page Content -->
+    {% block crm_content %}
+    {% endblock crm_content %}
+
+    <!-- Footer -->
+    <footer class="crm-footer">
+        <span>
+            HomeDen Interiors &copy; {% now "Y" %}
+            &nbsp;—&nbsp;
+            CRM & ERP Platform
+            &nbsp;|&nbsp;
+            Built with ❤️ for HomeDen
+        </span>
+    </footer>
+
+</main>
+<!-- END CONTENT -->
+
+
+<!-- ════════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+    /* ── Sidebar Toggle ── */
+    function toggleSidebar() {
+        const sb  = document.getElementById('crmSidebar');
+        const ov  = document.getElementById('sidebarOverlay');
+        sb.classList.toggle('open');
+        ov.classList.toggle('show');
+    }
+
+    document.getElementById('sidebarOverlay')
+        .addEventListener('click', function () {
+            document.getElementById('crmSidebar').classList.remove('open');
+            this.classList.remove('show');
+        });
+
+    /* ── Active Link Detection ── */
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const path   = window.location.pathname;
+        const search = window.location.search;
+
+        document.querySelectorAll('.sb-link').forEach(function (link) {
+            const href = link.getAttribute('href');
+            if (!href || href === '#') return;
+
+            // Exact full URL match (path + query)
+            if (href === path + search) {
+                link.classList.add('active');
+            }
+            // Path only match (no query string links)
+            else if (!href.includes('?') && href === path) {
+                link.classList.add('active');
+            }
+        });
+
+    });
+
+    /* ── Auto-dismiss Alerts ── */
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.crm-alert').forEach(function (alert, i) {
+            setTimeout(function () {
+                alert.style.transition = 'all 0.4s ease';
+                alert.style.opacity   = '0';
+                alert.style.transform = 'translateY(-8px)';
+                setTimeout(function () { alert.remove(); }, 400);
+            }, 5000 + (i * 500));
+        });
+    });
+
+</script>
+
+{% block extra_js %}{% endblock extra_js %}
+
+</body>
+</html>

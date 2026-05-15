@@ -1,0 +1,244 @@
+{% extends "admin/base_site.html" %}
+
+{% block title %}CRM Dashboard | HomeDen Admin{% endblock %}
+
+{% block content_title %}
+<h1>📊 CRM Dashboard</h1>
+{% endblock %}
+
+{% block content %}
+
+<!-- Stats -->
+<div style="display:grid;
+            grid-template-columns:repeat(auto-fit, minmax(160px,1fr));
+            gap:16px; margin-bottom:24px;">
+
+    <div style="background:#fff; border-radius:10px;
+                padding:20px; text-align:center;
+                box-shadow:0 2px 8px rgba(0,0,0,0.08);
+                border-top:4px solid #e67e22;">
+        <div style="font-size:32px; font-weight:700;
+                    color:#e67e22;">
+            {{ total_leads }}
+        </div>
+        <div style="font-size:13px; color:#718096;
+                    margin-top:4px;">
+            Total Leads
+        </div>
+    </div>
+
+    <div style="background:#fff; border-radius:10px;
+                padding:20px; text-align:center;
+                box-shadow:0 2px 8px rgba(0,0,0,0.08);
+                border-top:4px solid #3498db;">
+        <div style="font-size:32px; font-weight:700;
+                    color:#3498db;">
+            {{ new_leads }}
+        </div>
+        <div style="font-size:13px; color:#718096;
+                    margin-top:4px;">
+            New Leads
+        </div>
+    </div>
+
+    <div style="background:#fff; border-radius:10px;
+                padding:20px; text-align:center;
+                box-shadow:0 2px 8px rgba(0,0,0,0.08);
+                border-top:4px solid #e74c3c;">
+        <div style="font-size:32px; font-weight:700;
+                    color:#e74c3c;">
+            {{ pending_callbacks }}
+        </div>
+        <div style="font-size:13px; color:#718096;
+                    margin-top:4px;">
+            Pending Callbacks
+        </div>
+    </div>
+
+    <div style="background:#fff; border-radius:10px;
+                padding:20px; text-align:center;
+                box-shadow:0 2px 8px rgba(0,0,0,0.08);
+                border-top:4px solid #f39c12;">
+        <div style="font-size:32px; font-weight:700;
+                    color:#f39c12;">
+            {{ quotation_leads }}
+        </div>
+        <div style="font-size:13px; color:#718096;
+                    margin-top:4px;">
+            Quotations Sent
+        </div>
+    </div>
+
+    <div style="background:#fff; border-radius:10px;
+                padding:20px; text-align:center;
+                box-shadow:0 2px 8px rgba(0,0,0,0.08);
+                border-top:4px solid #27ae60;">
+        <div style="font-size:32px; font-weight:700;
+                    color:#27ae60;">
+            {{ converted_leads }}
+        </div>
+        <div style="font-size:13px; color:#718096;
+                    margin-top:4px;">
+            Converted
+        </div>
+    </div>
+
+    <div style="background:#fff; border-radius:10px;
+                padding:20px; text-align:center;
+                box-shadow:0 2px 8px rgba(0,0,0,0.08);
+                border-top:4px solid #e74c3c;">
+        <div style="font-size:32px; font-weight:700;
+                    color:#e74c3c;">
+            {{ closed_leads }}
+        </div>
+        <div style="font-size:13px; color:#718096;
+                    margin-top:4px;">
+            Closed
+        </div>
+    </div>
+
+</div>
+
+<!-- Quick Links -->
+<div style="display:flex; flex-wrap:wrap; gap:10px;
+            margin-bottom:24px;">
+
+    <a href="{% url 'lead_dashboard' %}"
+       target="_blank"
+       style="padding:10px 20px; background:#e67e22;
+              color:white; border-radius:8px;
+              font-size:13px; font-weight:600;
+              text-decoration:none;">
+        📊 Full CRM Dashboard
+    </a>
+
+    <a href="{% url 'lead_list' %}"
+       target="_blank"
+       style="padding:10px 20px;
+              background:#1a1f2e; color:white;
+              border-radius:8px; font-size:13px;
+              font-weight:600; text-decoration:none;">
+        👥 Manage All Leads
+    </a>
+
+    <a href="{% url 'export_leads_csv' %}"
+       style="padding:10px 20px;
+              background:#27ae60; color:white;
+              border-radius:8px; font-size:13px;
+              font-weight:600; text-decoration:none;">
+        📥 Export CSV
+    </a>
+
+</div>
+
+<!-- Recent Leads Table -->
+<div style="background:#fff; border-radius:10px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.08);
+            overflow:hidden;">
+
+    <div style="padding:16px 20px;
+                border-bottom:1px solid #f0f2f5;
+                font-size:15px; font-weight:600;
+                color:#1a202c;">
+        Recent Leads
+    </div>
+
+    <table style="width:100%; border-collapse:collapse;">
+        <thead>
+            <tr style="background:#f7f8fa;">
+                <th style="padding:12px 16px; text-align:left;
+                           font-size:11px; font-weight:600;
+                           color:#718096; text-transform:uppercase;
+                           letter-spacing:0.8px;">
+                    Name
+                </th>
+                <th style="padding:12px 16px; text-align:left;
+                           font-size:11px; font-weight:600;
+                           color:#718096; text-transform:uppercase;">
+                    Phone
+                </th>
+                <th style="padding:12px 16px; text-align:left;
+                           font-size:11px; font-weight:600;
+                           color:#718096; text-transform:uppercase;">
+                    Location
+                </th>
+                <th style="padding:12px 16px; text-align:left;
+                           font-size:11px; font-weight:600;
+                           color:#718096; text-transform:uppercase;">
+                    Status
+                </th>
+                <th style="padding:12px 16px; text-align:left;
+                           font-size:11px; font-weight:600;
+                           color:#718096; text-transform:uppercase;">
+                    Created
+                </th>
+                <th style="padding:12px 16px; text-align:left;
+                           font-size:11px; font-weight:600;
+                           color:#718096; text-transform:uppercase;">
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lead in recent_leads %}
+            <tr style="border-bottom:1px solid #f0f2f5;">
+                <td style="padding:12px 16px;
+                           font-size:14px; font-weight:600;
+                           color:#1a202c;">
+                    {{ lead.name }}
+                </td>
+                <td style="padding:12px 16px;
+                           font-size:13px; color:#2d3748;">
+                    {{ lead.phone }}
+                </td>
+                <td style="padding:12px 16px;
+                           font-size:13px; color:#718096;">
+                    {{ lead.location|default:"—" }}
+                </td>
+                <td style="padding:12px 16px;">
+                    <span style="padding:3px 10px;
+                                 border-radius:20px;
+                                 font-size:11px;
+                                 font-weight:600;
+                                 {% if lead.status == 'new' %}
+                                     background:#ebf8ff; color:#2b6cb0;
+                                 {% elif lead.status == 'converted' %}
+                                     background:#f0fff4; color:#27ae60;
+                                 {% elif lead.status == 'closed' %}
+                                     background:#fff5f5; color:#e74c3c;
+                                 {% else %}
+                                     background:#fef3c7; color:#92400e;
+                                 {% endif %}">
+                        {{ lead.get_status_display }}
+                    </span>
+                </td>
+                <td style="padding:12px 16px;
+                           font-size:12px; color:#a0aec0;">
+                    {{ lead.created_at|date:"d M Y" }}
+                </td>
+                <td style="padding:12px 16px;">
+                    <a href="{% url 'lead_detail' lead.id %}"
+                       target="_blank"
+                       style="color:#e67e22; font-size:12px;
+                              font-weight:600;
+                              text-decoration:none;">
+                        View →
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6"
+                    style="text-align:center;
+                           padding:40px;
+                           color:#a0aec0; font-size:14px;">
+                    No leads yet
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

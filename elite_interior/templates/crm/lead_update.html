@@ -1,0 +1,1241 @@
+{% extends 'crm/base.html' %}
+
+{% block title %}Edit {{ lead.name }} — HomeDen CRM{% endblock %}
+
+{% block page_title %}Edit Lead{% endblock %}
+{% block page_subtitle %}Updating lead profile for {{ lead.name }}{% endblock %}
+
+{% block crm_content %}
+
+<!-- ══════════════════════════════════════
+     BREADCRUMB
+══════════════════════════════════════ -->
+<div class="crm-breadcrumb mb-4">
+    <i class="bi bi-house-fill"></i>
+    <a href="{% url 'lead_dashboard' %}">Home</a>
+    <i class="bi bi-chevron-right" style="font-size:10px;"></i>
+    <a href="{% url 'lead_list' %}">All Leads</a>
+    <i class="bi bi-chevron-right" style="font-size:10px;"></i>
+    <a href="{% url 'lead_detail' lead.id %}">{{ lead.name }}</a>
+    <i class="bi bi-chevron-right" style="font-size:10px;"></i>
+    <span style="color:#2d3748; font-weight:600;">Edit</span>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PAGE HEADER
+══════════════════════════════════════ -->
+<div class="crm-page-header mb-4">
+
+    <div class="crm-page-header-left d-flex align-items-center gap-3">
+        <div style="
+            width: 48px;
+            height: 48px;
+            background: rgba(230,126,34,0.12);
+            color: #e67e22;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            flex-shrink: 0;">
+            {{ lead.name|first|upper }}
+        </div>
+        <div>
+            <h1 style="font-size:20px; font-weight:700; margin:0;">
+                Edit: {{ lead.name }}
+            </h1>
+            <div class="d-flex align-items-center gap-2 mt-1">
+                <span class="fs-12 text-muted">
+                    Lead #{{ lead.id }}
+                </span>
+                <span class="fs-12 text-muted">•</span>
+                <span class="fs-12 text-muted">
+                    Created {{ lead.created_at|date:"d M Y" }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2">
+        <a href="{% url 'lead_detail' lead.id %}"
+           class="btn-crm-secondary">
+            <i class="bi bi-arrow-left"></i>
+            Back to Detail
+        </a>
+    </div>
+
+</div>
+<!-- END PAGE HEADER -->
+
+
+<!-- ══════════════════════════════════════
+     FORM
+══════════════════════════════════════ -->
+<form method="POST" 
+      action="{% url 'lead_update' lead.id %}"
+      id="leadUpdateForm"
+      novalidate>
+
+    {% csrf_token %}
+
+    <div class="row g-4">
+
+        <!-- ════════════════════
+             LEFT COLUMN
+        ════════════════════ -->
+        <div class="col-12 col-xl-8">
+
+            <!-- ── PERSONAL INFORMATION ── -->
+            <div class="crm-card mb-4">
+                <div class="crm-card-header">
+                    <h5 class="crm-card-title">
+                        <i class="bi bi-person-fill me-2 text-crm-accent"></i>
+                        Personal Information
+                    </h5>
+                </div>
+                <div class="crm-card-body">
+                    <div class="row g-3">
+
+                        <!-- Name -->
+                        <div class="col-12 col-md-6">
+                            <label class="form-label-custom">
+                                <i class="bi bi-person"></i>
+                                Full Name
+                                <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="text"
+                                name="name"
+                                class="form-input-custom"
+                                value="{{ lead.name }}"
+                                placeholder="Enter full name"
+                                required>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-12 col-md-6">
+                            <label class="form-label-custom">
+                                <i class="bi bi-envelope"></i>
+                                Email Address
+                            </label>
+                            <input 
+                                type="email"
+                                name="email"
+                                class="form-input-custom"
+                                value="{{ lead.email|default:'' }}"
+                                placeholder="Enter email address">
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="col-12 col-md-6">
+                            <label class="form-label-custom">
+                                <i class="bi bi-telephone"></i>
+                                Primary Phone
+                                <span class="required">*</span>
+                            </label>
+                            <div class="phone-input-wrapper">
+                                <span class="phone-prefix">+91</span>
+                                <input 
+                                    type="text"
+                                    name="phone"
+                                    class="form-input-custom phone-input"
+                                    value="{{ lead.phone }}"
+                                    placeholder="Enter phone number"
+                                    maxlength="15"
+                                    required>
+                                <a href="tel:{{ lead.phone }}"
+                                   class="phone-action-btn"
+                                   title="Call">
+                                    <i class="bi bi-telephone-fill"></i>
+                                </a>
+                                <a href="https://wa.me/91{{ lead.phone }}"
+                                   target="_blank"
+                                   class="phone-action-btn whatsapp"
+                                   title="WhatsApp">
+                                    <i class="bi bi-whatsapp"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Alternate Phone -->
+                        <div class="col-12 col-md-6">
+                            <label class="form-label-custom">
+                                <i class="bi bi-telephone-plus"></i>
+                                Alternate Phone
+                            </label>
+                            <input 
+                                type="text"
+                                name="alternate_phone"
+                                class="form-input-custom"
+                                value="{{ lead.alternate_phone|default:'' }}"
+                                placeholder="Enter alternate phone"
+                                maxlength="15">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END PERSONAL INFO -->
+
+
+            <!-- ── PROJECT INFORMATION ── -->
+            <div class="crm-card mb-4">
+                <div class="crm-card-header">
+                    <h5 class="crm-card-title">
+                        <i class="bi bi-house-fill me-2 text-crm-accent"></i>
+                        Project Information
+                    </h5>
+                </div>
+                <div class="crm-card-body">
+                    <div class="row g-3">
+
+                        <!-- Location -->
+                        <div class="col-12">
+                            <label class="form-label-custom">
+                                <i class="bi bi-geo-alt"></i>
+                                Project Location
+                                <span class="required">*</span>
+                            </label>
+                            <input 
+                                type="text"
+                                name="location"
+                                class="form-input-custom"
+                                value="{{ lead.location }}"
+                                placeholder="Enter project location"
+                                required>
+                        </div>
+
+                        <!-- Rooms -->
+                        <div class="col-12">
+                            <label class="form-label-custom">
+                                <i class="bi bi-layout-text-window"></i>
+                                Selected Rooms / Modules
+                            </label>
+                            <div class="rooms-selector mb-2">
+                                <label class="room-chip">
+                                    <input type="checkbox" 
+                                           class="room-checkbox"
+                                           value="Kitchen"
+                                           {% if 'Kitchen' in lead.rooms %}
+                                           checked
+                                           {% endif %}>
+                                    <span class="room-chip-label">
+                                        🍳 Kitchen
+                                    </span>
+                                </label>
+                                <label class="room-chip">
+                                    <input type="checkbox" 
+                                           class="room-checkbox"
+                                           value="Master Bedroom"
+                                           {% if 'Master Bedroom' in lead.rooms %}
+                                           checked
+                                           {% endif %}>
+                                    <span class="room-chip-label">
+                                        🛏️ Master Bedroom
+                                    </span>
+                                </label>
+                                <label class="room-chip">
+                                    <input type="checkbox" 
+                                           class="room-checkbox"
+                                           value="Kids Room"
+                                           {% if 'Kids Room' in lead.rooms %}
+                                           checked
+                                           {% endif %}>
+                                    <span class="room-chip-label">
+                                        🧒 Kids Room
+                                    </span>
+                                </label>
+                                <label class="room-chip">
+                                    <input type="checkbox" 
+                                           class="room-checkbox"
+                                           value="Living Room"
+                                           {% if 'Living Room' in lead.rooms %}
+                                           checked
+                                           {% endif %}>
+                                    <span class="room-chip-label">
+                                        🛋️ Living Room
+                                    </span>
+                                </label>
+                                <label class="room-chip">
+                                    <input type="checkbox" 
+                                           class="room-checkbox"
+                                           value="Study Room"
+                                           {% if 'Study Room' in lead.rooms %}
+                                           checked
+                                           {% endif %}>
+                                    <span class="room-chip-label">
+                                        📚 Study Room
+                                    </span>
+                                </label>
+                                <label class="room-chip">
+                                    <input type="checkbox" 
+                                           class="room-checkbox"
+                                           value="Pooja Room"
+                                           {% if 'Pooja Room' in lead.rooms %}
+                                           checked
+                                           {% endif %}>
+                                    <span class="room-chip-label">
+                                        🙏 Pooja Room
+                                    </span>
+                                </label>
+                                <label class="room-chip">
+                                    <input type="checkbox" 
+                                           class="room-checkbox"
+                                           value="Dining"
+                                           {% if 'Dining' in lead.rooms %}
+                                           checked
+                                           {% endif %}>
+                                    <span class="room-chip-label">
+                                        🍽️ Dining
+                                    </span>
+                                </label>
+                                <label class="room-chip">
+                                    <input type="checkbox" 
+                                           class="room-checkbox"
+                                           value="Balcony"
+                                           {% if 'Balcony' in lead.rooms %}
+                                           checked
+                                           {% endif %}>
+                                    <span class="room-chip-label">
+                                        🌿 Balcony
+                                    </span>
+                                </label>
+                            </div>
+
+                            <!-- Hidden input that stores combined rooms -->
+                            <input 
+                                type="hidden"
+                                name="rooms"
+                                id="roomsHidden"
+                                value="{{ lead.rooms|default:'' }}">
+
+                            <div class="fs-12 text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Select rooms the customer is interested in
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- END PROJECT INFO -->
+
+
+            <!-- ── NOTES ── -->
+            <div class="crm-card mb-4">
+                <div class="crm-card-header">
+                    <h5 class="crm-card-title">
+                        <i class="bi bi-sticky-fill me-2 text-crm-accent"></i>
+                        Notes & Remarks
+                    </h5>
+                </div>
+                <div class="crm-card-body">
+                    <label class="form-label-custom">
+                        <i class="bi bi-pencil"></i>
+                        Internal Notes
+                    </label>
+                    <textarea 
+                        name="notes"
+                        class="form-textarea-custom"
+                        rows="5"
+                        placeholder="Add internal notes, follow-up details, customer preferences...">{{ lead.notes|default:'' }}</textarea>
+                    <div class="fs-12 text-muted mt-1">
+                        <i class="bi bi-info-circle me-1"></i>
+                        These notes are only visible to your team
+                    </div>
+                </div>
+            </div>
+            <!-- END NOTES -->
+
+
+        </div>
+        <!-- END LEFT COLUMN -->
+
+
+        <!-- ════════════════════
+             RIGHT COLUMN
+        ════════════════════ -->
+        <div class="col-12 col-xl-4">
+
+            <!-- ── STATUS & PRIORITY ── -->
+            <div class="crm-card mb-4">
+                <div class="crm-card-header">
+                    <h5 class="crm-card-title">
+                        <i class="bi bi-sliders me-2 text-crm-accent"></i>
+                        Lead Status
+                    </h5>
+                </div>
+                <div class="crm-card-body">
+
+                    <!-- Status -->
+                    <div class="mb-3">
+                        <label class="form-label-custom">
+                            <i class="bi bi-flag"></i>
+                            Status
+                            <span class="required">*</span>
+                        </label>
+                        <div class="status-selector">
+
+                            <label class="status-option">
+                                <input type="radio" 
+                                       name="status" 
+                                       value="new"
+                                       {% if lead.status == 'new' %}
+                                       checked
+                                       {% endif %}>
+                                <span class="status-option-label new-bg">
+                                    <i class="bi bi-circle-fill" 
+                                       style="font-size:8px;"></i>
+                                    New
+                                </span>
+                            </label>
+
+                            <label class="status-option">
+                                <input type="radio" 
+                                       name="status" 
+                                       value="contacted"
+                                       {% if lead.status == 'contacted' %}
+                                       checked
+                                       {% endif %}>
+                                <span class="status-option-label contacted-bg">
+                                    <i class="bi bi-telephone-fill"></i>
+                                    Contacted
+                                </span>
+                            </label>
+
+                            <label class="status-option">
+                                <input type="radio" 
+                                       name="status" 
+                                       value="callback"
+                                       {% if lead.status == 'callback' %}
+                                       checked
+                                       {% endif %}>
+                                <span class="status-option-label callback-bg">
+                                    <i class="bi bi-calendar-check-fill"></i>
+                                    Callback
+                                </span>
+                            </label>
+
+                            <label class="status-option">
+                                <input type="radio" 
+                                       name="status" 
+                                       value="quotation_sent"
+                                       {% if lead.status == 'quotation_sent' %}
+                                       checked
+                                       {% endif %}>
+                                <span class="status-option-label quotation-bg">
+                                    <i class="bi bi-file-earmark-text-fill"></i>
+                                    Quotation Sent
+                                </span>
+                            </label>
+
+                            <label class="status-option">
+                                <input type="radio" 
+                                       name="status" 
+                                       value="converted"
+                                       {% if lead.status == 'converted' %}
+                                       checked
+                                       {% endif %}>
+                                <span class="status-option-label converted-bg">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Converted
+                                </span>
+                            </label>
+
+                            <label class="status-option">
+                                <input type="radio" 
+                                       name="status" 
+                                       value="closed"
+                                       {% if lead.status == 'closed' %}
+                                       checked
+                                       {% endif %}>
+                                <span class="status-option-label closed-bg">
+                                    <i class="bi bi-x-circle-fill"></i>
+                                    Closed
+                                </span>
+                            </label>
+
+                        </div>
+                    </div>
+
+                    <!-- Priority -->
+                    <div class="mb-3">
+                        <label class="form-label-custom">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Priority Level
+                            <span class="required">*</span>
+                        </label>
+                        <div class="priority-selector">
+
+                            <label class="priority-option">
+                                <input type="radio" 
+                                       name="priority" 
+                                       value="high"
+                                       {% if lead.priority == 'high' %}
+                                       checked
+                                       {% endif %}>
+                                <span class="priority-option-label high-bg">
+                                    <i class="bi bi-arrow-up-circle-fill"></i>
+                                    High
+                                </span>
+                            </label>
+
+                            <label class="priority-option">
+                                <input type="radio" 
+                                       name="priority" 
+                                       value="medium"
+                                       {% if lead.priority == 'medium' %}
+                                       checked
+                                       {% endif %}>
+                                <span class="priority-option-label medium-bg">
+                                    <i class="bi bi-dash-circle-fill"></i>
+                                    Medium
+                                </span>
+                            </label>
+
+                            <label class="priority-option">
+                                <input type="radio" 
+                                       name="priority" 
+                                       value="low"
+                                       {% if lead.priority == 'low' %}
+                                       checked
+                                       {% endif %}>
+                                <span class="priority-option-label low-bg">
+                                    <i class="bi bi-arrow-down-circle-fill"></i>
+                                    Low
+                                </span>
+                            </label>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- END STATUS & PRIORITY -->
+
+
+            <!-- ── CALLBACK SCHEDULE ── -->
+            <div class="crm-card mb-4">
+                <div class="crm-card-header">
+                    <h5 class="crm-card-title">
+                        <i class="bi bi-calendar-event-fill me-2 text-crm-accent"></i>
+                        Callback Schedule
+                    </h5>
+                </div>
+                <div class="crm-card-body">
+
+                    <label class="form-label-custom">
+                        <i class="bi bi-calendar3"></i>
+                        Callback Date & Time
+                    </label>
+                    <input 
+                        type="datetime-local"
+                        name="callback_date"
+                        class="form-input-custom"
+                        value="{% if lead.callback_date %}{{ lead.callback_date|date:'Y-m-d\TH:i' }}{% endif %}">
+                    <div class="fs-12 text-muted mt-1">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Schedule next follow-up call
+                    </div>
+
+                    <!-- Quick Schedule Buttons -->
+                    <div class="quick-schedule mt-3">
+                        <div class="fs-12 text-muted fw-600 mb-2">
+                            Quick Schedule:
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="button"
+                                    class="quick-schedule-btn"
+                                    onclick="setCallback('today')">
+                                Today
+                            </button>
+                            <button type="button"
+                                    class="quick-schedule-btn"
+                                    onclick="setCallback('tomorrow')">
+                                Tomorrow
+                            </button>
+                            <button type="button"
+                                    class="quick-schedule-btn"
+                                    onclick="setCallback('3days')">
+                                In 3 Days
+                            </button>
+                            <button type="button"
+                                    class="quick-schedule-btn"
+                                    onclick="setCallback('week')">
+                                Next Week
+                            </button>
+                            <button type="button"
+                                    class="quick-schedule-btn clear-btn"
+                                    onclick="setCallback('clear')">
+                                <i class="bi bi-x"></i>
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- END CALLBACK SCHEDULE -->
+
+
+            <!-- ── SUBMIT ACTIONS ── -->
+            <div class="crm-card mb-4">
+                <div class="crm-card-body">
+
+                    <!-- Save Button -->
+                    <button type="submit" 
+                            class="btn-crm-primary w-100 justify-content-center"
+                            style="padding: 12px 20px; font-size: 15px;"
+                            id="saveBtn">
+                        <i class="bi bi-check-lg"></i>
+                        Save Changes
+                    </button>
+
+                    <!-- Save & Continue -->
+                    <button type="submit"
+                            name="save_continue"
+                            value="1"
+                            class="btn-crm-secondary w-100 justify-content-center mt-2"
+                            style="padding: 10px 20px;">
+                        <i class="bi bi-floppy-fill"></i>
+                        Save & Continue Editing
+                    </button>
+
+                    <!-- Cancel -->
+                    <a href="{% url 'lead_detail' lead.id %}"
+                       class="btn-crm-secondary w-100 justify-content-center mt-2"
+                       style="padding: 10px 20px;">
+                        <i class="bi bi-x-lg"></i>
+                        Cancel
+                    </a>
+
+                </div>
+            </div>
+            <!-- END SUBMIT ACTIONS -->
+
+
+            <!-- ── LEAD META INFO ── -->
+            <div class="crm-card">
+                <div class="crm-card-header">
+                    <h5 class="crm-card-title">
+                        <i class="bi bi-info-circle-fill me-2 text-crm-accent"></i>
+                        Lead Info
+                    </h5>
+                </div>
+                <div class="crm-card-body">
+
+                    <div class="meta-row">
+                        <span class="meta-label">Lead ID</span>
+                        <span class="meta-value">#{{ lead.id }}</span>
+                    </div>
+
+                    <div class="meta-row">
+                        <span class="meta-label">Created</span>
+                        <span class="meta-value">
+                            {{ lead.created_at|date:"d M Y, h:i A" }}
+                        </span>
+                    </div>
+
+                    <div class="meta-row" style="border-bottom:none;">
+                        <span class="meta-label">Last Updated</span>
+                        <span class="meta-value">
+                            {{ lead.updated_at|date:"d M Y, h:i A" }}
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+            <!-- END META INFO -->
+
+
+        </div>
+        <!-- END RIGHT COLUMN -->
+
+    </div>
+
+</form>
+<!-- END FORM -->
+
+
+{% endblock crm_content %}
+
+
+<!-- ══════════════════════════════════════
+     EXTRA CSS
+══════════════════════════════════════ -->
+{% block extra_css %}
+<style>
+
+    /* ── Form Label ── */
+    .form-label-custom {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: #718096;
+        margin-bottom: 8px;
+    }
+
+    .form-label-custom i {
+        font-size: 14px;
+        color: #a0aec0;
+    }
+
+    .required {
+        color: #e74c3c;
+        font-size: 14px;
+    }
+
+    /* ── Form Input ── */
+    .form-input-custom {
+        width: 100%;
+        padding: 11px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 14px;
+        font-family: var(--crm-font);
+        color: #2d3748;
+        background: #f7f8fa;
+        transition: all 0.2s;
+    }
+
+    .form-input-custom:focus {
+        outline: none;
+        border-color: var(--crm-accent);
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(230,126,34,0.1);
+    }
+
+    .form-input-custom::placeholder {
+        color: #a0aec0;
+    }
+
+    /* ── Form Textarea ── */
+    .form-textarea-custom {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 14px;
+        font-family: var(--crm-font);
+        color: #2d3748;
+        background: #f7f8fa;
+        transition: all 0.2s;
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .form-textarea-custom:focus {
+        outline: none;
+        border-color: var(--crm-accent);
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(230,126,34,0.1);
+    }
+
+    .form-textarea-custom::placeholder {
+        color: #a0aec0;
+    }
+
+    /* ── Phone Input Wrapper ── */
+    .phone-input-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        position: relative;
+    }
+
+    .phone-prefix {
+        position: absolute;
+        left: 14px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #718096;
+        z-index: 2;
+    }
+
+    .phone-input {
+        padding-left: 48px !important;
+        padding-right: 70px !important;
+    }
+
+    .phone-action-btn {
+        position: absolute;
+        right: 8px;
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        text-decoration: none;
+        background: rgba(41,128,185,0.1);
+        color: #2980b9;
+        transition: all 0.2s;
+    }
+
+    .phone-action-btn:nth-last-child(2) {
+        right: 40px;
+    }
+
+    .phone-action-btn.whatsapp {
+        background: rgba(37,211,102,0.1);
+        color: #25D366;
+    }
+
+    .phone-action-btn:hover {
+        transform: scale(1.1);
+    }
+
+    /* ── Room Selector ── */
+    .rooms-selector {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .room-chip {
+        cursor: pointer;
+        margin: 0;
+    }
+
+    .room-chip input[type="checkbox"] {
+        display: none;
+    }
+
+    .room-chip-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #718096;
+        background: #f7f8fa;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+
+    .room-chip input:checked + .room-chip-label {
+        border-color: var(--crm-accent);
+        background: rgba(230,126,34,0.08);
+        color: var(--crm-accent);
+        font-weight: 600;
+    }
+
+    .room-chip-label:hover {
+        border-color: #cbd5e0;
+        background: #edf2f7;
+    }
+
+    /* ── Status Selector ── */
+    .status-selector {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .status-option {
+        cursor: pointer;
+        margin: 0;
+    }
+
+    .status-option input[type="radio"] {
+        display: none;
+    }
+
+    .status-option-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #4a5568;
+        background: #f7f8fa;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .status-option-label i {
+        font-size: 14px;
+    }
+
+    .status-option-label:hover {
+        border-color: #cbd5e0;
+        background: #edf2f7;
+    }
+
+    .status-option input:checked + .status-option-label {
+        font-weight: 600;
+    }
+
+    .status-option input:checked + .new-bg {
+        border-color: #2b6cb0;
+        background: #ebf8ff;
+        color: #2b6cb0;
+    }
+
+    .status-option input:checked + .contacted-bg {
+        border-color: #92400e;
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .status-option input:checked + .callback-bg {
+        border-color: #c05621;
+        background: #fff7ed;
+        color: #c05621;
+    }
+
+    .status-option input:checked + .quotation-bg {
+        border-color: #276749;
+        background: #f0fff4;
+        color: #276749;
+    }
+
+    .status-option input:checked + .converted-bg {
+        border-color: #27ae60;
+        background: #f0fff4;
+        color: #27ae60;
+    }
+
+    .status-option input:checked + .closed-bg {
+        border-color: #e74c3c;
+        background: #fff5f5;
+        color: #e74c3c;
+    }
+
+    /* ── Priority Selector ── */
+    .priority-selector {
+        display: flex;
+        gap: 8px;
+    }
+
+    .priority-option {
+        flex: 1;
+        cursor: pointer;
+        margin: 0;
+    }
+
+    .priority-option input[type="radio"] {
+        display: none;
+    }
+
+    .priority-option-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        padding: 12px 10px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #718096;
+        background: #f7f8fa;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+
+    .priority-option-label i {
+        font-size: 18px;
+    }
+
+    .priority-option-label:hover {
+        border-color: #cbd5e0;
+    }
+
+    .priority-option input:checked + .high-bg {
+        border-color: #e74c3c;
+        background: #fff5f5;
+        color: #e74c3c;
+        font-weight: 600;
+    }
+
+    .priority-option input:checked + .medium-bg {
+        border-color: #f39c12;
+        background: #fffbeb;
+        color: #92400e;
+        font-weight: 600;
+    }
+
+    .priority-option input:checked + .low-bg {
+        border-color: #27ae60;
+        background: #f0fff4;
+        color: #276749;
+        font-weight: 600;
+    }
+
+    /* ── Quick Schedule ── */
+    .quick-schedule-btn {
+        padding: 6px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 500;
+        font-family: var(--crm-font);
+        color: #4a5568;
+        background: #f7f8fa;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .quick-schedule-btn:hover {
+        border-color: var(--crm-accent);
+        color: var(--crm-accent);
+        background: rgba(230,126,34,0.05);
+    }
+
+    .quick-schedule-btn.clear-btn {
+        color: #e74c3c;
+        border-color: rgba(231,76,60,0.3);
+    }
+
+    .quick-schedule-btn.clear-btn:hover {
+        background: rgba(231,76,60,0.05);
+        border-color: #e74c3c;
+    }
+
+    /* ── Meta Row ── */
+    .meta-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f2f5;
+    }
+
+    .meta-label {
+        font-size: 12px;
+        color: #718096;
+        font-weight: 500;
+    }
+
+    .meta-value {
+        font-size: 13px;
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    /* ── Save Animation ── */
+    .btn-saving {
+        pointer-events: none;
+        opacity: 0.8;
+    }
+
+    .btn-saving::after {
+        content: '';
+        width: 14px;
+        height: 14px;
+        border: 2px solid transparent;
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        margin-left: 8px;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* ── Unsaved Changes Badge ── */
+    .unsaved-badge {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #1a202c;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 500;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        display: none;
+        align-items: center;
+        gap: 8px;
+        z-index: 9999;
+        animation: slideUp 0.3s ease;
+    }
+
+    .unsaved-badge.show {
+        display: flex;
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+</style>
+{% endblock extra_css %}
+
+
+<!-- ══════════════════════════════════════
+     EXTRA JS
+══════════════════════════════════════ -->
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ══════════════════════════
+    // ROOM CHECKBOXES → HIDDEN INPUT
+    // ══════════════════════════
+    const roomCheckboxes = document.querySelectorAll('.room-checkbox');
+    const roomsHidden = document.getElementById('roomsHidden');
+
+    function updateRoomsHidden() {
+        const selected = [];
+        roomCheckboxes.forEach(cb => {
+            if (cb.checked) {
+                selected.push(cb.value);
+            }
+        });
+        roomsHidden.value = selected.join(', ');
+    }
+
+    roomCheckboxes.forEach(cb => {
+        cb.addEventListener('change', updateRoomsHidden);
+    });
+
+
+    // ══════════════════════════
+    // QUICK CALLBACK SCHEDULE
+    // ══════════════════════════
+    window.setCallback = function (period) {
+        const input = document.querySelector('input[name="callback_date"]');
+        const now = new Date();
+
+        switch (period) {
+            case 'today':
+                now.setHours(10, 0, 0, 0);
+                break;
+            case 'tomorrow':
+                now.setDate(now.getDate() + 1);
+                now.setHours(10, 0, 0, 0);
+                break;
+            case '3days':
+                now.setDate(now.getDate() + 3);
+                now.setHours(10, 0, 0, 0);
+                break;
+            case 'week':
+                now.setDate(now.getDate() + 7);
+                now.setHours(10, 0, 0, 0);
+                break;
+            case 'clear':
+                input.value = '';
+                return;
+        }
+
+        // Format for datetime-local input
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+
+        input.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+    };
+
+
+    // ══════════════════════════
+    // UNSAVED CHANGES DETECTOR
+    // ══════════════════════════
+    const form = document.getElementById('leadUpdateForm');
+    const unsavedBadge = document.createElement('div');
+    unsavedBadge.className = 'unsaved-badge';
+    unsavedBadge.innerHTML = `
+        <i class="bi bi-exclamation-circle-fill" 
+           style="color: #f39c12;"></i>
+        You have unsaved changes
+        <button type="submit" form="leadUpdateForm"
+                style="background: var(--crm-accent);
+                       color: white;
+                       border: none;
+                       padding: 5px 14px;
+                       border-radius: 6px;
+                       font-size: 12px;
+                       font-weight: 600;
+                       cursor: pointer;
+                       margin-left: 8px;">
+            Save Now
+        </button>
+    `;
+    document.body.appendChild(unsavedBadge);
+
+    let formChanged = false;
+    const originalData = new FormData(form);
+
+    form.addEventListener('input', function () {
+        if (!formChanged) {
+            formChanged = true;
+            unsavedBadge.classList.add('show');
+        }
+    });
+
+    form.addEventListener('change', function () {
+        if (!formChanged) {
+            formChanged = true;
+            unsavedBadge.classList.add('show');
+        }
+    });
+
+    form.addEventListener('submit', function () {
+        formChanged = false;
+        unsavedBadge.classList.remove('show');
+
+        // Save button animation
+        const saveBtn = document.getElementById('saveBtn');
+        saveBtn.innerHTML = `
+            <i class="bi bi-arrow-repeat"></i>
+            Saving...
+        `;
+        saveBtn.classList.add('btn-saving');
+    });
+
+    // Warn before leaving with unsaved changes
+    window.addEventListener('beforeunload', function (e) {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+
+
+    // ══════════════════════════
+    // AUTO CHANGE STATUS TO CALLBACK
+    // ══════════════════════════
+    const callbackInput = document.querySelector(
+        'input[name="callback_date"]'
+    );
+
+    callbackInput.addEventListener('change', function () {
+        if (this.value) {
+            const callbackRadio = document.querySelector(
+                'input[name="status"][value="callback"]'
+            );
+            if (callbackRadio) {
+                callbackRadio.checked = true;
+            }
+        }
+    });
+
+});
+</script>
+{% endblock extra_js %}

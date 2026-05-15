@@ -858,63 +858,214 @@ def send_message_view(request):
     response = send_whatsapp_message("919786224099")  # change to your number
     return JsonResponse(response)
 
+
+
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.utils import timezone
 import logging
+
+from .models import Lead
 
 logger = logging.getLogger(__name__)
 
+
 def submit_contact_form(request):
+
     if request.method == 'POST':
+
+        # =========================
+        # GET FORM DATA
+        # =========================
+
         name = request.POST.get('name', '').strip()
+
         contact = request.POST.get('contact', '').strip()
+
         contact2 = request.POST.get('contact2', '').strip()
+
         email = request.POST.get('email', '').strip()
+
         bhk_raw = request.POST.get('bhk', '')
+
         location = request.POST.get('location', '').strip()
 
-        # Format BHK properly
+        # =========================
+        # FORMAT ROOMS
+        # =========================
+
         bhk_list = []
+
         if bhk_raw:
+
             for item in bhk_raw.split(','):
-                room, count = item.split(':')
-                bhk_list.append(f"{room} - {count}")
-        bhk_formatted = "\n".join(bhk_list) if bhk_list else "Not specified"
 
-        subject_admin = f"New Enquiry from {name}"
-        message_admin = (
-            f"Name: {name}\n"
-            f"Contact: {contact}\n"
-            f"Contact 2: {contact2}\n"
-            f"Email: {email}\n"
-            f"Location: {location}\n\n"
-            f"Selected Rooms:\n{bhk_formatted}"
+                try:
+                    room, count = item.split(':')
+
+                    bhk_list.append(
+                        f"{room} - {count}"
+                    )
+
+                except:
+                    pass
+
+        bhk_formatted = (
+            "\n".join(bhk_list)
+            if bhk_list
+            else "Not specified"
         )
 
-        subject_client = "Thanks for contacting Home Den"
-        message_client = (
-            f"Hi {name},\n\n"
-            f"Thank you for contacting us! We will be in touch soon.\n\n"
-            f"Your Details:\n"
-            f"Contact: {contact}\n"
-            f"Contact 2: {contact2}\n"
-            f"Email: {email}\n"
-            f"Location: {location}\n"
-            f"Rooms:\n{bhk_formatted}\n\n"
-            f"Best regards,\nHome Den Team"
-        )
+        # =========================
+        # SAVE LEAD TO DATABASE
+        # =========================
 
         try:
-            send_mail(subject_admin, message_admin, settings.EMAIL_HOST_USER, [settings.ADMIN_EMAIL])
-            send_mail(subject_client, message_client, settings.EMAIL_HOST_USER, [email])
-            messages.success(request, "Thank you! Your inquiry was sent successfully.")
-        except Exception as e:
-            logger.error("Email sending failed", exc_info=e)
-            messages.error(request, "Error sending email. Try again later.")
 
-    return redirect(request.META.get('HTTP_REFERER', '/'))
+            lead = Lead.objects.create(
+                name=name,
+                phone=contact,
+                alternate_phone=contact2,
+                email=email,
+                location=location,
+                rooms=bhk_formatted,
+                status="new",
+                priority="medium",
+                created_at=timezone.now()
+            )
+
+        except Exception as db_error:
+
+            logger.error(
+                "Lead saving failed",
+                exc_info=db_error
+            )
+
+            messages.error(
+                request,
+                "Unable to save enquiry."
+            )
+
+            return redirect(
+                request.META.get('HTTP_REFERER', '/')
+            )
+
+        # =========================
+        # ADMIN EMAIL
+        # =========================
+
+        subject_admin = (
+            f"New Enquiry from {name}"
+        )
+
+        message_admin = (
+
+            f"New HomeDen Lead\n\n"
+
+            f"Lead ID: {lead.id}\n"
+
+            f"Name: {name}\n"
+
+            f"Contact: {contact}\n"
+
+            f"Alternate Contact: {contact2}\n"
+
+            f"Email: {email}\n"
+
+            f"Location: {location}\n\n"
+
+            f"Selected Rooms:\n"
+            f"{bhk_formatted}\n\n"
+
+            f"Status: NEW LEAD"
+        )
+
+        # =========================
+        # CLIENT EMAIL
+        # =========================
+
+        subject_client = (
+            "Thanks for contacting Home Den"
+        )
+
+        message_client = (
+
+            f"Hi {name},\n\n"
+
+            f"Thank you for contacting Home Den.\n\n"
+
+            f"Our design team will contact you shortly.\n\n"
+
+            f"Your Submitted Details:\n\n"
+
+            f"Phone: {contact}\n"
+
+            f"Alternate Phone: {contact2}\n"
+
+            f"Email: {email}\n"
+
+            f"Project Location: {location}\n\n"
+
+            f"Selected Rooms:\n"
+            f"{bhk_formatted}\n\n"
+
+            f"Regards,\n"
+            f"Home Den Team"
+        )
+
+        # =========================
+        # SEND EMAILS
+        # =========================
+
+        try:
+
+            # ADMIN EMAIL
+
+            send_mail(
+                subject_admin,
+                message_admin,
+                settings.EMAIL_HOST_USER,
+                [settings.ADMIN_EMAIL],
+                fail_silently=False
+            )
+
+            # CLIENT EMAIL
+
+            if email:
+
+                send_mail(
+                    subject_client,
+                    message_client,
+                    settings.EMAIL_HOST_USER,
+                    [email],
+                    fail_silently=False
+                )
+
+            messages.success(
+                request,
+                "Thank you! Your inquiry was sent successfully."
+            )
+
+        except Exception as email_error:
+
+            logger.error(
+                "Email sending failed",
+                exc_info=email_error
+            )
+
+            messages.warning(
+                request,
+                "Lead saved but email sending failed."
+            )
+
+    return redirect(
+        request.META.get('HTTP_REFERER', '/')
+    )
+
+
+
 
 
 
@@ -3775,6 +3926,533 @@ def get_ai_data(request, location):
             "message": str(e)
         })
     
+
+
+# views.py
+
+from django.shortcuts import render
+from .models import Lead
+from django.utils.timezone import now
+from datetime import timedelta
+
+def lead_dashboard(request):
+
+    total_leads = Lead.objects.count()
+
+    converted = Lead.objects.filter(
+        status="converted"
+    ).count()
+
+    quotation_sent = Lead.objects.filter(
+        status="quotation_sent"
+    ).count()
+
+    pending_callbacks = Lead.objects.filter(
+        callback_date__lte=now() + timedelta(days=1)
+    ).count()
+
+    recent_leads = Lead.objects.order_by(
+        "-created_at"
+    )[:10]
+
+    context = {
+        "total_leads": total_leads,
+        "converted": converted,
+        "quotation_sent": quotation_sent,
+        "pending_callbacks": pending_callbacks,
+        "recent_leads": recent_leads,
+    }
+
+    return render(
+        request,
+        "crm/dashboard.html",
+        context
+    )
+
+
+
+
+
+# crm/views.py
+
+# crm/views.py
+
+from django.core.paginator import Paginator
+from django.db.models import Q
+from django.utils.timezone import now
+
+
+def lead_list(request):
+
+    # ── Base Queryset ──
+    leads = Lead.objects.order_by("-created_at")
+
+    # ══════════════════════════════════
+    # SEARCH
+    # ══════════════════════════════════
+    search_query = request.GET.get("search", "").strip()
+
+    if search_query:
+        leads = leads.filter(
+            Q(name__icontains=search_query)         |
+            Q(phone__icontains=search_query)         |
+            Q(alternate_phone__icontains=search_query)|
+            Q(email__icontains=search_query)         |
+            Q(location__icontains=search_query)      |
+            Q(rooms__icontains=search_query)         |
+            Q(notes__icontains=search_query)
+        )
+
+    # ══════════════════════════════════
+    # FILTER BY STATUS
+    # ══════════════════════════════════
+    status_filter = request.GET.get("status", "").strip()
+
+    if status_filter:
+        leads = leads.filter(status=status_filter)
+
+    # ══════════════════════════════════
+    # FILTER BY PRIORITY
+    # ══════════════════════════════════
+    priority_filter = request.GET.get("priority", "").strip()
+
+    if priority_filter:
+        leads = leads.filter(priority=priority_filter)
+
+    # ══════════════════════════════════
+    # FILTER BY DATE RANGE
+    # ══════════════════════════════════
+    date_from = request.GET.get("date_from", "").strip()
+    date_to = request.GET.get("date_to", "").strip()
+
+    if date_from:
+        leads = leads.filter(
+            created_at__date__gte=date_from
+        )
+
+    if date_to:
+        leads = leads.filter(
+            created_at__date__lte=date_to
+        )
+
+    # ══════════════════════════════════
+    # STATUS COUNTS (always full counts)
+    # ══════════════════════════════════
+    all_count = Lead.objects.count()
+    new_count = Lead.objects.filter(
+        status="new"
+    ).count()
+    contacted_count = Lead.objects.filter(
+        status="contacted"
+    ).count()
+    callback_count = Lead.objects.filter(
+        status="callback"
+    ).count()
+    quotation_count = Lead.objects.filter(
+        status="quotation_sent"
+    ).count()
+    converted_count = Lead.objects.filter(
+        status="converted"
+    ).count()
+    closed_count = Lead.objects.filter(
+        status="closed"
+    ).count()
+
+    # ══════════════════════════════════
+    # RESULTS COUNT (filtered)
+    # ══════════════════════════════════
+    results_count = leads.count()
+
+    # ══════════════════════════════════
+    # PAGINATION
+    # ══════════════════════════════════
+    paginator = Paginator(leads, 15)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    # ══════════════════════════════════
+    # CHECK IF ANY FILTER IS ACTIVE
+    # ══════════════════════════════════
+    is_filtered = any([
+        search_query,
+        status_filter,
+        priority_filter,
+        date_from,
+        date_to
+    ])
+
+    context = {
+        # Leads data
+        "leads": page_obj,
+        "page_obj": page_obj,
+
+        # Search & filters
+        "search_query": search_query,
+        "status_filter": status_filter,
+        "priority_filter": priority_filter,
+        "date_from": date_from,
+        "date_to": date_to,
+        "is_filtered": is_filtered,
+        "results_count": results_count,
+
+        # Tab counts
+        "all_count": all_count,
+        "new_count": new_count,
+        "contacted_count": contacted_count,
+        "callback_count": callback_count,
+        "quotation_count": quotation_count,
+        "converted_count": converted_count,
+        "closed_count": closed_count,
+    }
+
+    return render(
+        request,
+        "crm/lead_list.html",
+        context
+    )
+
+
+from django.shortcuts import get_object_or_404
+
+
+def lead_detail(request, id):
+
+    lead = get_object_or_404(
+        Lead,
+        id=id
+    )
+
+    return render(
+        request,
+        "crm/lead_detail.html",
+        {
+            "lead": lead
+        }
+    )
+
+
+
+# Make sure these are imported at the top of your views.py
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.dateparse import parse_datetime
+
+# Your Lead model should also be imported
+# from .models import Lead 
+
+
+def lead_update(request, id):
+
+    lead = get_object_or_404(Lead, id=id)
+
+    if request.method == "POST":
+
+        # ── Personal Info ──
+        lead.name = request.POST.get("name", lead.name)
+        lead.phone = request.POST.get("phone", lead.phone)
+        lead.alternate_phone = request.POST.get(
+            "alternate_phone", lead.alternate_phone
+        )
+        lead.email = request.POST.get("email", lead.email)
+
+        # ── Project Info ──
+        lead.location = request.POST.get("location", lead.location)
+        lead.rooms = request.POST.get("rooms", lead.rooms)
+
+        # ── CRM Fields ──
+        lead.status = request.POST.get("status", lead.status)
+        lead.priority = request.POST.get("priority", lead.priority)
+        lead.notes = request.POST.get("notes", lead.notes)
+
+        # ── Callback Date ──
+        callback_date = request.POST.get("callback_date")
+        if callback_date:
+            lead.callback_date = parse_datetime(callback_date)
+        else:
+            lead.callback_date = None
+
+        lead.save()
+
+        messages.success(
+            request, 
+            f"Lead '{lead.name}' updated successfully!"
+        )
+
+        # Save & Continue button logic
+        if request.POST.get("save_continue"):
+            return redirect("lead_update", id=lead.id)
+
+        return redirect("lead_detail", id=lead.id)
+
+    return render(
+        request, 
+        "crm/lead_update.html", 
+        {"lead": lead}
+    )
+
+
+
+
+
+
+
+# views.py
+
+import csv
+from django.http import HttpResponse
+
+def export_leads_csv(request):
+
+    response = HttpResponse(
+        content_type='text/csv'
+    )
+
+    response['Content-Disposition'] = (
+        'attachment; filename="leads.csv"'
+    )
+
+    writer = csv.writer(response)
+
+    writer.writerow([
+        'Name',
+        'Phone',
+        'Email',
+        'Location',
+        'Status',
+        'Created'
+    ])
+
+    leads = Lead.objects.all()
+
+    for lead in leads:
+        writer.writerow([
+            lead.name,
+            lead.phone,
+            lead.email,
+            lead.location,
+            lead.status,
+            lead.created_at
+        ])
+
+    return response
+
+
+
+# views.py
+
+import json
+import urllib.parse
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.timezone import now
+
+
+def bulk_campaign(request):
+    """Main campaign page"""
+
+    templates = MessageTemplate.objects.filter(
+        is_active=True
+    )
+
+    # Get leads with filters
+    leads = Lead.objects.order_by("-created_at")
+
+    status_filter = request.GET.get("status", "")
+    priority_filter = request.GET.get("priority", "")
+    search_query = request.GET.get("search", "").strip()
+
+    if search_query:
+        leads = leads.filter(
+            Q(name__icontains=search_query) |
+            Q(phone__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(location__icontains=search_query)
+        )
+
+    if status_filter:
+        leads = leads.filter(status=status_filter)
+
+    if priority_filter:
+        leads = leads.filter(priority=priority_filter)
+
+    # Recent campaigns
+    recent_campaigns = CampaignLog.objects.all()[:10]
+
+    context = {
+        "templates": templates,
+        "leads": leads,
+        "recent_campaigns": recent_campaigns,
+        "status_filter": status_filter,
+        "priority_filter": priority_filter,
+        "search_query": search_query,
+        "total_leads": leads.count(),
+    }
+
+    return render(
+        request,
+        "crm/bulk_campaign.html",
+        context
+    )
+
+
+def get_template_detail(request, template_id):
+    """API: Get template content for preview"""
+
+    template = get_object_or_404(
+        MessageTemplate,
+        id=template_id
+    )
+
+    return JsonResponse({
+        "id": template.id,
+        "name": template.name,
+        "category": template.category,
+        "subject": template.subject or "",
+        "message": template.message,
+    })
+
+
+@require_POST
+def send_bulk_campaign(request):
+    """Process and send bulk campaign"""
+
+    data = json.loads(request.body)
+
+    template_id = data.get("template_id")
+    lead_ids = data.get("lead_ids", [])
+    platform = data.get("platform")  # whatsapp / email / both
+    custom_message = data.get("custom_message", "")
+    custom_subject = data.get("custom_subject", "")
+    campaign_name = data.get("campaign_name", "")
+
+    # Validate
+    if not lead_ids:
+        return JsonResponse({
+            "success": False,
+            "error": "No recipients selected"
+        })
+
+    if not platform:
+        return JsonResponse({
+            "success": False,
+            "error": "No platform selected"
+        })
+
+    # Get template
+    template = None
+    if template_id:
+        template = get_object_or_404(
+            MessageTemplate,
+            id=template_id
+        )
+
+    # Message to send
+    message_body = custom_message or (
+        template.message if template else ""
+    )
+    email_subject = custom_subject or (
+        template.subject if template else "HomeDen Interiors"
+    )
+
+    if not message_body:
+        return JsonResponse({
+            "success": False,
+            "error": "Message content is empty"
+        })
+
+    # Create campaign log
+    campaign = CampaignLog.objects.create(
+        campaign_name=campaign_name or f"Campaign - {now().strftime('%d %b %Y %H:%M')}",
+        template=template,
+        platform=platform,
+        total_recipients=len(lead_ids),
+        sent_by=request.user
+    )
+
+    # Get leads
+    leads = Lead.objects.filter(id__in=lead_ids)
+
+    sent = 0
+    failed = 0
+    whatsapp_links = []
+
+    for lead in leads:
+
+        # Personalize message
+        personalized = message_body.replace(
+            "{name}", lead.name
+        ).replace(
+            "{phone}", lead.phone or ""
+        ).replace(
+            "{location}", lead.location or ""
+        )
+
+        personalized_subject = email_subject.replace(
+            "{name}", lead.name
+        )
+
+        recipient = CampaignRecipient.objects.create(
+            campaign=campaign,
+            lead=lead,
+            status="pending"
+        )
+
+        try:
+            # ── SEND EMAIL ──
+            if platform in ["email", "both"]:
+                if lead.email:
+                    send_mail(
+                        subject=personalized_subject,
+                        message=personalized,
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[lead.email],
+                        fail_silently=False,
+                    )
+
+            # ── GENERATE WHATSAPP LINK ──
+            if platform in ["whatsapp", "both"]:
+                phone = lead.phone.replace(" ", "").replace("-", "")
+                if not phone.startswith("91"):
+                    phone = "91" + phone
+
+                encoded_msg = urllib.parse.quote(personalized)
+                wa_link = f"https://wa.me/{phone}?text={encoded_msg}"
+
+                whatsapp_links.append({
+                    "name": lead.name,
+                    "phone": lead.phone,
+                    "link": wa_link
+                })
+
+            recipient.status = "sent"
+            recipient.sent_at = now()
+            recipient.save()
+            sent += 1
+
+        except Exception as e:
+            recipient.status = "failed"
+            recipient.error_message = str(e)
+            recipient.save()
+            failed += 1
+
+    # Update campaign
+    campaign.sent_count = sent
+    campaign.failed_count = failed
+    campaign.status = "sent"
+    campaign.save()
+
+    return JsonResponse({
+        "success": True,
+        "campaign_id": campaign.id,
+        "sent": sent,
+        "failed": failed,
+        "total": len(lead_ids),
+        "whatsapp_links": whatsapp_links,
+        "platform": platform,
+    })
+
 
 
     

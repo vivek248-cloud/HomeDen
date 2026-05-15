@@ -104,7 +104,55 @@ urlpatterns = [
 
     path("dashboard/", dashboard, name="dashboard"),
 
+    path(
+        "crm/dashboard/",
+        lead_dashboard,
+        name="lead_dashboard"
+    ),
 
+    path(
+        "crm/leads/",
+        lead_list,
+        name="lead_list"
+    ),
+
+    path(
+        "crm/leads/<int:id>/",
+        lead_detail,
+        name="lead_detail"
+    ),
+
+    path(
+        "crm/leads/<int:id>/update/",
+        lead_update,
+        name="lead_update"
+    ),
+
+    path(
+        "crm/leads/export/csv/",
+        export_leads_csv,
+        name="export_leads_csv"
+    ),
+
+    # bulk campaign management
+    
+    path(
+        "crm/campaigns/",
+        bulk_campaign,
+        name="bulk_campaign"
+    ),
+
+    path(
+        "crm/campaigns/template/<int:template_id>/",
+        get_template_detail,
+        name="get_template_detail"
+    ),
+
+    path(
+        "crm/campaigns/send/",
+        send_bulk_campaign,
+        name="send_bulk_campaign"
+    ),
 
     path("<slug:slug>/", seo_service_detail, name="seo_service_detail"),
 ]

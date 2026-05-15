@@ -78,7 +78,8 @@ ROOT_URLCONF = 'interior.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "elite_interior" / "templates" / "elite_interior"],
+        
+        'DIRS':  [BASE_DIR / "templates", BASE_DIR / "elite_interior" / "templates" / "elite_interior"],
         # 'DIRS': [BASE_DIR / "templates"],
 
         'APP_DIRS': True,

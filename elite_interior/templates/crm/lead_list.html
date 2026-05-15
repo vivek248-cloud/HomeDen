@@ -1,0 +1,1286 @@
+{% extends 'crm/base.html' %}
+
+{% block title %}All Leads — HomeDen CRM{% endblock %}
+
+{% block page_title %}All Leads{% endblock %}
+{% block page_subtitle %}Manage and track all customer enquiries{% endblock %}
+
+{% block crm_content %}
+
+<!-- ══════════════════════════════════════
+     BREADCRUMB
+══════════════════════════════════════ -->
+<div class="crm-breadcrumb mb-4">
+    <i class="bi bi-house-fill"></i>
+    <a href="{% url 'lead_dashboard' %}">Home</a>
+    <i class="bi bi-chevron-right" style="font-size:10px;"></i>
+    <span style="color:#2d3748; font-weight:600;">All Leads</span>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PAGE HEADER
+══════════════════════════════════════ -->
+<div class="crm-page-header mb-4">
+
+    <div class="crm-page-header-left">
+        <h1>
+            <i class="bi bi-people-fill me-2 text-crm-accent"></i>
+            All Leads
+        </h1>
+        <p>
+            {% if is_filtered %}
+                <span style="color:var(--crm-accent); font-weight:600;">
+                    {{ results_count }}
+                </span>
+                results found
+                <span class="text-muted">
+                    out of {{ all_count }} total leads
+                </span>
+            {% else %}
+                {{ all_count }} total leads in the system
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="{% url 'export_leads_csv' %}"
+           class="btn-primary btn">
+            <i class="bi bi-download"></i>
+            Export CSV
+        </a>
+        <a href="{% url 'lead_dashboard' %}"
+           class="btn-crm-primary">
+            <i class="bi bi-grid-1x2-fill"></i>
+            Dashboard
+        </a>
+    </div>
+
+</div>
+
+
+<!-- ══════════════════════════════════════
+     STATUS TABS
+══════════════════════════════════════ -->
+<div class="crm-card mb-4">
+    <div class="crm-card-body p-0">
+        <div class="status-tabs-wrapper">
+            <div class="status-tabs">
+
+                <!-- All -->
+                <a href="{% url 'lead_list' %}"
+                   class="status-tab {% if not status_filter %}active{% endif %}">
+                    <i class="bi bi-grid-fill" style="font-size:11px;"></i>
+                    <span class="status-tab-label">All</span>
+                    <span class="status-tab-count">{{ all_count }}</span>
+                </a>
+
+                <!-- New -->
+                <a href="{% url 'lead_list' %}?status=new"
+                   class="status-tab {% if status_filter == 'new' %}active{% endif %}">
+                    <span class="status-tab-dot new-dot"></span>
+                    <span class="status-tab-label">New</span>
+                    <span class="status-tab-count">{{ new_count }}</span>
+                </a>
+
+                <!-- Contacted -->
+                <a href="{% url 'lead_list' %}?status=contacted"
+                   class="status-tab {% if status_filter == 'contacted' %}active{% endif %}">
+                    <span class="status-tab-dot contacted-dot"></span>
+                    <span class="status-tab-label">Contacted</span>
+                    <span class="status-tab-count">{{ contacted_count }}</span>
+                </a>
+
+                <!-- Callback -->
+                <a href="{% url 'lead_list' %}?status=callback"
+                   class="status-tab {% if status_filter == 'callback' %}active{% endif %}">
+                    <span class="status-tab-dot callback-dot"></span>
+                    <span class="status-tab-label">Callback</span>
+                    <span class="status-tab-count">{{ callback_count }}</span>
+                </a>
+
+                <!-- Quotation Sent -->
+                <a href="{% url 'lead_list' %}?status=quotation_sent"
+                   class="status-tab {% if status_filter == 'quotation_sent' %}active{% endif %}">
+                    <span class="status-tab-dot quotation-dot"></span>
+                    <span class="status-tab-label">Quotation</span>
+                    <span class="status-tab-count">{{ quotation_count }}</span>
+                </a>
+
+                <!-- Converted -->
+                <a href="{% url 'lead_list' %}?status=converted"
+                   class="status-tab {% if status_filter == 'converted' %}active{% endif %}">
+                    <span class="status-tab-dot converted-dot"></span>
+                    <span class="status-tab-label">Converted</span>
+                    <span class="status-tab-count">{{ converted_count }}</span>
+                </a>
+
+                <!-- Closed -->
+                <a href="{% url 'lead_list' %}?status=closed"
+                   class="status-tab {% if status_filter == 'closed' %}active{% endif %}">
+                    <span class="status-tab-dot closed-dot"></span>
+                    <span class="status-tab-label">Closed</span>
+                    <span class="status-tab-count">{{ closed_count }}</span>
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     SEARCH + FILTER BAR
+══════════════════════════════════════ -->
+<div class="crm-card mb-4">
+    <div class="crm-card-body py-3">
+        <form method="GET"
+              action="{% url 'lead_list' %}"
+              id="filterForm">
+
+            <div class="row g-3 align-items-end">
+
+                <!-- Search -->
+                <div class="col-12 col-md-4">
+                    <label class="filter-label">
+                        <i class="bi bi-search"></i>
+                        Search
+                    </label>
+                    <div class="search-input-wrapper">
+                        <i class="bi bi-search search-icon"></i>
+                        <input
+                            type="text"
+                            name="search"
+                            id="searchInput"
+                            class="search-input"
+                            placeholder="Name, phone, email, location..."
+                            value="{{ search_query }}"
+                            autocomplete="off">
+                        {% if search_query %}
+                        <button type="button"
+                                class="search-clear-btn"
+                                onclick="clearSearch()">
+                            <i class="bi bi-x-circle-fill"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div class="col-6 col-md-2">
+                    <label class="filter-label">
+                        <i class="bi bi-flag"></i>
+                        Status
+                    </label>
+                    <select name="status"
+                            class="filter-select"
+                            onchange="this.form.submit()">
+                        <option value="">All Status</option>
+                        <option value="new"
+                            {% if status_filter == 'new' %}selected{% endif %}>
+                            New
+                        </option>
+                        <option value="contacted"
+                            {% if status_filter == 'contacted' %}selected{% endif %}>
+                            Contacted
+                        </option>
+                        <option value="callback"
+                            {% if status_filter == 'callback' %}selected{% endif %}>
+                            Callback
+                        </option>
+                        <option value="quotation_sent"
+                            {% if status_filter == 'quotation_sent' %}selected{% endif %}>
+                            Quotation Sent
+                        </option>
+                        <option value="converted"
+                            {% if status_filter == 'converted' %}selected{% endif %}>
+                            Converted
+                        </option>
+                        <option value="closed"
+                            {% if status_filter == 'closed' %}selected{% endif %}>
+                            Closed
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Priority -->
+                <div class="col-6 col-md-2">
+                    <label class="filter-label">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Priority
+                    </label>
+                    <select name="priority"
+                            class="filter-select"
+                            onchange="this.form.submit()">
+                        <option value="">All Priority</option>
+                        <option value="high"
+                            {% if priority_filter == 'high' %}selected{% endif %}>
+                            🔴 High
+                        </option>
+                        <option value="medium"
+                            {% if priority_filter == 'medium' %}selected{% endif %}>
+                            🟡 Medium
+                        </option>
+                        <option value="low"
+                            {% if priority_filter == 'low' %}selected{% endif %}>
+                            🟢 Low
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Date From -->
+                <div class="col-6 col-md-2">
+                    <label class="filter-label">
+                        <i class="bi bi-calendar3"></i>
+                        From Date
+                    </label>
+                    <input type="date"
+                           name="date_from"
+                           class="filter-select"
+                           value="{{ date_from }}"
+                           onchange="this.form.submit()">
+                </div>
+
+                <!-- Date To -->
+                <div class="col-6 col-md-2">
+                    <label class="filter-label">
+                        <i class="bi bi-calendar3"></i>
+                        To Date
+                    </label>
+                    <input type="date"
+                           name="date_to"
+                           class="filter-select"
+                           value="{{ date_to }}"
+                           onchange="this.form.submit()">
+                </div>
+
+            </div>
+
+            <!-- Button Row -->
+            <div class="d-flex align-items-center
+                        justify-content-between
+                        mt-3 flex-wrap gap-2">
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn-crm-primary">
+                        <i class="bi bi-search"></i>
+                        Search
+                    </button>
+                    {% if is_filtered %}
+                    <a href="{% url 'lead_list' %}"
+                       class="btn-crm-secondary">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        Reset All
+                    </a>
+                    {% endif %}
+                </div>
+
+                {% if search_query %}
+                <div class="search-result-info">
+                    <i class="bi bi-search me-1"></i>
+                    Searching for <strong>"{{ search_query }}"</strong>
+                    — {{ results_count }} result{{ results_count|pluralize }}
+                </div>
+                {% endif %}
+
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     ACTIVE FILTER TAGS
+     RULE: Always start with ? then use &
+══════════════════════════════════════ -->
+{% if is_filtered %}
+<div class="d-flex align-items-center gap-2 mb-4 flex-wrap">
+
+    <span class="fs-12 text-muted fw-600">
+        <i class="bi bi-funnel-fill me-1"></i>
+        Active Filters:
+    </span>
+
+    <!-- ── Search Tag ── -->
+    {% if search_query %}
+    <span class="active-filter-tag">
+        <i class="bi bi-search"></i>
+        "{{ search_query }}"
+        <a href="{% url 'lead_list' %}?status={{ status_filter }}&priority={{ priority_filter }}&date_from={{ date_from }}&date_to={{ date_to }}"
+           class="active-filter-remove">
+            <i class="bi bi-x"></i>
+        </a>
+    </span>
+    {% endif %}
+
+    <!-- ── Status Tag ── -->
+    {% if status_filter %}
+    <span class="active-filter-tag">
+        <i class="bi bi-circle-fill" style="font-size:7px;"></i>
+        {% if status_filter == "new" %}New
+        {% elif status_filter == "contacted" %}Contacted
+        {% elif status_filter == "callback" %}Callback
+        {% elif status_filter == "quotation_sent" %}Quotation Sent
+        {% elif status_filter == "converted" %}Converted
+        {% elif status_filter == "closed" %}Closed
+        {% else %}{{ status_filter|capfirst }}
+        {% endif %}
+        <a href="{% url 'lead_list' %}?search={{ search_query }}&priority={{ priority_filter }}&date_from={{ date_from }}&date_to={{ date_to }}"
+           class="active-filter-remove">
+            <i class="bi bi-x"></i>
+        </a>
+    </span>
+    {% endif %}
+
+    <!-- ── Priority Tag ── -->
+    {% if priority_filter %}
+    <span class="active-filter-tag">
+        <i class="bi bi-flag-fill"></i>
+        {{ priority_filter|capfirst }}
+        <a href="{% url 'lead_list' %}?search={{ search_query }}&status={{ status_filter }}&date_from={{ date_from }}&date_to={{ date_to }}"
+           class="active-filter-remove">
+            <i class="bi bi-x"></i>
+        </a>
+    </span>
+    {% endif %}
+
+    <!-- ── Date From Tag ── -->
+    {% if date_from %}
+    <span class="active-filter-tag">
+        <i class="bi bi-calendar3"></i>
+        From: {{ date_from }}
+        <a href="{% url 'lead_list' %}?search={{ search_query }}&status={{ status_filter }}&priority={{ priority_filter }}&date_to={{ date_to }}"
+           class="active-filter-remove">
+            <i class="bi bi-x"></i>
+        </a>
+    </span>
+    {% endif %}
+
+    <!-- ── Date To Tag ── -->
+    {% if date_to %}
+    <span class="active-filter-tag">
+        <i class="bi bi-calendar3"></i>
+        To: {{ date_to }}
+        <a href="{% url 'lead_list' %}?search={{ search_query }}&status={{ status_filter }}&priority={{ priority_filter }}&date_from={{ date_from }}"
+           class="active-filter-remove">
+            <i class="bi bi-x"></i>
+        </a>
+    </span>
+    {% endif %}
+
+    <!-- ── Clear All ── -->
+    <a href="{% url 'lead_list' %}"
+       class="fs-12 text-crm-accent text-decoration-none fw-600">
+        <i class="bi bi-x-circle me-1"></i>
+        Clear All
+    </a>
+
+</div>
+{% endif %}
+
+
+<!-- ══════════════════════════════════════
+     RESULTS COUNT
+══════════════════════════════════════ -->
+<div class="d-flex align-items-center
+            justify-content-between mb-3">
+    <span class="fs-13 text-muted">
+        {% if page_obj.paginator.count > 0 %}
+            Showing
+            <strong>{{ page_obj.start_index }}</strong>
+            –
+            <strong>{{ page_obj.end_index }}</strong>
+            of
+            <strong>{{ page_obj.paginator.count }}</strong>
+            lead{{ page_obj.paginator.count|pluralize }}
+        {% else %}
+            No leads found
+        {% endif %}
+    </span>
+    <span class="fs-12 text-muted">
+        {% if page_obj.paginator.num_pages > 1 %}
+            Page {{ page_obj.number }}
+            of {{ page_obj.paginator.num_pages }}
+        {% endif %}
+    </span>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     LEADS TABLE
+══════════════════════════════════════ -->
+<div class="crm-card">
+    <div class="table-responsive">
+        <table class="crm-table">
+
+            <thead>
+                <tr>
+                    <th style="width:40px;">
+                        <input type="checkbox"
+                               id="selectAll"
+                               class="form-check-input"
+                               style="cursor:pointer;">
+                    </th>
+                    <th style="width:40px;">#</th>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Location</th>
+                    <th>Rooms</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Callback</th>
+                    <th>Created</th>
+                    <th style="width:130px;">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for lead in leads %}
+                <tr class="lead-row" data-lead-id="{{ lead.id }}">
+
+                    <!-- Checkbox -->
+                    <td onclick="event.stopPropagation()">
+                        <input type="checkbox"
+                               class="form-check-input lead-checkbox"
+                               value="{{ lead.id }}"
+                               style="cursor:pointer;">
+                    </td>
+
+                    <!-- Index -->
+                    <td class="fs-13 text-muted">
+                        {{ forloop.counter0|add:page_obj.start_index }}
+                    </td>
+
+                    <!-- Customer -->
+                    <td>
+                        <a href="{% url 'lead_detail' lead.id %}"
+                           class="text-decoration-none">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="lead-avatar">
+                                    {{ lead.name|first|upper }}
+                                </div>
+                                <div>
+                                    <div class="lead-name">
+                                        {{ lead.name }}
+                                    </div>
+                                    <div class="lead-email">
+                                        {{ lead.email|default:"No email" }}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </td>
+
+                    <!-- Phone -->
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <a href="tel:{{ lead.phone }}"
+                               class="lead-phone"
+                               onclick="event.stopPropagation()">
+                                <i class="bi bi-telephone me-1"></i>
+                                {{ lead.phone }}
+                            </a>
+                            <a href="https://wa.me/91{{ lead.phone }}"
+                               target="_blank"
+                               class="whatsapp-mini-btn"
+                               onclick="event.stopPropagation()">
+                                <i class="bi bi-whatsapp"></i>
+                            </a>
+                        </div>
+                        {% if lead.alternate_phone %}
+                        <div class="fs-11 text-muted mt-1">
+                            Alt: {{ lead.alternate_phone }}
+                        </div>
+                        {% endif %}
+                    </td>
+
+                    <!-- Location -->
+                    <td>
+                        <span class="fs-13">
+                            <i class="bi bi-geo-alt me-1 text-muted"></i>
+                            {{ lead.location|default:"—"|truncatechars:20 }}
+                        </span>
+                    </td>
+
+                    <!-- Rooms -->
+                    <td>
+                        {% if lead.rooms %}
+                        <div class="rooms-tags">
+                            {% for room in lead.rooms.split %}
+                            <span class="room-tag">{{ room }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <span class="text-muted fs-12">—</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Status -->
+                    <td>
+                        {% if lead.status == "new" %}
+                            <span class="status-badge new">
+                                <i class="bi bi-circle-fill" style="font-size:7px;"></i>
+                                New
+                            </span>
+                        {% elif lead.status == "contacted" %}
+                            <span class="status-badge contacted">
+                                <i class="bi bi-circle-fill" style="font-size:7px;"></i>
+                                Contacted
+                            </span>
+                        {% elif lead.status == "callback" %}
+                            <span class="status-badge callback">
+                                <i class="bi bi-circle-fill" style="font-size:7px;"></i>
+                                Callback
+                            </span>
+                        {% elif lead.status == "quotation_sent" %}
+                            <span class="status-badge quotation">
+                                <i class="bi bi-circle-fill" style="font-size:7px;"></i>
+                                Quotation
+                            </span>
+                        {% elif lead.status == "converted" %}
+                            <span class="status-badge converted">
+                                <i class="bi bi-circle-fill" style="font-size:7px;"></i>
+                                Converted
+                            </span>
+                        {% elif lead.status == "closed" %}
+                            <span class="status-badge closed">
+                                <i class="bi bi-circle-fill" style="font-size:7px;"></i>
+                                Closed
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Priority -->
+                    <td>
+                        {% if lead.priority == "high" %}
+                            <span class="priority-badge high">
+                                <i class="bi bi-arrow-up-circle-fill"></i>
+                                High
+                            </span>
+                        {% elif lead.priority == "medium" %}
+                            <span class="priority-badge medium">
+                                <i class="bi bi-dash-circle-fill"></i>
+                                Medium
+                            </span>
+                        {% elif lead.priority == "low" %}
+                            <span class="priority-badge low">
+                                <i class="bi bi-arrow-down-circle-fill"></i>
+                                Low
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Callback Date -->
+                    <td>
+                        {% if lead.callback_date %}
+                        <div class="callback-info">
+                            <i class="bi bi-calendar-event"></i>
+                            <span>{{ lead.callback_date|date:"d M" }}</span>
+                        </div>
+                        <div class="fs-11 text-muted">
+                            {{ lead.callback_date|date:"h:i A" }}
+                        </div>
+                        {% else %}
+                        <span class="text-muted fs-12">—</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Created -->
+                    <td>
+                        <div class="fs-13">
+                            {{ lead.created_at|date:"d M Y" }}
+                        </div>
+                        <div class="fs-11 text-muted">
+                            {{ lead.created_at|date:"h:i A" }}
+                        </div>
+                    </td>
+
+                    <!-- Actions -->
+                    <td onclick="event.stopPropagation()">
+                        <div class="d-flex gap-1">
+                            <a href="{% url 'lead_detail' lead.id %}"
+                               class="action-btn view-btn"
+                               title="View">
+                                <i class="bi bi-eye-fill"></i>
+                            </a>
+                            <a href="{% url 'lead_update' lead.id %}"
+                               class="action-btn edit-btn"
+                               title="Edit">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                            <a href="https://wa.me/91{{ lead.phone }}"
+                               target="_blank"
+                               class="action-btn whatsapp-btn"
+                               title="WhatsApp">
+                                <i class="bi bi-whatsapp"></i>
+                            </a>
+                            <a href="tel:{{ lead.phone }}"
+                               class="action-btn call-btn"
+                               title="Call">
+                                <i class="bi bi-telephone-fill"></i>
+                            </a>
+                        </div>
+                    </td>
+
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="11">
+                        <div class="empty-state">
+                            {% if search_query %}
+                                <i class="bi bi-search"
+                                   style="font-size:52px; color:#cbd5e0;"></i>
+                                <div class="empty-state-title">
+                                    No results for "{{ search_query }}"
+                                </div>
+                                <div class="empty-state-sub">
+                                    Try different keywords
+                                </div>
+                                <a href="{% url 'lead_list' %}"
+                                   class="btn-crm-secondary mt-3"
+                                   style="display:inline-flex;">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                    Clear Search
+                                </a>
+                            {% elif is_filtered %}
+                                <i class="bi bi-funnel"
+                                   style="font-size:52px; color:#cbd5e0;"></i>
+                                <div class="empty-state-title">
+                                    No leads match your filters
+                                </div>
+                                <div class="empty-state-sub">
+                                    Try adjusting your filter criteria
+                                </div>
+                                <a href="{% url 'lead_list' %}"
+                                   class="btn-crm-secondary mt-3"
+                                   style="display:inline-flex;">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                    Reset Filters
+                                </a>
+                            {% else %}
+                                <i class="bi bi-inbox"
+                                   style="font-size:52px; color:#cbd5e0;"></i>
+                                <div class="empty-state-title">No leads yet</div>
+                                <div class="empty-state-sub">
+                                    Leads from your website will appear here
+                                </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PAGINATION
+     RULE: Always start with ?page=X
+           then add & for other params
+══════════════════════════════════════ -->
+{% if page_obj.has_other_pages %}
+<div class="crm-pagination mt-4">
+
+    <div class="pagination-info">
+        Showing {{ page_obj.start_index }}–{{ page_obj.end_index }}
+        of {{ page_obj.paginator.count }} leads
+    </div>
+
+    <div class="pagination-controls">
+
+        {% if page_obj.has_previous %}
+        <a href="?page=1&search={{ search_query }}&status={{ status_filter }}&priority={{ priority_filter }}&date_from={{ date_from }}&date_to={{ date_to }}"
+           class="pagination-btn" title="First">
+            <i class="bi bi-chevron-double-left"></i>
+        </a>
+        <a href="?page={{ page_obj.previous_page_number }}&search={{ search_query }}&status={{ status_filter }}&priority={{ priority_filter }}&date_from={{ date_from }}&date_to={{ date_to }}"
+           class="pagination-btn">
+            <i class="bi bi-chevron-left"></i>
+            Prev
+        </a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <span class="pagination-btn active">{{ num }}</span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a href="?page={{ num }}&search={{ search_query }}&status={{ status_filter }}&priority={{ priority_filter }}&date_from={{ date_from }}&date_to={{ date_to }}"
+                   class="pagination-btn">
+                    {{ num }}
+                </a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}&search={{ search_query }}&status={{ status_filter }}&priority={{ priority_filter }}&date_from={{ date_from }}&date_to={{ date_to }}"
+           class="pagination-btn">
+            Next
+            <i class="bi bi-chevron-right"></i>
+        </a>
+        <a href="?page={{ page_obj.paginator.num_pages }}&search={{ search_query }}&status={{ status_filter }}&priority={{ priority_filter }}&date_from={{ date_from }}&date_to={{ date_to }}"
+           class="pagination-btn" title="Last">
+            <i class="bi bi-chevron-double-right"></i>
+        </a>
+        {% endif %}
+
+    </div>
+</div>
+{% endif %}
+
+
+<!-- ══════════════════════════════════════
+     BULK ACTION BAR
+══════════════════════════════════════ -->
+<div id="bulkActionBar" class="bulk-action-bar">
+    <div class="d-flex align-items-center gap-3">
+        <span class="fs-13 fw-600 text-white">
+            <span id="selectedCount">0</span> selected
+        </span>
+        <a href="#" class="bulk-btn green" id="bulkWhatsApp">
+            <i class="bi bi-whatsapp"></i>
+            WhatsApp
+        </a>
+        <a href="{% url 'export_leads_csv' %}" class="bulk-btn blue">
+            <i class="bi bi-download"></i>
+            Export
+        </a>
+        <button class="bulk-btn" onclick="clearSelection()">
+            <i class="bi bi-x-lg"></i>
+            Cancel
+        </button>
+    </div>
+</div>
+
+
+{% endblock crm_content %}
+
+
+{% block extra_css %}
+<style>
+
+    .filter-label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: #a0aec0;
+        margin-bottom: 6px;
+    }
+
+    /* ── Status Tabs ── */
+    .status-tabs-wrapper { overflow-x: auto; }
+
+    .status-tabs {
+        display: flex;
+        min-width: max-content;
+        border-bottom: 1px solid #f0f2f5;
+    }
+
+    .status-tab {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 14px 20px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #718096;
+        text-decoration: none;
+        border-bottom: 2px solid transparent;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+
+    .status-tab:hover {
+        color: #2d3748;
+        background: #f7f8fa;
+    }
+
+    .status-tab.active {
+        color: var(--crm-accent);
+        border-bottom-color: var(--crm-accent);
+        font-weight: 600;
+    }
+
+    .status-tab-count {
+        background: #f0f2f5;
+        color: #718096;
+        padding: 1px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .status-tab.active .status-tab-count {
+        background: rgba(230,126,34,0.12);
+        color: var(--crm-accent);
+    }
+
+    .status-tab-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .new-dot        { background: #2b6cb0; }
+    .contacted-dot  { background: #92400e; }
+    .callback-dot   { background: #c05621; }
+    .quotation-dot  { background: #276749; }
+    .converted-dot  { background: #27ae60; }
+    .closed-dot     { background: #e74c3c; }
+
+    /* ── Search ── */
+    .search-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 14px;
+        color: #a0aec0;
+        font-size: 15px;
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 10px 40px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: var(--crm-font);
+        color: #2d3748;
+        background: #f7f8fa;
+        transition: all 0.2s;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--crm-accent);
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(230,126,34,0.1);
+    }
+
+    .search-input::placeholder { color: #a0aec0; }
+
+    .search-clear-btn {
+        position: absolute;
+        right: 12px;
+        background: none;
+        border: none;
+        color: #a0aec0;
+        font-size: 16px;
+        cursor: pointer;
+        padding: 0;
+        z-index: 2;
+        transition: color 0.2s;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-clear-btn:hover { color: var(--crm-danger); }
+
+    .search-result-info {
+        font-size: 13px;
+        color: #718096;
+        background: rgba(230,126,34,0.08);
+        padding: 6px 14px;
+        border-radius: 20px;
+        border: 1px solid rgba(230,126,34,0.15);
+    }
+
+    /* ── Filter Select ── */
+    .filter-select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: var(--crm-font);
+        color: #2d3748;
+        background: #f7f8fa;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .filter-select:focus {
+        outline: none;
+        border-color: var(--crm-accent);
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(230,126,34,0.1);
+    }
+
+    /* ── Active Filter Tags ── */
+    .active-filter-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 10px;
+        background: rgba(230,126,34,0.08);
+        color: var(--crm-accent);
+        border: 1px solid rgba(230,126,34,0.2);
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .active-filter-remove {
+        color: var(--crm-accent);
+        text-decoration: none;
+        font-size: 14px;
+        line-height: 1;
+        margin-left: 2px;
+    }
+
+    .active-filter-remove:hover { color: var(--crm-danger); }
+
+    /* ── Lead Avatar ── */
+    .lead-avatar {
+        width: 34px;
+        height: 34px;
+        background: rgba(230,126,34,0.12);
+        color: #e67e22;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .lead-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1a202c;
+        line-height: 1.3;
+    }
+
+    .lead-email { font-size: 12px; color: #a0aec0; }
+
+    .lead-phone {
+        font-size: 13px;
+        font-weight: 500;
+        color: #2d3748;
+        text-decoration: none;
+    }
+
+    .lead-phone:hover { color: var(--crm-accent); }
+
+    /* ── WhatsApp Mini ── */
+    .whatsapp-mini-btn {
+        width: 24px;
+        height: 24px;
+        background: rgba(37,211,102,0.1);
+        color: #25D366;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        text-decoration: none;
+        transition: all 0.2s;
+        flex-shrink: 0;
+    }
+
+    .whatsapp-mini-btn:hover { background: #25D366; color: white; }
+
+    /* ── Room Tags ── */
+    .rooms-tags { display: flex; flex-wrap: wrap; gap: 3px; }
+
+    .room-tag {
+        background: #f7f8fa;
+        color: #718096;
+        padding: 2px 7px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 500;
+        border: 1px solid #e8ecf0;
+        white-space: nowrap;
+    }
+
+    /* ── Callback Info ── */
+    .callback-info {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 13px;
+        color: #2980b9;
+        font-weight: 500;
+    }
+
+    /* ── Action Buttons ── */
+    .action-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        text-decoration: none;
+        transition: all 0.2s;
+        flex-shrink: 0;
+    }
+
+    .view-btn       { background: rgba(41,128,185,0.1);  color: #2980b9; }
+    .view-btn:hover { background: #2980b9; color: white; }
+
+    .edit-btn       { background: rgba(230,126,34,0.1);  color: #e67e22; }
+    .edit-btn:hover { background: #e67e22; color: white; }
+
+    .whatsapp-btn       { background: rgba(37,211,102,0.1); color: #25D366; }
+    .whatsapp-btn:hover { background: #25D366; color: white; }
+
+    .call-btn       { background: rgba(39,174,96,0.1);  color: #27ae60; }
+    .call-btn:hover { background: #27ae60; color: white; }
+
+    /* ── Row ── */
+    .lead-row { cursor: pointer; }
+    .lead-row:hover { background: #fafbfc !important; }
+
+    /* ── Empty State ── */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .empty-state-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #4a5568;
+        margin-top: 16px;
+    }
+
+    .empty-state-sub {
+        font-size: 13px;
+        color: #a0aec0;
+        margin-top: 6px;
+    }
+
+    /* ── Pagination ── */
+    .crm-pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .pagination-info { font-size: 13px; color: #718096; }
+
+    .pagination-controls {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex-wrap: wrap;
+    }
+
+    .pagination-btn {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 7px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #4a5568;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        text-decoration: none;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+
+    .pagination-btn:hover {
+        background: #f7f8fa;
+        color: var(--crm-accent);
+        border-color: var(--crm-accent);
+    }
+
+    .pagination-btn.active {
+        background: var(--crm-accent);
+        color: white;
+        border-color: var(--crm-accent);
+    }
+
+    /* ── Bulk Bar ── */
+    .bulk-action-bar {
+        position: fixed;
+        bottom: -80px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #1a202c;
+        padding: 14px 28px;
+        border-radius: 14px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        z-index: 9999;
+        transition: bottom 0.3s ease;
+    }
+
+    .bulk-action-bar.show { bottom: 30px; }
+
+    .bulk-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        background: rgba(255,255,255,0.15);
+        color: white;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+
+    .bulk-btn:hover { background: rgba(255,255,255,0.25); color: white; }
+    .bulk-btn.green { background: rgba(37,211,102,0.3); }
+    .bulk-btn.green:hover { background: #25D366; }
+    .bulk-btn.blue { background: rgba(41,128,185,0.3); }
+    .bulk-btn.blue:hover { background: #2980b9; }
+
+    /* ── Checkbox ── */
+    .form-check-input:checked {
+        background-color: var(--crm-accent);
+        border-color: var(--crm-accent);
+    }
+
+    .form-check-input:focus {
+        box-shadow: 0 0 0 3px rgba(230,126,34,0.15);
+        border-color: var(--crm-accent);
+    }
+
+    /* ── Utility ── */
+    .fs-11 { font-size: 11px; }
+
+    @media (max-width: 768px) {
+        .status-tab { padding: 10px 14px; font-size: 12px; }
+        .crm-pagination { flex-direction: column; align-items: center; }
+    }
+
+</style>
+{% endblock extra_css %}
+
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    // ══════════════════════════════
+    // CHECKBOX + BULK BAR
+    // ══════════════════════════════
+    const selectAll    = document.getElementById('selectAll');
+    const checkboxes   = document.querySelectorAll('.lead-checkbox');
+    const bulkBar      = document.getElementById('bulkActionBar');
+    const selectedCount = document.getElementById('selectedCount');
+
+    if (selectAll) {
+        selectAll.addEventListener('change', function () {
+            checkboxes.forEach(cb => cb.checked = this.checked);
+            updateBulkBar();
+        });
+    }
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', function () {
+            updateBulkBar();
+            const checked = document.querySelectorAll(
+                '.lead-checkbox:checked'
+            ).length;
+            if (selectAll) {
+                selectAll.checked = checked === checkboxes.length;
+                selectAll.indeterminate =
+                    checked > 0 && checked < checkboxes.length;
+            }
+        });
+    });
+
+    function updateBulkBar() {
+        const checked = document.querySelectorAll('.lead-checkbox:checked');
+        if (checked.length > 0) {
+            bulkBar.classList.add('show');
+            selectedCount.textContent = checked.length;
+        } else {
+            bulkBar.classList.remove('show');
+        }
+    }
+
+    window.clearSelection = function () {
+        if (selectAll) {
+            selectAll.checked = false;
+            selectAll.indeterminate = false;
+        }
+        checkboxes.forEach(cb => cb.checked = false);
+        bulkBar.classList.remove('show');
+    };
+
+    // ══════════════════════════════
+    // ROW CLICK → NAVIGATE
+    // ══════════════════════════════
+    document.querySelectorAll('.lead-row').forEach(row => {
+        row.addEventListener('click', function (e) {
+            if (e.target.closest('td[onclick]')) return;
+            if (e.target.closest('.action-btn')) return;
+            if (e.target.closest('.lead-checkbox')) return;
+            if (e.target.closest('a')) return;
+
+            const leadId = this.dataset.leadId;
+            if (leadId) {
+                window.location.href = '/crm/leads/' + leadId + '/';
+            }
+        });
+    });
+
+    // ══════════════════════════════
+    // LIVE SEARCH
+    // ══════════════════════════════
+    const searchInput = document.getElementById('searchInput');
+
+    if (searchInput) {
+        let searchTimer;
+
+        searchInput.addEventListener('input', function () {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(function () {
+                document.getElementById('filterForm').submit();
+            }, 600);
+        });
+
+        searchInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                clearTimeout(searchTimer);
+                document.getElementById('filterForm').submit();
+            }
+        });
+    }
+
+    // ══════════════════════════════
+    // CLEAR SEARCH
+    // ══════════════════════════════
+    window.clearSearch = function () {
+        const input = document.getElementById('searchInput');
+        if (input) {
+            input.value = '';
+            document.getElementById('filterForm').submit();
+        }
+    };
+
+});
+</script>
+{% endblock extra_js %}

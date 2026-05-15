@@ -1,0 +1,880 @@
+{% extends 'crm/base.html' %}
+
+{% block title %}{{ lead.name }} — Lead Detail{% endblock %}
+
+{% block page_title %}Lead Detail{% endblock %}
+{% block page_subtitle %}Viewing full profile of {{ lead.name }}{% endblock %}
+
+{% block crm_content %}
+
+<!-- ══════════════════════════════════════
+     BREADCRUMB
+══════════════════════════════════════ -->
+<div class="crm-breadcrumb mb-4">
+    <i class="bi bi-house-fill"></i>
+    <a href="{% url 'lead_dashboard' %}">Home</a>
+    <i class="bi bi-chevron-right" style="font-size:10px;"></i>
+    <a href="{% url 'lead_list' %}">All Leads</a>
+    <i class="bi bi-chevron-right" style="font-size:10px;"></i>
+    <span style="color:#2d3748; font-weight:600;">
+        {{ lead.name }}
+    </span>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PAGE HEADER
+══════════════════════════════════════ -->
+<div class="crm-page-header mb-4">
+
+    <!-- Left: Name + Status -->
+    <div class="crm-page-header-left d-flex align-items-center gap-3">
+
+        <!-- Avatar -->
+        <div style="
+            width: 54px;
+            height: 54px;
+            background: rgba(230,126,34,0.12);
+            color: #e67e22;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 700;
+            flex-shrink: 0;">
+            {{ lead.name|first|upper }}
+        </div>
+
+        <div>
+            <h1 style="font-size:22px; font-weight:700; 
+                       color:#1a202c; margin:0;">
+                {{ lead.name }}
+            </h1>
+            <div class="d-flex align-items-center gap-2 mt-1">
+
+                <!-- Status Badge -->
+                {% if lead.status == "new" %}
+                    <span class="status-badge new">
+                        <i class="bi bi-circle-fill" style="font-size:7px;"></i>
+                        New
+                    </span>
+                {% elif lead.status == "contacted" %}
+                    <span class="status-badge contacted">
+                        <i class="bi bi-circle-fill" style="font-size:7px;"></i>
+                        Contacted
+                    </span>
+                {% elif lead.status == "callback" %}
+                    <span class="status-badge callback">
+                        <i class="bi bi-circle-fill" style="font-size:7px;"></i>
+                        Callback
+                    </span>
+                {% elif lead.status == "quotation_sent" %}
+                    <span class="status-badge quotation">
+                        <i class="bi bi-circle-fill" style="font-size:7px;"></i>
+                        Quotation Sent
+                    </span>
+                {% elif lead.status == "converted" %}
+                    <span class="status-badge converted">
+                        <i class="bi bi-circle-fill" style="font-size:7px;"></i>
+                        Converted
+                    </span>
+                {% elif lead.status == "closed" %}
+                    <span class="status-badge closed">
+                        <i class="bi bi-circle-fill" style="font-size:7px;"></i>
+                        Closed
+                    </span>
+                {% endif %}
+
+                <!-- Priority Badge -->
+                {% if lead.priority == "high" %}
+                    <span class="priority-badge high">
+                        <i class="bi bi-arrow-up-circle-fill"></i>
+                        High Priority
+                    </span>
+                {% elif lead.priority == "medium" %}
+                    <span class="priority-badge medium">
+                        <i class="bi bi-dash-circle-fill"></i>
+                        Medium Priority
+                    </span>
+                {% elif lead.priority == "low" %}
+                    <span class="priority-badge low">
+                        <i class="bi bi-arrow-down-circle-fill"></i>
+                        Low Priority
+                    </span>
+                {% endif %}
+
+                <!-- Lead ID -->
+                <span class="fs-12 text-muted">
+                    #{{ lead.id }}
+                </span>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Right: Action Buttons -->
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+
+        <!-- WhatsApp -->
+        <a href="https://wa.me/91{{ lead.phone }}"
+           target="_blank"
+           class="btn-crm-secondary"
+           style="padding:8px 16px; font-size:13px;
+                  color:#25D366; border-color:#25D366;">
+            <i class="bi bi-whatsapp"></i>
+            WhatsApp
+        </a>
+
+        <!-- Call -->
+        <a href="tel:{{ lead.phone }}"
+           class="btn-crm-secondary"
+           style="padding:8px 16px; font-size:13px;">
+            <i class="bi bi-telephone-fill"></i>
+            Call
+        </a>
+
+        <!-- Edit Lead -->
+        <a href="{% url 'lead_update' lead.id %}"
+           class="btn-crm-primary">
+            <i class="bi bi-pencil-fill"></i>
+            Edit Lead
+        </a>
+
+    </div>
+
+</div>
+<!-- END PAGE HEADER -->
+
+
+<!-- ══════════════════════════════════════
+     MAIN CONTENT GRID
+══════════════════════════════════════ -->
+<div class="row g-4">
+
+    <!-- ── LEFT COLUMN ── -->
+    <div class="col-12 col-xl-8">
+
+        <!-- ── CONTACT INFORMATION ── -->
+        <div class="crm-card mb-4">
+            <div class="crm-card-header">
+                <h5 class="crm-card-title">
+                    <i class="bi bi-person-fill me-2 text-crm-accent"></i>
+                    Contact Information
+                </h5>
+            </div>
+            <div class="crm-card-body">
+                <div class="row g-4">
+
+                    <!-- Phone -->
+                    <div class="col-12 col-sm-6">
+                        <div class="detail-field">
+                            <div class="detail-field-label">
+                                <i class="bi bi-telephone-fill"></i>
+                                Primary Phone
+                            </div>
+                            <div class="detail-field-value">
+                                <a href="tel:{{ lead.phone }}"
+                                   class="text-decoration-none"
+                                   style="color:#2d3748; font-weight:600;">
+                                    {{ lead.phone }}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alternate Phone -->
+                    <div class="col-12 col-sm-6">
+                        <div class="detail-field">
+                            <div class="detail-field-label">
+                                <i class="bi bi-telephone"></i>
+                                Alternate Phone
+                            </div>
+                            <div class="detail-field-value">
+                                {% if lead.alternate_phone %}
+                                    <a href="tel:{{ lead.alternate_phone }}"
+                                       class="text-decoration-none"
+                                       style="color:#2d3748; font-weight:600;">
+                                        {{ lead.alternate_phone }}
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted fs-13">
+                                        Not provided
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-12 col-sm-6">
+                        <div class="detail-field">
+                            <div class="detail-field-label">
+                                <i class="bi bi-envelope-fill"></i>
+                                Email Address
+                            </div>
+                            <div class="detail-field-value">
+                                {% if lead.email %}
+                                    <a href="mailto:{{ lead.email }}"
+                                       class="text-decoration-none"
+                                       style="color:#2d3748; font-weight:600;">
+                                        {{ lead.email }}
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted fs-13">
+                                        Not provided
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="col-12 col-sm-6">
+                        <div class="detail-field">
+                            <div class="detail-field-label">
+                                <i class="bi bi-geo-alt-fill"></i>
+                                Project Location
+                            </div>
+                            <div class="detail-field-value">
+                                {{ lead.location|default:"Not provided" }}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- END CONTACT INFORMATION -->
+
+
+        <!-- ── ROOMS / PROJECT DETAILS ── -->
+        <div class="crm-card mb-4">
+            <div class="crm-card-header">
+                <h5 class="crm-card-title">
+                    <i class="bi bi-house-fill me-2 text-crm-accent"></i>
+                    Project Details
+                </h5>
+            </div>
+            <div class="crm-card-body">
+
+                <!-- Rooms -->
+                <div class="detail-field mb-3">
+                    <div class="detail-field-label">
+                        <i class="bi bi-layout-text-window"></i>
+                        Selected Rooms / Modules
+                    </div>
+                    <div class="mt-2">
+                        {% if lead.rooms %}
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for room in lead.rooms.split %}
+                                    <span style="
+                                        background: rgba(230,126,34,0.1);
+                                        color: #e67e22;
+                                        padding: 5px 12px;
+                                        border-radius: 20px;
+                                        font-size: 13px;
+                                        font-weight: 500;
+                                        border: 1px solid rgba(230,126,34,0.2);">
+                                        <i class="bi bi-door-open me-1"></i>
+                                        {{ room }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <span class="text-muted fs-13">
+                                No rooms selected
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- END PROJECT DETAILS -->
+
+
+        <!-- ── NOTES ── -->
+        <div class="crm-card mb-4">
+            <div class="crm-card-header">
+                <h5 class="crm-card-title">
+                    <i class="bi bi-sticky-fill me-2 text-crm-accent"></i>
+                    Notes
+                </h5>
+                <a href="{% url 'lead_update' lead.id %}"
+                   class="btn-crm-secondary"
+                   style="padding:6px 14px; font-size:12px;">
+                    <i class="bi bi-pencil"></i>
+                    Edit Notes
+                </a>
+            </div>
+            <div class="crm-card-body">
+                {% if lead.notes %}
+                    <div style="
+                        background: #fffbeb;
+                        border-left: 4px solid #f39c12;
+                        border-radius: 8px;
+                        padding: 16px 18px;
+                        font-size: 14px;
+                        color: #2d3748;
+                        line-height: 1.7;
+                        white-space: pre-wrap;">
+                        {{ lead.notes }}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-sticky"
+                           style="font-size:36px; color:#cbd5e0;">
+                        </i>
+                        <div class="mt-2 text-muted fs-13">
+                            No notes added yet.
+                            <a href="{% url 'lead_update' lead.id %}"
+                               class="text-crm-accent text-decoration-none">
+                                Add a note
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- END NOTES -->
+
+
+        <!-- ── STATUS TIMELINE ── -->
+        <div class="crm-card">
+            <div class="crm-card-header">
+                <h5 class="crm-card-title">
+                    <i class="bi bi-diagram-3-fill me-2 text-crm-accent"></i>
+                    Lead Journey
+                </h5>
+            </div>
+            <div class="crm-card-body">
+                <div class="lead-timeline">
+
+                    <!-- New -->
+                    <div class="timeline-step
+                        {% if lead.status == 'new' or lead.status == 'contacted' or lead.status == 'callback' or lead.status == 'quotation_sent' or lead.status == 'converted' or lead.status == 'closed' %}
+                            completed
+                        {% endif %}
+                        {% if lead.status == 'new' %}active{% endif %}">
+                        <div class="timeline-dot">
+                            <i class="bi bi-person-plus-fill"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">New Lead</div>
+                            <div class="timeline-sub">Enquiry received</div>
+                        </div>
+                    </div>
+
+                    <!-- Contacted -->
+                    <div class="timeline-step
+                        {% if lead.status == 'contacted' or lead.status == 'callback' or lead.status == 'quotation_sent' or lead.status == 'converted' or lead.status == 'closed' %}
+                            completed
+                        {% endif %}
+                        {% if lead.status == 'contacted' %}active{% endif %}">
+                        <div class="timeline-dot">
+                            <i class="bi bi-telephone-fill"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Contacted</div>
+                            <div class="timeline-sub">First call made</div>
+                        </div>
+                    </div>
+
+                    <!-- Callback -->
+                    <div class="timeline-step
+                        {% if lead.status == 'callback' or lead.status == 'quotation_sent' or lead.status == 'converted' or lead.status == 'closed' %}
+                            completed
+                        {% endif %}
+                        {% if lead.status == 'callback' %}active{% endif %}">
+                        <div class="timeline-dot">
+                            <i class="bi bi-calendar-check-fill"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Callback</div>
+                            <div class="timeline-sub">Follow-up scheduled</div>
+                        </div>
+                    </div>
+
+                    <!-- Quotation Sent -->
+                    <div class="timeline-step
+                        {% if lead.status == 'quotation_sent' or lead.status == 'converted' or lead.status == 'closed' %}
+                            completed
+                        {% endif %}
+                        {% if lead.status == 'quotation_sent' %}active{% endif %}">
+                        <div class="timeline-dot">
+                            <i class="bi bi-file-earmark-text-fill"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Quotation Sent</div>
+                            <div class="timeline-sub">Awaiting decision</div>
+                        </div>
+                    </div>
+
+                    <!-- Converted -->
+                    <div class="timeline-step
+                        {% if lead.status == 'converted' %}
+                            completed active
+                        {% endif %}
+                        {% if lead.status == 'closed' %}
+                            completed
+                        {% endif %}">
+                        <div class="timeline-dot">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Converted</div>
+                            <div class="timeline-sub">Project confirmed</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- END STATUS TIMELINE -->
+
+
+    </div>
+    <!-- END LEFT COLUMN -->
+
+
+    <!-- ── RIGHT COLUMN ── -->
+    <div class="col-12 col-xl-4">
+
+        <!-- ── LEAD STATUS CARD ── -->
+        <div class="crm-card mb-4">
+            <div class="crm-card-header">
+                <h5 class="crm-card-title">
+                    <i class="bi bi-sliders me-2 text-crm-accent"></i>
+                    Lead Status
+                </h5>
+            </div>
+            <div class="crm-card-body">
+
+                <!-- Current Status -->
+                <div class="detail-field mb-3">
+                    <div class="detail-field-label">Current Status</div>
+                    <div class="mt-1">
+                        {% if lead.status == "new" %}
+                            <span class="status-badge new" style="font-size:13px; padding:6px 14px;">
+                                <i class="bi bi-circle-fill" style="font-size:8px;"></i>
+                                New
+                            </span>
+                        {% elif lead.status == "contacted" %}
+                            <span class="status-badge contacted" style="font-size:13px; padding:6px 14px;">
+                                <i class="bi bi-circle-fill" style="font-size:8px;"></i>
+                                Contacted
+                            </span>
+                        {% elif lead.status == "callback" %}
+                            <span class="status-badge callback" style="font-size:13px; padding:6px 14px;">
+                                <i class="bi bi-circle-fill" style="font-size:8px;"></i>
+                                Callback
+                            </span>
+                        {% elif lead.status == "quotation_sent" %}
+                            <span class="status-badge quotation" style="font-size:13px; padding:6px 14px;">
+                                <i class="bi bi-circle-fill" style="font-size:8px;"></i>
+                                Quotation Sent
+                            </span>
+                        {% elif lead.status == "converted" %}
+                            <span class="status-badge converted" style="font-size:13px; padding:6px 14px;">
+                                <i class="bi bi-circle-fill" style="font-size:8px;"></i>
+                                Converted
+                            </span>
+                        {% elif lead.status == "closed" %}
+                            <span class="status-badge closed" style="font-size:13px; padding:6px 14px;">
+                                <i class="bi bi-circle-fill" style="font-size:8px;"></i>
+                                Closed
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Priority -->
+                <div class="detail-field mb-3">
+                    <div class="detail-field-label">Priority Level</div>
+                    <div class="mt-1">
+                        {% if lead.priority == "high" %}
+                            <span class="priority-badge high" style="font-size:13px; padding:6px 14px;">
+                                <i class="bi bi-arrow-up-circle-fill"></i>
+                                High Priority
+                            </span>
+                        {% elif lead.priority == "medium" %}
+                            <span class="priority-badge medium" style="font-size:13px; padding:6px 14px;">
+                                <i class="bi bi-dash-circle-fill"></i>
+                                Medium Priority
+                            </span>
+                        {% elif lead.priority == "low" %}
+                            <span class="priority-badge low" style="font-size:13px; padding:6px 14px;">
+                                <i class="bi bi-arrow-down-circle-fill"></i>
+                                Low Priority
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Edit Button -->
+                <a href="{% url 'lead_update' lead.id %}"
+                   class="btn-crm-primary w-100 justify-content-center mt-2">
+                    <i class="bi bi-pencil-fill"></i>
+                    Update Status / Priority
+                </a>
+
+            </div>
+        </div>
+        <!-- END LEAD STATUS CARD -->
+
+
+        <!-- ── CALLBACK DATE ── -->
+        <div class="crm-card mb-4">
+            <div class="crm-card-header">
+                <h5 class="crm-card-title">
+                    <i class="bi bi-calendar-event-fill me-2 text-crm-accent"></i>
+                    Callback Schedule
+                </h5>
+            </div>
+            <div class="crm-card-body">
+                {% if lead.callback_date %}
+                    <div style="
+                        background: #ebf8ff;
+                        border-radius: 10px;
+                        padding: 16px;
+                        text-align: center;">
+                        <i class="bi bi-calendar-check-fill"
+                           style="font-size:28px; color:#2980b9;">
+                        </i>
+                        <div class="fw-700 mt-2"
+                             style="font-size:18px; color:#1a202c;">
+                            {{ lead.callback_date|date:"d M Y" }}
+                        </div>
+                        <div class="fs-13 text-muted mt-1">
+                            {{ lead.callback_date|date:"l, h:i A" }}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center py-3">
+                        <i class="bi bi-calendar-x"
+                           style="font-size:36px; color:#cbd5e0;">
+                        </i>
+                        <div class="mt-2 text-muted fs-13">
+                            No callback scheduled.
+                            <a href="{% url 'lead_update' lead.id %}"
+                               class="text-crm-accent text-decoration-none">
+                                Schedule one
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- END CALLBACK DATE -->
+
+
+        <!-- ── QUICK ACTIONS ── -->
+        <div class="crm-card mb-4">
+            <div class="crm-card-header">
+                <h5 class="crm-card-title">
+                    <i class="bi bi-lightning-fill me-2 text-crm-accent"></i>
+                    Quick Actions
+                </h5>
+            </div>
+            <div class="crm-card-body d-flex flex-column gap-2">
+
+                <!-- Call -->
+                <a href="tel:{{ lead.phone }}"
+                   class="quick-action-btn blue">
+                    <i class="bi bi-telephone-fill"></i>
+                    <span>Call {{ lead.name }}</span>
+                    <i class="bi bi-chevron-right ms-auto"></i>
+                </a>
+
+                <!-- WhatsApp -->
+                <a href="https://wa.me/91{{ lead.phone }}"
+                   target="_blank"
+                   class="quick-action-btn green">
+                    <i class="bi bi-whatsapp"></i>
+                    <span>Send WhatsApp</span>
+                    <i class="bi bi-chevron-right ms-auto"></i>
+                </a>
+
+                <!-- Email -->
+                {% if lead.email %}
+                <a href="mailto:{{ lead.email }}"
+                   class="quick-action-btn orange">
+                    <i class="bi bi-envelope-fill"></i>
+                    <span>Send Email</span>
+                    <i class="bi bi-chevron-right ms-auto"></i>
+                </a>
+                {% endif %}
+
+                <!-- Edit Lead -->
+                <a href="{% url 'lead_update' lead.id %}"
+                   class="quick-action-btn purple">
+                    <i class="bi bi-pencil-fill"></i>
+                    <span>Edit Lead</span>
+                    <i class="bi bi-chevron-right ms-auto"></i>
+                </a>
+
+            </div>
+        </div>
+        <!-- END QUICK ACTIONS -->
+
+
+        <!-- ── LEAD META INFO ── -->
+        <div class="crm-card">
+            <div class="crm-card-header">
+                <h5 class="crm-card-title">
+                    <i class="bi bi-info-circle-fill me-2 text-crm-accent"></i>
+                    Lead Information
+                </h5>
+            </div>
+            <div class="crm-card-body">
+
+                <div class="meta-row">
+                    <span class="meta-label">Lead ID</span>
+                    <span class="meta-value">#{{ lead.id }}</span>
+                </div>
+
+                <div class="meta-row">
+                    <span class="meta-label">Created</span>
+                    <span class="meta-value">
+                        {{ lead.created_at|date:"d M Y" }}
+                    </span>
+                </div>
+
+                <div class="meta-row">
+                    <span class="meta-label">Created Time</span>
+                    <span class="meta-value">
+                        {{ lead.created_at|date:"h:i A" }}
+                    </span>
+                </div>
+
+                <div class="meta-row">
+                    <span class="meta-label">Last Updated</span>
+                    <span class="meta-value">
+                        {{ lead.updated_at|date:"d M Y" }}
+                    </span>
+                </div>
+
+                <div class="meta-row" style="border-bottom:none;">
+                    <span class="meta-label">Updated Time</span>
+                    <span class="meta-value">
+                        {{ lead.updated_at|date:"h:i A" }}
+                    </span>
+                </div>
+
+            </div>
+        </div>
+        <!-- END LEAD META INFO -->
+
+
+    </div>
+    <!-- END RIGHT COLUMN -->
+
+</div>
+<!-- END MAIN CONTENT GRID -->
+
+
+{% endblock crm_content %}
+
+
+{% block extra_css %}
+<style>
+
+    /* ── Detail Field ── */
+    .detail-field-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #a0aec0;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .detail-field-value {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1a202c;
+    }
+
+    /* ── Meta Row ── */
+    .meta-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f2f5;
+    }
+
+    .meta-label {
+        font-size: 12px;
+        color: #718096;
+        font-weight: 500;
+    }
+
+    .meta-value {
+        font-size: 13px;
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    /* ── Quick Action Buttons ── */
+    .quick-action-btn {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .quick-action-btn:hover {
+        transform: translateX(3px);
+    }
+
+    .quick-action-btn i:first-child {
+        width: 20px;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    .quick-action-btn.blue {
+        background: #ebf8ff;
+        color: #2980b9;
+    }
+
+    .quick-action-btn.blue:hover {
+        background: #bee3f8;
+        color: #2980b9;
+    }
+
+    .quick-action-btn.green {
+        background: #f0fff4;
+        color: #25D366;
+    }
+
+    .quick-action-btn.green:hover {
+        background: #c6f6d5;
+        color: #25D366;
+    }
+
+    .quick-action-btn.orange {
+        background: #fff7ed;
+        color: #e67e22;
+    }
+
+    .quick-action-btn.orange:hover {
+        background: #fde8cc;
+        color: #e67e22;
+    }
+
+    .quick-action-btn.purple {
+        background: #faf5ff;
+        color: #8e44ad;
+    }
+
+    .quick-action-btn.purple:hover {
+        background: #e9d8fd;
+        color: #8e44ad;
+    }
+
+    /* ── Lead Timeline ── */
+    .lead-timeline {
+        display: flex;
+        align-items: flex-start;
+        gap: 0;
+        position: relative;
+        overflow-x: auto;
+        padding-bottom: 8px;
+    }
+
+    .timeline-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        position: relative;
+        min-width: 80px;
+    }
+
+    /* Connector Line */
+    .timeline-step::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        width: 100%;
+        height: 2px;
+        background: #e2e8f0;
+        z-index: 0;
+    }
+
+    .timeline-step:last-child::before {
+        display: none;
+    }
+
+    .timeline-step.completed::before {
+        background: #e67e22;
+    }
+
+    /* Dot */
+    .timeline-dot {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #f0f2f5;
+        border: 2px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        color: #a0aec0;
+        position: relative;
+        z-index: 1;
+        transition: all 0.3s;
+    }
+
+    .timeline-step.completed .timeline-dot {
+        background: rgba(230,126,34,0.1);
+        border-color: #e67e22;
+        color: #e67e22;
+    }
+
+    .timeline-step.active .timeline-dot {
+        background: #e67e22;
+        border-color: #e67e22;
+        color: white;
+        box-shadow: 0 0 0 4px rgba(230,126,34,0.2);
+    }
+
+    /* Text */
+    .timeline-content {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .timeline-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .timeline-step.completed .timeline-title,
+    .timeline-step.active .timeline-title {
+        color: #e67e22;
+    }
+
+    .timeline-sub {
+        font-size: 10px;
+        color: #a0aec0;
+        margin-top: 2px;
+    }
+
+</style>
+{% endblock extra_css %}

@@ -1,0 +1,1579 @@
+{% extends 'crm/base.html' %}
+
+{% block title %}Bulk Campaigns — HomeDen CRM{% endblock %}
+{% block page_title %}Bulk Campaigns{% endblock %}
+{% block page_subtitle %}Send WhatsApp & Email campaigns to leads{% endblock %}
+
+{% block crm_content %}
+
+<div class="crm-breadcrumb mb-4">
+    <i class="bi bi-house-fill"></i>
+    <a href="{% url 'lead_dashboard' %}">Home</a>
+    <i class="bi bi-chevron-right" style="font-size:10px;"></i>
+    <span style="color:#2d3748; font-weight:600;">Bulk Campaigns</span>
+</div>
+
+<!-- PAGE HEADER -->
+<div class="bc-page-header mb-4">
+    <div class="bc-page-header-left">
+        <div class="bc-header-icon bg-primary">
+            <i class="bi bi-megaphone-fill"></i>
+        </div>
+        <div>
+            <h1 class="bc-header-title">Bulk Campaigns</h1>
+            <p class="bc-header-subtitle">Send personalized WhatsApp & Email messages to multiple leads</p>
+        </div>
+    </div>
+    <div class="bc-header-actions">
+        <a href="{% url 'lead_list' %}" class="btn btn-secondary btn-lg">
+            <i class="bi bi-people-fill"></i> All Leads
+        </a>
+        <a href="{% url 'lead_dashboard' %}" class="btn btn-primary btn-lg">
+            <i class="bi bi-grid-1x2-fill"></i> Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- WIZARD STEPS -->
+<div class="bc-wizard-card mb-4">
+    <div class="bc-wizard-steps">
+
+        <div class="bc-step bc-step-active" id="bcStepIndicator1">
+            <div class="bc-step-bubble">
+                <span class="bc-step-num">1</span>
+                <i class="bi bi-check-lg bc-step-check"></i>
+            </div>
+            <div class="bc-step-text">
+                <span class="bc-step-title">Template</span>
+                <span class="bc-step-sub">Choose template</span>
+            </div>
+        </div>
+
+        <div class="bc-step-line" id="bcLine1"></div>
+
+        <div class="bc-step" id="bcStepIndicator2">
+            <div class="bc-step-bubble">
+                <span class="bc-step-num">2</span>
+                <i class="bi bi-check-lg bc-step-check"></i>
+            </div>
+            <div class="bc-step-text">
+                <span class="bc-step-title">Message</span>
+                <span class="bc-step-sub">Customize content</span>
+            </div>
+        </div>
+
+        <div class="bc-step-line" id="bcLine2"></div>
+
+        <div class="bc-step" id="bcStepIndicator3">
+            <div class="bc-step-bubble">
+                <span class="bc-step-num">3</span>
+                <i class="bi bi-check-lg bc-step-check"></i>
+            </div>
+            <div class="bc-step-text">
+                <span class="bc-step-title">Recipients</span>
+                <span class="bc-step-sub">Select leads</span>
+            </div>
+        </div>
+
+        <div class="bc-step-line" id="bcLine3"></div>
+
+        <div class="bc-step" id="bcStepIndicator4">
+            <div class="bc-step-bubble">
+                <span class="bc-step-num">4</span>
+                <i class="bi bi-check-lg bc-step-check"></i>
+            </div>
+            <div class="bc-step-text">
+                <span class="bc-step-title">Send</span>
+                <span class="bc-step-sub">Launch campaign</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="bc-layout">
+
+    <!-- LEFT COLUMN -->
+    <div class="bc-col-main">
+
+        <!-- STEP 1: TEMPLATES -->
+        <div class="bc-section-card" id="bcStep1">
+            <div class="bc-section-head">
+                <div class="bc-section-head-left">
+                    <div class="bc-section-icon">
+                        <i class="bi bi-file-earmark-text-fill"></i>
+                    </div>
+                    <div>
+                        <h5 class="bc-section-title">Choose Template</h5>
+                        <p class="bc-section-desc">Select a pre-built message template</p>
+                    </div>
+                </div>
+                <div class="bc-badge-count">
+                    <i class="bi bi-collection-fill me-1"></i>
+                    {{ templates|length }} Templates
+                </div>
+            </div>
+            <div class="bc-section-body">
+                <div class="bc-template-grid">
+                    {% for template in templates %}
+                    <div class="bc-tmpl-card"
+                         data-template-id="{{ template.id }}"
+                         onclick="bcSelectTemplate({{ template.id }}, this)">
+                        <div class="bc-tmpl-icon bc-tmpl-icon--{% if template.category == 'festival' %}festival{% elif template.category == 'offer' %}offer{% elif template.category == 'launch' %}launch{% elif template.category == 'followup' %}followup{% else %}custom{% endif %}">
+                            {% if template.category == "festival" %}🪔
+                            {% elif template.category == "offer" %}💰
+                            {% elif template.category == "launch" %}🚀
+                            {% elif template.category == "followup" %}📞
+                            {% else %}📝{% endif %}
+                        </div>
+                        <div class="bc-tmpl-info">
+                            <div class="bc-tmpl-name">{{ template.name }}</div>
+                            <div class="bc-tmpl-cat">
+                                <span class="bc-cat-pill bc-cat-pill--{% if template.category == 'festival' %}festival{% elif template.category == 'offer' %}offer{% elif template.category == 'launch' %}launch{% elif template.category == 'followup' %}followup{% else %}custom{% endif %}">
+                                    {{ template.get_category_display }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="bc-tmpl-check">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="bc-empty-state">
+                        <i class="bi bi-file-earmark-x"></i>
+                        <p>No templates found.</p>
+                        <span>Create templates in Django Admin</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: EDIT MESSAGE -->
+        <div class="bc-section-card" id="bcStep2">
+            <div class="bc-section-head">
+                <div class="bc-section-head-left">
+                    <div class="bc-section-icon bc-section-icon--blue">
+                        <i class="bi bi-pencil-fill"></i>
+                    </div>
+                    <div>
+                        <h5 class="bc-section-title">Customize Message</h5>
+                        <p class="bc-section-desc">Edit and personalize your campaign message</p>
+                    </div>
+                </div>
+                <div class="bc-placeholder-tags">
+                    <span class="bc-ph-tag" onclick="bcInsertPlaceholder('{name}')">{name}</span>
+                    <span class="bc-ph-tag" onclick="bcInsertPlaceholder('{phone}')">{phone}</span>
+                    <span class="bc-ph-tag" onclick="bcInsertPlaceholder('{location}')">{location}</span>
+                </div>
+            </div>
+            <div class="bc-section-body">
+                <div class="bc-form-row">
+                    <div class="bc-form-group">
+                        <label class="bc-form-label">
+                            <i class="bi bi-tag-fill"></i> Campaign Name
+                        </label>
+                        <input type="text"
+                               id="bcCampaignName"
+                               class="bc-form-input"
+                               placeholder="e.g. Diwali 2026 Campaign">
+                    </div>
+                    <div class="bc-form-group" id="bcEmailSubjectRow">
+                        <label class="bc-form-label">
+                            <i class="bi bi-envelope-fill"></i> Email Subject
+                        </label>
+                        <input type="text"
+                               id="bcEmailSubject"
+                               class="bc-form-input"
+                               placeholder="Enter email subject line...">
+                    </div>
+                </div>
+                <div class="bc-form-group">
+                    <div class="bc-textarea-label-row">
+                        <label class="bc-form-label">
+                            <i class="bi bi-chat-text-fill"></i> Message Body
+                        </label>
+                        <div class="bc-textarea-actions">
+                            <button class="bc-icon-btn" onclick="bcClearMessage()" title="Clear">
+                                <i class="bi bi-x-circle"></i>
+                            </button>
+                            <button class="bc-icon-btn" onclick="bcCopyMessage()" title="Copy">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <textarea id="bcMessageBody"
+                              class="bc-form-textarea"
+                              rows="10"
+                              placeholder="Type your message here...&#10;&#10;Use {name}, {phone}, {location} for personalization"></textarea>
+                    <div class="bc-textarea-footer">
+                        <span class="bc-hint">
+                            <i class="bi bi-magic"></i>
+                            Placeholders are auto-replaced per lead
+                        </span>
+                        <span class="bc-char-count" id="bcCharCount">0 characters</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: SELECT LEADS -->
+        <div class="bc-section-card" id="bcStep3">
+            <div class="bc-section-head">
+                <div class="bc-section-head-left">
+                    <div class="bc-section-icon bc-section-icon--green">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div>
+                        <h5 class="bc-section-title">Select Recipients</h5>
+                        <p class="bc-section-desc">Choose leads to include in this campaign</p>
+                    </div>
+                </div>
+                <div class="bc-lead-sel-actions">
+                    <span class="bc-sel-count" id="bcSelectedLeadCount">0 selected</span>
+                    <button class="bc-btn bc-btn-xs bc-btn-outline" onclick="bcSelectAllLeads()">
+                        <i class="bi bi-check2-all"></i> Select All
+                    </button>
+                    <button class="bc-btn bc-btn-xs bc-btn-outline" onclick="bcDeselectAllLeads()">
+                        <i class="bi bi-x-lg"></i> Clear
+                    </button>
+                </div>
+            </div>
+
+            <div class="bc-filter-bar">
+                <div class="bc-search-wrap">
+                    <i class="bi bi-search bc-search-icon"></i>
+                    <input type="text"
+                           id="bcLeadSearch"
+                           class="bc-search-input"
+                           placeholder="Search by name, phone, email..."
+                           onkeyup="bcFilterLeadTable()">
+                </div>
+                <select id="bcLeadStatusFilter" class="bc-filter-select" onchange="bcFilterLeadTable()">
+                    <option value="">All Status</option>
+                    <option value="new">New</option>
+                    <option value="contacted">Contacted</option>
+                    <option value="callback">Callback</option>
+                    <option value="quotation_sent">Quotation Sent</option>
+                    <option value="converted">Converted</option>
+                    <option value="closed">Closed</option>
+                </select>
+                <select id="bcLeadPriorityFilter" class="bc-filter-select" onchange="bcFilterLeadTable()">
+                    <option value="">All Priority</option>
+                    <option value="high">🔴 High</option>
+                    <option value="medium">🟡 Medium</option>
+                    <option value="low">🟢 Low</option>
+                </select>
+            </div>
+
+            <div class="bc-table-wrap">
+                <table class="bc-leads-table" id="bcLeadSelectTable">
+                    <thead>
+                        <tr>
+                            <th class="bc-th-check">
+                                <input type="checkbox"
+                                       id="bcSelectAllCampaignLeads"
+                                       class="bc-checkbox"
+                                       onchange="bcToggleAllCampaignLeads(this)">
+                            </th>
+                            <th>Lead</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for lead in leads %}
+                        <tr class="bc-lead-row"
+                            data-name="{{ lead.name|lower }}"
+                            data-phone="{{ lead.phone }}"
+                            data-email="{{ lead.email|default:'' }}"
+                            data-status="{{ lead.status }}"
+                            data-priority="{{ lead.priority }}">
+                            <td>
+                                <input type="checkbox"
+                                       class="bc-checkbox bc-lead-cb"
+                                       value="{{ lead.id }}"
+                                       data-name="{{ lead.name }}"
+                                       data-phone="{{ lead.phone }}"
+                                       data-email="{{ lead.email|default:'' }}"
+                                       data-location="{{ lead.location }}"
+                                       onchange="bcUpdateSelectedCount()">
+                            </td>
+                            <td>
+                                <div class="bc-lead-cell">
+                                    <div class="bc-lead-avatar">{{ lead.name|first|upper }}</div>
+                                    <div>
+                                        <div class="bc-lead-name">{{ lead.name }}</div>
+                                        <div class="bc-lead-id">#{{ lead.id }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="bc-td-text">{{ lead.phone }}</td>
+                            <td class="bc-td-muted">{{ lead.email|default:"—" }}</td>
+                            <td class="bc-td-text">{{ lead.location|truncatechars:16 }}</td>
+                            <td>
+                                <span class="bc-status-pill bc-status--{{ lead.status }}">
+                                    {{ lead.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bc-table-footer">
+                <span class="bc-hint">
+                    <i class="bi bi-info-circle"></i>
+                    Showing {{ leads|length }} leads
+                </span>
+                <span class="bc-sel-count-foot" id="bcTableFooterCount">0 leads selected</span>
+            </div>
+        </div>
+
+    </div><!-- END LEFT COLUMN -->
+
+    <!-- RIGHT COLUMN -->
+    <div class="bc-col-aside">
+
+        <!-- PLATFORM -->
+        <div class="bc-aside-card">
+            <div class="bc-aside-head">
+                <i class="bi bi-broadcast"></i>
+                <span>Select Platform</span>
+            </div>
+            <div class="bc-aside-body">
+                <div class="bc-platform-grid">
+                    <label class="bc-plat-option">
+                        <input type="radio" name="bcPlatform" value="whatsapp" checked>
+                        <div class="bc-plat-card bc-plat--whatsapp">
+                            <div class="bc-plat-icon"><i class="bi bi-whatsapp"></i></div>
+                            <span class="bc-plat-name">WhatsApp</span>
+                            <div class="bc-plat-tick"><i class="bi bi-check-circle-fill"></i></div>
+                        </div>
+                    </label>
+                    <label class="bc-plat-option">
+                        <input type="radio" name="bcPlatform" value="email">
+                        <div class="bc-plat-card bc-plat--email">
+                            <div class="bc-plat-icon"><i class="bi bi-envelope-fill"></i></div>
+                            <span class="bc-plat-name">Email</span>
+                            <div class="bc-plat-tick"><i class="bi bi-check-circle-fill"></i></div>
+                        </div>
+                    </label>
+                    <label class="bc-plat-option bc-plat-full">
+                        <input type="radio" name="bcPlatform" value="both">
+                        <div class="bc-plat-card bc-plat--both">
+                            <div class="bc-plat-icon"><i class="bi bi-lightning-charge-fill"></i></div>
+                            <span class="bc-plat-name">Both Platforms</span>
+                            <div class="bc-plat-tick"><i class="bi bi-check-circle-fill"></i></div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="bc-aside-card">
+            <div class="bc-aside-head">
+                <i class="bi bi-clipboard-data-fill"></i>
+                <span>Campaign Summary</span>
+            </div>
+            <div class="bc-aside-body p-0">
+                <div class="bc-summary-list">
+                    <div class="bc-sum-row">
+                        <div class="bc-sum-left">
+                            <div class="bc-sum-icon" style="background:rgba(230,126,34,0.1);color:var(--crm-accent);">
+                                <i class="bi bi-file-earmark-text"></i>
+                            </div>
+                            <span class="bc-sum-label">Template</span>
+                        </div>
+                        <span class="bc-sum-val" id="bcSummaryTemplate">Not selected</span>
+                    </div>
+                    <div class="bc-sum-row">
+                        <div class="bc-sum-left">
+                            <div class="bc-sum-icon" style="background:rgba(37,211,102,0.1);color:#25D366;">
+                                <i class="bi bi-broadcast"></i>
+                            </div>
+                            <span class="bc-sum-label">Platform</span>
+                        </div>
+                        <span class="bc-sum-val" id="bcSummaryPlatform">WhatsApp</span>
+                    </div>
+                    <div class="bc-sum-row">
+                        <div class="bc-sum-left">
+                            <div class="bc-sum-icon" style="background:rgba(41,128,185,0.1);color:#2980b9;">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <span class="bc-sum-label">Recipients</span>
+                        </div>
+                        <span class="bc-sum-val" id="bcSummaryRecipients">0 leads</span>
+                    </div>
+                    <div class="bc-sum-row" style="border:none;">
+                        <div class="bc-sum-left">
+                            <div class="bc-sum-icon" style="background:rgba(102,126,234,0.1);color:#667eea;">
+                                <i class="bi bi-activity"></i>
+                            </div>
+                            <span class="bc-sum-label">Status</span>
+                        </div>
+                        <span class="bc-status-pill bc-status--new" id="bcSummaryStatus">Ready</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PREVIEW -->
+        <div class="bc-aside-card">
+            <div class="bc-aside-head">
+                <i class="bi bi-eye-fill"></i>
+                <span>Message Preview</span>
+                <span class="bc-preview-badge">Sample Data</span>
+            </div>
+            <div class="bc-aside-body p-0">
+                <div class="bc-preview-wrap">
+                    <div class="bc-phone-mock">
+                        <div class="bc-phone-bar">
+                            <i class="bi bi-whatsapp" style="color:#25D366;"></i>
+                            <span>Rahul Sharma</span>
+                        </div>
+                        <div class="bc-msg-bubble" id="bcMessagePreview">
+                            <div class="bc-preview-ph">
+                                <i class="bi bi-chat-dots"></i>
+                                <span>Select a template to preview</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEND BUTTON -->
+        <div class="bc-send-card">
+            <button type="button"
+                    class="bc-send-btn"
+                    id="bcSendCampaignBtn"
+                    onclick="bcSendCampaign()">
+                <i class="bi bi-send-fill"></i>
+                <span>Send Campaign</span>
+            </button>
+            <div class="bc-send-note">
+                <i class="bi bi-shield-check"></i>
+                Messages are personalized for each lead individually
+            </div>
+        </div>
+
+        <!-- RECENT CAMPAIGNS -->
+        <div class="bc-aside-card">
+            <div class="bc-aside-head">
+                <i class="bi bi-clock-history"></i>
+                <span>Recent Campaigns</span>
+            </div>
+            <div class="bc-aside-body p-0">
+                {% for campaign in recent_campaigns %}
+                <div class="bc-recent-item">
+                    <div class="bc-recent-left">
+                        <div class="bc-recent-icon bc-recent-icon--{% if campaign.platform == 'whatsapp' %}wa{% elif campaign.platform == 'email' %}em{% else %}bt{% endif %}">
+                            {% if campaign.platform == "whatsapp" %}<i class="bi bi-whatsapp"></i>
+                            {% elif campaign.platform == "email" %}<i class="bi bi-envelope-fill"></i>
+                            {% else %}<i class="bi bi-lightning-fill"></i>{% endif %}
+                        </div>
+                        <div class="bc-recent-info">
+                            <div class="bc-recent-name">{{ campaign.campaign_name|truncatechars:22 }}</div>
+                            <div class="bc-recent-date">
+                                <i class="bi bi-calendar3"></i>
+                                {{ campaign.created_at|date:"d M Y, h:i A" }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bc-recent-stats">
+                        <div class="bc-recent-sent">{{ campaign.sent_count }}/{{ campaign.total_recipients }}</div>
+                        <div class="bc-recent-label">sent</div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="bc-empty-mini">
+                    <i class="bi bi-inbox"></i>
+                    <span>No campaigns sent yet</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div><!-- END RIGHT COLUMN -->
+
+</div>
+
+<!-- WHATSAPP MODAL -->
+<div class="modal fade" id="bcWhatsappModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content bc-modal-content">
+            <div class="bc-modal-head">
+                <div class="bc-modal-head-left">
+                    <div class="bc-modal-icon bc-modal-icon--wa">
+                        <i class="bi bi-whatsapp"></i>
+                    </div>
+                    <div>
+                        <h5 class="bc-modal-title">WhatsApp — Click to Send</h5>
+                        <p class="bc-modal-sub">Click each button to open WhatsApp with a pre-filled message</p>
+                    </div>
+                </div>
+                <button type="button" class="bc-modal-close" data-bs-dismiss="modal">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="bc-modal-info-bar bc-modal-info-bar--green">
+                <i class="bi bi-info-circle-fill"></i>
+                Send messages one by one. Each link opens WhatsApp with a personalized message ready to send.
+            </div>
+            <div class="modal-body p-0">
+                <div id="bcWhatsappLinksList"></div>
+            </div>
+            <div class="bc-modal-foot">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                    <i class="bi bi-x"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal fade" id="bcSuccessModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content bc-modal-content bc-success-modal">
+            <div class="bc-success-body">
+                <div class="bc-success-anim">
+                    <div class="bc-success-ring"></div>
+                    <i class="bi bi-check-lg bc-success-check"></i>
+                </div>
+                <h4 class="bc-success-title">Campaign Sent! 🎉</h4>
+                <p class="bc-success-msg" id="bcSuccessMessage">Messages sent successfully.</p>
+            </div>
+            <div class="bc-modal-foot justify-content-center">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                <a href="{% url 'bulk_campaign' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-lg"></i> New Campaign
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock crm_content %}
+
+
+{% block extra_css %}
+<style>
+
+.bc-layout, .bc-layout * { box-sizing: border-box; }
+
+/* PAGE HEADER */
+.bc-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.bc-page-header-left { display: flex; align-items: center; gap: 16px; }
+.bc-header-icon {
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--crm-accent) 0%, #f39c12 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; color: white; flex-shrink: 0;
+    
+}
+.bc-header-title {
+    font-size: 24px; font-weight: 800; color: #1a202c;
+    margin: 0; line-height: 1.2; letter-spacing: -0.5px;
+}
+.bc-header-subtitle { font-size: 13px; color: #718096; margin: 4px 0 0; }
+.bc-header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* BUTTONS */
+.bc-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 18px; border-radius: 10px; font-size: 13px;
+    font-weight: 600; cursor: pointer; text-decoration: none;
+    border: none; transition: all 0.2s; white-space: nowrap; font-family: inherit;
+}
+.bc-btn-primary {
+    background: linear-gradient(135deg, var(--crm-accent) 0%, #f39c12 100%);
+    color: white; box-shadow: 0 4px 12px rgba(230,126,34,0.3);
+}
+.bc-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(230,126,34,0.4); color: white; }
+.bc-btn-secondary {
+    background: white; color: #4a5568;
+    border: 1px solid #e2e8f0; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.bc-btn-secondary:hover { background: #f7f8fa; color: #2d3748; border-color: #cbd5e0; }
+.bc-btn-outline {
+    background: transparent; color: var(--crm-accent);
+    border: 1.5px solid rgba(230,126,34,0.3);
+}
+.bc-btn-outline:hover { background: rgba(230,126,34,0.06); border-color: var(--crm-accent); }
+.bc-btn-xs { padding: 5px 12px; font-size: 11px; border-radius: 7px; gap: 5px; }
+
+/* ══════════════════════════════════════
+   WIZARD STEPS  — fully rewritten
+══════════════════════════════════════ */
+.bc-wizard-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px 32px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    border: 1px solid #f0f2f5;
+}
+
+.bc-wizard-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 2px;
+}
+
+/* ── single step ── */
+.bc-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    cursor: default;
+}
+
+/* ── bubble ── */
+.bc-step-bubble {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    /* DEFAULT (idle) */
+    background: #f0f2f5;
+    border: 2px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.35s, border-color 0.35s, box-shadow 0.35s;
+}
+
+/* step number (shown when idle or active) */
+.bc-step-num {
+    font-size: 14px;
+    font-weight: 700;
+    color: #a0aec0;
+    line-height: 1;
+    transition: color 0.3s, opacity 0.3s;
+}
+
+/* check icon (hidden by default) */
+.bc-step-check {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+/* ── label text ── */
+.bc-step-text { display: flex; flex-direction: column; gap: 2px; }
+.bc-step-title {
+    font-size: 13px; font-weight: 600;
+    color: #a0aec0;
+    line-height: 1;
+    transition: color 0.3s;
+}
+.bc-step-sub {
+    font-size: 10px; color: #cbd5e0;
+    transition: color 0.3s;
+}
+
+/* ── ACTIVE state ── */
+.bc-step.bc-step-active .bc-step-bubble {
+    background: orange;
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(230,126,34,0.40);
+}
+.bc-step.bc-step-active .bc-step-num { color: white; }
+.bc-step.bc-step-active .bc-step-title { color: var(--crm-accent); font-weight: 700; }
+.bc-step.bc-step-active .bc-step-sub   { color: #f39c12; }
+
+/* ── DONE state ── */
+.bc-step.bc-step-done .bc-step-bubble {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(39,174,96,0.35);
+}
+/* hide number, show check */
+.bc-step.bc-step-done .bc-step-num   { opacity: 0; }
+.bc-step.bc-step-done .bc-step-check { opacity: 1; }
+.bc-step.bc-step-done .bc-step-title { color: #27ae60; font-weight: 700; }
+.bc-step.bc-step-done .bc-step-sub   { color: #68d391; }
+
+/* ── connector line ── */
+.bc-step-line {
+    flex: 1;
+    min-width: 28px;
+    max-width: 64px;
+    height: 3px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    margin: 0 10px;
+    transition: background 0.4s;
+    flex-shrink: 0;
+}
+.bc-step-line.bc-line-active {
+    background: linear-gradient(90deg, var(--crm-accent), #f39c12);
+}
+.bc-step-line.bc-line-done {
+    background: linear-gradient(90deg, #27ae60, #2ecc71);
+}
+
+/* LAYOUT */
+.bc-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 20px;
+    align-items: start;
+}
+.bc-col-aside {
+    position: sticky;
+    top: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* SECTION CARDS */
+.bc-section-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    border: 1px solid #f0f2f5;
+    overflow: hidden;
+    margin-bottom: 20px;
+    transition: box-shadow 0.2s;
+}
+.bc-section-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+.bc-section-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 22px; border-bottom: 1px solid #f0f2f5;
+    gap: 12px; flex-wrap: wrap;
+    background: linear-gradient(135deg, #fafbfc 0%, #ffffff 100%);
+}
+.bc-section-head-left { display: flex; align-items: center; gap: 14px; }
+.bc-section-icon {
+    width: 42px; height: 42px; border-radius: 12px;
+    background: linear-gradient(135deg, rgba(230,126,34,0.12), rgba(243,156,18,0.12));
+    color: var(--crm-accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+}
+.bc-section-icon--blue {
+    background: linear-gradient(135deg, rgba(41,128,185,0.12), rgba(52,152,219,0.12));
+    color: #2980b9;
+}
+.bc-section-icon--green {
+    background: linear-gradient(135deg, rgba(39,174,96,0.12), rgba(46,204,113,0.12));
+    color: #27ae60;
+}
+.bc-section-title { font-size: 15px; font-weight: 700; color: #1a202c; margin: 0; line-height: 1.2; }
+.bc-section-desc  { font-size: 12px; color: #a0aec0; margin: 3px 0 0; }
+.bc-section-body  { padding: 20px 22px; }
+.bc-badge-count {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 12px;
+    background: rgba(230,126,34,0.1); color: var(--crm-accent);
+    border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap;
+}
+
+/* TEMPLATE GRID */
+.bc-template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+.bc-tmpl-card {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px; border: 2px solid #e8ecf0; border-radius: 14px;
+    cursor: pointer; transition: all 0.25s; position: relative; background: #fafbfc;
+}
+.bc-tmpl-card:hover {
+    border-color: rgba(230,126,34,0.4); background: rgba(230,126,34,0.03);
+    transform: translateY(-2px); box-shadow: 0 6px 20px rgba(230,126,34,0.12);
+}
+.bc-tmpl-card.bc-tmpl-selected {
+    border-color: var(--crm-accent); background: rgba(230,126,34,0.05);
+    box-shadow: 0 6px 20px rgba(230,126,34,0.15);
+}
+.bc-tmpl-icon {
+    width: 46px; height: 46px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+}
+.bc-tmpl-icon--festival { background: linear-gradient(135deg, #fff7ed, #fde8c8); }
+.bc-tmpl-icon--offer    { background: linear-gradient(135deg, #f0fff4, #c6f6d5); }
+.bc-tmpl-icon--launch   { background: linear-gradient(135deg, #ebf8ff, #bee3f8); }
+.bc-tmpl-icon--followup { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+.bc-tmpl-icon--custom   { background: linear-gradient(135deg, #f0f2f5, #e2e8f0); }
+.bc-tmpl-name { font-size: 13px; font-weight: 700; color: #2d3748; line-height: 1.3; }
+.bc-cat-pill  {
+    display: inline-block; padding: 2px 8px; border-radius: 20px;
+    font-size: 10px; font-weight: 600; margin-top: 4px; letter-spacing: 0.3px;
+}
+.bc-cat-pill--festival { background:#fff7ed; color:#c05621; }
+.bc-cat-pill--offer    { background:#f0fff4; color:#276749; }
+.bc-cat-pill--launch   { background:#ebf8ff; color:#2b6cb0; }
+.bc-cat-pill--followup { background:#fef3c7; color:#92400e; }
+.bc-cat-pill--custom   { background:#f0f2f5; color:#4a5568; }
+.bc-tmpl-check {
+    position: absolute; top: 10px; right: 10px;
+    font-size: 18px; color: #e2e8f0; transition: color 0.2s;
+}
+.bc-tmpl-selected .bc-tmpl-check { color: var(--crm-accent); }
+.bc-empty-state {
+    grid-column: 1 / -1; text-align: center; padding: 40px 20px; color: #a0aec0;
+}
+.bc-empty-state i { font-size: 40px; display: block; margin-bottom: 12px; }
+.bc-empty-state p { font-size: 14px; font-weight: 600; color: #718096; margin: 0 0 4px; }
+
+/* FORM */
+.bc-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+.bc-form-group { display: flex; flex-direction: column; gap: 7px; }
+.bc-form-label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; color: #718096;
+}
+.bc-form-input {
+    width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0;
+    border-radius: 10px; font-size: 14px; font-family: inherit;
+    color: #2d3748; background: #f7f8fa; transition: all 0.2s;
+}
+.bc-form-input:focus {
+    outline: none; border-color: var(--crm-accent); background: white;
+    box-shadow: 0 0 0 3px rgba(230,126,34,0.1);
+}
+.bc-form-textarea {
+    width: 100%; padding: 14px; border: 1.5px solid #e2e8f0;
+    border-radius: 10px; font-size: 14px; font-family: inherit;
+    color: #2d3748; background: #f7f8fa; resize: vertical;
+    min-height: 180px; line-height: 1.7; transition: all 0.2s;
+}
+.bc-form-textarea:focus {
+    outline: none; border-color: var(--crm-accent); background: white;
+    box-shadow: 0 0 0 3px rgba(230,126,34,0.1);
+}
+.bc-textarea-label-row { display: flex; align-items: center; justify-content: space-between; }
+.bc-textarea-actions   { display: flex; gap: 6px; }
+.bc-icon-btn {
+    width: 28px; height: 28px; border: 1px solid #e2e8f0; border-radius: 7px;
+    background: white; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; font-size: 12px; color: #718096;
+    transition: all 0.2s; font-family: inherit;
+}
+.bc-icon-btn:hover { background: #f7f8fa; color: var(--crm-accent); border-color: var(--crm-accent); }
+.bc-textarea-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+.bc-hint       { font-size: 11px; color: #a0aec0; display: flex; align-items: center; gap: 4px; }
+.bc-char-count { font-size: 11px; color: #a0aec0; font-family: monospace; }
+.bc-placeholder-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.bc-ph-tag {
+    padding: 4px 10px; background: rgba(230,126,34,0.08); color: var(--crm-accent);
+    border: 1px solid rgba(230,126,34,0.2); border-radius: 6px;
+    font-size: 11px; font-weight: 700; cursor: pointer; font-family: monospace;
+    transition: all 0.2s; user-select: none;
+}
+.bc-ph-tag:hover { background: var(--crm-accent); color: white; border-color: var(--crm-accent); transform: translateY(-1px); }
+
+/* LEAD SELECTION */
+.bc-lead-sel-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.bc-sel-count {
+    font-size: 12px; font-weight: 700; color: var(--crm-accent);
+    background: rgba(230,126,34,0.1); padding: 4px 10px; border-radius: 20px;
+}
+
+/* FILTER BAR */
+.bc-filter-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 20px; background: #f7f8fa;
+    border-bottom: 1px solid #f0f2f5; flex-wrap: wrap;
+}
+.bc-search-wrap { position: relative; flex: 1; min-width: 200px; }
+.bc-search-icon {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: #a0aec0; font-size: 13px; pointer-events: none;
+}
+.bc-search-input {
+    width: 100%; padding: 9px 14px 9px 34px; border: 1.5px solid #e2e8f0;
+    border-radius: 9px; font-size: 13px; font-family: inherit;
+    color: #2d3748; background: white; transition: all 0.2s;
+}
+.bc-search-input:focus { outline: none; border-color: var(--crm-accent); box-shadow: 0 0 0 3px rgba(230,126,34,0.1); }
+.bc-filter-select {
+    padding: 9px 14px; border: 1.5px solid #e2e8f0; border-radius: 9px;
+    font-size: 13px; font-family: inherit; color: #2d3748; background: white;
+    cursor: pointer; transition: all 0.2s; min-width: 130px;
+}
+.bc-filter-select:focus { outline: none; border-color: var(--crm-accent); box-shadow: 0 0 0 3px rgba(230,126,34,0.1); }
+
+/* TABLE */
+.bc-table-wrap { max-height: 400px; overflow-y: auto; overflow-x: auto; }
+.bc-table-wrap::-webkit-scrollbar        { width: 6px; height: 6px; }
+.bc-table-wrap::-webkit-scrollbar-track  { background: #f7f8fa; }
+.bc-table-wrap::-webkit-scrollbar-thumb  { background: #e2e8f0; border-radius: 3px; }
+.bc-table-wrap::-webkit-scrollbar-thumb:hover { background: #cbd5e0; }
+.bc-leads-table { width: 100%; border-collapse: collapse; }
+.bc-leads-table thead th {
+    padding: 10px 16px; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px; color: #a0aec0;
+    background: #fafbfc; border-bottom: 1px solid #f0f2f5;
+    white-space: nowrap; position: sticky; top: 0; z-index: 2;
+}
+.bc-th-check { width: 48px; text-align: center; }
+.bc-leads-table tbody tr { border-bottom: 1px solid #f7f8fa; transition: background 0.15s; }
+.bc-leads-table tbody tr:hover { background: rgba(230,126,34,0.03); }
+.bc-leads-table tbody tr:last-child { border-bottom: none; }
+.bc-leads-table tbody td { padding: 10px 16px; vertical-align: middle; }
+.bc-checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--crm-accent); display: block; margin: 0 auto; }
+.bc-lead-cell { display: flex; align-items: center; gap: 10px; }
+.bc-lead-avatar {
+    width: 32px; height: 32px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--crm-accent), #f39c12);
+    color: white; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
+}
+.bc-lead-name { font-size: 13px; font-weight: 600; color: #2d3748; line-height: 1; }
+.bc-lead-id   { font-size: 10px; color: #a0aec0; margin-top: 2px; }
+.bc-td-text  { font-size: 13px; color: #4a5568; }
+.bc-td-muted { font-size: 13px; color: #a0aec0; }
+.bc-table-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 20px; border-top: 1px solid #f0f2f5; background: #fafbfc;
+}
+.bc-sel-count-foot { font-size: 12px; font-weight: 600; color: var(--crm-accent); }
+
+/* STATUS PILLS */
+.bc-status-pill {
+    display: inline-block; padding: 3px 10px; border-radius: 20px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.3px; white-space: nowrap;
+}
+.bc-status--new             { background:#e3f2fd; color:#1565c0; }
+.bc-status--contacted       { background:#fff3e0; color:#e65100; }
+.bc-status--callback        { background:#f3e5f5; color:#6a1b9a; }
+.bc-status--quotation_sent  { background:#e8f5e9; color:#2e7d32; }
+.bc-status--converted       { background:#e0f2f1; color:#00695c; }
+.bc-status--closed          { background:#fce4ec; color:#c62828; }
+
+/* ASIDE CARDS */
+.bc-aside-card {
+    background: white; border-radius: 16px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06); border: 1px solid #f0f2f5; overflow: hidden;
+}
+.bc-aside-head {
+    display: flex; align-items: center; gap: 8px; padding: 14px 18px;
+    border-bottom: 1px solid #f0f2f5; font-size: 13px; font-weight: 700; color: #2d3748;
+    background: linear-gradient(135deg, #fafbfc, #ffffff);
+}
+.bc-aside-head i { font-size: 15px; color: var(--crm-accent); }
+.bc-aside-body { padding: 16px 18px; }
+.bc-aside-body.p-0 { padding: 0; }
+
+/* PLATFORM */
+.bc-platform-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.bc-plat-option   { cursor: pointer; margin: 0; display: block; }
+.bc-plat-option input { display: none; }
+.bc-plat-full     { grid-column: 1 / -1; }
+.bc-plat-card {
+    display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+    border: 2px solid #e8ecf0; border-radius: 12px; cursor: pointer;
+    transition: all 0.2s; background: #fafbfc; position: relative;
+}
+.bc-plat-full .bc-plat-card { justify-content: center; }
+.bc-plat-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; transition: all 0.2s; flex-shrink: 0;
+}
+.bc-plat-name { font-size: 12px; font-weight: 600; color: #718096; transition: all 0.2s; }
+.bc-plat-tick { position: absolute; top: 8px; right: 8px; font-size: 14px; color: #e2e8f0; transition: all 0.2s; }
+
+.bc-plat--whatsapp .bc-plat-icon { background: #f0f2f5; color: #25D366; }
+.bc-plat--email .bc-plat-icon    { background: #f0f2f5; color: #2980b9; }
+.bc-plat--both .bc-plat-icon     { background: #f0f2f5; color: var(--crm-accent); }
+
+.bc-plat-option input:checked + .bc-plat--whatsapp { border-color:#25D366; background:rgba(37,211,102,0.06); }
+.bc-plat-option input:checked + .bc-plat--whatsapp .bc-plat-icon { background:rgba(37,211,102,0.12); color:#25D366; }
+.bc-plat-option input:checked + .bc-plat--whatsapp .bc-plat-name { color:#25D366; }
+.bc-plat-option input:checked + .bc-plat--whatsapp .bc-plat-tick { color:#25D366; }
+
+.bc-plat-option input:checked + .bc-plat--email { border-color:#2980b9; background:rgba(41,128,185,0.06); }
+.bc-plat-option input:checked + .bc-plat--email .bc-plat-icon { background:rgba(41,128,185,0.12); color:#2980b9; }
+.bc-plat-option input:checked + .bc-plat--email .bc-plat-name { color:#2980b9; }
+.bc-plat-option input:checked + .bc-plat--email .bc-plat-tick { color:#2980b9; }
+
+.bc-plat-option input:checked + .bc-plat--both { border-color:var(--crm-accent); background:rgba(230,126,34,0.06); }
+.bc-plat-option input:checked + .bc-plat--both .bc-plat-icon { background:rgba(230,126,34,0.12); color:var(--crm-accent); }
+.bc-plat-option input:checked + .bc-plat--both .bc-plat-name { color:var(--crm-accent); }
+.bc-plat-option input:checked + .bc-plat--both .bc-plat-tick { color:var(--crm-accent); }
+
+/* SUMMARY */
+.bc-summary-list { padding: 4px 0; }
+.bc-sum-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 18px; border-bottom: 1px solid #f7f8fa; gap: 8px;
+}
+.bc-sum-row:last-child { border: none; }
+.bc-sum-left { display: flex; align-items: center; gap: 10px; }
+.bc-sum-icon {
+    width: 28px; height: 28px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; flex-shrink: 0;
+}
+.bc-sum-label { font-size: 12px; color: #718096; font-weight: 500; }
+.bc-sum-val {
+    font-size: 12px; font-weight: 700; color: #2d3748;
+    text-align: right; max-width: 160px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* PREVIEW */
+.bc-preview-badge {
+    margin-left: auto; padding: 2px 8px;
+    background: rgba(230,126,34,0.1); color: var(--crm-accent);
+    border-radius: 6px; font-size: 10px; font-weight: 600;
+}
+.bc-preview-wrap { padding: 16px; background: linear-gradient(135deg, #e5ddd5 0%, #d4c9bc 100%); }
+.bc-phone-mock   { background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+.bc-phone-bar    { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #075e54; color: white; font-size: 12px; font-weight: 600; }
+.bc-msg-bubble   { padding: 14px; min-height: 120px; background: #dcf8c6; font-size: 13px; color: #2d3748; line-height: 1.7; border-radius: 0 0 14px 14px; white-space: pre-wrap; word-break: break-word; }
+.bc-preview-ph   { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 100px; color: #a0aec0; font-size: 12px; text-align: center; }
+.bc-preview-ph i { font-size: 28px; opacity: 0.5; }
+
+/* SEND CARD */
+.bc-send-card {
+    background: white; border-radius: 16px; padding: 18px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06); border: 1px solid #f0f2f5;
+}
+.bc-send-btn {
+    width: 100%; display: flex; align-items: center; justify-content: center;
+    gap: 10px; padding: 15px 24px;
+    background: orange;
+    color: white; border: none; border-radius: 12px; font-size: 16px;
+    font-weight: 700; cursor: pointer; font-family: inherit;
+    transition: all 0.25s; box-shadow: 0 6px 20px rgba(230,126,34,0.35); letter-spacing: 0.3px;
+}
+.bc-send-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(230,126,34,0.45); }
+.bc-send-btn:active:not(:disabled){ transform: translateY(0); }
+.bc-send-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+.bc-send-note {
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; font-size: 11px; color: #a0aec0; margin-top: 10px; text-align: center;
+}
+
+/* RECENT */
+.bc-recent-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 18px; border-bottom: 1px solid #f7f8fa; transition: background 0.15s;
+}
+.bc-recent-item:last-child { border: none; }
+.bc-recent-item:hover { background: #f7f8fa; }
+.bc-recent-left { display: flex; align-items: center; gap: 10px; }
+.bc-recent-icon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.bc-recent-icon--wa { background:rgba(37,211,102,0.12); color:#25D366; }
+.bc-recent-icon--em { background:rgba(41,128,185,0.12); color:#2980b9; }
+.bc-recent-icon--bt { background:rgba(230,126,34,0.12); color:var(--crm-accent); }
+.bc-recent-name  { font-size: 12px; font-weight: 700; color: #2d3748; line-height: 1; }
+.bc-recent-date  { font-size: 10px; color: #a0aec0; margin-top: 3px; display: flex; align-items: center; gap: 3px; }
+.bc-recent-stats { text-align: right; }
+.bc-recent-sent  { font-size: 13px; font-weight: 700; color: #27ae60; }
+.bc-recent-label { font-size: 10px; color: #a0aec0; }
+.bc-empty-mini   { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 30px; color: #a0aec0; font-size: 13px; }
+.bc-empty-mini i { font-size: 28px; }
+
+/* MODAL */
+.bc-modal-content { border-radius: 18px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.15); overflow: hidden; }
+.bc-modal-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    padding: 20px 24px; border-bottom: 1px solid #f0f2f5;
+    background: linear-gradient(135deg, #fafbfc, white); gap: 12px;
+}
+.bc-modal-head-left { display: flex; align-items: center; gap: 14px; }
+.bc-modal-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.bc-modal-icon--wa { background: rgba(37,211,102,0.12); color: #25D366; }
+.bc-modal-title { font-size: 16px; font-weight: 700; color: #1a202c; margin: 0; }
+.bc-modal-sub   { font-size: 12px; color: #a0aec0; margin: 4px 0 0; }
+.bc-modal-close {
+    width: 32px; height: 32px; border-radius: 8px; border: 1px solid #e2e8f0;
+    background: white; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; font-size: 13px; color: #718096;
+    transition: all 0.2s; flex-shrink: 0; font-family: inherit;
+}
+.bc-modal-close:hover { background: #fef2f2; color: #e53e3e; border-color: #feb2b2; }
+.bc-modal-info-bar { display: flex; align-items: center; gap: 8px; padding: 12px 24px; font-size: 13px; }
+.bc-modal-info-bar--green { background: #f0fff4; color: #276749; border-bottom: 1px solid #c6f6d5; }
+.bc-modal-foot { display: flex; align-items: center; gap: 10px; padding: 16px 20px; border-top: 1px solid #f0f2f5; background: #fafbfc; }
+
+.bc-wa-link-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px; border-bottom: 1px solid #f7f8fa;
+    transition: background 0.15s; gap: 12px;
+}
+.bc-wa-link-item:hover { background: #f7f8fa; }
+.bc-wa-link-item:last-child { border: none; }
+.bc-wa-lead-num {
+    width: 24px; height: 24px; background: #f0f2f5; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; color: #718096; flex-shrink: 0;
+}
+.bc-wa-lead-name  { font-size: 13px; font-weight: 600; color: #2d3748; }
+.bc-wa-lead-phone { font-size: 11px; color: #a0aec0; margin-top: 1px; }
+.bc-wa-send-link {
+    display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px;
+    background: #25D366; color: white; border-radius: 9px;
+    font-size: 12px; font-weight: 700; text-decoration: none;
+    transition: all 0.2s; white-space: nowrap; flex-shrink: 0;
+}
+.bc-wa-send-link:hover { background: #1da851; color: white; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,211,102,0.35); }
+
+/* SUCCESS MODAL */
+.bc-success-modal { text-align: center; }
+.bc-success-body  { padding: 40px 24px 24px; }
+.bc-success-anim  { width: 80px; height: 80px; margin: 0 auto 20px; position: relative; display: flex; align-items: center; justify-content: center; }
+.bc-success-ring  { position: absolute; inset: 0; border-radius: 50%; background: rgba(39,174,96,0.12); animation: bcSuccessPulse 1.5s ease-in-out infinite; }
+@keyframes bcSuccessPulse { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(1.15);opacity:0.7;} }
+.bc-success-check { font-size: 40px; color: #27ae60; position: relative; z-index: 1; }
+.bc-success-title { font-size: 20px; font-weight: 800; color: #1a202c; margin: 0 0 10px; }
+.bc-success-msg   { font-size: 14px; color: #718096; margin: 0; }
+
+/* SPIN */
+.bc-spin { animation: bcSpin 0.8s linear infinite; display: inline-block; }
+@keyframes bcSpin { to { transform: rotate(360deg); } }
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+    .bc-layout { grid-template-columns: 1fr; }
+    .bc-col-aside { position: static; display: grid; grid-template-columns: repeat(2, 1fr); }
+    .bc-send-card { grid-column: 1 / -1; }
+}
+@media (max-width: 768px) {
+    .bc-page-header { flex-direction: column; align-items: flex-start; }
+    .bc-header-icon { width: 44px; height: 44px; font-size: 18px; }
+    .bc-header-title { font-size: 20px; }
+    .bc-wizard-card { padding: 16px; }
+    .bc-wizard-steps { justify-content: flex-start; padding-bottom: 6px; }
+    .bc-step-line { min-width: 18px; max-width: 32px; margin: 0 6px; }
+    .bc-template-grid { grid-template-columns: 1fr; }
+    .bc-form-row { grid-template-columns: 1fr; }
+    .bc-col-aside { grid-template-columns: 1fr; }
+    .bc-filter-bar { flex-direction: column; }
+    .bc-search-wrap { width: 100%; }
+    .bc-filter-select { width: 100%; }
+    .bc-section-head { flex-direction: column; align-items: flex-start; }
+    .bc-placeholder-tags { display: none; }
+}
+
+</style>
+{% endblock extra_css %}
+
+
+{% block extra_js %}
+<script>
+(function () {
+    'use strict';
+
+    /* ══════════════════════════════════════════════════
+       STATE
+       ────────────────────────────────────────────────
+       bcStep1done  → template chosen
+       bcStep2done  → message body + campaign name filled
+       bcStep3done  → at least one lead selected
+    ══════════════════════════════════════════════════ */
+    var bcSelectedTemplateId = null;
+    var bcState = { s1: false, s2: false, s3: false };
+
+    /* ══════════════════════════════════════════════════
+       INIT
+    ══════════════════════════════════════════════════ */
+    document.addEventListener('DOMContentLoaded', function () {
+
+        /* hide email subject row by default (WhatsApp selected) */
+        document.getElementById('bcEmailSubjectRow').style.display = 'none';
+
+        /* character counter + step-2 check on every keystroke */
+        document.getElementById('bcMessageBody').addEventListener('input', function () {
+            document.getElementById('bcCharCount').textContent =
+                this.value.length + ' characters';
+            bcUpdatePreview();
+            bcEvalStep2();          // ← KEY: re-evaluate step 2
+        });
+
+        /* campaign-name also unlocks step 2 */
+        document.getElementById('bcCampaignName').addEventListener('input', function () {
+            bcEvalStep2();          // ← KEY
+        });
+
+        /* platform radio */
+        document.querySelectorAll('input[name="bcPlatform"]').forEach(function (r) {
+            r.addEventListener('change', function () {
+                var val = this.value;
+                document.getElementById('bcSummaryPlatform').textContent =
+                    val.charAt(0).toUpperCase() + val.slice(1);
+                document.getElementById('bcEmailSubjectRow').style.display =
+                    (val === 'whatsapp') ? 'none' : 'flex';
+            });
+        });
+
+        /* render initial wizard state */
+        bcRenderWizard();
+    });
+
+
+    /* ══════════════════════════════════════════════════
+       WIZARD STATE MACHINE
+       ────────────────────────────────────────────────
+       Steps progress in order: 1 → 2 → 3 → 4
+       A step is:
+         • idle   – not reached yet
+         • active – currently the user's focus
+         • done   – fully completed
+    ══════════════════════════════════════════════════ */
+    function bcRenderWizard() {
+        /*
+          Step 1  → done  when template chosen (bcState.s1)
+                  → active when not yet chosen
+          Step 2  → done  when msg+name filled (bcState.s2) AND s1 done
+                  → active when s1 done but s2 not
+          Step 3  → done  when lead selected (bcState.s3) AND s2 done
+                  → active when s2 done but s3 not
+          Step 4  → active when s3 done
+        */
+        var s1 = bcState.s1;
+        var s2 = s1 && bcState.s2;
+        var s3 = s2 && bcState.s3;
+
+        bcApplyStep(1, s1 ? 'done'   : 'active');
+        bcApplyStep(2, s1 ? (s2 ? 'done' : 'active') : 'idle');
+        bcApplyStep(3, s2 ? (s3 ? 'done' : 'active') : 'idle');
+        bcApplyStep(4, s3 ? 'active' : 'idle');
+
+        /* connector lines */
+        bcApplyLine(1, s1 ? (s2 ? 'done' : 'active') : 'idle');
+        bcApplyLine(2, s2 ? (s3 ? 'done' : 'active') : 'idle');
+        bcApplyLine(3, s3 ? 'active' : 'idle');
+    }
+
+    function bcApplyStep(n, state) {
+        var el = document.getElementById('bcStepIndicator' + n);
+        if (!el) return;
+        el.classList.remove('bc-step-active', 'bc-step-done');
+        if (state === 'active') el.classList.add('bc-step-active');
+        if (state === 'done')   el.classList.add('bc-step-done');
+    }
+
+    function bcApplyLine(n, state) {
+        var el = document.getElementById('bcLine' + n);
+        if (!el) return;
+        el.classList.remove('bc-line-active', 'bc-line-done');
+        if (state === 'active') el.classList.add('bc-line-active');
+        if (state === 'done')   el.classList.add('bc-line-done');
+    }
+
+    /* evaluate step-2 completion: needs message body AND campaign name */
+    function bcEvalStep2() {
+        var msg  = document.getElementById('bcMessageBody').value.trim();
+        var name = document.getElementById('bcCampaignName').value.trim();
+        bcState.s2 = (msg.length > 0 && name.length > 0);
+        bcRenderWizard();
+    }
+
+
+    /* ══════════════════════════════════════════════════
+       SELECT TEMPLATE  (Step 1)
+    ══════════════════════════════════════════════════ */
+    window.bcSelectTemplate = function (templateId, element) {
+        document.querySelectorAll('.bc-tmpl-card').forEach(function (c) {
+            c.classList.remove('bc-tmpl-selected');
+        });
+        element.classList.add('bc-tmpl-selected');
+        bcSelectedTemplateId = templateId;
+
+        /* mark step 1 done */
+        bcState.s1 = true;
+        bcRenderWizard();
+
+        fetch('/crm/campaigns/template/' + templateId + '/')
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                document.getElementById('bcMessageBody').value  = data.message  || '';
+                document.getElementById('bcEmailSubject').value = data.subject  || '';
+                document.getElementById('bcCampaignName').value = (data.name || '') + ' — Campaign';
+                document.getElementById('bcCharCount').textContent =
+                    (data.message || '').length + ' characters';
+                document.getElementById('bcSummaryTemplate').textContent = data.name || '';
+                bcUpdatePreview();
+                bcEvalStep2();      /* ← re-check step 2 after template fill */
+            })
+            .catch(function () {
+                bcShowToast('Could not load template. Please try again.', 'error');
+            });
+    };
+
+
+    /* ══════════════════════════════════════════════════
+       INSERT PLACEHOLDER
+    ══════════════════════════════════════════════════ */
+    window.bcInsertPlaceholder = function (ph) {
+        var ta = document.getElementById('bcMessageBody');
+        var s  = ta.selectionStart, e = ta.selectionEnd;
+        ta.value = ta.value.substring(0, s) + ph + ta.value.substring(e);
+        ta.focus();
+        ta.selectionStart = ta.selectionEnd = s + ph.length;
+        document.getElementById('bcCharCount').textContent =
+            ta.value.length + ' characters';
+        bcUpdatePreview();
+        bcEvalStep2();
+    };
+
+
+    /* ══════════════════════════════════════════════════
+       CLEAR / COPY
+    ══════════════════════════════════════════════════ */
+    window.bcClearMessage = function () {
+        if (!confirm('Clear the message body?')) return;
+        document.getElementById('bcMessageBody').value = '';
+        document.getElementById('bcCharCount').textContent = '0 characters';
+        bcUpdatePreview();
+        bcEvalStep2();
+    };
+
+    window.bcCopyMessage = function () {
+        var text = document.getElementById('bcMessageBody').value;
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(function () {
+            bcShowToast('Message copied to clipboard!', 'success');
+        });
+    };
+
+
+    /* ══════════════════════════════════════════════════
+       PREVIEW
+    ══════════════════════════════════════════════════ */
+    function bcUpdatePreview() {
+        var msg     = document.getElementById('bcMessageBody').value;
+        var preview = document.getElementById('bcMessagePreview');
+
+        if (!msg.trim()) {
+            preview.innerHTML =
+                '<div class="bc-preview-ph">' +
+                '<i class="bi bi-chat-dots"></i>' +
+                '<span>Type a message to preview</span>' +
+                '</div>';
+            return;
+        }
+
+        var html = escHtml(msg)
+            .replace(/\{name\}/g,     '<strong style="color:#075e54;">Rahul Sharma</strong>')
+            .replace(/\{phone\}/g,    '<strong style="color:#075e54;">9876543210</strong>')
+            .replace(/\{location\}/g, '<strong style="color:#075e54;">HSR Layout, Bangalore</strong>');
+
+        preview.innerHTML = html;
+    }
+
+    function escHtml(s) {
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+    }
+
+
+    /* ══════════════════════════════════════════════════
+       LEAD SELECTION  (Step 3)
+    ══════════════════════════════════════════════════ */
+    window.bcUpdateSelectedCount = function () {
+        var count = document.querySelectorAll('.bc-lead-cb:checked').length;
+        document.getElementById('bcSelectedLeadCount').textContent = count + ' selected';
+        document.getElementById('bcSummaryRecipients').textContent = count + ' leads';
+        document.getElementById('bcTableFooterCount').textContent  = count + ' leads selected';
+
+        bcState.s3 = (count > 0);
+        bcRenderWizard();
+    };
+
+    window.bcSelectAllLeads = function () {
+        document.querySelectorAll('.bc-lead-row:not([style*="display: none"]) .bc-lead-cb')
+            .forEach(function (cb) { cb.checked = true; });
+        document.getElementById('bcSelectAllCampaignLeads').checked = true;
+        bcUpdateSelectedCount();
+    };
+
+    window.bcDeselectAllLeads = function () {
+        document.querySelectorAll('.bc-lead-cb').forEach(function (cb) { cb.checked = false; });
+        document.getElementById('bcSelectAllCampaignLeads').checked = false;
+        bcUpdateSelectedCount();
+    };
+
+    window.bcToggleAllCampaignLeads = function (master) {
+        document.querySelectorAll('.bc-lead-row:not([style*="display: none"]) .bc-lead-cb')
+            .forEach(function (cb) { cb.checked = master.checked; });
+        bcUpdateSelectedCount();
+    };
+
+
+    /* ══════════════════════════════════════════════════
+       FILTER LEADS
+    ══════════════════════════════════════════════════ */
+    window.bcFilterLeadTable = function () {
+        var search   = document.getElementById('bcLeadSearch').value.toLowerCase();
+        var status   = document.getElementById('bcLeadStatusFilter').value;
+        var priority = document.getElementById('bcLeadPriorityFilter').value;
+
+        document.querySelectorAll('.bc-lead-row').forEach(function (row) {
+            var ok = true;
+            if (search && !row.dataset.name.includes(search) &&
+                          !row.dataset.phone.includes(search) &&
+                          !row.dataset.email.includes(search)) ok = false;
+            if (status   && row.dataset.status   !== status)   ok = false;
+            if (priority && row.dataset.priority !== priority) ok = false;
+            row.style.display = ok ? '' : 'none';
+        });
+    };
+
+
+    /* ══════════════════════════════════════════════════
+       SEND CAMPAIGN
+    ══════════════════════════════════════════════════ */
+    window.bcSendCampaign = function () {
+        var selectedLeads = [];
+        document.querySelectorAll('.bc-lead-cb:checked').forEach(function (cb) {
+            selectedLeads.push(parseInt(cb.value));
+        });
+
+        var platform     = document.querySelector('input[name="bcPlatform"]:checked').value;
+        var messageBody  = document.getElementById('bcMessageBody').value.trim();
+        var emailSubject = document.getElementById('bcEmailSubject').value.trim();
+        var campaignName = document.getElementById('bcCampaignName').value.trim();
+
+        if (selectedLeads.length === 0) { bcShowToast('Please select at least one lead!', 'warning'); return; }
+        if (!messageBody)               { bcShowToast('Please enter a message!', 'warning');           return; }
+        if (!campaignName)              { bcShowToast('Please enter a campaign name!', 'warning');     return; }
+
+        if (!confirm('Send ' + platform.toUpperCase() + ' campaign to ' + selectedLeads.length + ' lead(s)?')) return;
+
+        var btn = document.getElementById('bcSendCampaignBtn');
+        btn.innerHTML = '<i class="bi bi-arrow-repeat bc-spin"></i> <span>Sending...</span>';
+        btn.disabled  = true;
+
+        fetch('{% url "send_bulk_campaign" %}', {
+            method : 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+            body   : JSON.stringify({
+                template_id    : bcSelectedTemplateId,
+                lead_ids       : selectedLeads,
+                platform       : platform,
+                custom_message : messageBody,
+                custom_subject : emailSubject,
+                campaign_name  : campaignName
+            })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            btn.innerHTML = '<i class="bi bi-send-fill"></i> <span>Send Campaign</span>';
+            btn.disabled  = false;
+
+            if (data.success) {
+                /* step 4 → done */
+                bcState.s3 = true;
+                bcRenderWizard();
+                /* force step 4 active visually */
+                bcApplyStep(4, 'done');
+                bcApplyLine(3, 'done');
+
+                if (data.whatsapp_links && data.whatsapp_links.length > 0) {
+                    var html = '';
+                    data.whatsapp_links.forEach(function (item, i) {
+                        html +=
+                            '<div class="bc-wa-link-item">' +
+                            '  <div style="display:flex;align-items:center;gap:10px;">' +
+                            '    <div class="bc-wa-lead-num">' + (i+1) + '</div>' +
+                            '    <div>' +
+                            '      <div class="bc-wa-lead-name">'  + item.name  + '</div>' +
+                            '      <div class="bc-wa-lead-phone">' + item.phone + '</div>' +
+                            '    </div>' +
+                            '  </div>' +
+                            '  <a href="' + item.link + '" target="_blank" class="bc-wa-send-link">' +
+                            '    <i class="bi bi-whatsapp"></i> Send' +
+                            '  </a>' +
+                            '</div>';
+                    });
+                    document.getElementById('bcWhatsappLinksList').innerHTML = html;
+                    new bootstrap.Modal(document.getElementById('bcWhatsappModal')).show();
+                } else {
+                    document.getElementById('bcSuccessMessage').textContent =
+                        data.sent + ' of ' + data.total + ' messages sent successfully!';
+                    new bootstrap.Modal(document.getElementById('bcSuccessModal')).show();
+                }
+            } else {
+                bcShowToast('Error: ' + (data.error || 'Unknown error'), 'error');
+            }
+        })
+        .catch(function (err) {
+            btn.innerHTML = '<i class="bi bi-send-fill"></i> <span>Send Campaign</span>';
+            btn.disabled  = false;
+            bcShowToast('Network error: ' + err.message, 'error');
+        });
+    };
+
+
+    /* ══════════════════════════════════════════════════
+       TOAST
+    ══════════════════════════════════════════════════ */
+    function bcShowToast(message, type) {
+        var existing = document.getElementById('bcToastEl');
+        if (existing) existing.remove();
+
+        var map = {
+            success : { bg:'#f0fff4', border:'#c6f6d5', color:'#276749', icon:'bi-check-circle-fill' },
+            error   : { bg:'#fff5f5', border:'#fed7d7', color:'#c53030', icon:'bi-x-circle-fill' },
+            warning : { bg:'#fffbeb', border:'#fde68a', color:'#92400e', icon:'bi-exclamation-triangle-fill' },
+            info    : { bg:'#ebf8ff', border:'#bee3f8', color:'#2b6cb0', icon:'bi-info-circle-fill' }
+        };
+        var c = map[type] || map.info;
+
+        var t = document.createElement('div');
+        t.id = 'bcToastEl';
+        t.style.cssText = [
+            'position:fixed','top:20px','right:20px','z-index:9999',
+            'background:' + c.bg, 'border:1px solid ' + c.border, 'color:' + c.color,
+            'border-radius:12px','padding:14px 20px','font-size:14px','font-weight:600',
+            'display:flex','align-items:center','gap:10px',
+            'box-shadow:0 8px 24px rgba(0,0,0,0.12)','max-width:360px',
+            'animation:bcToastIn 0.3s ease','font-family:inherit'
+        ].join(';');
+        t.innerHTML = '<i class="bi ' + c.icon + '" style="font-size:18px;flex-shrink:0;"></i><span>' + message + '</span>';
+
+        if (!document.getElementById('bcToastKeyframes')) {
+            var st = document.createElement('style');
+            st.id  = 'bcToastKeyframes';
+            st.textContent =
+                '@keyframes bcToastIn  { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }' +
+                '@keyframes bcToastOut { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(20px)} }';
+            document.head.appendChild(st);
+        }
+
+        document.body.appendChild(t);
+        setTimeout(function () {
+            t.style.animation = 'bcToastOut 0.3s ease forwards';
+            setTimeout(function () { t.remove(); }, 310);
+        }, 3500);
+    }
+
+}());
+</script>
+{% endblock extra_js %}
