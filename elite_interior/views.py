@@ -3291,7 +3291,7 @@ def quotation_create(request):
 
     return render(request, "quotation/create.html", {
         "clients": Client.objects.all(),
-        "images": Image.objects.all(),
+        "images": QuotationImage.objects.all(),
         "fullsemis": FullSemi.objects.all(),
         "previous_specs": list(
         Quotation.objects.exclude(specification="")
@@ -3409,7 +3409,7 @@ def quotation_update(request, id):
     return render(request, "quotation/update.html", {
         "quotation_rows": rows,
         "clients": Client.objects.all(),
-        "images": Image.objects.all(),
+        "images": QuotationImage.objects.all(),
         "fullsemis": FullSemi.objects.all(),
         "previous_specs": list(
             Quotation.objects.exclude(specification="")
@@ -3782,22 +3782,22 @@ def fullsemi_delete(request, id):
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import modelform_factory
-from .models import Image
+from .models import QuotationImage
 from django.contrib.auth.decorators import login_required
 
-ImageForm = modelform_factory(Image, fields="__all__")
+QuotationImageForm = modelform_factory(QuotationImage, fields="__all__")
 
 
 @login_required
 def image_index(request):
-    data = Image.objects.all()
+    data = QuotationImage.objects.all()
     return render(request, "image/index.html", {"data": data})
 
 
 @login_required
 def image_create(request):
     if request.method == "POST":
-        Image.objects.create(
+        QuotationImage.objects.create(
             name=request.POST["name"],
             image=request.FILES["image"]
         )
@@ -3808,7 +3808,7 @@ def image_create(request):
 
 @login_required
 def image_update(request, id):
-    image = get_object_or_404(Image, id=id)
+    image = get_object_or_404(QuotationImage, id=id)
 
     if request.method == "POST":
 
@@ -3829,7 +3829,7 @@ def image_update(request, id):
 
 @login_required
 def image_delete(request, id):
-    obj = get_object_or_404(Image, id=id)
+    obj = get_object_or_404(QuotationImage, id=id)
 
     if request.method == "POST":
         obj.delete()

@@ -9,26 +9,181 @@ import os
 
 
 # Create your models here.
+from PIL import Image
+
+from io import BytesIO
+
+from django.core.files.base import ContentFile
+
+import os
+
+
 class HomeSlider(models.Model):
-    headline = models.CharField(max_length=255, null=True)
-    sub_headline = models.CharField(max_length=255, null=True)
-    quotes = models.TextField(blank=True, null=True)  # Optional quotes field
-    title = models.CharField(max_length=255)
-    image = models.ImageField(upload_to='home_slider/')
-    description = models.TextField(blank=True, null=True)  # Optional description
-    location = models.CharField(max_length=255, null=True, blank=True)  # ✅ New field
-    created_at = models.DateTimeField(auto_now_add=True)
+
+    headline = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True
+    )
+
+    sub_headline = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True
+    )
+
+    quotes = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    title = models.CharField(
+        max_length=255
+    )
+
+    image = models.ImageField(
+        upload_to='home_slider/'
+    )
+
+    description = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    location = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
 
     def __str__(self):
         return self.title
-    
-# ✅ Auto delete image file when model instance is deleted
+
+    # =====================================
+    # AUTO WEBP CONVERSION + COMPRESSION
+    # =====================================
+
+    def save(self, *args, **kwargs):
+
+        # Save original image first
+        super().save(*args, **kwargs)
+
+        # Skip if already webp
+        if not self.image:
+            return
+
+        if self.image.name.endswith(".webp"):
+            return
+
+        try:
+
+            # =====================================
+            # STORE OLD FILE PATH
+            # =====================================
+
+            old_image_path = self.image.path
+
+            # =====================================
+            # OPEN IMAGE
+            # =====================================
+
+            img = Image.open(old_image_path)
+
+            # Convert transparent images properly
+            if img.mode in ("RGBA", "P"):
+
+                img = img.convert("RGB")
+
+            # =====================================
+            # RESIZE LARGE IMAGES
+            # =====================================
+
+            max_width = 1920
+
+            if img.width > max_width:
+
+                ratio = max_width / img.width
+
+                new_height = int(img.height * ratio)
+
+                img = img.resize(
+                    (max_width, new_height),
+                    Image.LANCZOS
+                )
+
+            # =====================================
+            # CONVERT TO WEBP
+            # =====================================
+
+            webp_io = BytesIO()
+
+            img.save(
+                webp_io,
+                format="WEBP",
+                quality=65,
+                optimize=True
+            )
+
+            # =====================================
+            # CREATE WEBP NAME
+            # =====================================
+
+            filename = os.path.splitext(
+                os.path.basename(self.image.name)
+            )[0]
+
+            webp_filename = f"{filename}.webp"
+
+            # =====================================
+            # SAVE WEBP FILE
+            # =====================================
+
+            self.image.save(
+                webp_filename,
+                ContentFile(webp_io.getvalue()),
+                save=False
+            )
+
+            # Save updated webp image
+            super().save(update_fields=["image"])
+
+            # =====================================
+            # DELETE ORIGINAL JPG/PNG
+            # =====================================
+
+            if os.path.exists(old_image_path):
+
+                # Safety check
+                if not old_image_path.endswith(".webp"):
+
+                    os.remove(old_image_path)
+
+        except Exception as e:
+
+            print("WEBP Conversion Error:", e)
+
+
+# =====================================
+# AUTO DELETE IMAGE WHEN MODEL DELETED
+# =====================================
+
 @receiver(post_delete, sender=HomeSlider)
 def delete_image_on_instance_delete(sender, instance, **kwargs):
-    if instance.image and os.path.isfile(instance.image.path):
-        os.remove(instance.image.path)
 
-# models.py
+    if instance.image:
+
+        if os.path.isfile(instance.image.path):
+
+            os.remove(instance.image.path)
+
+
+
+
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -50,49 +205,357 @@ class SubCategory(models.Model):
         verbose_name = "Product sub category"
 
 
+
+
 class Project(models.Model):
+
     name = models.CharField(max_length=200)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-    image = models.ImageField(upload_to='project_images/')
-    slug = models.SlugField(default="", null=True, blank=True, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE
+    )
 
-    
+    subcategory = models.ForeignKey(
+        SubCategory,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
+    )
+
+    description = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    image = models.ImageField(
+        upload_to='project_images/'
+    )
+
+    slug = models.SlugField(
+        default="",
+        null=True,
+        blank=True,
+        unique=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    # =====================================
+    # SAVE
+    # =====================================
+
     def save(self, *args, **kwargs):
+
+        # =====================================
+        # AUTO SLUG
+        # =====================================
+
         if not self.slug:
-            base_slug = f"{self.category.name}-{self.name}" if self.category else self.name
+
+            base_slug = (
+                f"{self.category.name}-{self.name}"
+                if self.category
+                else self.name
+            )
+
             slug_candidate = slugify(base_slug)
+
             unique_slug = slug_candidate
+
             counter = 1
-            while Project.objects.filter(slug=unique_slug).exclude(pk=self.pk).exists():
-                unique_slug = f"{slug_candidate}-{counter}"
+
+            while Project.objects.filter(
+                slug=unique_slug
+            ).exclude(pk=self.pk).exists():
+
+                unique_slug = (
+                    f"{slug_candidate}-{counter}"
+                )
+
                 counter += 1
+
             self.slug = unique_slug
+
+        # =====================================
+        # SAVE ORIGINAL IMAGE FIRST
+        # =====================================
+
         super().save(*args, **kwargs)
 
+        # =====================================
+        # SKIP IF NO IMAGE
+        # =====================================
+
+        if not self.image:
+            return
+
+        # =====================================
+        # SKIP IF ALREADY WEBP
+        # =====================================
+
+        if self.image.name.endswith(".webp"):
+            return
+
+        try:
+
+            # =====================================
+            # STORE OLD FILE PATH
+            # =====================================
+
+            old_image_path = self.image.path
+
+            # =====================================
+            # OPEN IMAGE
+            # =====================================
+
+            img = Image.open(old_image_path)
+
+            # Convert transparent images properly
+            if img.mode in ("RGBA", "P"):
+
+                img = img.convert("RGB")
+
+            # =====================================
+            # RESIZE LARGE IMAGES
+            # =====================================
+
+            max_width = 1920
+
+            if img.width > max_width:
+
+                ratio = max_width / img.width
+
+                new_height = int(img.height * ratio)
+
+                img = img.resize(
+                    (max_width, new_height),
+                    Image.LANCZOS
+                )
+
+            # =====================================
+            # CONVERT TO WEBP
+            # =====================================
+
+            webp_io = BytesIO()
+
+            img.save(
+                webp_io,
+                format="WEBP",
+                quality=65,
+                optimize=True
+            )
+
+            # =====================================
+            # CREATE WEBP NAME
+            # =====================================
+
+            filename = os.path.splitext(
+                os.path.basename(self.image.name)
+            )[0]
+
+            webp_filename = f"{filename}.webp"
+
+            # =====================================
+            # SAVE WEBP FILE
+            # =====================================
+
+            self.image.save(
+                webp_filename,
+                ContentFile(webp_io.getvalue()),
+                save=False
+            )
+
+            # Save updated webp image
+            super().save(update_fields=["image"])
+
+            # =====================================
+            # DELETE ORIGINAL JPG/PNG
+            # =====================================
+
+            if os.path.exists(old_image_path):
+
+                if not old_image_path.endswith(".webp"):
+
+                    os.remove(old_image_path)
+
+        except Exception as e:
+
+            print("WEBP Conversion Error:", e)
+
     def __str__(self):
-        return f"{self.name} ({self.category.name}{' - ' + self.subcategory.name if self.subcategory else ''})"
-    
+
+        return (
+            f"{self.name} "
+            f"({self.category.name}"
+            f"{' - ' + self.subcategory.name if self.subcategory else ''})"
+        )
+
     class Meta:
+
         verbose_name = "Product"
 
-# ✅ Auto delete image file when Project is deleted
+
+# =====================================
+# AUTO DELETE IMAGE WHEN PROJECT DELETED
+# =====================================
+
 @receiver(post_delete, sender=Project)
 def delete_project_image(sender, instance, **kwargs):
-    if instance.image and os.path.isfile(instance.image.path):
-        instance.image.delete(save=False)
+
+    if instance.image:
+
+        if os.path.isfile(instance.image.path):
+
+            os.remove(instance.image.path)
+
+
 
 class ProjectGallery(models.Model):
-    title = models.CharField(max_length=200)
-    image = models.ImageField(upload_to='project_gallery/')
-    caption = models.CharField(max_length=255, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+
+    title = models.CharField(
+        max_length=200
+    )
+
+    image = models.ImageField(
+        upload_to='project_gallery/'
+    )
+
+    caption = models.CharField(
+        max_length=255,
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    # =====================================
+    # SAVE
+    # =====================================
+
+    def save(self, *args, **kwargs):
+
+        # Save original image first
+        super().save(*args, **kwargs)
+
+        # Skip if no image
+        if not self.image:
+            return
+
+        # Skip if already webp
+        if self.image.name.endswith(".webp"):
+            return
+
+        try:
+
+            # =====================================
+            # STORE OLD FILE PATH
+            # =====================================
+
+            old_image_path = self.image.path
+
+            # =====================================
+            # OPEN IMAGE
+            # =====================================
+
+            img = Image.open(old_image_path)
+
+            # Convert transparent images properly
+            if img.mode in ("RGBA", "P"):
+
+                img = img.convert("RGB")
+
+            # =====================================
+            # RESIZE LARGE IMAGES
+            # =====================================
+
+            max_width = 1920
+
+            if img.width > max_width:
+
+                ratio = max_width / img.width
+
+                new_height = int(img.height * ratio)
+
+                img = img.resize(
+                    (max_width, new_height),
+                    Image.LANCZOS
+                )
+
+            # =====================================
+            # CONVERT TO WEBP
+            # =====================================
+
+            webp_io = BytesIO()
+
+            img.save(
+                webp_io,
+                format="WEBP",
+                quality=75,
+                optimize=True
+            )
+
+            # =====================================
+            # CREATE WEBP NAME
+            # =====================================
+
+            filename = os.path.splitext(
+                os.path.basename(self.image.name)
+            )[0]
+
+            webp_filename = f"{filename}.webp"
+
+            # =====================================
+            # SAVE WEBP FILE
+            # =====================================
+
+            self.image.save(
+                webp_filename,
+                ContentFile(webp_io.getvalue()),
+                save=False
+            )
+
+            # Save updated webp image
+            super().save(update_fields=["image"])
+
+            # =====================================
+            # DELETE ORIGINAL JPG/PNG
+            # =====================================
+
+            if os.path.exists(old_image_path):
+
+                if not old_image_path.endswith(".webp"):
+
+                    os.remove(old_image_path)
+
+        except Exception as e:
+
+            print("WEBP Conversion Error:", e)
 
     def __str__(self):
+
         return self.title
+
+
+# =====================================
+# AUTO DELETE IMAGE WHEN MODEL DELETED
+# =====================================
+
+@receiver(post_delete, sender=ProjectGallery)
+def delete_gallery_image(sender, instance, **kwargs):
+
+    if instance.image:
+
+        if os.path.isfile(instance.image.path):
+
+            os.remove(instance.image.path)
+
+
+
+
 
 
 from django.dispatch import receiver
@@ -100,15 +563,45 @@ import os
 import re
 
 
-class PackageOffers(models.Model):
-    title = models.CharField(max_length=225)
-    subtitle = models.CharField(max_length=225,null=True, blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    offer_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    discription = models.CharField(max_length=225)
-    image = models.ImageField(upload_to='offer_images/')
 
-    # ✅ YouTube link field
+class PackageOffers(models.Model):
+
+    title = models.CharField(
+        max_length=225
+    )
+
+    subtitle = models.CharField(
+        max_length=225,
+        null=True,
+        blank=True
+    )
+
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+
+    offer_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True
+    )
+
+    discription = models.CharField(
+        max_length=225
+    )
+
+    image = models.ImageField(
+        upload_to='offer_images/'
+    )
+
+    # =====================================
+    # YOUTUBE LINK
+    # =====================================
+
     youtube_link = models.URLField(
         max_length=500,
         null=True,
@@ -116,47 +609,193 @@ class PackageOffers(models.Model):
         help_text="Paste full YouTube URL"
     )
 
-   # ✅ ADD THIS METHOD INSIDE THE MODEL
+    # =====================================
+    # SAVE
+    # =====================================
+
+    def save(self, *args, **kwargs):
+
+        # Save original image first
+        super().save(*args, **kwargs)
+
+        # Skip if no image
+        if not self.image:
+            return
+
+        # Skip if already webp
+        if self.image.name.endswith(".webp"):
+            return
+
+        try:
+
+            # =====================================
+            # STORE OLD FILE PATH
+            # =====================================
+
+            old_image_path = self.image.path
+
+            # =====================================
+            # OPEN IMAGE
+            # =====================================
+
+            img = Image.open(old_image_path)
+
+            # Convert transparent images properly
+            if img.mode in ("RGBA", "P"):
+
+                img = img.convert("RGB")
+
+            # =====================================
+            # RESIZE LARGE IMAGES
+            # =====================================
+
+            max_width = 1920
+
+            if img.width > max_width:
+
+                ratio = max_width / img.width
+
+                new_height = int(img.height * ratio)
+
+                img = img.resize(
+                    (max_width, new_height),
+                    Image.LANCZOS
+                )
+
+            # =====================================
+            # CONVERT TO WEBP
+            # =====================================
+
+            webp_io = BytesIO()
+
+            img.save(
+                webp_io,
+                format="WEBP",
+                quality=75,
+                optimize=True
+            )
+
+            # =====================================
+            # CREATE WEBP NAME
+            # =====================================
+
+            filename = os.path.splitext(
+                os.path.basename(self.image.name)
+            )[0]
+
+            webp_filename = f"{filename}.webp"
+
+            # =====================================
+            # SAVE WEBP FILE
+            # =====================================
+
+            self.image.save(
+                webp_filename,
+                ContentFile(webp_io.getvalue()),
+                save=False
+            )
+
+            # Save updated webp image
+            super().save(update_fields=["image"])
+
+            # =====================================
+            # DELETE ORIGINAL JPG/PNG
+            # =====================================
+
+            if os.path.exists(old_image_path):
+
+                if not old_image_path.endswith(".webp"):
+
+                    os.remove(old_image_path)
+
+        except Exception as e:
+
+            print("WEBP Conversion Error:", e)
+
+    # =====================================
+    # YOUTUBE EMBED URL
+    # =====================================
+
     def youtube_embed_url(self):
+
         if not self.youtube_link:
             return ""
 
         url = self.youtube_link.strip()
 
-        # If already embed URL
+        # Already embed URL
         if "/embed/" in url:
+
             return url.split("?")[0]
 
         video_id = ""
+
         start_time = ""
 
-        # watch?v=VIDEO_ID&t=1s
+        # watch?v=
         if "watch?v=" in url:
-            video_id = url.split("watch?v=")[1].split("&")[0]
-            match = re.search(r"[?&]t=(\d+)s?", url)
+
+            video_id = (
+                url.split("watch?v=")[1]
+                .split("&")[0]
+            )
+
+            match = re.search(
+                r"[?&]t=(\d+)s?",
+                url
+            )
+
             if match:
+
                 start_time = match.group(1)
 
-        # youtu.be/VIDEO_ID?t=10
+        # youtu.be/
         elif "youtu.be/" in url:
-            video_id = url.split("youtu.be/")[1].split("?")[0]
-            match = re.search(r"[?&]t=(\d+)", url)
+
+            video_id = (
+                url.split("youtu.be/")[1]
+                .split("?")[0]
+            )
+
+            match = re.search(
+                r"[?&]t=(\d+)",
+                url
+            )
+
             if match:
+
                 start_time = match.group(1)
 
         if not video_id:
             return ""
 
-        embed_url = f"https://www.youtube.com/embed/{video_id}"
+        embed_url = (
+            f"https://www.youtube.com/embed/{video_id}"
+        )
+
         if start_time:
+
             embed_url += f"?start={start_time}"
 
         return embed_url
 
-
-
     def __str__(self):
+
         return self.title
+
+
+# =====================================
+# AUTO DELETE IMAGE WHEN MODEL DELETED
+# =====================================
+
+@receiver(post_delete, sender=PackageOffers)
+def delete_offer_image(sender, instance, **kwargs):
+
+    if instance.image:
+
+        if os.path.isfile(instance.image.path):
+
+            os.remove(instance.image.path)
 
 
 
@@ -169,24 +808,170 @@ def delete_package_offers_image(sender, instance, **kwargs):
         instance.image.delete(save=False)
 
 class WhatWeDo_Grid(models.Model):
-    title = models.CharField(max_length=225)
-    image = models.ImageField(upload_to='what_we_do_images/')
-    size = models.CharField(max_length=10, choices=(('large', 'Large'), ('small', 'Small'), ('tall', 'tall')))
+
+    SIZE_CHOICES = (
+        ('large', 'Large'),
+        ('small', 'Small'),
+        ('tall', 'Tall'),
+    )
+
+    title = models.CharField(
+        max_length=225
+    )
+
+    image = models.ImageField(
+        upload_to='what_we_do_images/'
+    )
+
+    size = models.CharField(
+        max_length=10,
+        choices=SIZE_CHOICES
+    )
+
+    # =====================================
+    # SAVE
+    # =====================================
+
+    def save(self, *args, **kwargs):
+
+        # Save original image first
+        super().save(*args, **kwargs)
+
+        # Skip if no image
+        if not self.image:
+            return
+
+        # Skip if already webp
+        if self.image.name.endswith(".webp"):
+            return
+
+        try:
+
+            # =====================================
+            # STORE OLD FILE PATH
+            # =====================================
+
+            old_image_path = self.image.path
+
+            # =====================================
+            # OPEN IMAGE
+            # =====================================
+
+            img = Image.open(old_image_path)
+
+            # Convert transparent images properly
+            if img.mode in ("RGBA", "P"):
+
+                img = img.convert("RGB")
+
+            # =====================================
+            # RESIZE LARGE IMAGES
+            # =====================================
+
+            max_width = 1920
+
+            if img.width > max_width:
+
+                ratio = max_width / img.width
+
+                new_height = int(img.height * ratio)
+
+                img = img.resize(
+                    (max_width, new_height),
+                    Image.LANCZOS
+                )
+
+            # =====================================
+            # CONVERT TO WEBP
+            # =====================================
+
+            webp_io = BytesIO()
+
+            img.save(
+                webp_io,
+                format="WEBP",
+                quality=75,
+                optimize=True
+            )
+
+            # =====================================
+            # CREATE WEBP NAME
+            # =====================================
+
+            filename = os.path.splitext(
+                os.path.basename(self.image.name)
+            )[0]
+
+            webp_filename = f"{filename}.webp"
+
+            # =====================================
+            # SAVE WEBP FILE
+            # =====================================
+
+            self.image.save(
+                webp_filename,
+                ContentFile(webp_io.getvalue()),
+                save=False
+            )
+
+            # Save updated webp image
+            super().save(update_fields=["image"])
+
+            # =====================================
+            # DELETE ORIGINAL JPG/PNG
+            # =====================================
+
+            if os.path.exists(old_image_path):
+
+                if not old_image_path.endswith(".webp"):
+
+                    os.remove(old_image_path)
+
+        except Exception as e:
+
+            print("WEBP Conversion Error:", e)
+
+    # =====================================
+    # STRING
+    # =====================================
 
     def __str__(self):
+
         return self.title
-    
+
+    # =====================================
+    # SLUG
+    # =====================================
+
     def get_slug(self):
+
         return slugify(self.title)
-    
+
+    # =====================================
+    # ADMIN NAME
+    # =====================================
+
     class Meta:
+
         verbose_name = "OUR SERVICE GRID"
 
-# ✅ Auto delete image file when WhatWeDo_Grid is deleted
+
+# =====================================
+# AUTO DELETE IMAGE WHEN MODEL DELETED
+# =====================================
+
 @receiver(post_delete, sender=WhatWeDo_Grid)
 def delete_what_we_do_image(sender, instance, **kwargs):
-    if instance.image and os.path.isfile(instance.image.path):
-        instance.image.delete(save=False)
+
+    if instance.image:
+
+        if os.path.isfile(instance.image.path):
+
+            os.remove(instance.image.path)
+
+
+
+
 
 class Testimonial(models.Model):
     name = models.CharField(max_length=100)
@@ -265,41 +1050,227 @@ class BlogCategory(models.Model):
 
 
 class Blog(models.Model):
-    title = models.CharField(max_length=255)
-    image = models.ImageField(upload_to='blog_images/')
-    project_category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
-    category = models.ForeignKey(BlogCategory, on_delete=models.SET_NULL, null=True)
-    keyword = models.CharField(max_length=255)
-    is_featured = models.BooleanField(default=False) 
+
+    title = models.CharField(
+        max_length=255
+    )
+
+    image = models.ImageField(
+        upload_to='blog_images/'
+    )
+
+    project_category = models.ForeignKey(
+        Category,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    category = models.ForeignKey(
+        BlogCategory,
+        on_delete=models.SET_NULL,
+        null=True
+    )
+
+    keyword = models.CharField(
+        max_length=255
+    )
+
+    is_featured = models.BooleanField(
+        default=False
+    )
+
     description = models.TextField()
-    slug = models.SlugField(unique=True, default="", null=True, blank=True)  # remove unique=True for now
-    created_at = models.DateTimeField(default=timezone.now)
+
+    slug = models.SlugField(
+        unique=True,
+        default="",
+        null=True,
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        default=timezone.now
+    )
+
     date = models.DateField()
-    views = models.PositiveIntegerField(default=0)
+
+    views = models.PositiveIntegerField(
+        default=0
+    )
+
+    # =====================================
+    # SAVE
+    # =====================================
 
     def save(self, *args, **kwargs):
+
+        # =====================================
+        # AUTO SLUG
+        # =====================================
+
         if not self.slug:
-            category_name = getattr(self.category, 'name', None)  # works even if category is None
-            base_slug = f"{category_name}-{self.title}" if category_name else self.title
+
+            category_name = getattr(
+                self.category,
+                'name',
+                None
+            )
+
+            base_slug = (
+                f"{category_name}-{self.title}"
+                if category_name
+                else self.title
+            )
+
             slug_candidate = slugify(base_slug)
+
             unique_slug = slug_candidate
+
             counter = 1
-            while Blog.objects.filter(slug=unique_slug).exclude(pk=self.pk).exists():
-                unique_slug = f"{slug_candidate}-{counter}"
+
+            while Blog.objects.filter(
+                slug=unique_slug
+            ).exclude(pk=self.pk).exists():
+
+                unique_slug = (
+                    f"{slug_candidate}-{counter}"
+                )
+
                 counter += 1
+
             self.slug = unique_slug
+
+        # =====================================
+        # SAVE ORIGINAL IMAGE FIRST
+        # =====================================
+
         super().save(*args, **kwargs)
 
-        
+        # =====================================
+        # SKIP IF NO IMAGE
+        # =====================================
+
+        if not self.image:
+            return
+
+        # =====================================
+        # SKIP IF ALREADY WEBP
+        # =====================================
+
+        if self.image.name.endswith(".webp"):
+            return
+
+        try:
+
+            # =====================================
+            # STORE OLD FILE PATH
+            # =====================================
+
+            old_image_path = self.image.path
+
+            # =====================================
+            # OPEN IMAGE
+            # =====================================
+
+            img = Image.open(old_image_path)
+
+            # Convert transparent images properly
+            if img.mode in ("RGBA", "P"):
+
+                img = img.convert("RGB")
+
+            # =====================================
+            # RESIZE LARGE IMAGES
+            # =====================================
+
+            max_width = 1920
+
+            if img.width > max_width:
+
+                ratio = max_width / img.width
+
+                new_height = int(img.height * ratio)
+
+                img = img.resize(
+                    (max_width, new_height),
+                    Image.LANCZOS
+                )
+
+            # =====================================
+            # CONVERT TO WEBP
+            # =====================================
+
+            webp_io = BytesIO()
+
+            img.save(
+                webp_io,
+                format="WEBP",
+                quality=75,
+                optimize=True
+            )
+
+            # =====================================
+            # CREATE WEBP NAME
+            # =====================================
+
+            filename = os.path.splitext(
+                os.path.basename(self.image.name)
+            )[0]
+
+            webp_filename = f"{filename}.webp"
+
+            # =====================================
+            # SAVE WEBP FILE
+            # =====================================
+
+            self.image.save(
+                webp_filename,
+                ContentFile(webp_io.getvalue()),
+                save=False
+            )
+
+            # Save updated webp image
+            super().save(update_fields=["image"])
+
+            # =====================================
+            # DELETE ORIGINAL JPG/PNG
+            # =====================================
+
+            if os.path.exists(old_image_path):
+
+                if not old_image_path.endswith(".webp"):
+
+                    os.remove(old_image_path)
+
+        except Exception as e:
+
+            print("WEBP Conversion Error:", e)
+
+    # =====================================
+    # STRING
+    # =====================================
 
     def __str__(self):
+
         return self.title
 
-# ✅ Auto delete image file when Blog is deleted
+
+# =====================================
+# AUTO DELETE IMAGE WHEN BLOG DELETED
+# =====================================
+
 @receiver(post_delete, sender=Blog)
 def delete_blog_image(sender, instance, **kwargs):
-    if instance.image and os.path.isfile(instance.image.path):
-        instance.image.delete(save=False)
+
+    if instance.image:
+
+        if os.path.isfile(instance.image.path):
+
+            os.remove(instance.image.path)
+
+
+            
 
 import re
 from django.db import models
@@ -787,7 +1758,7 @@ class FullSemi(models.Model):
         return self.name
 
 
-class Image(models.Model):
+class QuotationImage(models.Model):
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to="quotation_images/")
 
@@ -801,7 +1772,7 @@ class Quotation(models.Model):
     location = models.CharField(max_length=200)
     element = models.CharField(max_length=100)
 
-    image = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True, blank=True)
+    image = models.ForeignKey(QuotationImage, on_delete=models.SET_NULL, null=True, blank=True)
     full_semi = models.ForeignKey(FullSemi, on_delete=models.SET_NULL, null=True, blank=True)
 
     core_material = models.CharField(max_length=100)
