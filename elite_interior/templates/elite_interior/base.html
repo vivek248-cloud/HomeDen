@@ -1,3 +1,4 @@
+{% load compress %}
 {% load static %}
 {% load extra_filters %}
 
@@ -121,7 +122,11 @@
     <!-- ========================================= -->
     <!-- Custom CSS -->
     <!-- ========================================= -->
+    {% compress css %}
+
     <link rel="stylesheet" href="{% static 'css/interior.css' %}">
+
+    {% endcompress %}
 
     {% block extra_css %}{% endblock %}
 

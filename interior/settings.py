@@ -33,6 +33,33 @@ ALLOWED_HOSTS = ["homedeninterior.com","www.homedeninterior.com","srv888437.hstg
 
 
 
+# SECURE_BROWSER_XSS_FILTER = True
+
+# SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# SESSION_COOKIE_SECURE = True
+
+# CSRF_COOKIE_SECURE = True
+
+# SECURE_SSL_REDIRECT = True
+
+# SECURE_HSTS_SECONDS = 31536000
+
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+# SECURE_HSTS_PRELOAD = True
+
+
+
+
+
+
+#CACHE CONTROL
+WHITENOISE_MAX_AGE = 31536000
+
+
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,7 +67,8 @@ INSTALLED_APPS = [
     "admin_interface",
     "colorfield",
 
-    # 'jazzmin',
+    'compressor',
+
     'django.contrib.sitemaps',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -63,32 +91,65 @@ INSTALLED_APPS = [
 
 
 MIDDLEWARE = [
+
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
     'whitenoise.middleware.WhiteNoiseMiddleware',
+
+    'django.contrib.sessions.middleware.SessionMiddleware',
+
+    'django.middleware.common.CommonMiddleware',
+
+    'django.middleware.csrf.CsrfViewMiddleware',
+
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+
+    'django.contrib.messages.middleware.MessageMiddleware',
+
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
+
+
+
 
 ROOT_URLCONF = 'interior.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        
-        'DIRS':  [BASE_DIR / "templates", BASE_DIR / "elite_interior" / "templates" / "elite_interior"],
-        # 'DIRS': [BASE_DIR / "templates"],
 
-        'APP_DIRS': True,
+        'DIRS': [
+            BASE_DIR / "templates",
+            BASE_DIR / "elite_interior" / "templates" / "elite_interior"
+        ],
+
+        'APP_DIRS': False,
+
         'OPTIONS': {
+
+            'loaders': [
+
+                (
+                    'django.template.loaders.cached.Loader',
+                    [
+                        'django.template.loaders.filesystem.Loader',
+                        'django.template.loaders.app_directories.Loader',
+                    ],
+                ),
+
+            ],
+
             'context_processors': [
+
                 'django.template.context_processors.request',
+
                 'django.contrib.auth.context_processors.auth',
+
                 'django.contrib.messages.context_processors.messages',
+
                 'elite_interior.context_processors.site_settings',
+
             ],
         },
     },
@@ -132,7 +193,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage" 
+STATICFILES_STORAGE = (
+    "whitenoise.storage.CompressedManifestStaticFilesStorage"
+)
+
 ROOT_URLCONF = 'interior.urls'
 
 
@@ -144,22 +208,14 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-# STATIC_URL = '/static/'
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'interior', 'static',)]
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 
@@ -171,6 +227,32 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+STATICFILES_FINDERS = [
+
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+
+    'compressor.finders.CompressorFinder',
+
+]
+
+
+
+#compressor settings
+
+# COMPRESS_ENABLED = True
+
+# COMPRESS_OFFLINE = True
+
+# COMPRESS_ROOT = STATIC_ROOT
+
+# COMPRESS_URL = STATIC_URL
+
+
+
 
 
 # Default primary key field type
