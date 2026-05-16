@@ -1,18 +1,65 @@
 :root {
-  --color-taupe: #483C32;          /* Rich, warm base color */
-  --color-gold-sand: #CBAF87;      /* Elegant accent */
-  --color-white-smoke: #F5F5F5;    /* Clean, soft background */
-  --color-dark-taupe: #3B322A;     /* Deeper taupe for depth */
-  --color-gold-hover: #B7986C;     /* Hover variation of gold */
-  --color-1:#e64b03;/*red*/
-  --color-2:#2ba58b; /* Teal */
-  --color-3:#4cb748; /* Green */
-  --color-4:orange; /* Orange */
-  --color-5:#0e0a09; /* Dark (likely the background) */
-  --darkoverlay: rgba(0, 0, 0, 0.336);
+
+  --color-taupe: #483C32;
+  --color-gold-sand: #CBAF87;
+  --color-white-smoke: #F5F5F5;
+  --color-dark-taupe: #3B322A;
+  --color-gold-hover: #B7986C;
+
+  --color-1:#e64b03;
+  --color-2:#2ba58b;
+  --color-3:#4cb748;
+  --color-4:orange;
+  --color-5:#0e0a09;
+
+  --darkoverlay: rgba(0,0,0,.336);
+
+  /* TESTIMONIAL SYSTEM */
+
+  --tms-primary: var(--color-gold-sand);
+  --tms-primary-light: #d8c2a1;
+  --tms-primary-dark: var(--color-gold-hover);
+
+  --tms-accent: var(--color-taupe);
+
+  --tms-success: #4cb748;
+  --tms-warning: #f4b400;
+
+  --tms-text-primary: #2f2924;
+  --tms-text-secondary: #5e564f;
+  --tms-text-muted: #8e857c;
+
+  --tms-border: rgba(72,60,50,.08);
+
+  --tms-bg-card: rgba(255,255,255,.78);
+
+  --tms-bg-section:
+  linear-gradient(
+      180deg,
+      #faf8f5 0%,
+      #f4efe9 100%
+  );
+
+  --tms-radius-sm: 14px;
+  --tms-radius-md: 24px;
+  --tms-radius-lg: 34px;
+
+  --tms-shadow-sm:
+  0 4px 10px rgba(0,0,0,.04);
+
+  --tms-shadow-md:
+  0 12px 30px rgba(72,60,50,.08);
+
+  --tms-shadow-lg:
+  0 35px 80px rgba(72,60,50,.14);
+
+  --tms-shadow-glow:
+  0 10px 40px rgba(203,175,135,.25);
+
+  --tms-transition:
+  cubic-bezier(.4,0,.2,1);
+
 }
-
-
 
 
 /* HTML: <div class="loader"></div> */
@@ -6657,4 +6704,822 @@ background:#444;
     100%{
         opacity:0;
     }
+}
+
+
+
+/* =========================================================
+   HOME DEN — PREMIUM TESTIMONIAL SECTION
+========================================================= */
+
+:root {
+
+  --color-taupe: #483C32;
+  --color-gold-sand: #CBAF87;
+  --color-white-smoke: #F5F5F5;
+  --color-dark-taupe: #3B322A;
+  --color-gold-hover: #B7986C;
+
+  --color-1:#e64b03;
+  --color-2:#2ba58b;
+  --color-3:#4cb748;
+  --color-4:orange;
+  --color-5:#0e0a09;
+
+  --darkoverlay: rgba(0,0,0,.336);
+
+  /* TESTIMONIAL VARIABLES */
+
+  --tms-primary: var(--color-gold-sand);
+  --tms-primary-dark: var(--color-gold-hover);
+
+  --tms-text: #2f2924;
+  --tms-text-light: #6f665d;
+  --tms-text-muted: #978b81;
+
+  --tms-border: rgba(72,60,50,.08);
+
+  --tms-card-bg: rgba(255,255,255,.72);
+
+  --tms-shadow-sm:
+  0 4px 10px rgba(0,0,0,.04);
+
+  --tms-shadow-md:
+  0 15px 40px rgba(72,60,50,.08);
+
+  --tms-shadow-lg:
+  0 40px 100px rgba(72,60,50,.14);
+
+  --tms-glow:
+  0 0 40px rgba(203,175,135,.2);
+
+  --tms-radius-sm:14px;
+  --tms-radius-md:24px;
+  --tms-radius-lg:34px;
+
+  --tms-transition:
+  cubic-bezier(.4,0,.2,1);
+
+}
+
+
+/* =========================================================
+SECTION
+========================================================= */
+
+.tms-section{
+
+    position:relative;
+    overflow:hidden;
+
+    padding:120px 0;
+
+
+
+}
+
+
+
+
+
+/* =========================================================
+HEADER
+========================================================= */
+
+.tms-header{
+
+    position:relative;
+
+    text-align:center;
+
+    margin-bottom:70px;
+
+    z-index:2;
+
+}
+
+.tms-eyebrow{
+
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+
+    font-size:.8rem;
+    letter-spacing:.18em;
+    font-weight:700;
+
+    color:var(--color-5);
+
+    margin-bottom:20px;
+
+}
+
+.tms-eyebrow span{
+
+    width:40px;
+    height:2px;
+
+    background:
+    linear-gradient(
+        90deg,
+        var(--color-1),
+        transparent
+    );
+
+}
+
+.tms-heading{
+
+    font-size:clamp(2.3rem,5vw,4.4rem);
+
+    line-height:1.1;
+
+    font-weight:800;
+
+    color:var(--tms-text);
+
+    margin-bottom:24px;
+
+}
+
+.tms-heading em{
+
+    font-style:normal;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--color-1),
+        var(--color-1)
+    );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+}
+
+.tms-subheading{
+
+    max-width:720px;
+
+    margin:auto;
+
+    font-size:1.08rem;
+    line-height:1.9;
+
+    color:var(--tms-text-light);
+
+}
+
+
+/* =========================================================
+STATS
+========================================================= */
+
+.tms-stats{
+
+    margin-top:40px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:30px;
+
+    flex-wrap:wrap;
+
+}
+
+.tms-stat-item{
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+}
+
+.tms-stat-num{
+
+    font-size:2rem;
+    font-weight:800;
+
+    color:var(--tms-text);
+
+}
+
+.tms-stat-star{
+
+    color:var(--tms-warning);
+}
+
+.tms-stat-lbl{
+
+    margin-top:6px;
+
+    color:var(--tms-text-light);
+
+    font-size:.92rem;
+
+}
+
+.tms-stat-sep{
+
+    width:1px;
+    height:50px;
+
+    background:rgba(72,60,50,.12);
+
+}
+
+
+/* =========================================================
+SWIPER
+========================================================= */
+
+.tms-swiper-wrap{
+    position:relative;
+}
+
+.tms-swiper{
+    padding:20px 10px 90px;
+}
+
+
+/* =========================================================
+CARD
+========================================================= */
+
+.tms-card{
+
+    position:relative;
+
+    border-radius:var(--tms-radius-lg);
+
+    overflow:hidden;
+
+    transition:.5s var(--tms-transition);
+
+}
+
+.tms-card-inner{
+
+    position:relative;
+
+    padding:34px;
+
+    border-radius:var(--tms-radius-lg);
+
+    background:var(--tms-card-bg);
+
+    backdrop-filter:blur(24px);
+
+    border:1px solid rgba(255,255,255,.7);
+
+    box-shadow:var(--tms-shadow-md);
+
+    transition:.5s var(--tms-transition);
+
+    overflow:hidden;
+    border-bottom: var(--color-2) 1px solid;
+
+}
+
+.tms-card-inner::before{
+
+    content:'';
+
+    position:absolute;
+    top:0;
+    left:0;
+
+    width:100%;
+    height:5px;
+
+    background:
+    linear-gradient(
+        90deg,
+        var(--color-5),
+        var(--color-5),
+        var(--color-5)
+    );
+
+}
+
+.tms-card:hover .tms-card-inner{
+
+    transform:translateY(-10px);
+
+    box-shadow:
+
+    0 40px 90px black,
+
+    0 0 40px rgba(203,175,135,.12);
+
+}
+
+
+/* =========================================================
+CARD GLOW
+========================================================= */
+
+.tms-card-glow{
+
+    position:absolute;
+    inset:0;
+
+    border-radius:inherit;
+
+    background:
+    radial-gradient(
+        circle at top right,
+        rgba(203,175,135,.2),
+        transparent 40%
+    );
+
+    pointer-events:none;
+
+}
+
+
+/* =========================================================
+QUOTE BACKGROUND
+========================================================= */
+
+.tms-card-bg-quote{
+
+    position:absolute;
+
+    top:10px;
+    right:20px;
+
+    font-size:8rem;
+    line-height:1;
+
+    font-weight:800;
+
+    color:rgba(203,175,135,.08);
+
+}
+
+
+/* =========================================================
+HEADER
+========================================================= */
+
+.tms-card-header{
+
+    display:flex;
+    align-items:center;
+
+    gap:18px;
+
+    margin-bottom:28px;
+
+}
+
+.tms-avatar-wrap{
+
+    position:relative;
+
+    width:72px;
+    height:72px;
+
+    flex-shrink:0;
+
+}
+
+.tms-avatar-ring{
+
+    position:absolute;
+    inset:-3px;
+
+    border-radius:50%;
+
+
+
+}
+
+.tms-avatar{
+
+    position:relative;
+
+    width:100%;
+    height:100%;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:3px solid white;
+
+}
+
+.tms-avatar-badge{
+
+    position:absolute;
+
+    right:-2px;
+    bottom:-2px;
+
+    width:24px;
+    height:24px;
+
+    border-radius:50%;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--color-3),
+        var(--color-gold-hover)
+    );
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:white;
+
+    box-shadow:
+    0 6px 20px rgba(203,175,135,.45);
+
+}
+
+.tms-avatar-status{
+
+    position:absolute;
+
+    top:4px;
+    right:4px;
+
+    width:10px;
+    height:10px;
+
+    background:#4cb748;
+
+    border-radius:50%;
+
+    border:2px solid white;
+
+}
+
+
+/* =========================================================
+NAME
+========================================================= */
+
+.tms-name-block{
+    flex:1;
+}
+
+.tms-name{
+
+    font-size:1.15rem;
+    font-weight:700;
+
+    color:var(--tms-text);
+
+}
+
+.tms-role{
+
+    margin-top:6px;
+
+    display:flex;
+    align-items:center;
+    gap:6px;
+
+    color:var(--tms-text-light);
+
+    font-size:.9rem;
+
+}
+
+.tms-header-rating{
+
+    padding:8px 14px;
+
+    border-radius:999px;
+
+    background:var(--color-5);
+
+}
+
+.tms-rating-num{
+
+    font-weight:700;
+
+    color:#fff;
+
+}
+
+
+/* =========================================================
+DIVIDER
+========================================================= */
+
+.tms-divider{
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    margin:24px 0;
+
+}
+
+.tms-divider-line{
+
+    flex:1;
+    height:1px;
+
+    background:
+    linear-gradient(
+        90deg,
+        transparent,
+        rgba(72,60,50,.15),
+        transparent
+    );
+
+}
+
+.tms-divider-icon{
+
+    color:var(--color-5);
+
+}
+
+
+/* =========================================================
+STARS
+========================================================= */
+
+.tms-stars-row{
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    margin-bottom:22px;
+
+}
+
+.tms-stars{
+
+    display:flex;
+    gap:5px;
+
+}
+
+.tms-star{
+    color:var(--tms-warning);
+}
+
+.tms-stars-label{
+
+    color:var(--color-5);
+
+    font-size:.92rem;
+
+}
+
+
+/* =========================================================
+QUOTE
+========================================================= */
+
+.tms-quote{
+
+    font-size:1rem;
+
+    line-height:1.9;
+
+    font-weight:400;
+
+    color:var(--tms-text-light);
+
+    margin-bottom:30px;
+
+    min-height:160px;
+
+}
+
+
+/* =========================================================
+FOOTER
+========================================================= */
+
+.tms-card-footer{
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    flex-wrap:wrap;
+    gap:10px;
+
+}
+
+.tms-verified{
+
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    color:var(--tms-text-light);
+
+    font-size:.9rem;
+
+}
+
+.tms-verified-icon{
+
+    width:22px;
+    height:22px;
+
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:
+    rgba(76,183,72,.12);
+
+    color:#4cb748;
+
+}
+
+.tms-date{
+
+    color:var(--tms-text-muted);
+
+    font-size:.86rem;
+
+}
+
+
+/* =========================================================
+NAVIGATION
+========================================================= */
+
+.tms-nav{
+
+    width:56px;
+    height:56px;
+
+    border-radius:50%;
+
+    background:var(--color-1);
+
+    backdrop-filter:blur(20px);
+
+    border:
+    1px solid rgba(203,175,135,.2);
+
+    box-shadow:var(--tms-shadow-sm);
+
+    color: white;
+
+    transition:.4s;
+
+}
+
+.tms-nav::after{
+    display:none;
+}
+
+.tms-nav:hover{
+
+    background:var(--color-1);
+
+    color:white;
+
+    transform:translateY(-3px);
+
+}
+
+
+/* =========================================================
+PAGINATION
+========================================================= */
+
+.tms-pagination{
+
+    bottom:0 !important;
+
+}
+
+.tms-pagination .swiper-pagination-bullet{
+
+    width:10px;
+    height:10px;
+
+    background:#d8cfc5;
+
+    opacity:1;
+
+    transition:.4s;
+
+}
+
+.tms-pagination .swiper-pagination-bullet-active{
+
+    width:28px;
+
+    border-radius:999px;
+
+    background:
+    linear-gradient(
+        135deg,
+        var(--color-gold-sand),
+        var(--color-gold-hover)
+    );
+
+}
+
+
+/* =========================================================
+EMPTY STATE
+========================================================= */
+
+.tms-empty{
+
+    text-align:center;
+
+    padding:100px 20px;
+
+}
+
+.tms-empty-icon{
+
+    font-size:4rem;
+
+    color:var(--tms-primary);
+
+    margin-bottom:20px;
+
+}
+
+
+/* =========================================================
+RESPONSIVE
+========================================================= */
+
+@media(max-width:992px){
+
+    .tms-section{
+        padding:90px 0;
+    }
+
+    .tms-card-inner{
+        padding:28px;
+    }
+
+}
+
+@media(max-width:768px){
+
+    .tms-heading{
+        font-size:2.5rem;
+    }
+
+    .tms-subheading{
+        font-size:1rem;
+    }
+
+    .tms-card-inner{
+        padding:24px;
+    }
+
+    .tms-stats{
+        gap:18px;
+    }
+
+    .tms-stat-sep{
+        display:none;
+    }
+
+    .tms-quote{
+        min-height:auto;
+    }
+
+}
+
+@media(max-width:576px){
+
+    .tms-section{
+        padding:70px 0;
+    }
+
+    .tms-heading{
+        font-size:2rem;
+    }
+
+    .tms-card-inner{
+        padding:22px;
+    }
+
+    .tms-nav{
+        display:none;
+    }
+
 }
