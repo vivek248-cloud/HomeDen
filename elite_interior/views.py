@@ -12,6 +12,9 @@ from django.http import JsonResponse
 from twilio.rest import Client
 from django.core.mail import send_mail
 import json
+import requests
+from django.conf import settings
+
 
 
 from .models import*
@@ -42,14 +45,52 @@ def home(request):
     blogs = Blog.objects.all().order_by('-created_at')
     ad = Ad.objects.filter(is_active=True).order_by('-created_at').first()
     
-    context = {'home_sliders': home_slider,
-               'offers':package_offers,
-               'grid':grid,
-               'test':test,
-               'ad': ad,
-               'videos':videos,
-               'blogs':blogs,
-               }
+     # ---------------------------
+    # GOOGLE REVIEWS
+    # ---------------------------
+
+    google_reviews = []
+    google_rating = 0
+    google_total_reviews = 0
+    google_place_id=settings.GOOGLE_PLACE_ID
+    try:
+
+        url = (
+            "https://maps.googleapis.com/maps/api/place/details/json"
+            f"?place_id={settings.GOOGLE_PLACE_ID}"
+            "&fields=name,rating,user_ratings_total,reviews"
+            f"&key={settings.GOOGLE_API_KEY}"
+        )
+
+        response = requests.get(url, timeout=10)
+
+        result = response.json().get("result", {})
+
+        google_reviews = result.get("reviews", [])
+        google_rating = result.get("rating", 0)
+        google_total_reviews = result.get("user_ratings_total", 0)
+
+    except Exception as e:
+        print("Google Review Error:", e)
+
+
+    context = {
+            'home_sliders': home_slider,
+            'offers':package_offers,
+            'grid':grid,
+            'test':test,
+            'ad': ad,
+            'videos':videos,
+            'blogs':blogs,
+
+            'google_reviews': google_reviews,
+            'google_rating': google_rating,
+            'google_total_reviews': google_total_reviews,
+            'google_place_id':google_place_id
+        }
+    
+
+
     if request.method == 'POST':
         name = request.POST.get('name')
         contact = request.POST.get('contact')

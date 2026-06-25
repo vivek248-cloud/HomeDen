@@ -33,21 +33,21 @@ ALLOWED_HOSTS = ["homedeninterior.com","www.homedeninterior.com","srv888437.hstg
 
 
 
-SECURE_BROWSER_XSS_FILTER = True
+# SECURE_BROWSER_XSS_FILTER = True
 
-SECURE_CONTENT_TYPE_NOSNIFF = True
+# SECURE_CONTENT_TYPE_NOSNIFF = True
 
-SESSION_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
 
-CSRF_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
 
-SECURE_SSL_REDIRECT = True
+# SECURE_SSL_REDIRECT = True
 
-SECURE_HSTS_SECONDS = 31536000
+# SECURE_HSTS_SECONDS = 31536000
 
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
-SECURE_HSTS_PRELOAD = True
+# SECURE_HSTS_PRELOAD = True
 
 
 
@@ -289,3 +289,14 @@ ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "homedeninterior@gmail.com")
 LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/quotation/"
 LOGOUT_REDIRECT_URL = "/accounts/login/"
+
+
+
+# google place ID for homeden interior
+
+
+place_id = "ChIJqz7niLI4FqcRUwGcqCXHMT4"
+
+GOOGLE_API_KEY = "AIzaSyCSSg4JvbsfUPX51r4FRz4hvqf88vyVcV4"
+
+GOOGLE_PLACE_ID = "ChIJqz7niLI4FqcRUwGcqCXHMT4"
