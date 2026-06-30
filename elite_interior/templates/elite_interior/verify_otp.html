@@ -1,33 +1,442 @@
 {% extends 'elite_interior/base.html' %}
 {% load static %}
 {% block content %}
+
+<style>
+/* ═══════════════════════════════════════════════════════
+   OTP VERIFICATION — SAAS PREMIUM (Taupe + Gold)
+═══════════════════════════════════════════════════════ */
+:root {
+
+  --color-taupe: #483C32;
+  --color-gold-sand: #CBAF87;
+  --color-white-smoke: #F5F5F5;
+  --color-dark-taupe: #3B322A;
+  --color-gold-hover: #B7986C;
+
+  --color-1:#e64b03;
+  --color-2:#2ba58b;
+  --color-3:#4cb748;
+  --color-4:orange;
+  --color-5:#0e0a09;
+
+    --tms-text-primary: #e64b03;
+    --tms-text-secondary: #2ba58b;
+    --tms-text-muted: #4cb748;
+
+    --tms-border: rgba(72,60,50,.08);
+
+    --tms-bg-card: rgba(255,255,255,.78);
+
+}
+
+
+.otp-container {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+  background: var(--tms-bg-section);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative blurred orbs */
+.otp-container::before,
+.otp-container::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+.otp-container::before {
+  width: 380px; height: 380px;
+  background: rgba(203,175,135,.25);
+  top: -120px; right: -120px;
+}
+.otp-container::after {
+  width: 320px; height: 320px;
+  background: rgba(72,60,50,.12);
+  bottom: -100px; left: -100px;
+}
+
+/* GLASS CARD */
+.glass-card {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 460px;
+  background: rgb(255, 255, 255);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--tms-border);
+  border-radius: var(--tms-radius-lg);
+  box-shadow: var(--tms-shadow-lg);
+  padding: 44px 38px;
+  text-align: center;
+  animation: cardRise .6s var(--tms-transition);
+}
+@keyframes cardRise {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* HEADER */
+.header { margin-bottom: 28px; }
+.icon-lock {
+  width: 72px; height: 72px;
+  margin: 0 auto 18px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, var(--tms-primary), var(--tms-primary-dark));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+  color: #fff;
+  box-shadow: var(--tms-shadow-glow);
+  position: relative;
+}
+.icon-lock::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 26px;
+  border: 1.5px dashed rgba(0, 0, 0, 0.4);
+  animation: spin 12s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.header h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #e64b03;
+  margin: 0 0 8px;
+  letter-spacing: -.3px;
+}
+.header p {
+  color: black;
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.55;
+}
+.header p strong {
+  color: var(--color-dark-taupe);
+  font-weight: 700;
+}
+
+/* TIMER CIRCLE */
+.timer-circle {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 26px;
+}
+.progress-ring {
+  transform: rotate(-90deg);
+}
+.progress-ring__circle-bg {
+  stroke: var(--tms-border);
+}
+.progress-ring__circle {
+  stroke: var(--tms-primary-dark) !important;
+  transition: stroke-dashoffset .9s linear, stroke .3s;
+  stroke-linecap: round;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+}
+.timer-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-dark-taupe);
+  letter-spacing: .5px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* OTP INPUTS */
+.otp-inputs {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.otp-box {
+  width: 60px;
+  height: 68px;
+  border: 2px solid var(--tms-border-strong);
+  border-radius: 14px;
+  background: #fff;
+  font-size: 26px;
+  font-weight: 800;
+  text-align: center;
+  color: var(--color-dark-taupe);
+  outline: none;
+  transition: all .25s var(--tms-transition);
+  font-family: 'Inter', sans-serif;
+  caret-color: var(--tms-primary-dark);
+}
+.otp-box:focus {
+  border-color: var(--tms-primary);
+  background: var(--tms-primary-soft);
+  box-shadow: 0 0 0 4px #e64b03;
+  transform: translateY(-2px);
+}
+.otp-box.filled {
+  border-color: var(--tms-primary);
+  background: linear-gradient(135deg, #e64b03, #fff);
+  color: var(--color-dark-taupe);
+  animation: filledPop .3s var(--tms-transition);
+}
+@keyframes filledPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+/* 3D BUTTON */
+.btn-3d {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 15px 24px;
+  background: linear-gradient(135deg, #e64b03, #e64b03);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .3px;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 10px 24px rgba(72,60,50,.25);
+  transition: all .25s var(--tms-transition);
+  font-family: inherit;
+  text-decoration: none;
+}
+.btn-3d:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px rgba(72,60,50,.32);
+  background: linear-gradient(135deg, var(--color-taupe), var(--color-dark-taupe));
+}
+.btn-3d:active:not(:disabled) {
+  transform: translateY(-1px);
+}
+.btn-3d:disabled {
+  opacity: .7;
+  cursor: not-allowed;
+  transform: none;
+}
+.btn-3d.loading {
+  background: linear-gradient(135deg, #e64b03, #e64b03) !important;
+  color: var(--color-dark-taupe);
+  pointer-events: none;
+}
+
+/* SPINNER */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(72,60,50,.25);
+  border-top-color: var(--color-dark-taupe);
+  border-radius: 50%;
+  animation: spinr .7s linear infinite;
+  display: inline-block;
+}
+@keyframes spinr {
+  to { transform: rotate(360deg); }
+}
+
+/* RIPPLE */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,.4);
+  transform: scale(0);
+  animation: rippleAnim .6s ease-out;
+  pointer-events: none;
+}
+@keyframes rippleAnim {
+  to { transform: scale(2); opacity: 0; }
+}
+
+/* RESEND */
+.resend {
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--tms-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.btn-link {
+  background: transparent;
+  border: none;
+  color: var(--tms-primary-dark);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all .2s;
+}
+.btn-link:hover:not(:disabled) {
+  background: var(--tms-primary-soft);
+  color: var(--color-dark-taupe);
+}
+.btn-link:disabled {
+  color: var(--tms-text-muted);
+  cursor: not-allowed;
+}
+.btn-link i { font-size: 14px; }
+.cooldown {
+  color: var(--tms-text-muted);
+  font-size: 12.5px;
+}
+
+/* SUCCESS STATE */
+.success-state {
+  padding: 12px 0;
+  animation: cardRise .6s var(--tms-transition);
+}
+.check-icon {
+  width: 88px; height: 88px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--tms-success), #3fa53b);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 44px;
+  color: #fff;
+  box-shadow: 0 14px 36px rgba(76,183,72,.35);
+  animation: checkPop .6s var(--tms-transition);
+}
+@keyframes checkPop {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.success-state h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  color: var(--color-dark-taupe);
+  margin: 0 0 6px;
+  font-weight: 700;
+}
+.success-state p {
+  color: var(--tms-text-secondary);
+  font-size: 14px;
+  margin: 0 0 24px;
+}
+.download-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.btn-3d.download {
+  background: linear-gradient(135deg, var(--tms-primary), var(--tms-primary-dark));
+  color: var(--color-dark-taupe);
+  box-shadow: var(--tms-shadow-glow);
+}
+.btn-3d.download:hover {
+  background: linear-gradient(135deg, var(--color-dark-taupe), var(--color-taupe));
+  color: #fff;
+}
+.countdown-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0 auto;
+  padding: 8px 18px;
+  background: var(--tms-primary-soft);
+  border: 1px dashed var(--tms-primary);
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--color-dark-taupe);
+  transition: transform .15s;
+}
+.countdown-badge span {
+  color: var(--tms-primary-dark);
+  font-variant-numeric: tabular-nums;
+  min-width: 18px;
+}
+
+/* MESSAGES */
+.messages {
+  margin-top: 18px;
+}
+.alert {
+  background: rgba(230,75,3,.08);
+  border: 1px solid rgba(230,75,3,.25);
+  color: var(--color-1);
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.shake {
+  animation: shake .4s var(--tms-transition);
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+  .glass-card { padding: 32px 22px; border-radius: 24px; }
+  .otp-box { width: 52px; height: 60px; font-size: 22px; }
+  .otp-inputs { gap: 8px; }
+  .header h3 { font-size: 22px; }
+  .icon-lock { width: 64px; height: 64px; font-size: 28px; }
+}
+</style>
+
+
 <div class="otp-container">
   <div class="glass-card">
+
     <!-- Header -->
     <div class="header">
       <div class="icon-lock">
         <i class="bi bi-shield-lock-fill"></i>
       </div>
       <h3>Verify Your Email</h3>
-      <p>Enter the <strong>4-digit</strong> code sent to <strong>{{ email }}</strong></p>
+      <p>Enter the <strong>4-digit</strong> code sent to<br><strong>{{ email }}</strong></p>
     </div>
 
     {% if not download_pdf %}
       <!-- Timer Circle -->
       <div class="timer-circle">
         <svg class="progress-ring" width="80" height="80">
-          <circle class="progress-ring__circle-bg" stroke="#e0e0e0" stroke-width="6" fill="transparent" r="36" cx="40" cy="40"/>
-          <circle class="progress-ring__circle" stroke="#e64b03" stroke-width="6" fill="transparent" r="36" cx="40" cy="40"/>
+          <circle class="progress-ring__circle-bg" stroke-width="6" fill="transparent" r="36" cx="40" cy="40"/>
+          <circle class="progress-ring__circle" stroke-width="6" fill="transparent" r="36" cx="40" cy="40"/>
         </svg>
         <div class="timer-text" id="timer">02:00</div>
       </div>
 
-      <!-- OTP Inputs (4 boxes) -->
+      <!-- OTP Inputs -->
       <div class="otp-inputs" id="otpInputs">
-        <input type="text" maxlength="1" class="otp-box" data-index="0">
-        <input type="text" maxlength="1" class="otp-box" data-index="1">
-        <input type="text" maxlength="1" class="otp-box" data-index="2">
-        <input type="text" maxlength="1" class="otp-box" data-index="3">
+        <input type="text" inputmode="numeric" maxlength="1" class="otp-box" data-index="0">
+        <input type="text" inputmode="numeric" maxlength="1" class="otp-box" data-index="1">
+        <input type="text" inputmode="numeric" maxlength="1" class="otp-box" data-index="2">
+        <input type="text" inputmode="numeric" maxlength="1" class="otp-box" data-index="3">
       </div>
 
       <!-- Hidden Form -->
@@ -39,88 +448,61 @@
 
       <!-- Verify Button -->
       <button type="submit" form="otpForm" id="verifyBtn" class="btn-3d">
-        <span>Verify Code</span>
-        <div class="ripple"></div>
+        <span id="verifyBtnText"><i class="bi bi-shield-check"></i> Verify Code</span>
       </button>
 
- <div class="resend">
-  <button id="resendBtn"
-          class="btn-link"
-          form="resendForm"
-          type="submit"
-          style="text-decoration: none;"
-          disabled>
-      <i class="bi bi-arrow-repeat"></i> Resend Code
-  </button>
+      <!-- Resend -->
+      <div class="resend">
+        <button id="resendBtn"
+                class="btn-link"
+                form="resendForm"
+                type="submit"
+                disabled>
+          <i class="bi bi-arrow-repeat"></i> Resend Code
+        </button>
+        <span class="cooldown" id="cooldown"> in <span id="cooldownSec">5</span>s</span>
+      </div>
 
-  <span class="cooldown" id="cooldown"> in <span id="cooldownSec">5</span>s</span>
-</div>
+      <form method="post" action="{% url 'resend_otp' %}" id="resendForm">
+        {% csrf_token %}
+        <input type="hidden" name="email" value="{{ email }}">
+      </form>
 
-<form method="post" action="{% url 'resend_otp' %}" id="resendForm">
-  {% csrf_token %}
-  <input type="hidden" name="email" value="{{ email }}">
+    {% else %}
+      <!-- Success State -->
+      <div class="success-state">
+        <div class="check-icon"><i class="bi bi-check-circle-fill"></i></div>
+        <h4>Verified Successfully!</h4>
+        <p>Your estimation PDF is ready.</p>
 
-</form>
+        <div class="download-wrapper">
+          <a href="{{ download_pdf }}" download id="downloadBtn" class="btn-3d download">
+            <i class="bi bi-download"></i> Download PDF
+          </a>
 
-
-
-
-
-
-   {% else %}
-    <!-- Success + 10-second Countdown -->
-    <div class="success-state">
-      <div class="check-icon"><i class="bi bi-check-circle-fill"></i></div>
-      <h4>Verified Successfully!</h4>
-      <p>Your estimation PDF is ready.</p>
-
-      <!-- Download Button + Countdown -->
-      <div class="download-wrapper">
-        <a href="{{ download_pdf }}" download id="downloadBtn" class="btn-3d download">
-          <i class="bi bi-download"></i> Download PDF
-          <div class="ripple"></div>
-        </a>
-
-        <div class="countdown-badge" id="countdownBadge">
-          Redirecting in <span id="countdownTimer">20</span>s
+          <div class="countdown-badge" id="countdownBadge">
+            <i class="bi bi-clock-history"></i> Redirecting in <span id="countdownTimer">20</span>s
+          </div>
         </div>
       </div>
 
-      <!-- Auto-redirect after 10s -->
       <script>
         document.addEventListener('DOMContentLoaded', () => {
           const timerEl = document.getElementById('countdownTimer');
-          const downloadBtn = document.getElementById('downloadBtn');
           let seconds = 20;
-
-          // Disable button initially (optional)
-          downloadBtn.style.pointerEvents = 'auto';
-          downloadBtn.style.opacity = '1';
-
           const countdown = setInterval(() => {
             seconds--;
             timerEl.textContent = seconds;
-
-            // Optional: pulse effect
             timerEl.parentElement.style.transform = 'scale(1.05)';
             setTimeout(() => timerEl.parentElement.style.transform = '', 100);
-
             if (seconds <= 0) {
               clearInterval(countdown);
               window.location.href = "{{ home_url }}";
             }
           }, 1000);
-
-          // Optional: Allow manual download during countdown
-          //downloadBtn.addEventListener('click', (e) => {
-           // clearInterval(countdown);
-            //timerEl.parentElement.textContent = 'Downloading...';
-            //timerEl.parentElement.style.background = '#28a745';
-          //});
         });
       </script>
-    </div>
-  {% endif %}
+    {% endif %}
 
     <!-- Messages -->
     {% if messages %}
@@ -134,17 +516,17 @@
 </div>
 
 
-
+{% if not download_pdf %}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // === TIMER: 2 minutes (120 seconds) ===
+  /* ───────── TIMER: 2 minutes ───────── */
   let timeLeft = 120;
   const timerEl = document.getElementById('timer');
   const circle = document.querySelector('.progress-ring__circle');
   const radius = 36;
   const circumference = 2 * Math.PI * radius;
   circle.style.strokeDasharray = `${circumference} ${circumference}`;
-  circle.style.strokeDashoffset = circumference;
+  circle.style.strokeDashoffset = 0;
 
   const countdown = setInterval(() => {
     timeLeft--;
@@ -153,29 +535,43 @@ document.addEventListener('DOMContentLoaded', () => {
     timerEl.textContent = `${minutes}:${seconds}`;
 
     const offset = circumference - (timeLeft / 120) * circumference;
-    circle.style.strokeDashoffset = offset;
+    circle.style.strokeDashoffset = circumference - offset;
+
+    // Color warning when < 30s
+    if (timeLeft <= 30) {
+      circle.style.stroke = 'var(--color-1)';
+      timerEl.style.color = 'var(--color-1)';
+    }
 
     if (timeLeft <= 0) {
       clearInterval(countdown);
       timerEl.textContent = "Expired";
       timerEl.style.color = "#999";
-      document.getElementById('verifyBtn').disabled = true;
+      const verifyBtn = document.getElementById('verifyBtn');
+      verifyBtn.disabled = true;
+      verifyBtn.style.opacity = '.5';
       enableResend();
     }
   }, 1000);
 
-  // === OTP: 4 digits ===
+  /* ───────── OTP: 4 digits ───────── */
   const inputs = document.querySelectorAll('.otp-box');
   const hiddenInput = document.getElementById('otpValue');
+  const otpForm = document.getElementById('otpForm');
+  const verifyBtn = document.getElementById('verifyBtn');
+  const verifyBtnText = document.getElementById('verifyBtnText');
+
+  let isSubmitting = false;
 
   inputs.forEach((input, index) => {
     input.addEventListener('input', (e) => {
       const value = e.target.value;
       if (/^\d$/.test(value)) {
         input.classList.add('filled');
-        if (index < 3) inputs[index + 1].focus();
+        if (index < inputs.length - 1) inputs[index + 1].focus();
       } else {
         e.target.value = '';
+        input.classList.remove('filled');
       }
       updateHidden();
     });
@@ -187,14 +583,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     input.addEventListener('paste', (e) => {
-      const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4);
+      const paste = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, inputs.length);
       paste.split('').forEach((char, i) => {
         if (inputs[i]) {
           inputs[i].value = char;
           inputs[i].classList.add('filled');
         }
       });
-      inputs[Math.min(paste.length, 3)].focus();
+      inputs[Math.min(paste.length, inputs.length - 1)].focus();
       updateHidden();
       e.preventDefault();
     });
@@ -203,59 +599,91 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateHidden() {
     const otp = Array.from(inputs).map(i => i.value).join('');
     hiddenInput.value = otp;
-    if (otp.length === 4) {
-      setTimeout(() => document.getElementById('verifyBtn').click(), 300);
+
+    /* ───────── AUTO-SUBMIT WITH LOADING STATE ───────── */
+    if (otp.length === 4 && !isSubmitting) {
+      triggerVerify();
     }
   }
 
-  // === Ripple Effect ===
+  function triggerVerify() {
+    if (isSubmitting) return;
+    isSubmitting = true;
+
+    // Disable all OTP inputs
+    inputs.forEach(i => i.disabled = true);
+
+    // Switch button to loading state
+    verifyBtn.disabled = true;
+    verifyBtn.classList.add('loading');
+    verifyBtnText.innerHTML = `<span class="spinner"></span> Verifying...`;
+
+    // Submit form
+    setTimeout(() => otpForm.submit(), 250);
+  }
+
+  // Prevent manual multi-click submission
+  verifyBtn.addEventListener('click', (e) => {
+    if (isSubmitting) {
+      e.preventDefault();
+      return;
+    }
+    const otp = Array.from(inputs).map(i => i.value).join('');
+    if (otp.length !== 4) {
+      e.preventDefault();
+      verifyBtn.classList.add('shake');
+      setTimeout(() => verifyBtn.classList.remove('shake'), 400);
+      return;
+    }
+    triggerVerify();
+    e.preventDefault();
+  });
+
+  /* ───────── RIPPLE EFFECT ───────── */
   document.querySelectorAll('.btn-3d').forEach(btn => {
     btn.addEventListener('click', function(e) {
+      if (this.disabled || this.classList.contains('loading')) return;
       const rect = this.getBoundingClientRect();
       const size = Math.max(rect.width, rect.height) * 2;
       const x = e.clientX - rect.left - size / 2;
       const y = e.clientY - rect.top - size / 2;
 
-      const ripple = document.createElement('div');
+      const ripple = document.createElement('span');
       ripple.className = 'ripple';
       ripple.style.width = ripple.style.height = size + 'px';
       ripple.style.left = x + 'px';
       ripple.style.top = y + 'px';
       this.appendChild(ripple);
-
       setTimeout(() => ripple.remove(), 600);
     });
   });
 
-  // === Resend Cooldown ===
-function enableResend() {
+  /* ───────── RESEND COOLDOWN ───────── */
+  function enableResend() {
     const resendBtn = document.getElementById('resendBtn');
     const cooldown = document.getElementById('cooldown');
     const cooldownSec = document.getElementById('cooldownSec');
 
     resendBtn.disabled = true;
-    cooldown.style.display = "inline-block"; 
+    cooldown.style.display = "inline-block";
     let sec = 5;
 
     const cd = setInterval(() => {
-        cooldownSec.textContent = sec;
-        sec--;
-
-        if (sec < 0) {
-            clearInterval(cd);
-            resendBtn.disabled = false;
-            cooldown.textContent = "You can resend now";
-            cooldown.style.color = "#28a745";
-        }
+      cooldownSec.textContent = sec;
+      sec--;
+      if (sec < 0) {
+        clearInterval(cd);
+        resendBtn.disabled = false;
+        cooldown.textContent = "You can resend now";
+        cooldown.style.color = "var(--tms-success)";
+      }
     }, 1000);
-}
+  }
 
-
-  // Auto-focus
+  // Auto-focus first input
   inputs[0].focus();
 });
 </script>
-
-
+{% endif %}
 
 {% endblock %}

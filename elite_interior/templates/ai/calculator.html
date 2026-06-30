@@ -1,572 +1,754 @@
-{% extends "elite_interior/base.html" %}
+{% extends 'base.html' %}
 {% load static %}
 {% block content %}
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interior Cost Calculator</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+/* ═══════════════════════════════════════════════════════
+   SAAS-GRADE INTERIOR CALCULATOR
+   Uses global :root variables from main CSS
+═══════════════════════════════════════════════════════ */
 :root {
-    --cream:        #faf6f1;
-    --warm-white:   #fffdf9;
-    --sand:         #e8ddd0;
-    --clay:         #c4a882;
-    --terracotta:   #c4714f;
-    --warm-brown:   #7c5c3e;
-    --deep-brown:   #3d2b1f;
-    --sage:         #7a9e7e;
-    --sage-light:   #b8d4bb;
-    --gold:         #c9a84c;
-    --gold-light:   rgba(201,168,76,0.15);
-    --charcoal:     #2c2420;
-    --muted:        #8a7060;
-    --border:       #e0d5c8;
-    --border-warm:  #d4c4b0;
-    --primary:      #c4714f;
-    --primary-hover:#a85a3a;
-    --shadow:       0 8px 40px rgba(61,43,31,0.12);
-    --shadow-sm:    0 2px 12px rgba(61,43,31,0.08);
-    --radius-xl:    24px;
-    --radius-md:    14px;
+
+  --color-taupe: #e64b03;
+  --color-gold-sand: #2ba58b;
+  --color-white-smoke: #4cb748;
+  --color-dark-taupe: orange;
+  --color-gold-hover: #0e0a09;
+
+  --color-1:#e64b03;
+  --color-2:#2ba58b;
+  --color-3:#4cb748;
+  --color-4:orange;
+  --color-5:#0e0a09;
+
+  --darkoverlay: rgba(0,0,0,.336);
+
+  /* TESTIMONIAL SYSTEM */
+
+  --tms-primary: var(--color-gold-sand);
+  --tms-primary-light: #d8c2a1;
+  --tms-primary-dark: var(--color-gold-hover);
+
+  --tms-accent: var(--color-taupe);
+
+  --tms-success: #4cb748;
+  --tms-warning: #f4b400;
+
+  --tms-text-primary: #2f2924;
+  --tms-text-secondary: #5e564f;
+  --tms-text-muted: #8e857c;
+
+  --tms-border: rgba(72,60,50,.08);
+
+  --tms-bg-card: rgba(255,255,255,.78);
+
+  --tms-bg-section:
+  linear-gradient(
+      180deg,
+      #faf8f5 0%,
+      #f4efe9 100%
+  );
+
+  --tms-radius-sm: 14px;
+  --tms-radius-md: 24px;
+  --tms-radius-lg: 34px;
+
+  --tms-shadow-sm:
+  0 4px 10px rgba(0,0,0,.04);
+
+  --tms-shadow-md:
+  0 12px 30px rgba(72,60,50,.08);
+
+  --tms-shadow-lg:
+  0 35px 80px rgba(72,60,50,.14);
+
+  --tms-shadow-glow:
+  0 10px 40px rgba(203,175,135,.25);
+
+  --tms-transition:
+  cubic-bezier(.4,0,.2,1);
+
+
+    --tms-primary-soft: #f5ecda;
+  --tms-border-strong: rgba(72,60,50,.14);
+  --tms-bg-soft: #faf8f5;
+  --tms-shadow-xs: 0 1px 2px rgba(72,60,50,.04);
+
+
 }
 
-body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--charcoal); }
 
-/* ===================== HERO ===================== */
-.hero-header {
-    position: relative;
-    min-height: 46vh;
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
-    background-image: url('{% static "images/self-green.jpeg" %}');
-    background-size: cover; background-position: center;
-}
-.hero-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(160deg, rgba(61,43,31,0.78) 0%, rgba(124,92,62,0.55) 50%, rgba(196,113,79,0.4) 100%);
-    z-index: 0;
-}
-.hero-lines { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-.hero-lines::before { content:''; position:absolute; top:0; left:15%; width:1px; height:100%; background:linear-gradient(to bottom,transparent,rgba(255,255,255,0.12),transparent); }
-.hero-lines::after  { content:''; position:absolute; top:0; right:20%; width:1px; height:100%; background:linear-gradient(to bottom,transparent,rgba(255,255,255,0.08),transparent); }
 
-/* Floating swatches */
-.swatch { position:absolute; border-radius:10px; opacity:0; animation:swatchFloat 12s ease-in-out infinite; z-index:1; box-shadow:0 8px 24px rgba(0,0,0,0.25); }
-.swatch-1 { width:58px;height:58px; background:linear-gradient(135deg,#d4a574,#a67c52); top:15%;left:8%; animation-delay:0.5s; transform:rotate(-8deg); }
-.swatch-2 { width:42px;height:42px; background:linear-gradient(135deg,#7a9e7e,#5a8060); top:60%;left:12%; animation-delay:3s; border-radius:50%; }
-.swatch-3 { width:48px;height:48px; background:linear-gradient(135deg,#c9a84c,#a8872e); top:20%;right:10%; animation-delay:1.5s; transform:rotate(12deg); }
-.swatch-4 { width:36px;height:36px; background:linear-gradient(135deg,#c4714f,#a85a3a); bottom:20%;right:14%; animation-delay:4.5s; transform:rotate(-5deg); }
-.swatch-label { position:absolute; top:50%;left:50%; transform:translate(-50%,-50%); font-size:0.48rem; font-weight:700; color:rgba(255,255,255,0.85); text-transform:uppercase; letter-spacing:0.06em; text-align:center; }
-@keyframes swatchFloat {
-    0%   { opacity:0; transform:translateY(20px); }
-    10%  { opacity:0.85; }
-    50%  { transform:translateY(-12px); opacity:0.8; }
-    90%  { opacity:0.85; }
-    100% { opacity:0; transform:translateY(20px); }
+/* Local-only additions (not in your global :root) */
+.calc-page {
+  --tms-primary-soft: #f5ecda;
+  --tms-border-strong: rgba(72,60,50,.14);
+  --tms-bg-soft: #faf8f5;
+  --tms-shadow-xs: 0 1px 2px rgba(72,60,50,.04);
 }
 
-.hero-content { position:relative; z-index:2; text-align:center; color:white; animation:heroUp 1s cubic-bezier(.22,1,.36,1) both; padding:0 1rem; }
-@keyframes heroUp { from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);} }
+* { box-sizing: border-box; }
 
-.hero-eyebrow {
-    display:inline-flex; align-items:center; gap:8px;
-    background:rgba(255,255,255,0.12); backdrop-filter:blur(12px);
-    border:1px solid rgba(255,255,255,0.2);
-    border-radius:100px; padding:5px 16px 5px 10px;
-    font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase;
-    margin-bottom:18px; animation:heroUp 1s 0.15s both;
+body {
+
+  background: var(--tms-bg-section);
+  color: var(--tms-text-primary);
+
 }
-.swatch-pill { display:flex; gap:4px; }
-.swatch-pill span { width:10px;height:10px;border-radius:50%;display:inline-block; }
 
-.hero-ornament {
-    display:flex;align-items:center;justify-content:center;gap:12px;
-    margin-bottom:10px; animation:heroUp 1s 0.25s both;
+/* ═══════════════ STATS STRIP (replaces sidebar) ═══════════════ */
+.stats-strip {
+  max-width: 980px;
+  margin: -50px auto 0;
+  position: relative;
+  z-index: 5;
+  background: #ffffff;
+  border: 1px solid var(--tms-border);
+  border-radius: var(--tms-radius-md);
+  box-shadow: var(--tms-shadow-md);
+  padding: 18px 22px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
 }
-.hero-ornament::before,.hero-ornament::after { content:''; flex:1;max-width:80px;height:1px; }
-.hero-ornament::before { background:linear-gradient(to right,transparent,rgba(255,255,255,0.5)); }
-.hero-ornament::after  { background:linear-gradient(to left,transparent,rgba(255,255,255,0.5)); }
-.hero-ornament-icon { font-size:0.8rem; opacity:0.7; }
-
-.hero-content h1 {
-    font-family:'Cormorant Garamond',serif; font-size:clamp(2.4rem,7vw,4rem);
-    font-weight:600; letter-spacing:2px; line-height:1.1;
-    text-shadow:0 2px 30px rgba(0,0,0,0.3); margin-bottom:16px;
-    animation:heroUp 1s 0.3s both;
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px;
+  border-radius: var(--tms-radius-sm);
+  background: var(--tms-bg-soft);
+  border: 1px solid transparent;
+  transition: all .35s var(--tms-transition);
 }
-.hero-content h1 em { font-style:italic; color:#f0c98a; }
-.hero-content p { font-size:0.98rem; color:rgba(255,255,255,0.72); max-width:520px; margin:0 auto; line-height:1.75; animation:heroUp 1s 0.45s both; }
-
-.hero-pills { display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:22px;animation:heroUp 1s 0.55s both; }
-.hero-pill { background:rgba(255,255,255,0.1);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.18);border-radius:100px;padding:5px 14px;font-size:0.74rem;color:rgba(255,255,255,0.85);cursor:default;transition:all 0.25s; }
-.hero-pill:hover { background:rgba(255,255,255,0.22);color:white; }
-
-.scroll-hint { position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:6px;animation:scrollBounce 2.5s infinite;opacity:0.5; }
-.scroll-hint-line { width:1px;height:32px;background:white;border-radius:2px; }
-.scroll-hint-dot  { width:5px;height:5px;background:white;border-radius:50%; }
-@keyframes scrollBounce { 0%,100%{transform:translateX(-50%) translateY(0);opacity:0.5;}50%{transform:translateX(-50%) translateY(8px);opacity:0.8;} }
-
-/* ===================== WRAPPER ===================== */
-.ai-wrapper {
-    display:flex; max-width:1120px; margin:48px auto 80px; height:760px;
-    background:var(--warm-white); border-radius:var(--radius-xl);
-    box-shadow:var(--shadow),0 1px 0 rgba(255,255,255,0.8) inset;
-    overflow:hidden; border:1px solid var(--border);
-    animation:wrapReveal 0.9s 0.3s cubic-bezier(.22,1,.36,1) both; position:relative;
+.stat-card h5 {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--tms-text-muted);
+  margin: 0 0 6px;
+  display: flex; align-items: center; gap: 6px;
 }
-@keyframes wrapReveal { from{opacity:0;transform:translateY(28px) scale(0.97);}to{opacity:1;transform:translateY(0) scale(1);} }
-.ai-wrapper::before { content:'';position:absolute;top:0;left:300px;width:1px;height:100%;background:linear-gradient(to bottom,var(--border) 0%,transparent 20%,transparent 80%,var(--border) 100%);z-index:5;pointer-events:none; }
-
-/* ===================== SIDEBAR ===================== */
-.ai-sidebar { width:300px;background:var(--cream);display:flex;flex-direction:column;position:relative;overflow:hidden;flex-shrink:0; }
-
-/* Mini room mood illustration */
-.sidebar-mood { position:relative;height:162px;overflow:hidden;flex-shrink:0; }
-.mood-scene { width:100%;height:100%;position:relative;overflow:hidden;background:linear-gradient(180deg,#d4bfa8 0%,#c8a882 50%,#b8936c 100%); }
-.mood-wall  { position:absolute;top:0;left:0;right:0;bottom:58px;background:linear-gradient(160deg,#edddc6 0%,#d4bfa8 100%); }
-.mood-floor { position:absolute;bottom:0;left:0;right:0;height:58px;background:linear-gradient(to bottom,#c8a472,#a87c4a);background-image:repeating-linear-gradient(90deg,transparent,transparent 18px,rgba(0,0,0,0.04) 18px,rgba(0,0,0,0.04) 19px); }
-.mood-wainscot { position:absolute;bottom:58px;left:0;right:0;height:28px;background:#c8b096;border-top:2px solid #b89a78; }
-/* Window */
-.mood-window { position:absolute;top:14px;right:60px;width:40px;height:50px;background:linear-gradient(160deg,#b8d4e8,#8ab4d0);border:2px solid #c8b096;border-radius:3px 3px 0 0;overflow:hidden; }
-.mood-window::before { content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:#c8b096; }
-.mood-window::after  { content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:#c8b096; }
-.mood-ray { position:absolute;top:14px;right:60px;width:90px;height:110px;background:linear-gradient(170deg,rgba(255,240,200,0.22) 0%,transparent 60%);pointer-events:none; }
-/* Sofa */
-.mood-sofa { position:absolute;bottom:55px;left:18px;width:106px;height:40px;background:linear-gradient(160deg,#8b6b4a,#6b4e30);border-radius:6px 6px 0 0;box-shadow:0 -3px 8px rgba(0,0,0,0.15); }
-.mood-sofa::before { content:'';position:absolute;top:5px;left:5px;right:5px;height:18px;background:linear-gradient(to right,#9a7a58,#7a5a38,#9a7a58);border-radius:4px 4px 0 0; }
-.mood-sofa::after  { content:'';position:absolute;bottom:0;left:-6px;right:-6px;height:28px;background:#5a3e24;border-radius:3px; }
-/* Table */
-.mood-table::before { content:'';position:absolute;top:0;left:0;right:0;height:6px;background:#8b6b4a;border-radius:2px; }
-.mood-table::after  { content:'';position:absolute;top:6px;left:12px;right:12px;bottom:0;background:#6b4e30;border-radius:0 0 2px 2px; }
-.mood-table { position:absolute;bottom:55px;right:26px;width:32px;height:36px; }
-/* Lamp */
-.mood-lamp { position:absolute;bottom:92px;right:30px;width:20px;height:30px; }
-.mood-lamp::before { content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:18px solid #d4a84c; }
-.mood-lamp::after  { content:'';position:absolute;top:18px;left:50%;transform:translateX(-50%);width:2px;height:12px;background:#8b6b4a; }
-.mood-lamp-glow { position:absolute;bottom:104px;right:20px;width:44px;height:22px;background:radial-gradient(ellipse,rgba(255,220,100,0.35) 0%,transparent 70%);animation:lampGlow 3s ease-in-out infinite; }
-@keyframes lampGlow { 0%,100%{opacity:0.7;transform:scale(1);}50%{opacity:1;transform:scale(1.1);} }
-/* Plant */
-.mood-plant { position:absolute;bottom:55px;left:136px; }
-.mood-plant-pot { width:14px;height:12px;background:linear-gradient(to bottom,#c4714f,#a85a3a);border-radius:0 0 4px 4px;position:relative;left:3px; }
-.mood-plant-body { position:relative;height:28px;width:20px;left:3px; }
-.mood-plant-stem { width:2px;height:16px;background:#4a7a4c;margin:0 auto;position:relative; }
-.mood-plant-leaf { position:absolute;width:12px;height:8px;background:#5a8e5c;border-radius:50% 50% 0 50%; }
-.mood-gradient-overlay { position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,var(--cream) 100%);pointer-events:none; }
-.mood-label { position:absolute;bottom:8px;left:14px;font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted); }
-
-.sidebar-content { padding:16px 20px 20px;display:flex;flex-direction:column;gap:11px;flex:1;overflow:hidden; }
-
-.sidebar-heading { display:flex;align-items:center;gap:10px;margin-bottom:2px; }
-.sidebar-heading-icon { width:28px;height:28px;background:linear-gradient(135deg,var(--terracotta),var(--warm-brown));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;box-shadow:0 3px 8px rgba(196,113,79,0.35);animation:iconPulse 4s ease-in-out infinite;flex-shrink:0; }
-@keyframes iconPulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.06);} }
-.sidebar-heading h3 { font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--deep-brown);letter-spacing:0.5px; }
-
-.status-card { background:var(--warm-white);padding:10px 14px;border-radius:12px;border:1px solid var(--border);transition:transform 0.25s,border-color 0.25s,box-shadow 0.25s;position:relative;overflow:hidden;cursor:default;animation:cardIn 0.6s both; }
-.status-card:nth-child(1){animation-delay:0.1s;}
-.status-card:nth-child(2){animation-delay:0.2s;}
-.status-card:nth-child(3){animation-delay:0.3s;}
-.status-card:nth-child(4){animation-delay:0.4s;}
-@keyframes cardIn { from{opacity:0;transform:translateX(-14px);}to{opacity:1;transform:translateX(0);} }
-.status-card::before { content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--terracotta),var(--clay));opacity:0;transition:opacity 0.3s;border-radius:2px 0 0 2px; }
-.status-card:hover { transform:translateX(3px);border-color:var(--clay);box-shadow:0 2px 12px rgba(196,113,79,0.1); }
-.status-card:hover::before { opacity:1; }
-.status-card h5 { margin:0 0 3px;font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;font-weight:700; }
-.status-card p  { margin:0;font-weight:600;color:var(--deep-brown);font-size:0.88rem;transition:color 0.3s; }
-.status-card.updated p { color:var(--terracotta);animation:valuePop 0.45s cubic-bezier(.22,1,.36,1); }
-@keyframes valuePop { 0%{transform:scale(0.8);opacity:0.5;}60%{transform:scale(1.06);}100%{transform:scale(1);opacity:1;} }
-
-/* Material palette */
-.material-strip-label { font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;font-weight:700;margin-bottom:5px; }
-.material-strip { display:flex;gap:6px;align-items:center; }
-.material-swatch { width:22px;height:22px;border-radius:6px;border:1.5px solid rgba(255,255,255,0.6);cursor:pointer;transition:transform 0.2s,box-shadow 0.2s; }
-.material-swatch:hover { transform:scale(1.18);box-shadow:0 3px 8px rgba(0,0,0,0.2); }
-.mat-wood   { background:linear-gradient(135deg,#c8a472,#8b6b4a); }
-.mat-marble { background:linear-gradient(135deg,#e8e0d8,#c8bdb0); }
-.mat-stone  { background:linear-gradient(135deg,#9a9690,#6a6460); }
-.mat-sage   { background:linear-gradient(135deg,#7a9e7e,#4a7050); }
-.mat-terra  { background:linear-gradient(135deg,#c4714f,#8a4a30); }
-
-.note { margin-top:auto;font-size:0.7rem;color:var(--muted);line-height:1.55;padding:10px 13px;background:linear-gradient(135deg,rgba(196,168,130,0.15),rgba(122,158,126,0.1));border-radius:10px;border:1px dashed var(--border-warm); }
-
-/* ===================== CHAT MAIN ===================== */
-.ai-main { flex:1;display:flex;flex-direction:column;background:var(--warm-white);position:relative;min-width:0; }
-
-.ai-header { padding:14px 26px;background:rgba(250,246,241,0.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;z-index:10; }
-.header-avatar { width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--terracotta),var(--warm-brown));display:flex;align-items:center;justify-content:center;font-size:1.15rem;box-shadow:0 4px 12px rgba(196,113,79,0.4);animation:avatarWiggle 7s ease-in-out infinite;flex-shrink:0; }
-@keyframes avatarWiggle { 0%,82%,100%{transform:rotate(0);}85%{transform:rotate(-6deg);}90%{transform:rotate(6deg);}95%{transform:rotate(-3deg);} }
-.header-info { flex:1; }
-.header-info strong { font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--deep-brown);letter-spacing:0.3px;display:block; }
-.header-info span { font-size:0.72rem;color:var(--muted);display:flex;align-items:center;gap:5px; }
-.dot { width:7px;height:7px;background:var(--sage);border-radius:50%;box-shadow:0 0 0 0 rgba(122,158,126,0.7);animation:dotPulse 2.2s infinite;display:inline-block;flex-shrink:0; }
-@keyframes dotPulse { 0%{box-shadow:0 0 0 0 rgba(122,158,126,0.7);}70%{box-shadow:0 0 0 7px rgba(122,158,126,0);}100%{box-shadow:0 0 0 0 rgba(122,158,126,0);} }
-
-.header-styles { display:flex;gap:6px; }
-.style-tag { background:var(--gold-light);border:1px solid rgba(201,168,76,0.3);border-radius:100px;padding:3px 10px;font-size:0.68rem;font-weight:600;color:var(--warm-brown);letter-spacing:0.04em; }
-
-/* Arch SVG deco */
-.header-deco { width:54px;height:42px;opacity:0.7;animation:decoFloat 4s ease-in-out infinite;flex-shrink:0; }
-@keyframes decoFloat { 0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);} }
-
-/* ===================== CHAT AREA ===================== */
-.ai-chat {
-    flex:1;overflow-y:auto;padding:28px;
-    background:var(--cream);
-    background-image:
-        repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(196,168,130,0.04) 20px,rgba(196,168,130,0.04) 21px),
-        repeating-linear-gradient(-45deg,transparent,transparent 20px,rgba(196,168,130,0.04) 20px,rgba(196,168,130,0.04) 21px);
-    scroll-behavior:smooth;position:relative;
+.stat-card p {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--tms-text-primary);
+  margin: 0;
+  line-height: 1.35;
+  word-break: break-word;
 }
-.ai-chat::before { content:'❧';position:absolute;top:14px;right:18px;font-size:1.4rem;color:rgba(196,168,130,0.2);pointer-events:none;animation:ornSpin 20s linear infinite; }
-@keyframes ornSpin { from{transform:rotate(0);}to{transform:rotate(360deg);} }
+.stat-card.updated {
+  background: linear-gradient(135deg, var(--tms-primary-soft), #fff);
+  border-color: var(--tms-primary);
+  animation: flashCard .6s var(--tms-transition);
+}
+@keyframes flashCard {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.025); box-shadow: var(--tms-shadow-glow); }
+  100% { transform: scale(1); }
+}
 
-/* ===================== MESSAGES ===================== */
-.msg { margin-bottom:20px;padding:14px 20px;border-radius:18px;max-width:78%;line-height:1.65;font-size:0.92rem;position:relative;animation:msgSlide 0.45s cubic-bezier(.22,1,.36,1) both; }
-@keyframes msgSlide { from{opacity:0;transform:translateY(14px) scale(0.97);}to{opacity:1;transform:translateY(0) scale(1);} }
-.ai-msg { background:var(--warm-white);color:var(--charcoal);border-bottom-left-radius:5px;border:1px solid var(--border);box-shadow:0 2px 10px rgba(61,43,31,0.06); }
-.ai-msg::before { content:'';position:absolute;left:0;top:12px;bottom:12px;width:3px;background:linear-gradient(to bottom,var(--gold),var(--clay));border-radius:0 3px 3px 0;opacity:0.6; }
-.user-msg { background:linear-gradient(135deg,var(--warm-brown),#5a3e24);color:#faf0e4;margin-left:auto;border-bottom-right-radius:5px;box-shadow:0 6px 20px rgba(61,43,31,0.25); }
+/* ═══════════════ MAIN WORKSPACE ═══════════════ */
+.workspace {
+  max-width: 980px;
+  margin: 28px auto 60px;
+  padding: 0 20px;
+}
 
-.ai-msg.typing { display:flex;align-items:center;gap:5px;padding:14px 18px;min-width:60px; }
-.typing-dot { width:8px;height:8px;background:var(--clay);border-radius:50%;animation:typeBounce 1.4s infinite ease-in-out; }
-.typing-dot:nth-child(1){animation-delay:0s;}
-.typing-dot:nth-child(2){animation-delay:0.2s;}
-.typing-dot:nth-child(3){animation-delay:0.4s;}
-@keyframes typeBounce { 0%,60%,100%{transform:translateY(0);background:var(--clay);}30%{transform:translateY(-8px);background:var(--terracotta);} }
+/* CHAT CARD */
+.chat-card {
+  background: #ffffff;
+  border: 1px solid var(--tms-border);
+  border-radius: var(--tms-radius-lg);
+  box-shadow: var(--tms-shadow-lg);
+  display: flex;
+  flex-direction: column;
+  height: 78vh;
+  min-height: 620px;
+  overflow: hidden;
+}
 
-/* ===================== ESTIMATE TABLE ===================== */
-.estimate-box { background:var(--warm-white);border:1px solid var(--border);border-radius:16px;padding:20px;margin-top:14px;box-shadow:0 4px 20px rgba(61,43,31,0.07);overflow:hidden;position:relative;animation:msgSlide 0.5s 0.1s both; }
-.estimate-box::before { content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(to right,var(--terracotta),var(--gold),var(--sage));border-radius:16px 16px 0 0; }
-.estimate-box h4 { margin:0 0 14px;font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--deep-brown);letter-spacing:0.3px; }
-.estimate-table { width:100%;border-collapse:collapse;font-size:0.83rem; }
-.estimate-table th { text-align:left;padding:9px 10px;border:1px solid var(--border);color:var(--muted);font-weight:700;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.07em;background:var(--cream); }
-.estimate-table td { padding:9px 10px;border:1px solid var(--border);color:var(--charcoal); }
-.estimate-table b  { color:var(--terracotta);font-weight:700; }
-.estimate-table tbody tr { transition:background 0.2s; }
-.estimate-table tbody tr:hover { background:rgba(196,168,130,0.08); }
+/* CHAT HEADER */
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 24px;
+  background: linear-gradient(180deg, #fff, var(--tms-bg-soft));
+  border-bottom: 1px solid var(--tms-border);
+}
+.chat-avatar {
+  width: 44px; height: 44px;
+  border-radius: 14px;
+  background: #1b6bff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  color: #fff;
+  box-shadow: var(--tms-shadow-glow);
+  flex-shrink: 0;
+}
+.chat-header-info { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.chat-header-info strong {
+  font-size: 15px;
+  font-weight: 800;
+  color: #000000;
+  letter-spacing: -.2px;
+}
+.chat-header-info span {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px;
+  color: var(--tms-text-muted);
+  margin-top: 2px;
+}
+.status-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--tms-success);
+  box-shadow: 0 0 0 3px rgba(76,183,72,.18);
+  animation: pulseDot 2s infinite;
+}
+@keyframes pulseDot {
+  0%,100% { box-shadow: 0 0 0 3px rgba(76,183,72,.18); }
+  50% { box-shadow: 0 0 0 6px rgba(76,183,72,.08); }
+}
+.header-actions {
+  display: flex; gap: 8px;
+}
+.header-btn {
+  background: #fff;
+  border: 1px solid var(--tms-border);
+  color: var(--tms-text-secondary);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: inherit;
+}
+.header-btn:hover {
+  border-color: var(--tms-primary);
+  color: var(--tms-primary-dark);
+  background: var(--tms-primary-soft);
+}
 
-/* ===================== INPUT ===================== */
-.ai-input-container { padding:18px 26px;border-top:1px solid var(--border);background:var(--warm-white);position:relative; }
-.ai-input-container::before { content:'';position:absolute;top:-1px;left:26px;right:26px;height:1px;background:linear-gradient(to right,transparent,var(--clay),transparent);opacity:0.35; }
-.ai-input-group { display:flex;background:var(--cream);padding:7px 7px 7px 18px;border-radius:100px;align-items:center;border:1.5px solid var(--border-warm);transition:all 0.3s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden; }
-.ai-input-group:focus-within { background:white;border-color:var(--clay);box-shadow:0 0 0 4px rgba(196,168,130,0.15); }
-.ai-input-group input { flex:1;border:none;background:transparent;padding:10px 0;outline:none;font-size:0.93rem;color:var(--deep-brown);font-family:'DM Sans',sans-serif; }
-.ai-input-group input::placeholder { color:var(--clay);opacity:0.6; }
-.ai-input-group button { background:linear-gradient(135deg,var(--terracotta),var(--warm-brown));color:#faf0e4;border:none;padding:11px 26px;border-radius:100px;font-weight:700;cursor:pointer;transition:all 0.25s cubic-bezier(.22,1,.36,1);box-shadow:0 4px 14px rgba(196,113,79,0.4);font-family:'DM Sans',sans-serif;font-size:0.88rem;position:relative;overflow:hidden; }
-.ai-input-group button::after { content:'';position:absolute;inset:0;background:rgba(255,255,255,0.12);opacity:0;transition:opacity 0.2s; }
-.ai-input-group button:hover { transform:translateY(-2px) scale(1.03);box-shadow:0 7px 20px rgba(196,113,79,0.5); }
-.ai-input-group button:hover::after { opacity:1; }
-.ai-input-group button:active { transform:scale(0.97); }
-.send-plane { display:inline-block;transition:transform 0.3s; }
-.ai-input-group button:hover .send-plane { transform:translateX(3px) translateY(-2px); }
+/* MESSAGES AREA */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(203,175,135,.05), transparent 40%),
+    radial-gradient(circle at 85% 90%, rgba(72,60,50,.03), transparent 40%),
+    var(--tms-bg-soft);
+  scroll-behavior: smooth;
+}
+.chat-messages::-webkit-scrollbar { width: 6px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb {
+  background: rgba(72,60,50,.15);
+  border-radius: 10px;
+}
 
-/* ===================== CHIPS ===================== */
-.ai-btn { display:inline-flex;align-items:center;gap:5px;background:var(--warm-white);border:1.5px solid var(--border-warm);border-radius:100px;padding:6px 14px;font-size:0.78rem;font-weight:600;cursor:pointer;color:var(--warm-brown);font-family:'DM Sans',sans-serif;transition:all 0.25s cubic-bezier(.22,1,.36,1);margin:3px 2px;white-space:nowrap; }
-.ai-btn:hover { background:var(--terracotta);color:white;border-color:var(--terracotta);transform:translateY(-2px);box-shadow:0 5px 14px rgba(196,113,79,0.3); }
-.ai-btn:active { transform:translateY(0); }
+/* MESSAGE BUBBLES */
+.msg {
+  max-width: 80%;
+  margin-bottom: 18px;
+  animation: msgSlide .35s var(--tms-transition);
+  word-wrap: break-word;
+  line-height: 1.6;
+  font-size: 14.5px;
+}
+@keyframes msgSlide {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-/* ===== PRODUCT TOGGLE: SELECTED STATE ===== */
-.ai-btn.product-toggle { position: relative; overflow: hidden; }
-.ai-btn.product-toggle::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(196,113,79,0.08), rgba(201,168,76,0.06));
-    opacity: 0;
-    transition: opacity 0.25s;
-    border-radius: inherit;
+/* AI MESSAGE - with avatar */
+.ai-msg {
+  position: relative;
+  margin-left: 52px;
+  background: #fff;
+  border: 1px solid var(--tms-border);
+  padding: 14px 18px;
+  border-radius: 18px;
+  border-top-left-radius: 4px;
+  box-shadow: var(--tms-shadow-xs);
+  color: var(--tms-text-primary);
+}
+.ai-msg::before {
+  content: "\F6B1";                              /* bi-robot unicode */
+  font-family: "bootstrap-icons" !important;     /* required for icon font */
+  font-style: normal;
+  font-weight: normal !important;
+  position: absolute;
+  left: -52px; top: 0;
+  width: 40px; height: 40px;
+  background: #1b6bff;
+  color: #fff;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  box-shadow: var(--tms-shadow-glow);
+}
+.ai-msg b { color: var(--tms-primary-dark); font-weight: 700; }
+.ai-msg small { color: var(--tms-text-muted); }
+
+/* USER MESSAGE */
+.user-msg {
+  background: linear-gradient(135deg, var(--color-1), var(--color-1));
+  color: #fff;
+  margin-left: auto;
+  padding: 12px 20px;
+  border-radius: 18px;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 6px 18px rgba(72,60,50,.18);
+  max-width: 70%;
+  width: fit-content;
+  font-weight: 500;
+}
+
+/* AI BUTTONS */
+.ai-btn {
+  display: inline-flex;
+  align-items: center;
+  background: #fff;
+  color: var(--tms-text-primary);
+  border: 1.5px solid var(--tms-border-strong);
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 4px 6px 4px 0;
+  cursor: pointer;
+  transition: all .2s var(--tms-transition);
+  font-family: inherit;
+  box-shadow: var(--tms-shadow-xs);
+}
+.ai-btn:hover {
+  border-color: var(--tms-primary);
+  background: var(--tms-primary-soft);
+  color: var(--tms-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--tms-shadow-sm);
 }
 .ai-btn.product-toggle.selected {
-    background: linear-gradient(135deg, var(--warm-brown), #5a3e24);
-    color: #faf0e4;
-    border-color: var(--warm-brown);
-    box-shadow: 0 4px 14px rgba(61,43,31,0.28), inset 0 1px 0 rgba(255,255,255,0.1);
-    transform: translateY(-1px);
+  background: var(--tms-primary);
+  color: white;
+  border-color: var(--tms-primary);
+  box-shadow: var(--tms-shadow-glow);
 }
 .ai-btn.product-toggle.selected::before {
-    content: '✓';
-    font-size: 0.7rem;
-    font-weight: 800;
-    margin-right: 3px;
-    display: inline-block;
-    animation: checkPop 0.3s cubic-bezier(.22,1,.36,1) both;
+  content: "✓ ";
+  font-weight: 800;
 }
-@keyframes checkPop {
-    from { transform: scale(0) rotate(-20deg); opacity: 0; }
-    to   { transform: scale(1) rotate(0deg);  opacity: 1; }
+.ai-btn.confirm-btn {
+  background: var(--color-1);
+  color: white;
+  font-weight: 700;
+  box-shadow: var(--tms-shadow-glow);
 }
-.ai-btn.product-toggle.selected:hover {
-    background: linear-gradient(135deg, #6a4c32, #4a3018);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(61,43,31,0.35);
+.ai-btn.confirm-btn:hover {
+  background: linear-gradient(135deg, var(--color-dark-taupe), var(--color-taupe));
+  color: #fff;
+  border-color: var(--color-dark-taupe);
 }
-/* pulse ring on select */
-@keyframes selectRing {
-    0%   { box-shadow: 0 0 0 0 rgba(124,92,62,0.5), 0 4px 14px rgba(61,43,31,0.28); }
-    60%  { box-shadow: 0 0 0 8px rgba(124,92,62,0), 0 4px 14px rgba(61,43,31,0.28); }
-    100% { box-shadow: 0 0 0 0 rgba(124,92,62,0),  0 4px 14px rgba(61,43,31,0.28); }
+.ai-btn.all-btn {
+  background: #1a6aff;
+  color: #fff;
+  border-color:#1b6bff ;
 }
-.ai-btn.product-toggle.selected { animation: selectRing 0.5s ease-out; }
+.ai-btn.all-btn:hover {
+  background: #075eff;
+  color: #fff;
+}
 
-/* ===================== SCROLLBAR ===================== */
-.ai-chat::-webkit-scrollbar { width:5px; }
-.ai-chat::-webkit-scrollbar-track { background:transparent; }
-.ai-chat::-webkit-scrollbar-thumb { background:var(--sand);border-radius:10px; }
-.ai-chat::-webkit-scrollbar-thumb:hover { background:var(--clay); }
-
-/* ===================== MOBILE ===================== */
-@media (max-width:768px) {
-    .ai-wrapper { flex-direction:column;height:100vh;margin:0;border-radius:0;animation:none; }
-    .ai-sidebar { width:100%;flex-direction:row;overflow-x:auto;gap:8px;padding:8px 12px;border-right:none;border-bottom:1px solid var(--border);scrollbar-width:none; }
-    .ai-sidebar::-webkit-scrollbar { display:none; }
-    .ai-sidebar .sidebar-heading,.note,.material-strip,.material-strip-label,.sidebar-mood { display:none; }
-    .sidebar-content { flex-direction:row;padding:0;gap:8px;overflow-x:auto; }
-    .status-card { min-width:125px;flex-shrink:0;animation:none;padding:9px 12px; }
-    .ai-main { flex:1;height:0; }
-    .ai-chat { padding:14px; }
-    .msg { max-width:90%;font-size:0.88rem; }
-    .ai-header { padding:10px 14px; }
-    .ai-input-container { padding:10px 12px; }
-    .header-deco,.header-styles { display:none; }
+/* ESTIMATE TABLE */
+.estimate-box {
+  background: #fff;
+  border-radius: var(--tms-radius-md);
+  padding: 22px;
+  margin-top: 6px;
+  border: 1px solid var(--tms-border);
+  box-shadow: var(--tms-shadow-md);
+  overflow-x: auto;
 }
-@media (max-width:480px) {
-    .msg { font-size:0.84rem;padding:10px 14px; }
-    .ai-input-group button { padding:10px 16px;font-size:0.84rem; }
+.estimate-box h3 {
+  font-size: 17px;
+  font-weight: 800;
+  color:#1a6aff ;
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--tms-primary-soft);
+}
+.estimate-box table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 12.5px;
+}
+.estimate-box th {
+  background: var(--tms-bg-soft);
+  color: var(--tms-text-secondary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  font-size: 10px;
+  padding: 11px 10px;
+  text-align: left;
+  border-bottom: 2px solid var(--tms-border);
+}
+.estimate-box td {
+  padding: 11px 10px;
+  border-bottom: 1px solid var(--tms-border);
+  color: var(--tms-text-primary);
+}
+.estimate-box tr.subtotal-row td {
+  background: var(--tms-primary-soft);
+  font-weight: 700;
+  color: #000000;
+}
+.estimate-box tr.loc-header td {
+  background: #1a6aff;
+  color: #fff;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 11px 12px;
+}
+.estimate-box tr.grand-row td {
+  background: #1a6aff;
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  padding: 15px 12px;
+}
+
+/* QUICK SUGGESTIONS (above input) */
+.quick-suggestions {
+  display: flex;
+  gap: 8px;
+  padding: 12px 24px 0;
+  flex-wrap: wrap;
+  background: #fff;
+  border-top: 1px solid var(--tms-border);
+}
+.quick-chip {
+  background: var(--tms-bg-soft);
+  border: 1px solid var(--tms-border);
+  color: var(--color-5);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: inherit;
+}
+.quick-chip:hover {
+  background: var(--tms-primary-soft);
+  border-color: var(--tms-primary);
+  color: var(--tms-primary-dark);
+}
+
+/* CHAT INPUT */
+.chat-input-bar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 14px 20px 18px;
+  background: #fff;
+}
+.attach-btn {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--tms-border);
+  background: var(--tms-bg-soft);
+  color: var(--tms-text-muted);
+  font-size: 18px;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.attach-btn:hover {
+  border-color: var(--tms-primary);
+  color: var(--tms-primary-dark);
+  background: var(--tms-primary-soft);
+}
+#chatInput {
+  flex: 1;
+  background: var(--tms-bg-soft);
+  border: 1.5px solid var(--tms-border);
+  padding: 13px 20px;
+  border-radius: 999px;
+  color: var(--tms-text-primary);
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+  transition: all .25s var(--tms-transition);
+}
+#chatInput::placeholder { color: var(--tms-text-muted); }
+#chatInput:focus {
+  border-color: var(--tms-primary);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(203,175,135,.15);
+}
+.send-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #1b6bff;
+  color: white;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--tms-shadow-glow);
+  transition: all .25s var(--tms-transition);
+  font-family: inherit;
+  flex-shrink: 0;
+}
+.send-btn:hover {
+  background: linear-gradient(135deg, var(--color-dark-taupe), var(--color-taupe));
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(72,60,50,.25);
+}
+
+/* TRUST FOOTER */
+.trust-row {
+  max-width: 980px;
+  margin: 24px auto 60px;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.trust-card {
+  background: #fff;
+  border: 1px solid var(--tms-border);
+  border-radius: var(--tms-radius-md);
+  padding: 18px 20px;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: var(--tms-shadow-xs);
+  transition: all .3s var(--tms-transition);
+}
+.trust-card:hover {
+  border-color: var(--tms-primary);
+  transform: translateY(-3px);
+  box-shadow: var(--tms-shadow-md);
+}
+.trust-icon {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  background: var(--tms-primary-soft);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.trust-text strong {
+  display: block;
+  font-size: 13px;
+  color: var(--color-1);
+  font-weight: 800;
+  margin-bottom: 2px;
+}
+.trust-text span {
+  font-size: 11.5px;
+  color: var(--tms-text-muted);
+}
+
+/* DISCLAIMER */
+.disclaimer {
+  max-width: 980px;
+  margin: 0 auto 40px;
+  padding: 14px 20px;
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--tms-text-muted);
+  font-style: italic;
+}
+.disclaimer::before {
+  content: "ⓘ  ";
+  color: var(--tms-primary-dark);
+  font-style: normal;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .stats-strip {
+    grid-template-columns: repeat(2, 1fr);
+    margin: -36px 16px 0;
+    padding: 14px 14px;
+  }
+  .workspace { padding: 0 12px; margin-top: 20px; }
+  .chat-card { height: 75vh; min-height: 540px; }
+  .chat-header { padding: 14px 16px; }
+  .header-actions { display: none; }
+  .chat-messages { padding: 20px 16px; }
+  .ai-msg { margin-left: 44px; padding: 12px 14px; font-size: 14px; }
+  .ai-msg::before { left: -44px; width: 32px; height: 32px; font-size: 14px; border-radius: 10px; }
+  .user-msg { max-width: 80%; padding: 10px 16px; font-size: 14px; }
+  .chat-input-bar { padding: 12px 14px 14px; }
+  .send-btn { padding: 11px 16px; font-size: 13px; }
+  .send-btn span { display: none; }
+  .quick-suggestions { padding: 10px 14px 0; }
+  .trust-row { grid-template-columns: 1fr; padding: 0 16px; }
+}
+@media (max-width: 480px) {
+  .stats-strip { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-card { padding: 8px 10px; }
+  .stat-card p { font-size: 12.5px; }
 }
 </style>
-</head>
-<body>
 
-<!-- HERO -->
-<div class="hero-header">
-    <div class="hero-overlay"></div>
-    <div class="hero-lines"></div>
-    <div class="swatch swatch-1"><span class="swatch-label">Oak</span></div>
-    <div class="swatch swatch-2"><span class="swatch-label">Sage</span></div>
-    <div class="swatch swatch-3"><span class="swatch-label">Gold</span></div>
-    <div class="swatch swatch-4"><span class="swatch-label">Clay</span></div>
+<!-- ═══════════════ HERO (kept as-is) ═══════════════ -->
+<div class="hero-header position-relative text-white text-center d-flex align-items-center justify-content-center"
+     style="min-height: 75vh; padding: 4rem 1rem;">
 
-    <div class="hero-content">
-        <div class="hero-eyebrow">
-            <div class="swatch-pill">
-                <span style="background:#c4714f"></span>
-                <span style="background:#c9a84c"></span>
-                <span style="background:#7a9e7e"></span>
-            </div>
-            AI-Powered Interior Estimations
-        </div>
-        <div class="hero-ornament"><span class="hero-ornament-icon">✦</span></div>
-        <h1>Interior <em>Cost</em> Calculator</h1>
-        <p>Describe your dream space — kitchen, bedroom, living area — and receive a detailed cost breakdown tailored to your finish preferences and room dimensions.</p>
-        <div class="hero-pills">
-            <span class="hero-pill">🪑 Living Room</span>
-            <span class="hero-pill">🍳 Kitchen</span>
-            <span class="hero-pill">🛏 Bedroom</span>
-            <span class="hero-pill">🛁 Bathroom</span>
-            <span class="hero-pill">🏢 Office</span>
-        </div>
-    </div>
-    <div class="scroll-hint"><div class="scroll-hint-line"></div><div class="scroll-hint-dot"></div></div>
-</div>
+    <img src="{% static 'images/bg02.webp' %}"
+         alt="Hero Background"
+         style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-1;">
 
+    <div class="hero-overlay position-absolute top-0 start-0 w-100 h-100"
+         style="background-color: rgba(0,0,0,0.55); z-index: 0;"></div>
 
-<!-- AI WRAPPER -->
-<div class="ai-wrapper">
-
-    <!-- SIDEBAR -->
-    <div class="ai-sidebar">
-        <!-- Mini room illustration -->
-        <div class="sidebar-mood">
-            <div class="mood-scene">
-                <div class="mood-wall"></div>
-                <div class="mood-ray"></div>
-                <div class="mood-window"></div>
-                <div class="mood-wainscot"></div>
-                <div class="mood-floor"></div>
-                <div class="mood-sofa"></div>
-                <div class="mood-table"></div>
-                <div class="mood-lamp"></div>
-                <div class="mood-lamp-glow"></div>
-                <!-- Plant -->
-                <div class="mood-plant">
-                    <div class="mood-plant-body">
-                        <div class="mood-plant-stem"></div>
-                        <div class="mood-plant-leaf" style="top:-20px;left:2px;transform:rotate(-30deg);"></div>
-                        <div class="mood-plant-leaf" style="top:-15px;left:-8px;transform:rotate(30deg) scaleX(-1);"></div>
-                        <div class="mood-plant-leaf" style="top:-26px;left:-2px;transform:rotate(5deg);"></div>
-                    </div>
-                    <div class="mood-plant-pot"></div>
-                </div>
-                <div class="mood-gradient-overlay"></div>
-            </div>
-            <div class="mood-label">Your Space Preview</div>
-        </div>
-
-        <div class="sidebar-content">
-            <div class="sidebar-heading">
-                <div class="sidebar-heading-icon">🏠</div>
-                <h3>Project Scope</h3>
+    <div class="container position-relative z-1">
+        <div class="related-heading d-flex flex-column align-items-center gap-2 mb-3">
+            <div class="d-flex justify-content-center">
+                <span class="line" style="width: 80px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
             </div>
 
-            <div class="status-card">
-                <h5>📍 Location</h5>
-                <p id="stat-location">Not Set</p>
-            </div>
-            <div class="status-card">
-                <h5>📐 Dimensions</h5>
-                <p id="stat-area">0 sq.ft</p>
-            </div>
-            <div class="status-card">
-                <h5>✨ Finish</h5>
-                <p id="stat-finish">Standard</p>
-            </div>
-            <div class="status-card">
-                <h5>🏷️ Tier</h5>
-                <p id="stat-package">None</p>
-            </div>
+            <h1 class="fw-bold text-white px-2"
+                style="font-family: 'Playfair Display', serif; font-size: clamp(1.75rem, 6vw, 3.2rem); letter-spacing: 1px;">
+                Customized Interior Quote
+            </h1>
 
-            <div>
-                <div class="material-strip-label">Material Palette</div>
-                <div class="material-strip">
-                    <div class="material-swatch mat-wood"   title="Oak Wood"></div>
-                    <div class="material-swatch mat-marble" title="Marble"></div>
-                    <div class="material-swatch mat-stone"  title="Stone"></div>
-                    <div class="material-swatch mat-sage"   title="Sage Green"></div>
-                    <div class="material-swatch mat-terra"  title="Terracotta"></div>
-                </div>
-            </div>
-
-            <div class="note">
-                ⓘ Estimates are indicative and subject to site verification. Final pricing may vary.
-            </div>
-        </div>
-    </div>
-
-    <!-- CHAT MAIN -->
-    <div class="ai-main">
-        <div class="ai-header">
-            <div class="header-avatar">🛋️</div>
-            <div class="header-info">
-                <strong>Interior AI Designer</strong>
-                <span><div class="dot"></div> Online &amp; Ready</span>
-            </div>
-            <div class="header-styles">
-                <span class="style-tag">Modern</span>
-                <span class="style-tag">Classic</span>
-                <span class="style-tag">Boho</span>
-            </div>
-            <!-- Arch deco SVG -->
-            <svg class="header-deco" viewBox="0 0 56 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="4" y="24" width="48" height="18" rx="3" fill="#c4a882" opacity="0.3"/>
-                <path d="M4 24 Q4 4 28 4 Q52 4 52 24" stroke="#c4714f" stroke-width="1.5" fill="none" opacity="0.5"/>
-                <rect x="24" y="4" width="8" height="4" rx="1" fill="#c9a84c" opacity="0.5"/>
-                <line x1="28" y1="8" x2="28" y2="24" stroke="#c4714f" stroke-width="1" opacity="0.4"/>
-                <rect x="8"  y="26" width="16" height="16" rx="2" fill="#8b6b4a" opacity="0.25"/>
-                <rect x="32" y="26" width="16" height="16" rx="2" fill="#8b6b4a" opacity="0.25"/>
-                <line x1="4" y1="24" x2="52" y2="24" stroke="#c4a882" stroke-width="1" opacity="0.5"/>
-            </svg>
-        </div>
-
-        <div id="chat" class="ai-chat">
-            <div class="msg ai-msg">
-                👋 Welcome! I'm your <b>Interior AI Designer</b>.
-                <br><br>
-                Tell me about your space — room type, dimensions, and preferred finish — and I'll craft a detailed cost estimate for you.
-                <br><br>
-                Try: <b>"I want a kitchen with laminate finish"</b>
+            <div class="d-flex justify-content-center">
+                <span class="line" style="width: 80px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
             </div>
         </div>
 
-        <div class="ai-input-container">
-            <div class="ai-input-group">
-                <input id="chatInput"
-                    placeholder="Describe your interior project..."
-                    onkeypress="if(event.key==='Enter') sendMessage()">
-                <button onclick="sendMessage()">
-                    <span class="send-plane">Send ✦</span>
-                </button>
-            </div>
-        </div>
+        <p class="fs-6 fs-md-5 text-white-50" style="max-width: 600px; margin: 0 auto;">
+            Your Dream Home Deserves
+        </p>
     </div>
 </div>
 
-<script>
-// Track selected products
-window._selectedProducts = window._selectedProducts || [];
 
-// Toggle product button highlight
-const _origToggleProduct = window.toggleProduct;
-window.toggleProduct = function(p) {
-    const safeId = 'pt-' + p.replace(/\s+/g, '-');
-    const btn = document.getElementById(safeId);
-    if (!btn) { if (_origToggleProduct) _origToggleProduct(p); return; }
-
-    const idx = window._selectedProducts.indexOf(p);
-    if (idx === -1) {
-        window._selectedProducts.push(p);
-        btn.classList.add('selected');
-    } else {
-        window._selectedProducts.splice(idx, 1);
-        btn.classList.remove('selected');
-    }
-    // Call original if it exists
-    if (_origToggleProduct) _origToggleProduct(p);
-};
-
-// Hook selectAllProducts to highlight all buttons
-const _origSelectAll = window.selectAllProducts;
-window.selectAllProducts = function(loc) {
-    document.querySelectorAll('.product-toggle').forEach(btn => {
-        btn.classList.add('selected');
-    });
-    if (_origSelectAll) _origSelectAll(loc);
-};
-
-['stat-location','stat-area','stat-finish','stat-package'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    new MutationObserver(() => {
-        const card = el.closest('.status-card');
-        if (card) {
-            card.classList.remove('updated');
-            void card.offsetWidth;
-            card.classList.add('updated');
-            setTimeout(() => card.classList.remove('updated'), 600);
-        }
-    }).observe(el, { childList: true, characterData: true, subtree: true });
-});
-</script>
+<!-- ═══════════════ STATS STRIP (replaces sidebar) ═══════════════ -->
+<div class="stats-strip">
+  <div class="stat-card" id="card-location">
+    <h5>📍 Location</h5>
+    <p id="stat-location">Not set</p>
+  </div>
+  <div class="stat-card" id="card-area">
+    <h5>📐 Dimensions</h5>
+    <p id="stat-area">0 sq.ft</p>
+  </div>
+  <div class="stat-card" id="card-finish">
+    <h5>✨ Finish</h5>
+    <p id="stat-finish">Standard</p>
+  </div>
+  <div class="stat-card" id="card-package">
+    <h5>🏷️ Tier</h5>
+    <p id="stat-package">None</p>
+  </div>
+</div>
 
 
+<!-- ═══════════════ WORKSPACE ═══════════════ -->
+<div class="workspace">
+  <div class="chat-card">
 
+    <!-- HEADER -->
+    <div class="chat-header">
+      <div class="chat-avatar"><i class="bi bi-robot"></i></div>
+      <div class="chat-header-info">
+        <strong>Interior AI Designer</strong>
+        <span><span class="status-dot"></span> Online &amp; Ready to Assist</span>
+      </div>
+      <div class="header-actions">
+        <button class="header-btn" onclick="resetChat()">↻ Reset</button>
+        <button class="header-btn" onclick="downloadPDF()">📄 Export</button>
+      </div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div id="chat" class="chat-messages">
+      <div class="msg ai-msg">
+        👋 Welcome! I'm your <b>Interior AI Designer</b>.<br><br>
+        Tell me about your space — room type, dimensions, and preferred finish — and I'll craft a detailed cost estimate for you.<br><br>
+        Try: <b>"I want a kitchen with laminate finish"</b>
+      </div>
+    </div>
+
+    <!-- QUICK SUGGESTIONS -->
+    <div class="quick-suggestions">
+      <button class="quick-chip" onclick="quickPrompt('Kitchen')">🍳 Kitchen</button>
+      <button class="quick-chip" onclick="quickPrompt('Bedroom')">🛏 Bedroom</button>
+      <button class="quick-chip" onclick="quickPrompt('Living Room')">🛋 Living Room</button>
+      <button class="quick-chip" onclick="quickPrompt('Bathroom')">🛁 Bathroom</button>
+      <button class="quick-chip" onclick="quickPrompt('Office')">🏢 Office</button>
+    </div>
+
+    <!-- INPUT -->
+    <div class="chat-input-bar">
+      <button class="attach-btn" title="Attach floor plan">📎</button>
+      <input id="chatInput"
+        placeholder="Describe your interior project..."
+        onkeypress="if(event.key==='Enter') sendMessage()">
+      <button class="send-btn" onclick="sendMessage()">
+        <span>Send</span> ➤
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════ TRUST ROW ═══════════════ -->
+<div class="trust-row">
+  <div class="trust-card">
+    <div class="trust-icon">⚡</div>
+    <div class="trust-text">
+      <strong>Instant Estimates</strong>
+      <span>Get pricing in seconds</span>
+    </div>
+  </div>
+  <div class="trust-card">
+    <div class="trust-icon">🏆</div>
+    <div class="trust-text">
+      <strong>Premium Quality</strong>
+      <span>Curated finishes &amp; materials</span>
+    </div>
+  </div>
+  <div class="trust-card">
+    <div class="trust-icon">🔒</div>
+    <div class="trust-text">
+      <strong>No Commitment</strong>
+      <span>Free, no obligation quote</span>
+    </div>
+  </div>
+</div>
+
+<div class="disclaimer">
+  Estimates are indicative and subject to site verification. Final pricing may vary based on site conditions.
+</div>
+
+
+<!-- ═══════════════ SCRIPTS (LOGIC UNCHANGED) ═══════════════ -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
 <script>
-
-/* ======================== */
-/* AI STATE */
-/* ======================== */
-
-let ai = {
-    locations: [],      // completed location estimates
-    current: null,      // current location being configured
-    stage: "start"
-    // stages: start | select_products | enter_area | configure_product | done
-};
-
+let ai = { locations: [], current: null, stage: "start" };
 let aiDataCache = {};
 let AVAILABLE_LOCATIONS = [];
 let isLoading = false;
 let isButtonClick = false;
-
-// Tracks which product index is being configured right now
 let currentProductIndex = 0;
-
-
-/* ======================== */
-/* LOAD LOCATIONS */
-/* ======================== */
 
 async function loadLocations() {
     try {
@@ -574,40 +756,22 @@ async function loadLocations() {
         let result = await res.json();
         if (result.status === "success") {
             AVAILABLE_LOCATIONS = result.locations.map(l => l.toLowerCase().trim());
-        } else {
-            addAI("⚠️ Failed to load locations");
-        }
-    } catch {
-        addAI("❌ Error loading locations");
-    }
+        } else { addAI("⚠️ Failed to load locations"); }
+    } catch { addAI("❌ Error loading locations"); }
 }
-
-
-/* ======================== */
-/* CHAT UI */
-/* ======================== */
 
 function addUser(text) {
-    document.getElementById("chat").innerHTML +=
-        `<div class="msg user-msg">${text}</div>`;
+    document.getElementById("chat").innerHTML += `<div class="msg user-msg">${text}</div>`;
     scroll();
 }
-
 function addAI(html) {
-    document.getElementById("chat").innerHTML +=
-        `<div class="msg ai-msg">${html}</div>`;
+    document.getElementById("chat").innerHTML += `<div class="msg ai-msg">${html}</div>`;
     scroll();
 }
-
 function scroll() {
     let chat = document.getElementById("chat");
     setTimeout(() => { chat.scrollTop = chat.scrollHeight; }, 100);
 }
-
-
-/* ======================== */
-/* SIDEBAR */
-/* ======================== */
 
 function updateSidebar() {
     let locList = ai.locations.map(l =>
@@ -621,8 +785,6 @@ function updateSidebar() {
             `${capitalize(p.name)}: ${p.area} sq.ft`
         ).join(", ");
         document.getElementById("stat-area").innerText = areas || "0 sq.ft";
-
-        // Show current product being configured
         let configuring = c.products[currentProductIndex];
         document.getElementById("stat-finish").innerText =
             configuring?.finish ? capitalize(configuring.finish) : "Standard";
@@ -633,156 +795,100 @@ function updateSidebar() {
         document.getElementById("stat-finish").innerText = "Standard";
         document.getElementById("stat-package").innerText = "None";
     }
+
+    ['card-location','card-area','card-finish','card-package'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove('updated');
+        void el.offsetWidth;
+        el.classList.add('updated');
+        setTimeout(() => el.classList.remove('updated'), 600);
+    });
 }
-
-
-/* ======================== */
-/* RESET */
-/* ======================== */
-
-function resetAI() {
-    ai = { locations: [], current: null, stage: "start" };
-    aiDataCache = {};
-    isLoading = false;
-    currentProductIndex = 0;
-    updateSidebar();
-}
-
-
-/* ======================== */
-/* LOAD DATA */
-/* ======================== */
 
 async function loadAIData(location) {
     if (aiDataCache[location]) return;
     if (isLoading) return;
     isLoading = true;
-
     try {
         let res = await fetch(`/get-ai-data/${location}/`);
         let result = await res.json();
-
         if (result.status === "success") {
             let raw = result.data;
             let normalized = {};
-
             Object.keys(raw).forEach(product => {
                 let pKey = product.toLowerCase().trim();
                 normalized[pKey] = {};
-
                 Object.keys(raw[product]).forEach(finish => {
                     let fKey = finish.toLowerCase().trim();
                     normalized[pKey][fKey] = {};
-
                     Object.keys(raw[product][finish]).forEach(pkg => {
                         let pkgKey = pkg.toLowerCase().trim();
                         normalized[pKey][fKey][pkgKey] = {};
-
                         Object.keys(raw[product][finish][pkg]).forEach(ply => {
                             let plyKey = ply.toLowerCase().trim();
-                            normalized[pKey][fKey][pkgKey][plyKey] =
-                                raw[product][finish][pkg][ply];
+                            normalized[pKey][fKey][pkgKey][plyKey] = raw[product][finish][pkg][ply];
                         });
                     });
                 });
             });
-
             aiDataCache[location] = normalized;
-
         } else {
             aiDataCache[location] = {};
             addAI(`⚠️ No pricing data found for ${capitalize(location)}`);
         }
-
     } catch (e) {
         console.error("loadAIData error:", e);
         addAI(`❌ Server error loading data for ${capitalize(location)}`);
     }
-
     isLoading = false;
 }
-
-
-/* ======================== */
-/* STEP 1 — SHOW LOCATIONS */
-/* ======================== */
 
 function showLocations() {
     let alreadyAdded = ai.locations.map(l => l.location);
     let remaining = AVAILABLE_LOCATIONS.filter(l => !alreadyAdded.includes(l));
-
     if (remaining.length === 0) {
         addAI(`✅ All locations added!<br><br>
-            <button class='ai-btn confirm-btn' onclick='showFinalEstimate()'>
-                📊 View Final Estimate
-            </button>`);
+            <button class='ai-btn confirm-btn' onclick='showFinalEstimate()'>📊 View Final Estimate</button>`);
         return;
     }
-
     let html = "🏠 Select a location:<br><br>";
     remaining.forEach(loc => {
-        html += `<button class="ai-btn" onclick="selectLocation('${loc}')">
-            ${capitalize(loc)}
-        </button> `;
+        html += `<button class="ai-btn" onclick="selectLocation('${loc}')">${capitalize(loc)}</button> `;
     });
-
     addAI(html);
     ai.stage = "start";
 }
-
-
-/* ======================== */
-/* STEP 2 — SELECT LOCATION */
-/* ======================== */
 
 async function selectLocation(loc) {
     isButtonClick = true;
     loc = loc.toLowerCase().trim();
     addUser(capitalize(loc));
-
-    ai.current = {
-        location: loc,
-        products: [],           // [{ name, area, finish, package, plywood }]
-        selectedProducts: [],
-        total: 0
-    };
+    ai.current = { location: loc, products: [], selectedProducts: [], total: 0 };
     currentProductIndex = 0;
-
     addAI(`🏠 Setting up <b>${capitalize(loc)}</b>...`);
     await loadAIData(loc);
-
     let data = aiDataCache[loc];
     if (!data || !Object.keys(data).length) {
         addAI(`⚠️ No products found for ${capitalize(loc)}.`);
         return;
     }
-
     ai.stage = "select_products";
     showProductSelection(loc);
 }
 
-
-/* ======================== */
-/* STEP 3 — PRODUCT SELECTION */
-/* ======================== */
-
 function showProductSelection(loc) {
     let data = aiDataCache[loc];
     let products = Object.keys(data);
-
     let html = `🪑 Select products for <b>${capitalize(loc)}</b>:<br>
-        <small style="opacity:0.7">Choose one or more, then confirm</small><br><br>`;
-
+        <small style="opacity:.6;font-size:12px;">Choose one or more, then confirm</small><br><br>`;
     products.forEach(p => {
         let safeId = `pt-${p.replace(/\s+/g, "-")}`;
-        html += `<button class="ai-btn product-toggle" id="${safeId}"
-            onclick="toggleProduct('${p}')">${capitalize(p)}</button> `;
+        html += `<button class="ai-btn product-toggle" id="${safeId}" onclick="toggleProduct('${p}')">${capitalize(p)}</button> `;
     });
-
     html += `<br><br>
         <button class="ai-btn all-btn" onclick="selectAllProducts('${loc}')">✅ All Products</button>
         <button class="ai-btn confirm-btn" onclick="confirmProducts()">➡️ Confirm</button>`;
-
     addAI(html);
 }
 
@@ -791,7 +897,6 @@ function toggleProduct(p) {
     let safeId = `pt-${p.replace(/\s+/g, "-")}`;
     let btn = document.getElementById(safeId);
     let idx = ai.current.selectedProducts.indexOf(p);
-
     if (idx === -1) {
         ai.current.selectedProducts.push(p);
         if (btn) btn.classList.add("selected");
@@ -813,92 +918,48 @@ function selectAllProducts(loc) {
 
 function confirmProducts() {
     isButtonClick = true;
-
     if (!ai.current.selectedProducts.length) {
         addAI("⚠️ Please select at least one product.");
         return;
     }
-
-    // 🔥 Each product has its OWN finish/package/plywood
     ai.current.products = ai.current.selectedProducts.map(p => ({
-        name: p,
-        area: null,
-        finish: null,
-        package: null,
-        plywood: null
+        name: p, area: null, finish: null, package: null, plywood: null
     }));
-
     addUser("Selected: " + ai.current.selectedProducts.map(capitalize).join(", "));
-
     currentProductIndex = 0;
     ai.stage = "enter_area";
     askNextArea();
 }
 
-
-/* ======================== */
-/* STEP 4 — AREA PER PRODUCT */
-/* ======================== */
-
 function askNextArea() {
-    // Find first product with no area
     let pending = ai.current.products.find(p => p.area === null);
-
     if (!pending) {
-        // All areas done — start configuring finish/package/plywood per product
         currentProductIndex = 0;
         ai.stage = "configure_product";
         configureNextProduct();
         return;
     }
-
     addAI(`📐 Enter size for <b>${capitalize(pending.name)}</b>:<br>
-        <small style="opacity:0.7">e.g. 10x12 or just type 120 for sq.ft</small>`);
+        <small style="opacity:.6;font-size:12px;">e.g. 10x12 or just type 120 for sq.ft</small>`);
 }
 
-
-/* ======================== */
-/* STEP 5/6/7 — PER PRODUCT CONFIG */
-/* ======================== */
-
 function configureNextProduct() {
-    // Find next product that still needs finish configured
-    let prod = ai.current.products.find((p, i) =>
-        i >= currentProductIndex && p.finish === null
-    );
-
-    if (!prod) {
-        // All products configured — calculate estimate
-        estimateLocation();
-        return;
-    }
-
+    let prod = ai.current.products.find((p, i) => i >= currentProductIndex && p.finish === null);
+    if (!prod) { estimateLocation(); return; }
     currentProductIndex = ai.current.products.indexOf(prod);
     updateSidebar();
-
-    // Show a header for this product's config
     addAI(`<b>⚙️ Configuring: ${capitalize(prod.name)}</b>`);
-
     showProductFinishes(prod);
 }
 
 function showProductFinishes(prod) {
     let data = aiDataCache[ai.current.location];
     let finishes = Object.keys(data[prod.name] || {});
-
-    if (!finishes.length) {
-        addAI(`⚠️ No finishes found for ${capitalize(prod.name)}`);
-        return;
-    }
-
+    if (!finishes.length) { addAI(`⚠️ No finishes for ${capitalize(prod.name)}`); return; }
     let html = `🎨 Choose finish for <b>${capitalize(prod.name)}</b>:<br><br>`;
     finishes.forEach(f => {
-        html += `<button class="ai-btn"
-            onclick="selectProductFinish('${prod.name}', '${f}')">
-            ${capitalize(f)}
-        </button> `;
+        html += `<button class="ai-btn" onclick="selectProductFinish('${prod.name}','${f}')">${capitalize(f)}</button> `;
     });
-
     addAI(html);
 }
 
@@ -914,20 +975,11 @@ function selectProductFinish(prodName, finish) {
 function showProductPackages(prod) {
     let data = aiDataCache[ai.current.location];
     let packages = Object.keys(data[prod.name]?.[prod.finish] || {});
-
-    if (!packages.length) {
-        addAI(`⚠️ No packages found for ${capitalize(prod.name)} → ${capitalize(prod.finish)}`);
-        return;
-    }
-
+    if (!packages.length) { addAI(`⚠️ No packages for ${capitalize(prod.name)}`); return; }
     let html = `💎 Choose package for <b>${capitalize(prod.name)}</b>:<br><br>`;
     packages.forEach(p => {
-        html += `<button class="ai-btn"
-            onclick="selectProductPackage('${prod.name}', '${p}')">
-            ${capitalize(p)}
-        </button> `;
+        html += `<button class="ai-btn" onclick="selectProductPackage('${prod.name}','${p}')">${capitalize(p)}</button> `;
     });
-
     addAI(html);
 }
 
@@ -942,23 +994,12 @@ function selectProductPackage(prodName, pkg) {
 
 function showProductPlywood(prod) {
     let data = aiDataCache[ai.current.location];
-    let plywoods = Object.keys(
-        data[prod.name]?.[prod.finish]?.[prod.package] || {}
-    );
-
-    if (!plywoods.length) {
-        addAI(`⚠️ No plywood options for ${capitalize(prod.name)}`);
-        return;
-    }
-
+    let plywoods = Object.keys(data[prod.name]?.[prod.finish]?.[prod.package] || {});
+    if (!plywoods.length) { addAI(`⚠️ No plywood options for ${capitalize(prod.name)}`); return; }
     let html = `🪵 Choose plywood for <b>${capitalize(prod.name)}</b>:<br><br>`;
     plywoods.forEach(p => {
-        html += `<button class="ai-btn"
-            onclick="selectProductPlywood('${prod.name}', '${p}')">
-            ${capitalize(p)}
-        </button> `;
+        html += `<button class="ai-btn" onclick="selectProductPlywood('${prod.name}','${p}')">${capitalize(p)}</button> `;
     });
-
     addAI(html);
 }
 
@@ -968,30 +1009,16 @@ function selectProductPlywood(prodName, ply) {
     prod.plywood = ply;
     addUser(capitalize(ply));
     updateSidebar();
-
-    // Move to next product
     currentProductIndex++;
     configureNextProduct();
 }
 
-
-/* ======================== */
-/* CALCULATE RATE */
-/* ======================== */
-
 function calcRate(item) {
     let rate = parseFloat(item.rate) || 0;
     let multiplier = parseFloat(item.multiplier);
-    if (!isNaN(multiplier) && multiplier > 0 && multiplier <= 10) {
-        return rate * multiplier;
-    }
+    if (!isNaN(multiplier) && multiplier > 0 && multiplier <= 10) return rate * multiplier;
     return rate;
 }
-
-
-/* ======================== */
-/* ESTIMATE ONE LOCATION */
-/* ======================== */
 
 function estimateLocation() {
     let data = aiDataCache[ai.current.location];
@@ -1001,19 +1028,11 @@ function estimateLocation() {
 
     c.products.forEach(prod => {
         let item = data?.[prod.name]?.[prod.finish]?.[prod.package]?.[prod.plywood];
-
-        if (!item) {
-            console.warn(`[WARN] No data: ${prod.name} → ${prod.finish} → ${prod.package} → ${prod.plywood}`);
-            return;
-        }
-        if (!prod.area) return;
-
+        if (!item || !prod.area) return;
         let rate = calcRate(item);
         let cost = prod.area * rate;
         total += cost;
-
-        rows += `
-        <tr>
+        rows += `<tr>
             <td>${capitalize(prod.name)}</td>
             <td>${capitalize(prod.finish)} / ${capitalize(prod.package)} / ${capitalize(prod.plywood)}</td>
             <td>${prod.area} sq.ft</td>
@@ -1022,40 +1041,21 @@ function estimateLocation() {
         </tr>`;
     });
 
-    if (!rows) {
-        addAI("⚠️ No matching data found. Please try again.");
-        return;
-    }
+    if (!rows) { addAI("⚠️ No matching data found. Please try again."); return; }
 
     c.total = total;
-
-    ai.locations.push({
-        location: c.location,
-        products: c.products.map(p => ({ ...p })),
-        total: c.total
-    });
-
+    ai.locations.push({ location: c.location, products: c.products.map(p => ({...p})), total: c.total });
     updateSidebar();
 
     let html = `
     <div class="estimate-box">
         <h3>🧾 ${capitalize(c.location)} Estimate</h3>
-        <table style="width:100%; border-collapse:collapse;">
-            <tr>
-                <th>Product</th>
-                <th>Finish / Package / Plywood</th>
-                <th>Area</th>
-                <th>Rate/sqft</th>
-                <th>Total</th>
-            </tr>
+        <table>
+            <tr><th>Product</th><th>Finish / Package / Plywood</th><th>Area</th><th>Rate/sqft</th><th>Total</th></tr>
             ${rows}
-            <tr style="font-weight:bold; background:#f9f9f9;">
-                <td colspan="4">${capitalize(c.location)} Subtotal</td>
-                <td>₹${total.toLocaleString("en-IN")}</td>
-            </tr>
+            <tr class="subtotal-row"><td colspan="4">${capitalize(c.location)} Subtotal</td><td>₹${total.toLocaleString("en-IN")}</td></tr>
         </table>
-    </div>
-    <br>
+    </div><br>
     <button class="ai-btn" onclick="addAnotherLocation()">➕ Add Another Location</button>
     <button class="ai-btn confirm-btn" onclick="showFinalEstimate()">📊 Final Estimate</button>`;
 
@@ -1064,11 +1064,6 @@ function estimateLocation() {
     ai.stage = "done";
 }
 
-
-/* ======================== */
-/* ADD ANOTHER LOCATION */
-/* ======================== */
-
 function addAnotherLocation() {
     isButtonClick = true;
     currentProductIndex = 0;
@@ -1076,35 +1071,22 @@ function addAnotherLocation() {
     showLocations();
 }
 
-
-/* ======================== */
-/* FINAL ESTIMATE */
-/* ======================== */
-
 function showFinalEstimate() {
     isButtonClick = true;
-
-    if (!ai.locations.length) {
-        addAI("⚠️ No locations added yet.");
-        return;
-    }
+    if (!ai.locations.length) { addAI("⚠️ No locations added yet."); return; }
 
     let grandTotal = 0;
     let locationBlocks = "";
 
     ai.locations.forEach(loc => {
         grandTotal += loc.total;
-
         let rows = loc.products.map(p => {
             let data = aiDataCache[loc.location];
             let item = data?.[p.name]?.[p.finish]?.[p.package]?.[p.plywood];
             if (!item || !p.area) return "";
-
             let rate = calcRate(item);
             let cost = p.area * rate;
-
-            return `
-            <tr>
+            return `<tr>
                 <td>${capitalize(p.name)}</td>
                 <td>${capitalize(p.finish)} / ${capitalize(p.package)} / ${capitalize(p.plywood)}</td>
                 <td>${p.area} sq.ft</td>
@@ -1114,91 +1096,50 @@ function showFinalEstimate() {
         }).join("");
 
         locationBlocks += `
-        <tr style="background:#f0f4ff;">
-            <td colspan="5" style="font-weight:bold; padding:6px;">
-                🏠 ${capitalize(loc.location)}
-            </td>
-        </tr>
+        <tr class="loc-header"><td colspan="5">🏠 ${capitalize(loc.location)}</td></tr>
         ${rows}
-        <tr style="font-weight:bold; border-bottom:2px solid #ddd;">
-            <td colspan="4">${capitalize(loc.location)} Subtotal</td>
-            <td>₹${loc.total.toLocaleString("en-IN")}</td>
-        </tr>`;
+        <tr class="subtotal-row"><td colspan="4">${capitalize(loc.location)} Subtotal</td><td>₹${loc.total.toLocaleString("en-IN")}</td></tr>`;
     });
 
     let html = `
     <div class="estimate-box" id="estimateBox">
         <h3>🧾 Full Interior Estimate</h3>
-        <table style="width:100%; border-collapse:collapse;">
-            <tr>
-                <th>Product</th>
-                <th>Finish / Package / Plywood</th>
-                <th>Area</th>
-                <th>Rate/sqft</th>
-                <th>Total</th>
-            </tr>
+        <table>
+            <tr><th>Product</th><th>Finish / Package / Plywood</th><th>Area</th><th>Rate/sqft</th><th>Total</th></tr>
             ${locationBlocks}
-            <tr style="font-weight:bold; font-size:1.1em; background:#e8f5e9;">
-                <td colspan="4">💰 Grand Total</td>
-                <td>₹${grandTotal.toLocaleString("en-IN")}</td>
-            </tr>
-        </table>
-        <br>
-        <button onclick="downloadPDF()" class="ai-btn">📄 Download PDF</button>
+            <tr class="grand-row"><td colspan="4">💰 Grand Total</td><td>₹${grandTotal.toLocaleString("en-IN")}</td></tr>
+        </table><br>
+        <button onclick="downloadPDF()" class="ai-btn confirm-btn">📄 Download PDF</button>
         <button onclick="addAnotherLocation()" class="ai-btn">➕ Add Location</button>
     </div>`;
 
     addAI(html);
 }
 
-
-/* ======================== */
-/* MAIN FLOW — TEXT INPUT */
-/* ======================== */
-
 async function sendMessage() {
-    if (isButtonClick) {
-        isButtonClick = false;
-        return;
-    }
-
+    if (isButtonClick) { isButtonClick = false; return; }
     let input = document.getElementById("chatInput");
     let msg = input.value.trim();
     if (!msg) return;
-
     addUser(msg);
     input.value = "";
 
     if (ai.stage === "start") {
         let loc = detectLocation(msg);
-        if (loc) {
-            await selectLocation(loc);
-        } else {
-            showLocations();
-        }
+        if (loc) { await selectLocation(loc); } else { showLocations(); }
         return;
     }
-
     if (ai.stage === "enter_area") {
         let area = parseArea(msg);
         if (area && area > 0) {
             let pending = ai.current.products.find(p => p.area === null);
-            if (pending) {
-                pending.area = area;
-                updateSidebar();
-                askNextArea();
-            }
+            if (pending) { pending.area = area; updateSidebar(); askNextArea(); }
         } else {
             addAI("⚠️ Please enter size like <b>10x12</b> or a number like <b>120</b>");
         }
         return;
     }
 }
-
-
-/* ======================== */
-/* HELPERS */
-/* ======================== */
 
 function parseArea(msg) {
     let mulMatch = msg.match(/(\d+)\s*[x×]\s*(\d+)/i);
@@ -1207,51 +1148,44 @@ function parseArea(msg) {
     if (numMatch) return parseInt(numMatch[1]);
     return null;
 }
-
 function detectLocation(msg) {
     msg = msg.toLowerCase();
-    for (let loc of AVAILABLE_LOCATIONS) {
-        if (msg.includes(loc)) return loc;
-    }
+    for (let loc of AVAILABLE_LOCATIONS) { if (msg.includes(loc)) return loc; }
     return null;
 }
-
 function capitalize(str) {
     if (!str) return "";
     return str.replace(/\b\w/g, c => c.toUpperCase());
 }
-
-function calcRate(item) {
-    let rate = parseFloat(item.rate) || 0;
-    let multiplier = parseFloat(item.multiplier);
-    if (!isNaN(multiplier) && multiplier > 0 && multiplier <= 10) {
-        return rate * multiplier;
-    }
-    return rate;
-}
-
-
-/* ======================== */
-/* PDF */
-/* ======================== */
-
 function downloadPDF() {
     let element = document.getElementById("estimateBox");
     if (!element) { addAI("⚠️ Generate final estimate first."); return; }
     html2pdf().from(element).save("Interior_Estimate.pdf");
 }
 
-
-/* ======================== */
-/* INIT */
-/* ======================== */
+/* NEW: Quick prompt + Reset */
+function quickPrompt(text) {
+    const input = document.getElementById("chatInput");
+    input.value = text;
+    input.focus();
+}
+function resetChat() {
+    if (!confirm("Reset the entire estimate? This will clear all locations.")) return;
+    ai = { locations: [], current: null, stage: "start" };
+    currentProductIndex = 0;
+    document.getElementById("chat").innerHTML = `
+      <div class="msg ai-msg">
+        👋 Fresh start! Tell me about your space — room type, dimensions, and finish — and I'll craft a detailed estimate.
+      </div>`;
+    updateSidebar();
+    showLocations();
+}
 
 window.onload = async function () {
     updateSidebar();
     await loadLocations();
     showLocations();
 };
-
 </script>
 
 {% endblock %}

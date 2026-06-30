@@ -10,6 +10,41 @@
 
 
 {% block content %}
+
+<!-- ═══════════════ HERO (kept as-is) ═══════════════ -->
+<div class="hero-header position-relative text-white text-center d-flex align-items-center justify-content-center"
+     style="min-height: 75vh; padding: 4rem 1rem;">
+
+    <img src="{% static 'images/bg02.webp' %}"
+         alt="Hero Background"
+         style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:-1;">
+
+    <div class="hero-overlay position-absolute top-0 start-0 w-100 h-100"
+         style="background-color: rgba(0,0,0,0.55); z-index: 0;"></div>
+
+    <div class="container position-relative z-1">
+        <div class="related-heading d-flex flex-column align-items-center gap-2 mb-3">
+            <div class="d-flex justify-content-center">
+                <span class="line" style="width: 80px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
+            </div>
+
+            <h1 class="fw-bold text-white px-2"
+                style="font-family: 'Playfair Display', serif; font-size: clamp(1.75rem, 6vw, 3.2rem); letter-spacing: 1px;">
+                BedRoom Estimation
+            </h1>
+
+            <div class="d-flex justify-content-center">
+                <span class="line" style="width: 80px; height: 1.5px; background-color: rgba(255, 255, 255, 0.5);"></span>
+            </div>
+        </div>
+
+        <p class="fs-6 fs-md-5 text-white-50" style="max-width: 600px; margin: 0 auto;">
+            Your Dream Home Deserves
+        </p>
+    </div>
+</div>
+
+
 <div class="container py-5" style="margin-top: 100px;">
   <div class="card shadow border-0 rounded-4 px-3 px-md-5 py-4 bg-white">
     <h2 class="text-center fw-bold mb-4 text-dark">
