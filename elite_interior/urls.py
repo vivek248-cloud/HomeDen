@@ -154,6 +154,8 @@ urlpatterns = [
         name="send_bulk_campaign"
     ),
 
+    path("game/", game_view, name="game_view"),
+
     path("<slug:slug>/", seo_service_detail, name="seo_service_detail"),
 ]
 

@@ -4,159 +4,967 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>404 - Home Den | Interior</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&
+  family=Playfair+Display:wght@400;700&
+  family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    /* ── RESET ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ── BODY ── */
     body {
-      margin: 0;
-      padding: 0;
-      background: #f7f7f7;
-      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      font-family: 'Roboto', sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    /* ── PARTICLES ── */
+    #particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0;
+      animation: float-up linear infinite;
+    }
+    @keyframes float-up {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.3; }
+      100% { transform: translateY(-20px) scale(1); opacity: 0; }
+    }
+
+    /* ── HEADER ── */
+    .header {
+      text-align: center;
+      z-index: 10;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .error-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      color: #fff;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 0.65rem;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+      animation: pulse-badge 2s infinite;
+    }
+    @keyframes pulse-badge {
+      0%,100% { box-shadow: 0 4px 15px rgba(231,76,60,0.4); }
+      50%      { box-shadow: 0 4px 30px rgba(231,76,60,0.8); }
+    }
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 4vw, 2.8rem);
+      background: linear-gradient(135deg, #f5d76e, #f0a500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+    .header p {
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      color: #a0c4d8;
+      margin-bottom: 4px;
+    }
+    .brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem;
+      color: #f5d76e;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      z-index: 10;
+      margin-bottom: 14px;
+    }
+    .stat-pill {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 50px;
+      padding: 8px 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(10px);
+      font-size: 0.85rem;
+      transition: all 0.3s;
+    }
+    .stat-pill .icon { font-size: 1.1rem; }
+    .stat-pill .label { color: #a0c4d8; font-size: 0.7rem; }
+    .stat-pill .value {
+      font-weight: 700;
+      color: #f5d76e;
+      font-size: 1rem;
+      min-width: 28px;
+      text-align: center;
+    }
+    .stat-pill.highlight { border-color: #f5d76e55; background: rgba(245,215,110,0.08); }
+
+    /* ── DIFFICULTY SELECTOR ── */
+    .diff-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      z-index: 10;
+    }
+    .diff-btn {
+      padding: 7px 18px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 50px;
+      background: transparent;
+      color: #a0c4d8;
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s;
+      letter-spacing: 1px;
+    }
+    .diff-btn:hover { border-color: #f5d76e; color: #f5d76e; }
+    .diff-btn.active {
+      background: linear-gradient(135deg, #f5d76e, #f0a500);
+      border-color: transparent;
+      color: #1a1a2e;
+    }
+
+    /* ── GAME BOARD ── */
+    #board {
+      display: grid;
+      gap: 10px;
+      z-index: 10;
+      perspective: 1000px;
+      margin-bottom: 18px;
+    }
+    /* grid columns set by JS */
+
+    /* ── CARD ── */
+    .card {
+      width: 100%;
+      aspect-ratio: 1;
+      cursor: pointer;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 14px;
+    }
+    .card.flipped  { transform: rotateY(180deg); }
+    .card.matched  { transform: rotateY(180deg); animation: matched-bounce 0.5s ease; }
+    .card.shake    { animation: shake 0.4s ease; }
+    .card.hint     { transform: rotateY(180deg) scale(1.08); }
+
+    @keyframes matched-bounce {
+      0%   { transform: rotateY(180deg) scale(1); }
+      40%  { transform: rotateY(180deg) scale(1.15); }
+      70%  { transform: rotateY(180deg) scale(0.95); }
+      100% { transform: rotateY(180deg) scale(1); }
+    }
+    @keyframes shake {
+      0%,100% { transform: rotateY(180deg) translateX(0); }
+      25%      { transform: rotateY(180deg) translateX(-6px); }
+      75%      { transform: rotateY(180deg) translateX(6px); }
+    }
+
+    /* Card faces */
+    .card-face {
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      height: 100vh;
-    }
-
-    h1 {
-      font-size: 2rem;
-      color: #333;
-      margin-bottom: 20px;
-    }
-
-    #game {
-      width: 800px;
-      height: 200px;
-      background: white;
-      border: 5px double #333;
+      gap: 4px;
       overflow: hidden;
-      position: relative;
     }
 
-    #dino {
-      width: 44px;
-      height: 44px;
-      border-radius: 50% 50% 0 0;
-      background-color: #b9b2ffff;
-      position: absolute;
-      bottom: 0;
-      left: 50px;
+    /* Back face */
+    .card-back {
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      border: 2px solid rgba(255,255,255,0.15);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+      transition: box-shadow 0.3s;
+    }
+    .card:hover:not(.flipped):not(.matched) .card-back {
+      box-shadow: 0 8px 25px rgba(245,215,110,0.3), inset 0 1px 0 rgba(255,255,255,0.15);
+      border-color: rgba(245,215,110,0.4);
+    }
+    .card-back-pattern {
+      font-size: 1.8rem;
+      opacity: 0.5;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+    .card-back-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.5rem;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 1px;
     }
 
-    #cactus {
-      width: 34px;
-      height: 50px;
-      background: #dc3545;
+    /* Front face */
+    .card-front {
+      transform: rotateY(180deg);
+      border: 2px solid transparent;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      flex-direction: column;
+      gap: 6px;
+    }
+    .card-front.matched-face {
+      border-color: #2ecc71 !important;
+      box-shadow: 0 0 20px rgba(46,204,113,0.4) !important;
+    }
+    .card-emoji { font-size: clamp(1.6rem, 5vw, 2.6rem); line-height: 1; }
+    .card-label {
+      font-size: clamp(0.45rem, 1.5vw, 0.65rem);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-align: center;
+      padding: 0 4px;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+    .matched-star {
       position: absolute;
-      bottom: 0;
-      right: -50px;
+      top: 4px; right: 6px;
+      font-size: 0.8rem;
+      animation: spin-star 1s ease;
+    }
+    @keyframes spin-star {
+      from { transform: scale(0) rotate(-180deg); }
+      to   { transform: scale(1) rotate(0deg); }
     }
 
-    #score {
-      position: absolute;
-      top: 10px;
-      right: 20px;
-      font-size: 20px;
-      font-weight: bold;
-      color: #333;
+    /* ── HINT BUTTON ── */
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      z-index: 10;
+      margin-bottom: 14px;
     }
-    .home-link:hover {
-      text-decoration: underline;
+    .ctrl-btn {
+      padding: 9px 22px;
+      border-radius: 50px;
+      border: none;
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
       cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+    }
+    .ctrl-btn:active { transform: translateY(2px); }
+    .btn-hint {
+      background: linear-gradient(135deg, #9b59b6, #8e44ad);
+      color: #fff;
+      box-shadow: 0 4px 0 #6c3483;
+    }
+    .btn-hint:hover { box-shadow: 0 6px 0 #6c3483; transform: translateY(-2px); }
+    .btn-restart {
+      background: linear-gradient(135deg, #e67e22, #d35400);
+      color: #fff;
+      box-shadow: 0 4px 0 #a04000;
+    }
+    .btn-restart:hover { box-shadow: 0 6px 0 #a04000; transform: translateY(-2px); }
+    .btn-home {
+      background: linear-gradient(135deg, #27ae60, #2ecc71);
+      color: #fff;
+      box-shadow: 0 4px 0 #1a8a45;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-home:hover { box-shadow: 0 6px 0 #1a8a45; transform: translateY(-2px); }
+
+    /* ── PROGRESS BAR ── */
+    .progress-wrap {
+      width: min(600px, 90vw);
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      z-index: 10;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+    #progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #f5d76e, #f0a500);
+      border-radius: 10px;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    /* ── OVERLAY (Win / Intro) ── */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      backdrop-filter: blur(6px);
+      padding: 20px;
+    }
+    .overlay-box {
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      border: 2px solid rgba(245,215,110,0.3);
+      border-radius: 24px;
+      padding: 36px 40px;
+      text-align: center;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      animation: pop-in 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes pop-in {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+    .overlay-box h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      color: #f5d76e;
+      margin-bottom: 10px;
+    }
+    .overlay-box p {
+      color: #a0c4d8;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      line-height: 1.6;
+    }
+    .overlay-box .big-emoji { font-size: 3rem; margin-bottom: 12px; }
+    .win-stats {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin: 16px 0;
+      flex-wrap: wrap;
+    }
+    .win-stat {
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 10px 18px;
+      min-width: 80px;
+    }
+    .win-stat .ws-val {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #f5d76e;
+    }
+    .win-stat .ws-lbl {
+      font-size: 0.65rem;
+      color: #a0c4d8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .overlay-btns {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .ov-btn {
+      padding: 11px 26px;
+      border-radius: 50px;
+      border: none;
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+    }
+    .ov-btn-primary {
+      background: linear-gradient(135deg, #f5d76e, #f0a500);
+      color: #1a1a2e;
+      box-shadow: 0 4px 0 #b07d00;
+    }
+    .ov-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #b07d00; }
+    .ov-btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .ov-btn-secondary:hover { background: rgba(255,255,255,0.18); }
+
+    /* ── COMBO TOAST ── */
+    #toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-80px);
+      background: linear-gradient(135deg, #f5d76e, #f0a500);
+      color: #1a1a2e;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 10px 24px;
+      border-radius: 50px;
+      z-index: 200;
+      pointer-events: none;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── TIMER BAR ── */
+    #timer-bar-wrap {
+      width: min(600px, 90vw);
+      height: 8px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      z-index: 10;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    #timer-bar {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 1s linear, background 1s;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .overlay-box { padding: 26px 20px; }
+      .stat-pill .label { display: none; }
     }
   </style>
 </head>
 <body>
-  <h1>500 - Internal Server Error! Play Dino 🦖</h1>
-  <div id="game">
-    <div id="dino"></div>
-    <div id="cactus"></div>
-    <div id="score">Score: 0</div>
+
+<!-- Particles -->
+<div id="particles"></div>
+
+<!-- Toast -->
+<div id="toast">🎉 COMBO ×2!</div>
+
+<!-- Intro / Win Overlay -->
+<div class="overlay" id="overlay">
+  <div class="overlay-box" id="overlay-box">
+    <!-- filled by JS -->
   </div>
-  <a href="{% url 'home' %}" class="home-link" style="margin-top: 20px; text-decoration: none; color: #000000ff; font-size: 32px;"> > Go to Home</a>
+</div>
 
-  <script>
-    const dino = document.getElementById("dino");
-    const cactus = document.getElementById("cactus");
-    const scoreDisplay = document.getElementById("score");
-    let isJumping = false;
-    let score = 0;
-    let gameOver = false;
+<!-- HEADER -->
+<div class="header">
+  <div class="error-badge">⚠ 500 — INTERNAL SERVER ERROR</div>
+  <h1>🏠 Home Den</h1>
+  <p>Match the Interior Design Cards</p>
+  <div class="brand">Memory Challenge</div>
+</div>
 
-    // Jump logic
-    document.addEventListener("keydown", function (event) {
-      if ((event.code === "Space" || event.code === "ArrowUp") && !isJumping) {
-        jump();
-      }
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-pill highlight">
+    <span class="icon">🃏</span>
+    <div>
+      <div class="label">MOVES</div>
+      <div class="value" id="moves-val">0</div>
+    </div>
+  </div>
+  <div class="stat-pill highlight">
+    <span class="icon">✅</span>
+    <div>
+      <div class="label">MATCHED</div>
+      <div class="value" id="matched-val">0</div>
+    </div>
+  </div>
+  <div class="stat-pill">
+    <span class="icon">⏱</span>
+    <div>
+      <div class="label">TIME</div>
+      <div class="value" id="time-val">0s</div>
+    </div>
+  </div>
+  <div class="stat-pill">
+    <span class="icon">🔥</span>
+    <div>
+      <div class="label">COMBO</div>
+      <div class="value" id="combo-val">×1</div>
+    </div>
+  </div>
+  <div class="stat-pill">
+    <span class="icon">⭐</span>
+    <div>
+      <div class="label">SCORE</div>
+      <div class="value" id="score-val">0</div>
+    </div>
+  </div>
+</div>
+
+<!-- TIMER BAR -->
+<div id="timer-bar-wrap">
+  <div id="timer-bar"></div>
+</div>
+
+<!-- DIFFICULTY -->
+<div class="diff-bar">
+  <button class="diff-btn active" data-diff="easy">🌿 Easy</button>
+  <button class="diff-btn" data-diff="medium">🛋 Medium</button>
+  <button class="diff-btn" data-diff="hard">🏆 Hard</button>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div id="progress-bar"></div>
+</div>
+
+<!-- BOARD -->
+<div id="board"></div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <button class="ctrl-btn btn-hint" id="hint-btn">💡 Hint (3)</button>
+  <button class="ctrl-btn btn-restart" id="restart-btn">🔄 Restart</button>
+  <a href="/" class="ctrl-btn btn-home">🏠 Go Home</a>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   HOME DEN — Interior Design Memory Card Game
+   Features:
+   • 3 difficulty levels  (4×3 / 4×4 / 6×5)
+   • Timer with colour-coded bar
+   • Combo system (consecutive matches = bonus)
+   • Hint system (briefly reveals all unmatched cards)
+   • Star rating on win
+   • Particle background
+   • Smooth CSS-flip animations
+   ═══════════════════════════════════════════════════════════════ */
+
+// ── Card catalogue ────────────────────────────────────────────────────────────
+const ALL_CARDS = [
+  { emoji: '🛋️', label: 'Sofa',        color: 'linear-gradient(135deg,#667eea,#764ba2)' },
+  { emoji: '🪑', label: 'Chair',       color: 'linear-gradient(135deg,#f093fb,#f5576c)' },
+  { emoji: '🛏️', label: 'Bed',         color: 'linear-gradient(135deg,#4facfe,#00f2fe)' },
+  { emoji: '🪞', label: 'Mirror',      color: 'linear-gradient(135deg,#43e97b,#38f9d7)' },
+  { emoji: '🖼️', label: 'Artwork',     color: 'linear-gradient(135deg,#fa709a,#fee140)' },
+  { emoji: '🪴', label: 'Plant',       color: 'linear-gradient(135deg,#a8edea,#fed6e3)' },
+  { emoji: '💡', label: 'Lamp',        color: 'linear-gradient(135deg,#ffecd2,#fcb69f)' },
+  { emoji: '🪟', label: 'Window',      color: 'linear-gradient(135deg,#a1c4fd,#c2e9fb)' },
+  { emoji: '🚿', label: 'Shower',      color: 'linear-gradient(135deg,#d4fc79,#96e6a1)' },
+  { emoji: '🛁', label: 'Bathtub',     color: 'linear-gradient(135deg,#84fab0,#8fd3f4)' },
+  { emoji: '🪵', label: 'Wood Floor',  color: 'linear-gradient(135deg,#f6d365,#fda085)' },
+  { emoji: '🧺', label: 'Basket',      color: 'linear-gradient(135deg,#fddb92,#d1fdff)' },
+  { emoji: '🕯️', label: 'Candle',     color: 'linear-gradient(135deg,#e0c3fc,#8ec5fc)' },
+  { emoji: '🗄️', label: 'Cabinet',    color: 'linear-gradient(135deg,#f5f7fa,#c3cfe2)' },
+  { emoji: '🧸', label: 'Decor',       color: 'linear-gradient(135deg,#fbc2eb,#a6c1ee)' },
+];
+
+// ── Difficulty config ─────────────────────────────────────────────────────────
+const DIFFICULTIES = {
+  easy:   { cols: 4, pairs: 6,  time: 60,  label: 'Easy'   },
+  medium: { cols: 4, pairs: 8,  time: 90,  label: 'Medium' },
+  hard:   { cols: 6, pairs: 15, time: 120, label: 'Hard'   },
+};
+
+// ── DOM ───────────────────────────────────────────────────────────────────────
+const board       = document.getElementById('board');
+const overlay     = document.getElementById('overlay');
+const overlayBox  = document.getElementById('overlay-box');
+const movesEl     = document.getElementById('moves-val');
+const matchedEl   = document.getElementById('matched-val');
+const timeEl      = document.getElementById('time-val');
+const comboEl     = document.getElementById('combo-val');
+const scoreEl     = document.getElementById('score-val');
+const progressBar = document.getElementById('progress-bar');
+const timerBar    = document.getElementById('timer-bar');
+const hintBtn     = document.getElementById('hint-btn');
+const restartBtn  = document.getElementById('restart-btn');
+const toast       = document.getElementById('toast');
+const particles   = document.getElementById('particles');
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let diff       = 'easy';
+let cards      = [];        // {id, pairId, emoji, label, color, el, flipped, matched}
+let flipped    = [];        // up to 2 selected card indices
+let locked     = false;
+let moves      = 0;
+let matchCount = 0;
+let score      = 0;
+let combo      = 0;
+let hints      = 3;
+let elapsed    = 0;
+let timerLimit = 60;
+let timerInt   = null;
+let started    = false;
+let finished   = false;
+
+// ── Particles ─────────────────────────────────────────────────────────────────
+(function buildParticles() {
+  const colours = ['#f5d76e','#a0c4d8','#9b59b6','#2ecc71','#e74c3c','#fff'];
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const sz = Math.random() * 6 + 2;
+    Object.assign(p.style, {
+      width:  sz + 'px',
+      height: sz + 'px',
+      left:   Math.random() * 100 + 'vw',
+      bottom: '-10px',
+      background: colours[Math.floor(Math.random() * colours.length)],
+      animationDuration: (Math.random() * 10 + 8) + 's',
+      animationDelay:    (Math.random() * 10) + 's',
     });
+    particles.appendChild(p);
+  }
+})();
 
-    function jump() {
-      isJumping = true;
-      let position = 0;
-      
-      let upInterval = setInterval(() => {
-        if (position >= 120) {
-          clearInterval(upInterval);
-          // fall down
-          let downInterval = setInterval(() => {
-            if (position <= 0) {
-              clearInterval(downInterval);
-              isJumping = false;
-            }
-            position -= 5;
-            dino.style.bottom = position + "px";
-            dino.style.transform = "rotate(-" + position * 4 + "deg)";
-          }, 20);
-        }
-        position += 5;
-        dino.style.bottom = position + "px";
-        dino.style.transform = "rotate(-" + position * 4 + "deg)";
-      }, 20);
-    }
-
-   // Cactus movement + collision detection
-function moveCactus() {
-  let cactusPosition = 800;   // starting X position
-  let speed = 5;              // movement speed (px per frame)
-  let levelUp = 5;            // increase speed every 5 points
-  let multiplier = 1;         // speed multiplier
-
-  let interval = setInterval(() => {
-    if (gameOver) {
-      clearInterval(interval);
-      return;
-    }
-
-    // Move cactus left
-    cactusPosition -= speed * multiplier;
-
-    // Reset cactus when it goes out of screen
-    if (cactusPosition < -50) {
-      cactusPosition = 800;
-      score++;
-
-      // Increase difficulty
-      if (score % levelUp === 0) {
-        speed += 1; // cactus runs faster 🚀
-        multiplier += 0.1; // increase difficulty
-      }
-
-      scoreDisplay.textContent = "Score: " + score;
-    }
-
-    cactus.style.left = cactusPosition + "px";
-
-    // Collision detection
-    let dinoBottom = parseInt(window.getComputedStyle(dino).getPropertyValue("bottom"));
-    if (cactusPosition < 90 && cactusPosition > 40 && dinoBottom < 50) {
-      gameOver = true;
-      window.alert("💀 Game Over! Your Score: " + score);
-      window.location.reload();
-    }
-  }, 20); // fixed smooth frame rate
+// ── Shuffle ───────────────────────────────────────────────────────────────────
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
 }
 
-moveCactus();
+// ── Timer ─────────────────────────────────────────────────────────────────────
+function startTimer() {
+  clearInterval(timerInt);
+  timerInt = setInterval(() => {
+    if (finished) return;
+    elapsed++;
+    timeEl.textContent = elapsed + 's';
 
-  </script>
+    // Timer bar
+    const ratio = Math.max(0, 1 - elapsed / timerLimit);
+    timerBar.style.width = (ratio * 100) + '%';
+    timerBar.style.background = ratio > 0.5
+      ? 'linear-gradient(90deg,#2ecc71,#27ae60)'
+      : ratio > 0.25
+        ? 'linear-gradient(90deg,#f39c12,#e67e22)'
+        : 'linear-gradient(90deg,#e74c3c,#c0392b)';
+
+    if (elapsed >= timerLimit) {
+      clearInterval(timerInt);
+      endGame(false);
+    }
+  }, 1000);
+}
+
+// ── Build board ───────────────────────────────────────────────────────────────
+function buildBoard() {
+  const cfg    = DIFFICULTIES[diff];
+  timerLimit   = cfg.time;
+  const chosen = shuffle([...ALL_CARDS]).slice(0, cfg.pairs);
+
+  // Build pairs
+  const pairs = [];
+  chosen.forEach((c, i) => {
+    pairs.push({ ...c, pairId: i });
+    pairs.push({ ...c, pairId: i });
+  });
+  shuffle(pairs);
+
+  cards      = [];
+  flipped    = [];
+  locked     = false;
+  moves      = 0;
+  matchCount = 0;
+  score      = 0;
+  combo      = 0;
+  hints      = 3;
+  elapsed    = 0;
+  started    = false;
+  finished   = false;
+
+  movesEl.textContent   = '0';
+  matchedEl.textContent = '0';
+  timeEl.textContent    = '0s';
+  comboEl.textContent   = '×1';
+  scoreEl.textContent   = '0';
+  progressBar.style.width = '0%';
+  timerBar.style.width    = '100%';
+  timerBar.style.background = 'linear-gradient(90deg,#2ecc71,#27ae60)';
+  hintBtn.textContent   = `💡 Hint (${hints})`;
+  clearInterval(timerInt);
+
+  // Board grid
+  const cardSize = calcCardSize(cfg.cols);
+  board.style.gridTemplateColumns = `repeat(${cfg.cols}, ${cardSize}px)`;
+  board.style.width = (cfg.cols * cardSize + (cfg.cols - 1) * 10) + 'px';
+  board.innerHTML = '';
+
+  pairs.forEach((data, idx) => {
+    const card = {
+      id: idx, pairId: data.pairId,
+      emoji: data.emoji, label: data.label,
+      color: data.color, flipped: false, matched: false,
+      el: null,
+    };
+
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.style.width = cardSize + 'px';
+    el.innerHTML = `
+      <div class="card-face card-back">
+        <div class="card-back-pattern">🏠</div>
+        <div class="card-back-logo">HOME DEN</div>
+      </div>
+      <div class="card-face card-front" style="background:${data.color}">
+        <div class="card-emoji">${data.emoji}</div>
+        <div class="card-label">${data.label}</div>
+      </div>`;
+
+    el.addEventListener('click', () => onCardClick(card));
+    board.appendChild(el);
+    card.el = el;
+    cards.push(card);
+  });
+}
+
+function calcCardSize(cols) {
+  const vw  = Math.min(window.innerWidth, 900);
+  const gap = 10;
+  const pad = 40;
+  return Math.min(Math.floor((vw - pad - (cols - 1) * gap) / cols), 100);
+}
+
+// ── Card click ────────────────────────────────────────────────────────────────
+function onCardClick(card) {
+  if (locked || card.flipped || card.matched || finished) return;
+
+  // Start timer on first click
+  if (!started) { started = true; startTimer(); }
+
+  // Flip card
+  card.flipped = true;
+  card.el.classList.add('flipped');
+  flipped.push(card);
+
+  if (flipped.length < 2) return;
+
+  // Two cards selected
+  locked = true;
+  moves++;
+  movesEl.textContent = moves;
+
+  const [a, b] = flipped;
+  if (a.pairId === b.pairId) {
+    // ✅ Match
+    combo++;
+    const pts = 100 * combo;
+    score += pts;
+
+    setTimeout(() => {
+      [a, b].forEach(c => {
+        c.matched = true;
+        c.el.classList.add('matched');
+        c.el.querySelector('.card-front').classList.add('matched-face');
+        // Add star decoration
+        const star = document.createElement('div');
+        star.className = 'matched-star';
+        star.textContent = '⭐';
+        c.el.appendChild(star);
+      });
+
+      matchCount++;
+      matchedEl.textContent = matchCount;
+      scoreEl.textContent   = score;
+      comboEl.textContent   = '×' + combo;
+
+      // Progress
+      const total = DIFFICULTIES[diff].pairs;
+      progressBar.style.width = (matchCount / total * 100) + '%';
+
+      // Combo toast
+      if (combo >= 2) showToast(`🔥 COMBO ×${combo}! +${pts}pts`);
+
+      flipped = [];
+      locked  = false;
+
+      // Win?
+      if (matchCount === total) endGame(true);
+    }, 400);
+
+  } else {
+    // ❌ No match
+    combo = 0;
+    comboEl.textContent = '×1';
+    setTimeout(() => {
+      [a, b].forEach(c => {
+        c.el.classList.add('shake');
+        setTimeout(() => c.el.classList.remove('shake'), 400);
+        c.flipped = false;
+        c.el.classList.remove('flipped');
+      });
+      flipped = [];
+      locked  = false;
+    }, 900);
+  }
+}
+
+// ── Hint ──────────────────────────────────────────────────────────────────────
+hintBtn.addEventListener('click', () => {
+  if (hints <= 0 || locked || finished) return;
+  hints--;
+  hintBtn.textContent = `💡 Hint (${hints})`;
+  locked = true;
+
+  // Reveal all unmatched cards briefly
+  cards.forEach(c => {
+    if (!c.matched && !c.flipped) c.el.classList.add('hint');
+  });
+  setTimeout(() => {
+    cards.forEach(c => {
+      if (!c.matched && !c.flipped) c.el.classList.remove('hint');
+    });
+    locked = false;
+  }, 1200);
+});
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+// ── End Game ──────────────────────────────────────────────────────────────────
+function endGame(won) {
+  finished = true;
+  clearInterval(timerInt);
+
+  // Star rating (based on moves & time)
+  const cfg   = DIFFICULTIES[diff];
+  const ideal = cfg.pairs * 2;               // perfect = pairs*2 moves
+  const ratio = ideal / Math.max(moves, ideal);
+  const stars = ratio > 0.8 ? 3 : ratio > 0.5 ? 2 : 1;
+  const starStr = '⭐'.repeat(won ? stars : 0);
+
+  // Time bonus
+  const timeBonus = won ? Math.max(0, Math.floor((timerLimit - elapsed) * 5)) : 0;
+  const finalScore = score + timeBonus;
+
+  // Best score
+  const key  = 'hdMemory_' + diff;
+  const best = parseInt(localStorage.getItem(key) || '0');
+  if (won && finalScore > best) localStorage.setItem(key, finalScore);
+
+  setTimeout(() => {
+    overlayBox.innerHTML = won ? `
+      <div class="big-emoji">🏆</div>
+      <h2>You Matched Them All!</h2>
+      <p>Great interior design taste! ${starStr}</p>
+      <div class="win-stats">
+        <div class="win-stat">
+          <div class="ws-val">${moves}</div>
+          <div class="ws-lbl">Moves</div>
+        </div>
+        <div class="win-stat">
+          <div class="ws-val">${elapsed}s</div>
+          <div class="ws-lbl">Time</div>
+        </div>
+        <div class="win-stat">
+          <div class="ws-val">+${timeBonus}</div>
+          <div class="ws-lbl">Time Bonus</div>
+        </div>
+        <div class="win-stat">
+          <div class="ws-val">${finalScore}</div>
+          <div class="ws-lbl">Total Score</div>
+        </div>
+      </div>
+      <p style="color:#f5d76e;font-size:0.8rem;">
+        🏅 Best: ${Math.max(best, finalScore)} pts
+      </p>
+      <div class="overlay-btns">
+        <button class="ov-btn ov-btn-primary" id="ov-play">▶ Play Again</button>
+        <button class="ov-btn ov-btn-secondary" id="ov-harder">⬆ Try Harder</button>
+        <a href="/" class="ov-btn ov-btn-secondary">🏠 Go Home</a>
+      </div>` : `
+      <div class="big-emoji">⏰</div>
+      <h2>Time's Up!</h2>
+      <p>You matched <strong>${matchCount}</strong> of
+         <strong>${DIFFICULTIES[diff].pairs}</strong> pairs.</p>
+      <p style="margin-top:8px;color:#f5d76e;">Score: ${score}</p>
+      <div class="overlay-btns">
+        <button class="ov-btn ov-btn-primary" id="ov-play">🔄 Try Again</button>
+        <a href="/" class="ov-btn ov-btn-secondary">🏠 Go Home</a>
+      </div>`;
+
+    overlay.style.display = 'flex';
+
+    document.getElementById('ov-play')
+            ?.addEventListener('click', () => { overlay.style.display='none'; buildBoard(); });
+    document.getElementById('ov-harder')
+            ?.addEventListener('click', () => {
+              const order = ['easy','medium','hard'];
+              const next  = order[Math.min(order.indexOf(diff)+1, 2)];
+              setDiff(next);
+              overlay.style.display = 'none';
+            });
+  }, won ? 600 : 0);
+}
+
+// ── Difficulty switch ─────────────────────────────────────────────────────────
+function setDiff(d) {
+  diff = d;
+  document.querySelectorAll('.diff-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.diff === d);
+  });
+  overlay.style.display = 'none';
+  buildBoard();
+}
+
+document.querySelectorAll('.diff-btn')
+        .forEach(b => b.addEventListener('click', () => setDiff(b.dataset.diff)));
+
+restartBtn.addEventListener('click', () => { overlay.style.display='none'; buildBoard(); });
+
+// ── Intro overlay ─────────────────────────────────────────────────────────────
+function showIntro() {
+  overlayBox.innerHTML = `
+    <div class="big-emoji">🏠</div>
+    <h2>Home Den Interior Memory</h2>
+    <p>Match pairs of interior design items before time runs out!</p>
+    <p style="margin-top:6px;color:#f5d76e;font-size:0.8rem;">
+      Build combos for bonus points 🔥<br>
+      Use hints wisely 💡
+    </p>
+    <div class="overlay-btns" style="margin-top:20px;">
+      <button class="ov-btn ov-btn-primary" id="intro-start">🎮 Start Game</button>
+    </div>`;
+  overlay.style.display = 'flex';
+  document.getElementById('intro-start').addEventListener('click', () => {
+    overlay.style.display = 'none';
+    buildBoard();
+  });
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+buildBoard();
+showIntro();
+</script>
 </body>
 </html>
