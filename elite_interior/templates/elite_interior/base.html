@@ -218,11 +218,11 @@
                 <li class="nav-item2" style="color:white;"><a class="nav-link2" href="{% url 'projects' %}" style="color:white;">Projects</a></li>
 
                 <!-- Offers Dropdown -->
-                <li class="nav-item2 dropdown " style="color:white;">
+                {% comment %} <li class="nav-item2 dropdown " style="color:white;">
                   <a class="nav-link2 " href="{% url 'packages' %}">
                     Packages
                   </a>
-                </li>
+                </li> {% endcomment %}
 
                 <li class="nav-item2" style="color:white;"><a class="nav-link2" href="{% url 'contact' %}" style="color:white;">Contact</a></li>
                 <li class="nav-item2"><a class="nav-link2" href="{% url 'service'%}" style="color:white;">Service</a></li>
@@ -278,11 +278,11 @@
 
     <li class="nav-item"><a class="nav-link" href="{% url 'projects' %}">Projects</a></li>
 
-    <li class="nav-item dropdown">
+    {% comment %} <li class="nav-item dropdown">
       <a class="nav-link " href="{% url 'packages' %}" >
         Packages
       </a>
-    </li>
+    </li> {% endcomment %}
 
     <li class="nav-item"><a class="nav-link" href="{% url 'contact'%}">Contact</a></li>
     <li class="nav-item"><a class="nav-link" href="{% url 'service'%}">Service</a></li>
