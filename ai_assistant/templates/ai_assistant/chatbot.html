@@ -1,0 +1,705 @@
+{% load static %}
+
+<style>
+
+#hd-chat-toggle{
+    position:fixed;
+    bottom:30px;
+    right:30px;
+    width:65px;
+    height:65px;
+    border-radius:50%;
+    background:#1f5eff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    z-index:99999;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+    transition:.3s;
+}
+
+#hd-chat-toggle:hover{
+    transform:scale(1.08);
+}
+
+.chat-icon{
+    font-size:28px;
+}
+
+.pulse{
+    position:absolute;
+    width:65px;
+    height:65px;
+    border-radius:50%;
+    background:#1f5eff;
+    animation:pulse 2s infinite;
+    opacity:.4;
+}
+
+@keyframes pulse{
+
+    0%{
+        transform:scale(1);
+        opacity:.5;
+    }
+
+    70%{
+        transform:scale(1.6);
+        opacity:0;
+    }
+
+    100%{
+        opacity:0;
+    }
+
+}
+
+#hd-chat-window{
+
+    position:fixed;
+
+    bottom:110px;
+
+    right:30px;
+
+    width:380px;
+
+    height:620px;
+
+    background:#fff;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    display:none;
+
+    flex-direction:column;
+
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+
+    z-index:99999;
+
+}
+
+#hd-chat-window.show{
+
+    display:flex;
+
+}
+
+.chat-header{
+
+    background:linear-gradient(135deg,#1f5eff,#0088ff);
+
+    color:#fff;
+
+    padding:18px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.header-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.bot-avatar{
+
+    width:48px;
+
+    height:48px;
+
+    border-radius:50%;
+
+    background:#fff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:24px;
+
+}
+
+.chat-header h4{
+
+    margin:0;
+
+    font-size:18px;
+
+}
+
+.chat-header span{
+
+    font-size:13px;
+
+    opacity:.9;
+
+}
+
+#close-chat{
+
+    background:none;
+
+    border:none;
+
+    color:#fff;
+
+    font-size:22px;
+
+    cursor:pointer;
+
+}
+
+#chat-body{
+
+    flex:1;
+
+    overflow-y:auto;
+
+    padding:18px;
+
+    background:#f6f8fb;
+
+}
+
+.bot-message{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-bottom:16px;
+
+}
+
+.user-message{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    margin-bottom:16px;
+
+}
+
+.avatar{
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:50%;
+
+    background:#1f5eff;
+
+    color:#fff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+.bubble{
+
+    max-width:260px;
+
+    background:#fff;
+
+    border-radius:15px;
+
+    padding:14px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+}
+
+.user-message .bubble{
+
+    background:#1f5eff;
+
+    color:#fff;
+
+}
+
+.quick-actions{
+
+    margin-top:15px;
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:8px;
+
+}
+
+.quick-btn{
+
+    border:none;
+
+    background:#eef4ff;
+
+    padding:8px 12px;
+
+    border-radius:30px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.quick-btn:hover{
+
+    background:#1f5eff;
+
+    color:#fff;
+
+}
+
+.chat-footer{
+
+    display:flex;
+
+    gap:10px;
+
+    padding:15px;
+
+    border-top:1px solid #eee;
+
+    background:#fff;
+
+}
+
+#chat-input{
+
+    flex:1;
+
+    resize:none;
+
+    border:1px solid #ddd;
+
+    border-radius:12px;
+
+    padding:12px;
+
+    outline:none;
+
+    font-size:14px;
+
+}
+
+#send-message{
+
+    width:52px;
+
+    border:none;
+
+    background:#1f5eff;
+
+    color:#fff;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-size:20px;
+
+}
+
+.typing{
+
+    display:flex;
+
+    gap:5px;
+
+}
+
+.typing span{
+
+    width:8px;
+
+    height:8px;
+
+    border-radius:50%;
+
+    background:#888;
+
+    animation:blink 1.2s infinite;
+
+}
+
+.typing span:nth-child(2){
+
+    animation-delay:.2s;
+
+}
+
+.typing span:nth-child(3){
+
+    animation-delay:.4s;
+
+}
+
+@keyframes blink{
+
+    0%,80%,100%{
+
+        opacity:.3;
+
+    }
+
+    40%{
+
+        opacity:1;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    #hd-chat-window{
+
+        width:100%;
+
+        height:100%;
+
+        right:0;
+
+        bottom:0;
+
+        border-radius:0;
+
+    }
+
+    #hd-chat-toggle{
+
+        right:20px;
+
+        bottom:20px;
+
+    }
+
+}
+
+</style>
+
+<!-- ===========================
+     FLOATING CHAT BUTTON
+=========================== -->
+
+<div id="hd-chat-toggle">
+
+    <div class="pulse"></div>
+
+    <div class="chat-icon">
+        🏠
+    </div>
+
+</div>
+
+
+<!-- ===========================
+     CHAT WINDOW
+=========================== -->
+
+<div id="hd-chat-window">
+
+    <!-- Header -->
+
+    <div class="chat-header">
+
+        <div class="header-left">
+
+            <div class="bot-avatar">
+                🏠
+            </div>
+
+            <div>
+
+                <h4>HomeDen AI</h4>
+
+                <span>Interior Consultant</span>
+
+            </div>
+
+        </div>
+
+        <button id="close-chat">
+            ✕
+        </button>
+
+    </div>
+
+
+
+    <!-- Chat Body -->
+
+    <div id="chat-body">
+
+        <div class="bot-message">
+
+            <div class="avatar">
+
+                🤖
+
+            </div>
+
+            <div class="bubble">
+
+                <h5>Welcome to Home Den 👋</h5>
+
+                <p>
+                    I'm your AI Interior Consultant.
+                </p>
+
+                <p>
+                    I can help you with:
+                </p>
+
+                <div class="quick-actions">
+
+                    <button class="quick-btn">
+                        🍽 Modular Kitchen
+                    </button>
+
+                    <button class="quick-btn">
+                        🚪 Wardrobe
+                    </button>
+
+                    <button class="quick-btn">
+                        🏠 Home Interior
+                    </button>
+
+                    <button class="quick-btn">
+                        💰 Approximate Quote
+                    </button>
+
+                    <button class="quick-btn">
+                        📅 Book Site Visit
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Typing -->
+
+    <div id="typing" style="display:none;">
+
+        <div class="bot-message">
+
+            <div class="avatar">
+                🤖
+            </div>
+
+            <div class="bubble typing">
+
+                <span></span>
+                <span></span>
+                <span></span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Footer -->
+
+    <div class="chat-footer">
+
+        <textarea
+            id="chat-input"
+            placeholder="Type your message..."
+            rows="1"></textarea>
+
+        <button id="send-message">
+
+            ➤
+
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+const toggle=document.getElementById("hd-chat-toggle");
+const windowBox=document.getElementById("hd-chat-window");
+const closeBtn=document.getElementById("close-chat");
+
+toggle.onclick=()=>{
+
+    windowBox.classList.add("show");
+
+}
+
+closeBtn.onclick=()=>{
+
+    windowBox.classList.remove("show");
+
+}
+
+
+
+const input=document.getElementById("chat-input");
+const send=document.getElementById("send-message");
+const body=document.getElementById("chat-body");
+const typing=document.getElementById("typing");
+
+
+
+function appendUser(msg){
+
+    body.innerHTML+=`
+
+    <div class="user-message">
+
+        <div class="bubble">
+
+            ${msg}
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+
+
+function appendBot(msg){
+
+    body.innerHTML+=`
+
+    <div class="bot-message">
+
+        <div class="avatar">
+
+            🤖
+
+        </div>
+
+        <div class="bubble">
+
+            ${msg}
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+
+
+async function sendMessage(){
+
+    let message=input.value.trim();
+
+    if(!message)return;
+
+    appendUser(message);
+
+    input.value="";
+
+    body.scrollTop=body.scrollHeight;
+
+    typing.style.display="block";
+
+
+
+    const response=await fetch("/api/ai/chat/",{
+
+        method:"POST",
+
+        headers:{
+
+            "Content-Type":"application/json"
+
+        },
+
+        body:JSON.stringify({
+
+            message:message
+
+        })
+
+    });
+
+    const data=await response.json();
+
+    typing.style.display="none";
+
+    appendBot(data.reply);
+
+    body.scrollTop=body.scrollHeight;
+
+}
+
+
+
+send.onclick=sendMessage;
+
+
+
+input.addEventListener("keypress",function(e){
+
+    if(e.key==="Enter" && !e.shiftKey){
+
+        e.preventDefault();
+
+        sendMessage();
+
+    }
+
+});
+
+
+
+document.querySelectorAll(".quick-btn").forEach(btn=>{
+
+    btn.onclick=()=>{
+
+        input.value=btn.innerText;
+
+        sendMessage();
+
+    }
+
+});
+
+</script>

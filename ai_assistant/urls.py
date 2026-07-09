@@ -1,0 +1,18 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+
+    path(
+        "chat/",
+        views.chat,
+        name="ai-chat"
+    ),
+
+    path(
+        "reset/",
+        views.reset_chat,
+        name="reset-chat"
+    ),
+
+]

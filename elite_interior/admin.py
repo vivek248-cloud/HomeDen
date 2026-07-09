@@ -14,7 +14,10 @@ from datetime import timedelta
 from .models import (
     # Website Models
     HomeSlider,
-    PackageOffers,
+    InteriorPackage,
+    PackageItem,
+    PackageSection,
+    # PackageOffers,
     WhatWeDo_Grid,
     Testimonial,
     BlogCategory,
@@ -205,7 +208,9 @@ class HomeSliderAdmin(admin.ModelAdmin):
         }
 
 admin.site.register(HomeSlider, HomeSliderAdmin)
-admin.site.register(PackageOffers)
+admin.site.register(InteriorPackage)
+admin.site.register(PackageSection)
+admin.site.register(PackageItem)
 admin.site.register(WhatWeDo_Grid)
 admin.site.register(Testimonial)
 admin.site.register(BlogCategory)

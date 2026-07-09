@@ -128,7 +128,8 @@
 
     {% endcompress %}
 
-    {% block extra_css %}{% endblock %}
+    {% block extra_css %}
+    {% endblock %}
 
 </head>
 
@@ -218,14 +219,9 @@
 
                 <!-- Offers Dropdown -->
                 <li class="nav-item2 dropdown " style="color:white;">
-                  <a class="nav-link2 dropdown-toggle" href="#" data-bs-toggle="dropdown" style="color:white;">
-                    Offers
+                  <a class="nav-link2 " href="{% url 'packages' %}">
+                    Packages
                   </a>
-                  <ul class="dropdown-menu bg-white">
-                    <li><a class="dropdown-item" href="{% url 'silver' %}" >Silver</a></li>
-                    <li><a class="dropdown-item" href="{% url 'gold' %}" >Gold</a></li>
-                    <li><a class="dropdown-item" href="{% url 'platinum' %}" >Platinum</a></li>
-                  </ul>
                 </li>
 
                 <li class="nav-item2" style="color:white;"><a class="nav-link2" href="{% url 'contact' %}" style="color:white;">Contact</a></li>
@@ -258,53 +254,7 @@
           </div>
 
       
-          <!-- Desktop Nav -->
-          {% comment %} <div class="collapse navbar-collapse d-none d-lg-block" style="font-size:1.2rem;">
-
-            <ul class="navbar-nav ms-auto" style="text-transform:uppercase;">
-              <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-              <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About Us</a></li>
-              <li class="nav-item dropdown">
-                <a class="nav-link " href="#" data-bs-toggle="dropdown">
-                  Products<span class="dropdown-icon">&#9662;</span>
-                </a>                               
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{% url 'kitchen_projects' %}">KITCHEN</a></li>
-                  <li><a class="dropdown-item" href="{% url 'bedroom_projects' %}">BEDROOM</a></li>
-                  <li><a class="dropdown-item" href="{% url 'dining_projects' %}">DINNING</a></li>
-                  <li><a class="dropdown-item" href="{% url 'living_projects' %}">LIVING ROOM</a></li>
-                  <li><a class="dropdown-item" href="{% url 'bathroom_projects' %}">BATH ROOM</a></li>
-                  <li><a class="dropdown-item" href="{% url 'kidsroom_projects' %}">KID'S ROOM</a></li>
-                </ul>
-              </li>
-              <li class="nav-item"><a class="nav-link" href="{% url 'projects' %}">Projects</a></li>
-               <li class="nav-item dropdown">
-                <a class="nav-link " href="#" data-bs-toggle="dropdown">
-                  Offers<span class="dropdown-icon">&#9662;</span>
-                </a> 
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{% url 'silver' %}">Silver</a></li>
-                  <li><a class="dropdown-item" href="{% url 'gold' %}">Gold</a></li>
-                  <li><a class="dropdown-item" href="{% url 'platinum' %}">Platinum</a></li>
-                </ul>
-              </li>
-              <li class="nav-item"><a class="nav-link" href="{% url 'contact'%}">Contact</a></li>
-              <li class="nav-item"><a class="nav-link" href="{% url 'service'%}">Service</a></li>
-              <li class="nav-item"><a class="nav-link" href="{% url 'blog_list'%}">Blog</a></li>
-              <li class="nav-item dropdown">
-                <a class="nav-link " href="#" data-bs-toggle="dropdown">
-                  <i class="bi bi-list"></i>
-                  
-                </a> 
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{% url 'service'%}#FAQ">FAQ</a></li>
-                  <li><a class="dropdown-item" href="{% url 'service'%}#TERMS">Terms & Condition</a></li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-        </div> {% endcomment %}
-
+         
 
         <div class="collapse navbar-collapse d-none d-lg-block" style="font-size:1.2rem;">
   <ul class="navbar-nav ms-auto" style="text-transform:uppercase;">
@@ -329,14 +279,9 @@
     <li class="nav-item"><a class="nav-link" href="{% url 'projects' %}">Projects</a></li>
 
     <li class="nav-item dropdown">
-      <a class="nav-link " href="#" data-bs-toggle="dropdown">
-        Offers<span class="dropdown-icon">&#9662;</span>
-      </a> 
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="{% url 'silver' %}">Silver</a></li>
-        <li><a class="dropdown-item" href="{% url 'gold' %}">Gold</a></li>
-        <li><a class="dropdown-item" href="{% url 'platinum' %}">Platinum</a></li>
-      </ul>
+      <a class="nav-link " href="{% url 'packages' %}" >
+        Packages
+      </a>
     </li>
 
     <li class="nav-item"><a class="nav-link" href="{% url 'contact'%}">Contact</a></li>
@@ -835,7 +780,7 @@ wBtn.addEventListener("mouseleave", function () {
 
         <h4>Contact</h4>
         <p>Email: <a href="mailto:homedeninterior@gmail.com" style="text-transform:lowercase;">homedeninterior@gmail.com</a></p>
-        <p>Phone: <a href="tel:+917780038005">+91 77 8003 8005</a></p>
+        <p>Phone: <a href="tel:+917780038004">+91 77 8003 8004</a></p>
         <p>Trichy, Tamil Nadu, India</p>
       
      <div class="social-icons">

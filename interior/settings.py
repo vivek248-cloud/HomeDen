@@ -20,7 +20,7 @@ TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = False
+DEBUG = False  # Set to False for production
 
 # ✅ Force www redirect
 # SECURE_SSL_REDIRECT = True

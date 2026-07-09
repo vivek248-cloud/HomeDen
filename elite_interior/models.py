@@ -558,254 +558,161 @@ def delete_gallery_image(sender, instance, **kwargs):
 
 
 
-from django.dispatch import receiver
-import os
-import re
+################################################ FINAL PCAKAGE #################
 
 
+from django.db import models
+from django.utils.text import slugify
 
-class PackageOffers(models.Model):
 
-    title = models.CharField(
-        max_length=225
+class InteriorPackage(models.Model):
+
+    PLAN_CHOICES = [
+        ("comfort", "Comfort"),
+        ("compact", "Compact"),
+        ("signature", "Signature"),
+        ("luxury", "Luxury"),
+        ("royal", "Royal"),
+    ]
+
+    BHK_CHOICES = [
+        ("1bhk", "1 BHK"),
+        ("2bhk", "2 BHK"),
+        ("3bhk", "3 BHK"),
+        ("4bhk", "4 BHK"),
+        ("villa", "Villa"),
+        ("commercial", "Commercial"),
+    ]
+
+    name = models.CharField(
+        max_length=20,
+        choices=PLAN_CHOICES,
+        unique=True,
+    )
+
+    slug = models.SlugField(
+        unique=True,
+        blank=True,
     )
 
     subtitle = models.CharField(
-        max_length=225,
-        null=True,
-        blank=True
+        max_length=200,
+        blank=True,
     )
 
-    price = models.DecimalField(
-        max_digits=10,
+    suitable_for = models.CharField(
+        max_length=20,
+        choices=BHK_CHOICES,
+    )
+
+    original_price = models.DecimalField(
+        max_digits=12,
         decimal_places=2,
+        blank=True,
         null=True,
-        blank=True
     )
 
     offer_price = models.DecimalField(
-        max_digits=10,
+        max_digits=12,
         decimal_places=2,
-        null=True,
-        blank=True
     )
 
-    discription = models.CharField(
-        max_length=225
+    warranty_years = models.PositiveIntegerField(
+        default=20,
+    )
+
+    description = models.TextField(
+        blank=True,
     )
 
     image = models.ImageField(
-        upload_to='offer_images/'
+        upload_to="package_images/",
+        blank=True,
+        null=True,
     )
 
-    # =====================================
-    # YOUTUBE LINK
-    # =====================================
+    brochure = models.FileField(
+        upload_to="package_brochures/",
+        blank=True,
+        null=True,
+    )
 
     youtube_link = models.URLField(
-        max_length=500,
-        null=True,
         blank=True,
-        help_text="Paste full YouTube URL"
     )
 
-    # =====================================
-    # SAVE
-    # =====================================
+    is_active = models.BooleanField(
+        default=True,
+    )
+
+    display_order = models.PositiveIntegerField(
+        default=0,
+    )
+
+    class Meta:
+        ordering = ["display_order"]
 
     def save(self, *args, **kwargs):
-
-        # Save original image first
+        if not self.slug:
+            self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
-        # Skip if no image
-        if not self.image:
-            return
+    def __str__(self):
+        return self.get_name_display()
+    
 
-        # Skip if already webp
-        if self.image.name.endswith(".webp"):
-            return
 
-        try:
+class PackageSection(models.Model):
 
-            # =====================================
-            # STORE OLD FILE PATH
-            # =====================================
+    package = models.ForeignKey(
+        InteriorPackage,
+        on_delete=models.CASCADE,
+        related_name="sections",
+    )
 
-            old_image_path = self.image.path
+    title = models.CharField(
+        max_length=100,
+    )
 
-            # =====================================
-            # OPEN IMAGE
-            # =====================================
+    display_order = models.PositiveIntegerField(
+        default=0,
+    )
 
-            img = Image.open(old_image_path)
-
-            # Convert transparent images properly
-            if img.mode in ("RGBA", "P"):
-
-                img = img.convert("RGB")
-
-            # =====================================
-            # RESIZE LARGE IMAGES
-            # =====================================
-
-            max_width = 1920
-
-            if img.width > max_width:
-
-                ratio = max_width / img.width
-
-                new_height = int(img.height * ratio)
-
-                img = img.resize(
-                    (max_width, new_height),
-                    Image.LANCZOS
-                )
-
-            # =====================================
-            # CONVERT TO WEBP
-            # =====================================
-
-            webp_io = BytesIO()
-
-            img.save(
-                webp_io,
-                format="WEBP",
-                quality=75,
-                optimize=True
-            )
-
-            # =====================================
-            # CREATE WEBP NAME
-            # =====================================
-
-            filename = os.path.splitext(
-                os.path.basename(self.image.name)
-            )[0]
-
-            webp_filename = f"{filename}.webp"
-
-            # =====================================
-            # SAVE WEBP FILE
-            # =====================================
-
-            self.image.save(
-                webp_filename,
-                ContentFile(webp_io.getvalue()),
-                save=False
-            )
-
-            # Save updated webp image
-            super().save(update_fields=["image"])
-
-            # =====================================
-            # DELETE ORIGINAL JPG/PNG
-            # =====================================
-
-            if os.path.exists(old_image_path):
-
-                if not old_image_path.endswith(".webp"):
-
-                    os.remove(old_image_path)
-
-        except Exception as e:
-
-            print("WEBP Conversion Error:", e)
-
-    # =====================================
-    # YOUTUBE EMBED URL
-    # =====================================
-
-    def youtube_embed_url(self):
-
-        if not self.youtube_link:
-            return ""
-
-        url = self.youtube_link.strip()
-
-        # Already embed URL
-        if "/embed/" in url:
-
-            return url.split("?")[0]
-
-        video_id = ""
-
-        start_time = ""
-
-        # watch?v=
-        if "watch?v=" in url:
-
-            video_id = (
-                url.split("watch?v=")[1]
-                .split("&")[0]
-            )
-
-            match = re.search(
-                r"[?&]t=(\d+)s?",
-                url
-            )
-
-            if match:
-
-                start_time = match.group(1)
-
-        # youtu.be/
-        elif "youtu.be/" in url:
-
-            video_id = (
-                url.split("youtu.be/")[1]
-                .split("?")[0]
-            )
-
-            match = re.search(
-                r"[?&]t=(\d+)",
-                url
-            )
-
-            if match:
-
-                start_time = match.group(1)
-
-        if not video_id:
-            return ""
-
-        embed_url = (
-            f"https://www.youtube.com/embed/{video_id}"
-        )
-
-        if start_time:
-
-            embed_url += f"?start={start_time}"
-
-        return embed_url
+    class Meta:
+        ordering = ["display_order"]
 
     def __str__(self):
+        return f"{self.package} - {self.title}"
 
+class PackageItem(models.Model):
+
+    section = models.ForeignKey(
+        PackageSection,
+        on_delete=models.CASCADE,
+        related_name="items",
+    )
+
+    title = models.CharField(
+        max_length=255,
+    )
+
+    description = models.TextField(
+        blank=True,
+    )
+
+    display_order = models.PositiveIntegerField(
+        default=0,
+    )
+
+    class Meta:
+        ordering = ["display_order"]
+
+    def __str__(self):
         return self.title
 
 
-# =====================================
-# AUTO DELETE IMAGE WHEN MODEL DELETED
-# =====================================
-
-@receiver(post_delete, sender=PackageOffers)
-def delete_offer_image(sender, instance, **kwargs):
-
-    if instance.image:
-
-        if os.path.isfile(instance.image.path):
-
-            os.remove(instance.image.path)
 
 
-
-
-
-# ✅ Auto delete image file when PackageOffers is deleted
-@receiver(post_delete, sender=PackageOffers)
-def delete_package_offers_image(sender, instance, **kwargs):
-    if instance.image and os.path.isfile(instance.image.path):
-        instance.image.delete(save=False)
 
 class WhatWeDo_Grid(models.Model):
 

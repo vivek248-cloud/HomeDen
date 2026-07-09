@@ -1,0 +1,421 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Interior Packages - Home Den Interior Firm{% endblock %}
+
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/packages.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<!-- ========================
+     INTRO
+     ======================== -->
+
+<section class="page-intro">
+    <div class="eyebrow">Interior Packages</div>
+    <h1>Choose Your Perfect Package</h1>
+    <p>
+        Handcrafted interior solutions tailored to your home,
+        your style, and your budget.
+    </p>
+</section>
+
+
+{% if packages %}
+
+<!-- ========================
+     TABS
+     ======================== -->
+
+<div class="tabs-wrapper">
+    <div class="tabs-container">
+        {% for package in packages %}
+            <button
+                class="tab-btn {% if forloop.first %}active{% endif %}"
+                data-target="package-{{ package.slug }}"
+                type="button"
+            >
+                {{ package.get_name_display }}
+            </button>
+        {% endfor %}
+    </div>
+</div>
+
+
+<!-- ========================
+     PANELS
+     ======================== -->
+
+{% for package in packages %}
+
+<div
+    class="package-panel {% if forloop.first %}active{% endif %}"
+    id="package-{{ package.slug }}"
+>
+
+    <!-- ---- Hero + Floating Card ---- -->
+
+    <div class="package-hero">
+
+        {% if package.image %}
+            <img
+                src="{{ package.image.url }}"
+                alt="{{ package.get_name_display }}"
+                class="package-hero-img"
+                loading="lazy"
+            >
+        {% else %}
+            <div class="package-hero-no-img">🏠</div>
+        {% endif %}
+
+        <div class="price-card">
+
+            <div class="eyebrow">Everything</div>
+
+            <h2>{{ package.get_name_display }}</h2>
+
+            <div class="description">
+                {% if package.subtitle %}
+                    {{ package.subtitle }}
+                {% else %}
+                    Complete Woodwork for {{ package.get_suitable_for_display }}
+                {% endif %}
+            </div>
+
+            <div class="price-row">
+
+                <span class="offer-label">Offer</span>
+
+                {% if package.original_price %}
+                    <span class="original">
+                        ₹{{ package.original_price|floatformat:2|intcomma }}
+                        <span class="lac">LAC</span>
+                    </span>
+                {% endif %}
+
+                <span class="offer-price">
+                    ₹{{ package.offer_price|floatformat:2|intcomma }}
+                    <span class="lac">LAC*</span>
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ---- Content (Cream BG) ---- -->
+
+    <div class="package-content">
+
+        <div class="content-container">
+
+            {% if package.sections.all %}
+
+                <div class="sections-columns">
+
+                    <!-- Left Column -->
+                    <div class="col-left">
+                        {% for section in package.sections.all %}
+                            {% if forloop.counter0|divisibleby:2 %}
+                                <div class="section-item">
+                                    <h3>{{ section.title }}</h3>
+                                    <ul>
+                                        {% for item in section.items.all %}
+                                            <li>
+                                                {% if item.description %}
+                                                    <span class="item-desc">
+                                                        {{ item.description }}
+                                                    </span>
+                                                {% endif %}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="col-right">
+                        {% for section in package.sections.all %}
+                            {% if not forloop.counter0|divisibleby:2 %}
+                                <div class="section-item">
+                                    <h3>{{ section.title }}</h3>
+                                    <ul>
+                                        {% for item in section.items.all %}
+                                            <li>
+                                                {{ item.title }}
+                                                {% if item.description %}
+                                                    <span class="item-desc">
+                                                        {{ item.description }}
+                                                    </span>
+                                                {% endif %}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- Warranty note -->
+
+            <div class="warranty-note">
+                <p>
+                    All woodwork covered by
+                    <strong>{{ package.warranty_years }}-Year Warranty</strong>
+                    · Suitable for {{ package.get_suitable_for_display }}
+                </p>
+            </div>
+
+
+            <!-- Action Buttons -->
+
+            <div class="action-buttons">
+
+                <button
+                    class="action-btn"
+                    type="button"
+                    onclick="openModal('faq-{{ package.slug }}')"
+                >
+                    Frequently Asked Questions
+                    <span class="icon">?</span>
+                </button>
+
+                {% if package.youtube_link %}
+                    <button
+                        class="action-btn"
+                        type="button"
+                        onclick="openModal('video-{{ package.slug }}')"
+                    >
+                        View Package Video
+                        <span class="icon">▶</span>
+                    </button>
+                {% endif %}
+
+                <a href="{% url 'contact' %}" class="action-btn">
+                    Contact Us for More Details
+                    <span class="icon">🔗</span>
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ---- FAQ Modal ---- -->
+
+    <div class="modal-overlay" id="faq-{{ package.slug }}">
+        <div class="modal-content">
+            <button
+                class="modal-close"
+                type="button"
+                onclick="closeModal('faq-{{ package.slug }}')"
+            >×</button>
+
+            <h2>Frequently Asked Questions</h2>
+
+            <div style="line-height: 1.7; color: #555;">
+
+                <p style="margin-bottom: 20px;">
+                    <strong style="color: #1a1a1a;">
+                        What does the {{ package.warranty_years }}-year warranty cover?
+                    </strong><br>
+                    All woodwork, hardware, and installation are covered
+                    under our comprehensive warranty against manufacturing defects.
+                </p>
+
+                <p style="margin-bottom: 20px;">
+                    <strong style="color: #1a1a1a;">
+                        Is this package customizable?
+                    </strong><br>
+                    Yes, every package can be tailored to match your
+                    specific home layout and design preferences.
+                </p>
+
+                <p style="margin-bottom: 20px;">
+                    <strong style="color: #1a1a1a;">
+                        What is the delivery timeline?
+                    </strong><br>
+                    Typical delivery and installation takes 30-45 days
+                    from the date of design finalization.
+                </p>
+
+                <p style="margin-bottom: 20px;">
+                    <strong style="color: #1a1a1a;">
+                        Do you provide site visits?
+                    </strong><br>
+                    Yes, we offer free site visits and consultations
+                    before finalizing your package.
+                </p>
+
+                {% if package.description %}
+                    <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+                        {{ package.description|linebreaksbr }}
+                    </p>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ---- Video Modal ---- -->
+
+    {% if package.youtube_link %}
+        <div class="modal-overlay" id="video-{{ package.slug }}">
+            <div class="modal-content">
+                <button
+                    class="modal-close"
+                    type="button"
+                    onclick="closeModal('video-{{ package.slug }}')"
+                >×</button>
+
+                <h2>{{ package.get_name_display }} Video</h2>
+
+                <div class="modal-video">
+                    <iframe
+                        src="{{ package.youtube_link }}"
+                        title="{{ package.get_name_display }}"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen
+                    ></iframe>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+
+</div>
+
+{% endfor %}
+
+
+{% else %}
+
+<div class="no-packages">
+    <div class="no-packages-icon">📦</div>
+    <h2>Packages Coming Soon</h2>
+    <p>We're preparing something amazing. Check back soon!</p>
+</div>
+
+{% endif %}
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+
+    // ==================
+    // Tab switching
+    // ==================
+
+    (function () {
+
+        const tabs = document.querySelectorAll(".tab-btn");
+        const panels = document.querySelectorAll(".package-panel");
+
+        if (!tabs.length) return;
+
+        tabs.forEach(function (tab) {
+
+            tab.addEventListener("click", function () {
+
+                const target = this.getAttribute("data-target");
+
+                tabs.forEach(function (t) {
+                    t.classList.remove("active");
+                });
+
+                this.classList.add("active");
+
+                panels.forEach(function (panel) {
+                    panel.classList.remove("active");
+                });
+
+                const targetPanel = document.getElementById(target);
+
+                if (targetPanel) {
+                    targetPanel.classList.add("active");
+                }
+
+                // Scroll below tabs
+                const wrapper = document.querySelector(".tabs-wrapper");
+                if (wrapper) {
+                    const offset = wrapper.offsetHeight;
+                    const top = targetPanel.getBoundingClientRect().top
+                              + window.pageYOffset
+                              - offset;
+                    window.scrollTo({ top: top, behavior: "smooth" });
+                }
+
+            });
+
+        });
+
+    })();
+
+
+    // ==================
+    // Modal open / close
+    // ==================
+
+    function openModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.classList.add("active");
+            document.body.style.overflow = "hidden";
+        }
+    }
+
+    function closeModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.classList.remove("active");
+            document.body.style.overflow = "";
+
+            // Stop video playback by resetting iframe src
+            const iframe = modal.querySelector("iframe");
+            if (iframe) {
+                const src = iframe.src;
+                iframe.src = "";
+                iframe.src = src;
+            }
+        }
+    }
+
+    // Close on background click
+    document.querySelectorAll(".modal-overlay").forEach(function (overlay) {
+        overlay.addEventListener("click", function (e) {
+            if (e.target === this) {
+                closeModal(this.id);
+            }
+        });
+    });
+
+    // Close on Escape key
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+            document.querySelectorAll(".modal-overlay.active").forEach(function (m) {
+                closeModal(m.id);
+            });
+        }
+    });
+
+</script>
+{% endblock %}
