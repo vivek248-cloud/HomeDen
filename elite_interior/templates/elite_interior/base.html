@@ -94,6 +94,9 @@
     }
     </script>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- ========================================= -->
     <!-- CSS Frameworks -->
     <!-- ========================================= -->
@@ -159,240 +162,137 @@
 <!-- Button to simulate loading -->
 {% comment %} <button onclick="simulateLoading()">Simulate Loading</button> {% endcomment %}
 
-    <header>
-      <nav class="navbar navbar-expand-lg fixed-top navbar-dark" id="navbar">
-        <div class="container">
-          <div class="d-flex align-items-center rounded px-2 py-1" style="width: 220px;">
-            <img src="{% static 'images/home_den.png' %}" alt="Logo" class="me-2" style="height: 80px;">
-            
-            <div class="d-flex flex-column">
-              <div class="navbar-brand-block">
-            <a href="{% url 'contact' %}" class="brand-main">
-              HOME<span class="brand-highlight"> DEN</span><sup class="brand-sup">&trade;</sup>
-            </a>
-            <a href="#" class="brand-sub">
-              INTERIOR <span class="firm-highlight">FIRM</span>
-            </a>
-          </div>
-
-            </div>
-          </div>
-
+<header>
+  <nav class="navbar navbar-expand-lg fixed-top premium-navbar" id="navbar">
+    <div class="container-fluid px-lg-5 px-3">
       
-          <!-- Toggler -->
-          <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-      
-          <!-- Offcanvas Mobile Menu -->
-          <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="mobileMenu">
-            <div class="offcanvas-header">
-              <div class="d-flex flex-column">
-              <h5 class="offcanvas-title" style="color:var(--color-2);">HOME <span class="text-liner">DEN<span><sup class="text-liner">&trade;</sup></h5>
-                <p class="navbar-brand mb-0 text-liner" href="#" style="line-height: 0.2; font-size: 0.68rem; margin-left:10px; letter-spacing: 0.9px;font-weight:600;background: linear-gradient(to right, #e3c882, #cfa64e, #a8732a, #7a4e14);background-clip: text;-webkit-background-clip: text;color: transparent;">INTERIOR <span style="color:var(--color-2)">FIRM</span></p>
-              </div>
-              <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-            </div>
-
-            <div class="offcanvas-body">
-              <ul class="navbar-nav w-100 text-white" style="color:white;">
-                <li class="nav-item2" style="color:white;"><a class="nav-link2" href="{% url 'home' %}" style="color:white;">Home</a></li>
-                <li class="nav-item2" style="color:white;"><a class="nav-link2" href="{% url 'about' %}" style="color:white;">About Us</a></li>
-
-                <!-- What We Do Dropdown -->
-                <li class="nav-item2 dropdown" style="color:white;">
-                  <a class="nav-link2 dropdown-toggle" href="#" data-bs-toggle="dropdown" style="color:white;">
-                    Products
-                  </a>
-                  <ul class="dropdown-menu" style="color:white;text-transform:uppercase;">
-                    <li><a class="dropdown-item" href="{% url 'kitchen_projects' %}" >Kitchen</a></li>
-                    <li><a class="dropdown-item" href="{% url 'bedroom_projects' %}" >Bedroom</a></li>
-                    <li><a class="dropdown-item" href="{% url 'dining_projects' %}" >Dining</a></li>
-                    <li><a class="dropdown-item" href="{% url 'living_projects' %}" >Living Room</a></li>
-                    <li><a class="dropdown-item" href="{% url 'bathroom_projects' %}" >Bathroom</a></li>
-                    <li><a class="dropdown-item" href="{% url 'kidsroom_projects' %}">KID'S ROOM</a></li>
-                    <li><a class="dropdown-item" href="{% url 'poojaroom_projects' %}">POOJA ROOM</a></li>
-                  </ul>
-                </li>
-
-                <li class="nav-item2" style="color:white;"><a class="nav-link2" href="{% url 'projects' %}" style="color:white;">Projects</a></li>
-
-                <!-- Offers Dropdown -->
-                {% comment %} <li class="nav-item2 dropdown " style="color:white;">
-                  <a class="nav-link2 " href="{% url 'packages' %}">
-                    Packages
-                  </a>
-                </li> {% endcomment %}
-
-                <li class="nav-item2" style="color:white;"><a class="nav-link2" href="{% url 'contact' %}" style="color:white;">Contact</a></li>
-                <li class="nav-item2"><a class="nav-link2" href="{% url 'service'%}" style="color:white;">Service</a></li>
-                <li class="nav-item2"><a class="nav-link2" href="{% url 'blog_list'%}" style="color:white;">BLOGS</a></li>
-                <li class="nav-item2 dropdown">
-                <a class="nav-link2  dropdown-toggle" href="#" data-bs-toggle="dropdown" style="color:white;">
-                  Menu
-                  
-                </a> 
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{% url 'service'%}#FAQ">FAQ</a></li>
-                  <li><a class="dropdown-item" href="{% url 'service'%}#TERMS">Terms & Condition</a></li>
-                </ul>
-              </li>
-              <li class="nav-item2">  <!-- ✅ Right-side button -->
-              <a href="{% url 'home' %}" 
-                data-bs-toggle="modal" 
-                data-bs-target="#designConsultantModal"
-                class="nav-link2" style="margin-top:-5px;">
-                Get Free Quote
-              </a></li>
-              <li class="nav-item2" style="margin-top:5px;">  <!-- ✅ Right-side button -->
-              <a href="{% url 'select_platform' %}" 
-                class="nav-link2" style="margin-top:5px;">
-               <i class="bi bi-calculator"></i> Budget
-              </a></li>
-              </ul>
-            </div>
-          </div>
-
-      
-         
-
-        <div class="collapse navbar-collapse d-none d-lg-block" style="font-size:1.2rem;">
-  <ul class="navbar-nav ms-auto" style="text-transform:uppercase;">
-    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About Us</a></li>
-
-    <li class="nav-item dropdown">
-      <a class="nav-link " href="#" data-bs-toggle="dropdown">
-        Products<span class="dropdown-icon">&#9662;</span>
-      </a>                               
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="{% url 'kitchen_projects' %}">KITCHEN</a></li>
-        <li><a class="dropdown-item" href="{% url 'bedroom_projects' %}">BEDROOM</a></li>
-        <li><a class="dropdown-item" href="{% url 'dining_projects' %}">DINNING</a></li>
-        <li><a class="dropdown-item" href="{% url 'living_projects' %}">LIVING ROOM</a></li>
-        <li><a class="dropdown-item" href="{% url 'bathroom_projects' %}">BATH ROOM</a></li>
-        <li><a class="dropdown-item" href="{% url 'kidsroom_projects' %}">KID'S ROOM</a></li>
-        <li><a class="dropdown-item" href="{% url 'poojaroom_projects' %}">POOJA ROOM</a></li>
-      </ul>
-    </li>
-
-    <li class="nav-item"><a class="nav-link" href="{% url 'projects' %}">Projects</a></li>
-
-    {% comment %} <li class="nav-item dropdown">
-      <a class="nav-link " href="{% url 'packages' %}" >
-        Packages
+      <!-- Brand Logo -->
+      <a href="{% url 'home' %}" class="navbar-brand d-flex align-items-center gap-2">
+        <img src="{% static 'images/logo.png' %}" alt="Home Den Logo" class="brand-logo">
       </a>
-    </li> {% endcomment %}
+      <!-- ⬆️ REMOVED extra </div> that was here -->
 
-    <li class="nav-item"><a class="nav-link" href="{% url 'contact'%}">Contact</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'service'%}">Service</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'blog_list'%}">Blog</a></li>
+      <!-- Toggler (Mobile) -->
+      <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
+        <span class="toggler-line"></span>
+        <span class="toggler-line"></span>
+        <span class="toggler-line"></span>
+      </button>
 
-    <li class="nav-item dropdown">
-      <a class="nav-link " href="#" data-bs-toggle="dropdown">
-        <i class="bi bi-list"></i>
-      </a> 
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="{% url 'service'%}#FAQ">FAQ</a></li>
-        <li><a class="dropdown-item" href="{% url 'service'%}#TERMS">Terms & Condition</a></li>
-      </ul>
-    </li>
+      <!-- Desktop Menu -->
+      <div class="collapse navbar-collapse d-none d-lg-flex justify-content-end">
+        <ul class="navbar-nav align-items-center gap-1">
+          <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
 
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Products</a>
+            <ul class="dropdown-menu premium-dropdown">
+              <li><a class="dropdown-item" href="{% url 'kitchen_projects' %}">Kitchen</a></li>
+              <li><a class="dropdown-item" href="{% url 'bedroom_projects' %}">Bedroom</a></li>
+              <li><a class="dropdown-item" href="{% url 'dining_projects' %}">Dining</a></li>
+              <li><a class="dropdown-item" href="{% url 'living_projects' %}">Living Room</a></li>
+              <li><a class="dropdown-item" href="{% url 'bathroom_projects' %}">Bathroom</a></li>
+              <li><a class="dropdown-item" href="{% url 'kidsroom_projects' %}">Kid's Room</a></li>
+              <li><a class="dropdown-item" href="{% url 'poojaroom_projects' %}">Pooja Room</a></li>
+            </ul>
+          </li>
 
+          <li class="nav-item"><a class="nav-link" href="{% url 'projects' %}">Projects</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'service' %}">Services</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'blog_list' %}">Blogs</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
 
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+              <i class="bi bi-three-dots"></i>
+            </a>
+            <ul class="dropdown-menu premium-dropdown dropdown-menu-end">
+              <li><a class="dropdown-item" href="{% url 'service' %}#FAQ">FAQ</a></li>
+              <li><a class="dropdown-item" href="{% url 'service' %}#TERMS">Terms & Conditions</a></li>
+            </ul>
+          </li>
 
-<!-- Premium 3D Liquid Toggle – Quote / Budget -->
-<label class="liquid-toggle" role="radiogroup" aria-label="Choose Quote or Budget">
-  <a href="#" data-bs-toggle="modal" data-bs-target="#designConsultantModal"
-     class="seg left" tabindex="0" role="radio" aria-checked="true">
-    <i class="bi bi-chat-square-quote"></i>
-    <span>Quote</span>
-  </a>
+          <li class="nav-item ms-lg-3">
+            <a href="#" data-bs-toggle="modal" data-bs-target="#designConsultantModal" class="btn-premium btn-outline-gold">
+              <i class="bi bi-chat-square-quote"></i> Get Quote
+            </a>
+          </li>
+          <li class="nav-item ms-2">
+            <a href="{% url 'select_platform' %}" class="btn-premium btn-solid-gold">
+              <i class="bi bi-calculator"></i> Budget
+            </a>
+          </li>
+        </ul>
+      </div>
 
-  <a href="{% url 'select_platform' %}" class="seg right" tabindex="0" role="radio">
-    <i class="bi bi-calculator"></i>
-    <span>Budget</span>
-  </a>
+      <!-- ✅ FIXED Offcanvas Mobile Menu -->
+      <!-- Offcanvas Mobile Menu -->
+<div class="offcanvas offcanvas-end hd-offcanvas d-lg-none" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="mobileMenuLabel">Menu</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
 
-  <!-- 3D Liquid Bubble -->
-  <div class="liquid-bubble"></div>
-</label>
+  <div class="offcanvas-body">
+    <ul class="hd-mobile-list">
+      <li class="hd-mobile-item">
+        <a class="hd-mobile-link" href="{% url 'home' %}">Home</a>
+      </li>
+      <li class="hd-mobile-item">
+        <a class="hd-mobile-link" href="{% url 'about' %}">About Us</a>
+      </li>
 
+      <li class="hd-mobile-item dropdown">
+        <a class="hd-mobile-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Products</a>
+        <ul class="dropdown-menu hd-mobile-dropdown">
+          <li><a class="hd-mobile-drop-item" href="{% url 'kitchen_projects' %}">Kitchen</a></li>
+          <li><a class="hd-mobile-drop-item" href="{% url 'bedroom_projects' %}">Bedroom</a></li>
+          <li><a class="hd-mobile-drop-item" href="{% url 'dining_projects' %}">Dining</a></li>
+          <li><a class="hd-mobile-drop-item" href="{% url 'living_projects' %}">Living Room</a></li>
+          <li><a class="hd-mobile-drop-item" href="{% url 'bathroom_projects' %}">Bathroom</a></li>
+          <li><a class="hd-mobile-drop-item" href="{% url 'kidsroom_projects' %}">Kid's Room</a></li>
+          <li><a class="hd-mobile-drop-item" href="{% url 'poojaroom_projects' %}">Pooja Room</a></li>
+        </ul>
+      </li>
 
+      <li class="hd-mobile-item">
+        <a class="hd-mobile-link" href="{% url 'projects' %}">Projects</a>
+      </li>
+      <li class="hd-mobile-item">
+        <a class="hd-mobile-link" href="{% url 'service' %}">Services</a>
+      </li>
+      <li class="hd-mobile-item">
+        <a class="hd-mobile-link" href="{% url 'blog_list' %}">Blogs</a>
+      </li>
+      <li class="hd-mobile-item">
+        <a class="hd-mobile-link" href="{% url 'contact' %}">Contact</a>
+      </li>
 
-    <!-- Elegant Right-Side Button with Modal Trigger -->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const toggle = document.querySelector('.liquid-toggle');
-  const left  = toggle.querySelector('.left');
-  const right = toggle.querySelector('.right');
-  const modalEl = document.querySelector('#designConsultantModal');
-  let modal = null;
+      <li class="hd-mobile-item dropdown">
+        <a class="hd-mobile-link dropdown-toggle" href="#" data-bs-toggle="dropdown">More</a>
+        <ul class="dropdown-menu hd-mobile-dropdown">
+          <li><a class="hd-mobile-drop-item" href="{% url 'service' %}#FAQ">FAQ</a></li>
+          <li><a class="hd-mobile-drop-item" href="{% url 'service' %}#TERMS">Terms & Conditions</a></li>
+        </ul>
+      </li>
+    </ul>
 
-  // Initialize modal only once
-  if (modalEl) {
-    modal = new bootstrap.Modal(modalEl, { backdrop: true, keyboard: true });
-  }
-
-  // Default state
-  toggle.classList.add('active-left');
-
-  const setActive = (side) => {
-    toggle.classList.remove('active-left', 'active-right');
-    toggle.classList.add(`active-${side}`);
-  };
-
-  // LEFT: Open modal
-  left.addEventListener('click', (e) => {
-    e.preventDefault();
-    setActive('left');
-    if (modal) modal.show();
-  });
-
-  // RIGHT: Navigate
-  right.addEventListener('click', () => {
-    setActive('right');
-  });
-
-  // Keyboard support
-  [left, right].forEach(btn => {
-    btn.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        btn.click();
-      }
-    });
-  });
-
-  // CRITICAL: Remove backdrop when modal is fully hidden
-  if (modalEl) {
-    modalEl.addEventListener('hidden.bs.modal', () => {
-      // Force-remove any lingering backdrop
-      document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
-        backdrop.remove();
-      });
-      // Reset body classes
-      document.body.classList.remove('modal-open');
-      document.body.style.overflow = '';
-      document.body.style.paddingRight = '';
-    });
-  }
-});
-</script>
-
-  </ul>
-
-
-
-
-
-
+    <!-- Mobile CTA -->
+    <div class="hd-mobile-cta">
+      <a href="#" data-bs-toggle="modal" data-bs-target="#designConsultantModal" class="btn-premium btn-outline-gold">
+        <i class="bi bi-chat-square-quote"></i> Get Free Quote
+      </a>
+      <a href="{% url 'select_platform' %}" class="btn-premium btn-solid-gold">
+        <i class="bi bi-calculator"></i> Budget Calculator
+      </a>
+    </div>
+  </div>
 </div>
 
-      </nav>
-      {% comment %} data-bs-toggle="dropdown"  dropdown-toggle{% endcomment %}
-      
-    </header>
+    </div>
+  </nav>
+</header>
 
     <div class="modal fade" id="designConsultantModal" tabindex="-1" aria-labelledby="designConsultantModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered responsive-modal">
@@ -550,6 +450,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- JS -->
 <script>
+
+document.addEventListener('DOMContentLoaded', () => {
+  const offcanvas = document.getElementById('mobileMenu');
+  
+  if (offcanvas) {
+    // Close on nav link click (but not dropdown toggles)
+    offcanvas.querySelectorAll('.hd-mobile-link:not(.dropdown-toggle), .hd-mobile-drop-item')
+      .forEach(link => {
+        link.addEventListener('click', () => {
+          const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvas);
+          if (offcanvasInstance) offcanvasInstance.hide();
+        });
+      });
+  }
+});
+
+
 document.querySelectorAll(".room-chip").forEach(chip => {
   chip.addEventListener("click", function(e) {
     if (e.target.classList.contains("ctr-btn")) return;
@@ -670,12 +587,12 @@ wBtn.addEventListener("mouseleave", function () {
 
 
 
-<div class="floating-ai-btn">
+{% comment %} <div class="floating-ai-btn">
   <a href="{% url 'ai_calculator' %}">
     <i class="bi bi-robot"></i>
   </a>
   <span class="ai-label">AI Estimate</span>
-</div>
+</div> {% endcomment %}
 
 
 

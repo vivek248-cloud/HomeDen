@@ -461,10 +461,17 @@ def kidsroom_projects(request):
 def poojaroom_projects(request):
     projects = get_unique_projects_by_category("pooja room")
     first_project = projects[0] if projects else None
-    return render(request, 'elite_interior/poojaroom.html', {
-        'projects': projects,
-        'first_project': first_project
-    })
+    second_project = projects[1] if len(projects) > 1 else None
+
+    return render(
+        request,
+        "elite_interior/poojaroom.html",
+        {
+            "projects": projects,
+            "first_project": first_project,\
+            "second_project": second_project
+        }
+    )
 
 
 # def essential(request):

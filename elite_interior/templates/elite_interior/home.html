@@ -21,27 +21,6 @@
 
                 <div class="scroller-content-bg">
                   <div class="scroller-content"></div>
-
-                  <div class="scroller-content-2">
-                    {% if slide.headline %}
-                      <h1>{{ slide.headline }}</h1>
-                    {% endif %}
-                    {% if slide.sub_headline %}
-                    <h4 class="animation slide-up" style="font-family:'Tangerine', cursive; font-weight:700;">{{ slide.sub_headline }}</h4>
-                    {% endif %}
-                    {% if slide.quotes %}
-                      <span class="highlight-text">
-                        <h3 class="animation slide-up" >{{ slide.quotes }}</h3>
-                      </span>
-                    {% endif %}
-                    <a href="{% url 'home' %}" 
-                        data-bs-target="#designConsultantModal" 
-                        data-bs-toggle="modal"  
-                        class="highlight-btn">
-                        GET ESTIMATE
-                      </a>
-                    <p>*T&C Apply</p>
-                  </div>
                 </div>
               </section>
               {% endfor %}
@@ -418,71 +397,6 @@
 
 
 
-<section class="full-section">
-  <div class="container-fluid p-0">
-    <div class="row g-0">
-      <!-- Text Column -->
-      <div class="col-md-6 d-flex align-items-center p-5 text-column">
-        <div>
-          <h2 class="mb-4" style="text-transform: uppercase;">LUXURY INTERIOR DESIGNERS IN TRICHY</h2>
-          <p>
-          Looking for the best interior designers in Trichy? Our expert team specializes in creating stylish, functional, and personalized spaces. From modern kitchen interiors in Trichy to complete modular kitchen solutions, we ensure every design is tailored to your exact space and lifestyle. As one of the top interior designers in Trichy, we offer creative ideas for bedrooms, living rooms, dining areas, and more. Whether you need kitchen interior design in Trichy or a full home makeover, our attention to detail and quality craftsmanship set us apart. Transform your home with the trusted choice for modern interiors and modular kitchens in Trichy.
-          </p>
-
-          <p>
-          HOME DEN is the largest home interior design company in Tamil Nadu. We are professional and contemporary interior designers and contractors with the capacity to deliver 100+ projects every month.
-          </p>
-
-          <p>
-          We ensure client satisfaction through premium-quality materials, innovative designs, and a systematic approach to every project.
-          </p>
-
-          <p>
-          Our services include customizing modular kitchens, bedrooms, living rooms, and dining room furniture based on your exact measurements and style preferences. Whether it’s a modern kitchen interior in Trichy or complete home interiors, we create spaces that are both functional and beautiful.
-          </p>
-
-        </div>
-      </div>
-
-      <!-- Image Column -->
-      <div class="col-md-6 image-column ">
-        <div class="h-100 w-100 bg-cover" style="background-image: url('{% static 'images/hall.jpeg' %}');"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="full-section">
-  <div class="container-fluid p-0">
-    <div class="row g-0">
-
-      
-
-
-      <!-- Text Column -->
-      <div class="col-md-6 order-2 order-md-2 d-flex align-items-center p-5 text-column">
-        <div>
-          <h2 class="mb-4"> HOME DEN BEST INTERIOR DESIGNERS IN TRICHY - TAMIL NADU</h2>
-          <p>
-            First of all, the design by HOME DEN is always in accordance with the latest trends in contemporary style.
-          </p>
-          <p>
-            Our interior designers in Chennai consider the interests and requirements of the clients in great detail. They visit the site and discuss with clients to choose the best possible design style. Also, the design is always considering the practicality and specifications for smooth execution. Systematic manufacturing and assembling procedures ensure the best output to match the designs as per the client requirement. Therefore, a client is sure to achieve the results as per the plan and discussions with the designer. In addition to this, there is a wide scope for selection of colors and finishes suitable for modern apartments or houses. We listen to your wants, needs, and aspirations to provide the support needed to ensure your new home meets your objectives.
-          </p>
-          <p>
-             All our products are exclusively manufactured at our state-of-the-art factories spanning 1,25,000 sq. ft. for the timeless aesthetics.
-          </p>
-        </div>
-      </div>
-
-    <!-- Image Column -->
-      <div class="col-md-6 order-1 order-md-1 image-column">
-        <div class="h-100 w-100 bg-cover" style="background-image: url('{% static 'images/bedroom.jpg' %}');"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
 
 
 </div>
@@ -491,7 +405,7 @@
 
 </section>
 
-<section class="testimonial-section">
+{% comment %} <section class="testimonial-section">
     <div class="testimonial-container">
         <div class="testimonial-row">
 
@@ -616,7 +530,7 @@
 
         </div>
     </div>
-</section>
+</section> {% endcomment %}
 
 
     <!-- CTA -->
