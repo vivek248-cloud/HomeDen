@@ -767,7 +767,9 @@ zx
   height: 100%;
   object-fit: cover;
   /* filter: brightness(0.7); */
+
 }
+/* */
   .scroller-content-2 h1 {
     font-size: 3.1rem;
     font-weight: 600;
