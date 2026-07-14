@@ -9,34 +9,45 @@
 {% endblock %}
 {% block content %}
 <!-- Hero Section -->
-<div class="hero-section ">
-    <!-- template.html -->
+<div class="hero-section">
     <div class="contact-container">
         <div class="contact-bg">
-          <div class="sliders-box grid-slideshow">
-              {% for slide in home_sliders %}
-              <section class="slider-sections {% if forloop.first %}active{% endif %}" style="width: 100vw;">
-                <!-- Add the image here -->
-                <img src="{{ slide.image.url }}" alt="{{ slide.headline }}" class="slider-img">
 
-                <div class="scroller-content-bg">
-                  <div class="scroller-content"></div>
-                </div>
-              </section>
-              {% endfor %}
-          </div>
-      
-          <!-- Pagination Dots (OUTSIDE the for loop) -->
-          <div class="pagination-dots">
-           
-          </div>
+            <div class="sliders-box grid-slideshow">
 
-           
-          </div>
-      
+                {% for slide in home_sliders %}
+
+                <section class="slider-sections {% if forloop.first %}active{% endif %}">
+
+                    <picture>
+
+                        {% if slide.mobile_image %}
+                            <source
+                                media="(max-width:768px)"
+                                srcset="{{ slide.mobile_image.url }}">
+                        {% endif %}
+
+                        <img
+                            src="{{ slide.image.url }}"
+                            alt="{{ slide.headline }}"
+                            class="slider-img">
+
+                    </picture>
+
+                    <div class="scroller-content-bg">
+                        <div class="scroller-content"></div>
+                    </div>
+
+                </section>
+
+                {% endfor %}
+
+            </div>
+
+            <div class="pagination-dots"></div>
 
         </div>
-      </div>
+    </div>
 </div>
       <!-- Section -->
 

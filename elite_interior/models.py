@@ -18,18 +18,31 @@ from django.core.files.base import ContentFile
 import os
 
 
+from django.db import models
+from django.dispatch import receiver
+from django.db.models.signals import post_delete
+
+from PIL import Image
+
+from io import BytesIO
+
+from django.core.files.base import ContentFile
+
+import os
+
+
 class HomeSlider(models.Model):
 
     headline = models.CharField(
         max_length=255,
-        null=True,
-        blank=True
+        blank=True,
+        null=True
     )
 
     sub_headline = models.CharField(
         max_length=255,
-        null=True,
-        blank=True
+        blank=True,
+        null=True
     )
 
     quotes = models.TextField(
@@ -42,7 +55,14 @@ class HomeSlider(models.Model):
     )
 
     image = models.ImageField(
-        upload_to='home_slider/'
+        upload_to="home_slider/"
+    )
+
+    mobile_image = models.ImageField(
+        upload_to="slider_mobile/",
+        blank=True,
+        null=True,
+        help_text="Upload mobile version (Recommended: 1080 × 1920)"
     )
 
     description = models.TextField(
@@ -52,57 +72,42 @@ class HomeSlider(models.Model):
 
     location = models.CharField(
         max_length=255,
-        null=True,
-        blank=True
+        blank=True,
+        null=True
     )
 
     created_at = models.DateTimeField(
         auto_now_add=True
     )
 
+    class Meta:
+        ordering = ["-created_at"]
+
     def __str__(self):
         return self.title
 
-    # =====================================
-    # AUTO WEBP CONVERSION + COMPRESSION
-    # =====================================
+    # =====================================================
+    # Convert Image to WEBP
+    # =====================================================
 
-    def save(self, *args, **kwargs):
+    def convert_to_webp(self, field_name, max_width):
 
-        # Save original image first
-        super().save(*args, **kwargs)
+        image_field = getattr(self, field_name)
 
-        # Skip if already webp
-        if not self.image:
+        if not image_field:
             return
 
-        if self.image.name.endswith(".webp"):
+        if image_field.name.endswith(".webp"):
             return
 
         try:
 
-            # =====================================
-            # STORE OLD FILE PATH
-            # =====================================
+            old_path = image_field.path
 
-            old_image_path = self.image.path
+            img = Image.open(old_path)
 
-            # =====================================
-            # OPEN IMAGE
-            # =====================================
-
-            img = Image.open(old_image_path)
-
-            # Convert transparent images properly
             if img.mode in ("RGBA", "P"):
-
                 img = img.convert("RGB")
-
-            # =====================================
-            # RESIZE LARGE IMAGES
-            # =====================================
-
-            max_width = 1920
 
             if img.width > max_width:
 
@@ -115,64 +120,68 @@ class HomeSlider(models.Model):
                     Image.LANCZOS
                 )
 
-            # =====================================
-            # CONVERT TO WEBP
-            # =====================================
-
             webp_io = BytesIO()
 
             img.save(
                 webp_io,
                 format="WEBP",
-                quality=65,
+                quality=70,
                 optimize=True
             )
 
-            # =====================================
-            # CREATE WEBP NAME
-            # =====================================
-
             filename = os.path.splitext(
-                os.path.basename(self.image.name)
+                os.path.basename(image_field.name)
             )[0]
 
-            webp_filename = f"{filename}.webp"
+            webp_name = f"{filename}.webp"
 
-            # =====================================
-            # SAVE WEBP FILE
-            # =====================================
-
-            self.image.save(
-                webp_filename,
+            image_field.save(
+                webp_name,
                 ContentFile(webp_io.getvalue()),
                 save=False
             )
 
-            # Save updated webp image
-            super().save(update_fields=["image"])
+            super().save(
+                update_fields=[field_name]
+            )
 
-            # =====================================
-            # DELETE ORIGINAL JPG/PNG
-            # =====================================
+            if os.path.exists(old_path):
 
-            if os.path.exists(old_image_path):
+                if not old_path.endswith(".webp"):
 
-                # Safety check
-                if not old_image_path.endswith(".webp"):
-
-                    os.remove(old_image_path)
+                    os.remove(old_path)
 
         except Exception as e:
 
-            print("WEBP Conversion Error:", e)
+            print(f"{field_name} WEBP Error :", e)
+
+    # =====================================================
+    # SAVE
+    # =====================================================
+
+    def save(self, *args, **kwargs):
+
+        super().save(*args, **kwargs)
+
+        # Desktop Banner
+        self.convert_to_webp(
+            "image",
+            max_width=1920
+        )
+
+        # Mobile Banner
+        self.convert_to_webp(
+            "mobile_image",
+            max_width=1080
+        )
 
 
-# =====================================
-# AUTO DELETE IMAGE WHEN MODEL DELETED
-# =====================================
+# =====================================================
+# DELETE IMAGES WHEN RECORD IS DELETED
+# =====================================================
 
 @receiver(post_delete, sender=HomeSlider)
-def delete_image_on_instance_delete(sender, instance, **kwargs):
+def delete_slider_images(sender, instance, **kwargs):
 
     if instance.image:
 
@@ -180,6 +189,11 @@ def delete_image_on_instance_delete(sender, instance, **kwargs):
 
             os.remove(instance.image.path)
 
+    if instance.mobile_image:
+
+        if os.path.isfile(instance.mobile_image.path):
+
+            os.remove(instance.mobile_image.path)
 
 
 
